@@ -1,4 +1,4 @@
-define(['core/game'], function (Game)
+define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (Scheduler, Map, RenderableMap)
 {
     'use strict';
 
@@ -8,8 +8,11 @@ define(['core/game'], function (Game)
         this.context = null;
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
 
+        this.map = null;
+        this.renderables = [];
+
         window.addEventListener('resize', handleResize.bind(this));
-        Game.scheduleEvent({context: this, method: update});
+        Scheduler.schedule({context: this, method: update, priority: Scheduler.priority.render});
     }
 
     function handleResize()
@@ -17,41 +20,32 @@ define(['core/game'], function (Game)
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
 
-        this.viewportRect.width = this.canvas.width;
-        this.viewportRect.height = this.canvas.height;
+        this.viewportRect.width = this.canvas.clientWidth;
+        this.viewportRect.height = this.canvas.clientHeight;
     }
 
-    function update(deltaTime)
+    function update(e, deltaTime)
     {
         this.context.clearRect(0, 0, this.viewportRect.width, this.viewportRect.height);
 
-        var halfWidth = this.viewportRect.width / 2;
-        var halfHeight = this.viewportRect.height / 2;
+        if (this.map)
+        { // TODO: It may be nice to combine this in with the other renderables, but it will have to render first
+            this.map.render(this.context, this.viewportRect);
+        }
 
-        this.context.fillStyle = 'blue';
-        this.context.strokeStyle = 'blue';
-
-        this.context.beginPath();
-        this.context.arc(halfWidth, halfHeight, 300, 0, Math.PI * 2, false);
-        this.context.stroke();
-
-        this.context.fillStyle = 'blue';
-        this.context.strokeStyle = 'black';
-
-        this.context.beginPath();
-        this.context.arc(halfWidth - 90, halfHeight - 60, 25, 0, Math.PI * 2, false);
-        this.context.fill();
-        this.context.stroke();
-
-        this.context.beginPath();
-        this.context.arc(halfWidth + 90, halfHeight - 60, 25, 0, Math.PI * 2, false);
-        this.context.fill();
-        this.context.stroke();
-
-        this.context.beginPath();
-        this.context.arc(halfWidth, halfHeight - 250, 400, Math.PI * 0.35, Math.PI * 0.65, false);
-        this.context.stroke();
+        for (var i = 0; i < this.renderables.length; i++)
+        {
+            this.renderables[i].render(this.context, this.viewportRect);
+        }
     }
+
+    Renderer.prototype.addRenderable = function (renderable)
+    {
+        if (renderable instanceof Map)
+        {
+            this.map = new RenderableMap(renderable);
+        }
+    };
 
     Renderer.prototype.setCanvas = function (canvas)
     {
