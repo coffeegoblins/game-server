@@ -1,5 +1,8 @@
 require.config({
     baseUrl: '',
     shim: {},
-    paths: {}
+    paths: {
+        i18n: 'lib/i18n',
+        text: 'lib/text'
+    }
 });
