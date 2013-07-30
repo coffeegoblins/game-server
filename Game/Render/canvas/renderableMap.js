@@ -1,33 +1,43 @@
-define([], function ()
+define(['maps/map'], function (Map)
 {
     'use strict';
+
+    function getColorForHeight(height)
+    { // Convert the height to a color gradient. Low is white. High is black.
+        var numericColor = Math.floor(255 * (1 - (height / Map.maxHeight)));
+        var hexColor = numericColor.toString(16);
+        return '#' + hexColor + hexColor + hexColor;
+    }
+
+
     function RenderableMap(map)
     {
         this.map = map;
     }
 
-    RenderableMap.prototype.render = function (context, viewportRect)
+    RenderableMap.prototype.render = function (context, scale, viewportRect)
     {
-        var tileSize = this.map.tileSize;
-        context.strokeStyle = '#cdcdcd';
-        context.lineWidth = 0.5;
+        var tileSize = this.map.tileSize * scale;
 
-        var x = tileSize - (viewportRect.x % tileSize);
-        for (; x < viewportRect.width; x += tileSize)
-        {
-            context.beginPath();
-            context.moveTo(x, 0);
-            context.lineTo(x, viewportRect.height);
-            context.stroke();
-        }
+        var xTileStart = Math.floor(viewportRect.x / tileSize);
+        var xTileEnd = Math.ceil((viewportRect.x + viewportRect.width) / tileSize);
 
-        var y = tileSize - (viewportRect.y % tileSize);
-        for (; y < viewportRect.height; y += tileSize)
+        var yTileStart = Math.floor(viewportRect.y / tileSize);
+        var yTileEnd = Math.ceil((viewportRect.y + viewportRect.height) / tileSize);
+
+        for (var x = xTileStart; x < xTileEnd; x++)
         {
-            context.beginPath();
-            context.moveTo(0, y);
-            context.lineTo(viewportRect.width, y);
-            context.stroke();
+            for (var y = yTileStart; y < yTileEnd; y++)
+            {
+                var tile = this.map.getTile(x, y);
+                if (tile)
+                {
+                    context.beginPath();
+                    context.fillStyle = getColorForHeight(tile.height);
+                    context.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    context.fill();
+                }
+            }
         }
     };
 

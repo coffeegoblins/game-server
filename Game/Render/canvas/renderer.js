@@ -6,6 +6,8 @@ define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (
     {
         this.canvas = null;
         this.context = null;
+
+        this.scale = 1; // TODO: It may be better to scale the canvas instead of the drawing
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
 
         this.map = null;
@@ -30,12 +32,12 @@ define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (
 
         if (this.map)
         { // TODO: It may be nice to combine this in with the other renderables, but it will have to render first
-            this.map.render(this.context, this.viewportRect);
+            this.map.render(this.context, this.scale, this.viewportRect);
         }
 
         for (var i = 0; i < this.renderables.length; i++)
         {
-            this.renderables[i].render(this.context, this.viewportRect);
+            this.renderables[i].render(this.context, this.scale, this.viewportRect);
         }
     }
 
