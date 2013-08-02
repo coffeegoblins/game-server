@@ -1,4 +1,4 @@
-define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (Scheduler, Map, RenderableMap)
+define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Scheduler,  RenderableMap)
 {
     'use strict';
 
@@ -31,7 +31,7 @@ define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (
         this.context.clearRect(0, 0, this.viewportRect.width, this.viewportRect.height);
 
         if (this.map)
-        { // TODO: It may be nice to combine this in with the other renderables, but it will have to render first
+        { // TODO: It may be nice to combine this in with the other renderables, but it will have to Renderer first
             this.map.render(this.context, this.scale, this.viewportRect);
         }
 
@@ -41,12 +41,9 @@ define(['core/scheduler', 'maps/map', 'Render/canvas/renderableMap'], function (
         }
     }
 
-    Renderer.prototype.addRenderable = function (renderable)
+    Renderer.prototype.addRenderableMap = function (renderableMap)
     {
-        if (renderable instanceof Map)
-        {
-            this.map = new RenderableMap(renderable);
-        }
+        this.map = new RenderableMap(renderableMap);
     };
 
     Renderer.prototype.setCanvas = function (canvas)

@@ -1,4 +1,4 @@
-define(['core/utility'], function (Utility)
+define([], function ()
 {
     'use strict';
 

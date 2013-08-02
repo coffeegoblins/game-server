@@ -33,7 +33,7 @@ define([], function ()
         return this.tiles[x + y * this.width];
     };
 
-    Map.maxHeight = 16;
+    Map.prototype.maxHeight = 16;
 
     return Map;
 });

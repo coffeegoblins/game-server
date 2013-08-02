@@ -1,6 +1,6 @@
-require(["Utility"], function (Utility)
+require(["utility"], function (Utility)
 {
-    UtilityTest = TestCase("UtilityTest");
+    var UtilityTest = TestCase("UtilityTest");
 
     UtilityTest.prototype.setUp = function()
     {

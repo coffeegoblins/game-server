@@ -1,4 +1,4 @@
-require(['core/scheduler', 'Render/canvas/renderer', 'maps/map'], function (Scheduler, Renderer, Map)
+require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/maps/map'], function (Scheduler, Renderer, Map)
 {
     'use strict';
     function onDocumentReady()
@@ -30,7 +30,7 @@ require(['core/scheduler', 'Render/canvas/renderer', 'maps/map'], function (Sche
             }
         }
 
-        Renderer.addRenderable(map);
+        Renderer.addRenderableMap(map);
     }
 
     if (document.readyState === 'complete')

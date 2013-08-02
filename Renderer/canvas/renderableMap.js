@@ -1,10 +1,10 @@
-define(['maps/map'], function (Map)
+define([], function ()
 {
     'use strict';
 
-    function getColorForHeight(height)
+    function getColorForHeight(height, maxHeight)
     { // Convert the height to a color gradient. Low is white. High is black.
-        var numericColor = Math.floor(255 * (1 - (height / Map.maxHeight)));
+        var numericColor = Math.floor(255 * (1 - (height / maxHeight)));
         var hexColor = numericColor.toString(16);
         return '#' + hexColor + hexColor + hexColor;
     }
@@ -33,7 +33,7 @@ define(['maps/map'], function (Map)
                 if (tile)
                 {
                     context.beginPath();
-                    context.fillStyle = getColorForHeight(tile.height);
+                    context.fillStyle = getColorForHeight(tile.height, this.map.maxHeight);
                     context.rect(x * tileSize, y * tileSize, tileSize, tileSize);
                     context.fill();
                 }
