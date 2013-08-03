@@ -1,4 +1,4 @@
-define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Scheduler,  RenderableMap)
+define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Scheduler, RenderableMap)
 {
     'use strict';
 
@@ -12,9 +12,6 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Schedu
 
         this.map = null;
         this.renderables = [];
-
-        window.addEventListener('resize', handleResize.bind(this));
-        Scheduler.schedule({context: this, method: update, priority: Scheduler.priority.render});
     }
 
     function handleResize()
@@ -46,12 +43,14 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Schedu
         this.map = new RenderableMap(renderableMap);
     };
 
-    Renderer.prototype.setCanvas = function (canvas)
+    Renderer.prototype.initialize = function (canvas)
     {
         this.canvas = canvas;
         this.context = canvas.getContext('2d'); // TODO: If this doesn't work, tell the user their browser sucks and exit gracefully
 
         handleResize.call(this);
+        window.addEventListener('resize', handleResize.bind(this));
+        Scheduler.schedule({context: this, method: update, priority: Scheduler.priority.render});
     };
 
     return new Renderer();

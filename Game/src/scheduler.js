@@ -11,22 +11,20 @@ define([], function ()
         window.cancelAnimationFrame = window[vendorTag + 'CancelAnimationFrame'] || window[vendorTag + 'CancelRequestAnimationFrame'];
     }
 
-    // Variables for the main loop
-    var updateLoopId;
-    var updateMethod;
-    var lastUpdateTime = 0;
-    var eventQueue = {};
-
     function Scheduler()
     {
         this.isRunning = false;
-        updateMethod = this.update.bind(this);
     }
+
+    Scheduler.prototype.clear = function ()
+    {
+        eventQueue = {};
+    };
 
     Scheduler.prototype.start = function ()
     {
         this.isRunning = true;
-        updateLoopId = window.requestAnimationFrame(updateMethod);
+        updateLoopId = window.requestAnimationFrame(update);
     };
 
     Scheduler.prototype.stop = function ()
@@ -35,75 +33,35 @@ define([], function ()
         window.cancelAnimationFrame(updateLoopId);
     };
 
-    Scheduler.prototype.update = function (time)
+    /*
+     * @param eventData The event to schedule
+     * @param {Object} eventData.context The context to execute the method under
+     * @param {function} eventData.method The method to execute
+     * @param {Number} [eventData.interval=0] The time in seconds between executions
+     * @param {Number} [eventData.priority=Scheduler.priority.update] Methods with higher priority are executed first
+     */
+    Scheduler.prototype.schedule = function (eventData)
     {
-        if (!this.isRunning)
-            return;
+        if (eventData.interval == null)
+            eventData.interval = 0;
 
-        var deltaTime = (time - lastUpdateTime) * 0.001;
-        lastUpdateTime = time;
+        if (eventData.priority == null)
+            eventData.priority = this.priority.update;
 
-        // Don't let the game clock sink lower than 20fps
-        if (deltaTime > 0.05)
-            deltaTime = 0.05;
+        eventData.timeRemaining = eventData.interval;
 
-        // Update any events that have registered with the game
         var previousEvent = eventQueue;
         var currentEvent = eventQueue.next;
-        while (currentEvent)
+        while (currentEvent && currentEvent.eventData.priority > eventData.priority)
         {
-            var eventData = currentEvent.eventData;
-            eventData.timeRemaining -= deltaTime;
-            if (eventData.timeRemaining < 0)
-            {
-                eventData.method.call(eventData.context, eventData, deltaTime);
-                if (eventData.isFinished)
-                {
-                    previousEvent.next = currentEvent.next;
-                    currentEvent = currentEvent.next;
-                    continue;
-                }
-                else
-                {
-                    eventData.timeRemaining += eventData.interval;
-                    if (eventData.timeRemaining < 0)
-                        eventData.timeRemaining = 0;
-                }
-            }
-
             previousEvent = currentEvent;
             currentEvent = currentEvent.next;
         }
 
-        updateLoopId = window.requestAnimationFrame(updateMethod);
+        previousEvent.next = {eventData: eventData, next: currentEvent};
     };
 
-
-    Scheduler.prototype.schedule = function (eventData)
-    {
-        if (eventData && eventData.method)
-        {
-            if (eventData.interval == null)
-                eventData.interval = 0;
-
-            if (eventData.priority == null)
-                eventData.priority = this.priority.update;
-
-            eventData.isFinished = false;
-            eventData.timeRemaining = eventData.interval;
-
-            var previousEvent = eventQueue;
-            var currentEvent = eventQueue.next;
-            while (currentEvent && currentEvent.priority < eventData.priority)
-            {
-                previousEvent = currentEvent;
-                currentEvent = currentEvent.next;
-            }
-
-            previousEvent.next = {eventData: eventData, next: currentEvent};
-        }
-    };
-
+    /* @param {object} eventData The event to unschedule */
     Scheduler.prototype.unschedule = function (eventData)
     {
         var previousEvent = eventQueue;
@@ -121,6 +79,7 @@ define([], function ()
         }
     };
 
+    /* @param id The id property on the event to unschedule */
     Scheduler.prototype.unscheduleById = function (id)
     {
         var previousEvent = eventQueue;
@@ -150,9 +109,49 @@ define([], function ()
     };
 
     Scheduler.prototype.priority = {
-        update: 1,
-        render: 2
+        update: 1000,
+        render: 100
     };
 
-    return new Scheduler();
+
+    var scheduler = new Scheduler();
+    var updateLoopId;
+    var lastUpdateTime = 0;
+    var eventQueue = {};
+
+    function update(time)
+    {
+        if (!scheduler.isRunning)
+            return;
+
+        var deltaTime = (time - lastUpdateTime) * 0.001;
+        lastUpdateTime = time;
+
+        // Don't let the game clock sink lower than 20fps
+        if (deltaTime > 0.05)
+            deltaTime = 0.05;
+
+        // Update any events that have registered with the game
+        var previousEvent = eventQueue;
+        var currentEvent = eventQueue.next;
+        while (currentEvent)
+        {
+            var eventData = currentEvent.eventData;
+            eventData.timeRemaining -= deltaTime;
+            if (eventData.timeRemaining < 0)
+            {
+                eventData.method.call(eventData.context, eventData, deltaTime);
+                eventData.timeRemaining += eventData.interval;
+                if (eventData.timeRemaining < 0)
+                    eventData.timeRemaining = 0;
+            }
+
+            previousEvent = currentEvent;
+            currentEvent = currentEvent.next;
+        }
+
+        updateLoopId = window.requestAnimationFrame(update);
+    }
+
+    return scheduler;
 });

@@ -1,11 +1,11 @@
-require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/maps/map'], function (Scheduler, Renderer, Map)
+require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map'], function (Scheduler, Renderer, Map)
 {
     'use strict';
     function onDocumentReady()
     {
         // TODO: We're going to need to preload stuff once we have actual content
 
-        Renderer.setCanvas(document.getElementById('canvas'));
+        Renderer.initialize(document.getElementById('canvas'));
         Scheduler.start();
 
         // TODO: I would prefer to keep this file rather slim. Should there be Game and Level-esque classes to handle most of the setup logic?
