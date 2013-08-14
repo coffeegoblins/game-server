@@ -22,11 +22,40 @@ define([], function ()
             {
                 this.tiles.push({
                     contents: null,
+                    unit:null,
                     height: 0
                 });
             }
         }
     }
+
+    /**
+     * @param unit The unit to add
+     * @param x The X position of target tile
+     * @param y The Y position of target tile
+     */
+    Map.prototype.addUnit = function (unit, x, y)
+    {
+        this.getTile(x,y).unit = unit;
+    };
+
+    /**
+     * @param x The x coordinate of the start tile in the tile array
+     * @param y The y coordinate of the start tile in the tile array
+     * @param x2 The x coordinate of the target tile in the tile array
+     * @param y2 The y coordinate of the target tile in the tile array
+     */
+    Map.prototype.moveUnit = function (x, y, x2, y2)
+    {
+        var currentTile = this.tiles[x + y * this.width];
+        var targetTile = this.tiles[x2 + y2 * this.width];
+
+        // TODO Synchronous Move Animation
+        currentTile.unit.move(x2, y2);
+
+        targetTile.unit = currentTile.unit;
+        currentTile.unit = null;
+    };
 
     /**
      * @param x The x coordinate of the tile in the tile array

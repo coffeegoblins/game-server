@@ -1,0 +1,60 @@
+define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], function (Renderer, Map, Soldier)
+{
+    'use strict';
+
+    /**
+     * @constructor
+     */
+    function LevelLoader()
+    {
+
+    }
+
+    /**
+     * @param fileName The name of the file to load
+     */
+    LevelLoader.prototype.loadLevel = function (fileName)
+    {
+        // TODO: Asynchronous loading from file
+        var map = new Map(100, 100, 64);
+
+        // Build a hill for illustration purposes
+        var height = 5;
+        var summitX = 10;
+        var summitY = 5;
+
+        for (var x = summitX - height; x <= summitX + height; x++)
+        {
+            for (var y = summitY - height; y <= summitY + height; y++)
+            {
+                var tile = map.getTile(x, y);
+                if (tile)
+                {
+                    var xDelta = Math.abs(summitX - x);
+                    var yDelta = Math.abs(summitY - y);
+                    tile.height = height - Math.max(xDelta, yDelta);
+                }
+            }
+        }
+
+        Renderer.addRenderableMap(map);
+
+        var soldier = new Soldier();
+        soldier.PositionX = 100;
+        soldier.PositionY = 100;
+
+        var soldier2 = new Soldier();
+        soldier2.PositionX = 200;
+        soldier2.PositionY = 100;
+
+        var soldier3 = new Soldier();
+        soldier3.PositionX = 100;
+        soldier3.PositionY = 500;
+
+        Renderer.addRenderableSoldier(soldier);
+        Renderer.addRenderableSoldier(soldier2);
+        Renderer.addRenderableSoldier(soldier3);
+    };
+
+    return new LevelLoader;
+});

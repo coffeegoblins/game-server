@@ -1,4 +1,4 @@
-define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Scheduler, RenderableMap)
+define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/renderableSoldier'], function (Scheduler, RenderableMap, RenderableSoldier)
 {
     'use strict';
 
@@ -41,6 +41,11 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap'], function (Schedu
     Renderer.prototype.addRenderableMap = function (renderableMap)
     {
         this.map = new RenderableMap(renderableMap);
+    };
+
+    Renderer.prototype.addRenderableSoldier = function (soldier)
+    {
+        this.renderables.push(new RenderableSoldier(soldier));
     };
 
     Renderer.prototype.initialize = function (canvas)
