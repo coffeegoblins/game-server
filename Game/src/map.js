@@ -3,8 +3,8 @@ define([], function ()
     'use strict';
 
     /**
-     * @param width The number of tiles on the horizontal axis of the map
-     * @param height The number of tiles on the vertical axis of the map
+     * @param width The number of tiles on the horizontal axis of the renderableMap
+     * @param height The number of tiles on the vertical axis of the renderableMap
      * @param tileSize The size of the tiles in game space
      * @constructor
      */
@@ -15,13 +15,18 @@ define([], function ()
 
         this.tiles = [];
         this.tileSize = tileSize || 16;
+        var halfWidth = (tileSize / 2);
 
-        for (var x = 0; x < width; x++)
+
+        for (var y = 0; y < height; y++)
         {
-            for (var y = 0; y < height; y++)
+            for (var x = 0; x < width; x++)
             {
-                this.tiles.push({
+                this.tiles.push(
+                {
                     contents: null,
+                    xPosition: x * tileSize + halfWidth,
+                    yPosition: y * tileSize + halfWidth,
                     unit:null,
                     height: 0
                 });
@@ -36,7 +41,11 @@ define([], function ()
      */
     Map.prototype.addUnit = function (unit, x, y)
     {
-        this.getTile(x,y).unit = unit;
+        var tile = this.getTile(x,y);
+        tile.unit = unit;
+
+        unit.PositionX = tile.xPosition;
+        unit.PositionY = tile.yPosition;
     };
 
     /**
@@ -70,7 +79,7 @@ define([], function ()
      * @param x The x coordinate of the tile in game space
      * @param y The y coordinate of the tile in game space
      */
-    Map.prototype.getTileAtPosition = function (x, y)
+    Map.prototype.getTileAtCoordinate = function (x, y)
     {
         x = Math.floor(x / this.tileSize);
         y = Math.floor(y / this.tileSize);

@@ -4,8 +4,10 @@ require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map', 'Game
     function onDocumentReady()
     {
         // TODO: We're going to need to preload stuff once we have actual content
+        var canvas = document.getElementById('canvas');
 
-        Renderer.initialize(document.getElementById('canvas'));
+        Renderer.initialize(canvas);
+
         Scheduler.start();
         LevelLoader.loadLevel("");
     }

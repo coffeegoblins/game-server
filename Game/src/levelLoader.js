@@ -40,16 +40,12 @@ define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], functio
         Renderer.addRenderableMap(map);
 
         var soldier = new Soldier();
-        soldier.PositionX = 100;
-        soldier.PositionY = 100;
-
         var soldier2 = new Soldier();
-        soldier2.PositionX = 200;
-        soldier2.PositionY = 100;
-
         var soldier3 = new Soldier();
-        soldier3.PositionX = 100;
-        soldier3.PositionY = 500;
+
+        map.addUnit(soldier, 0, 0);
+        map.addUnit(soldier2, 1, 1);
+        map.addUnit(soldier3, 2, 2);
 
         Renderer.addRenderableSoldier(soldier);
         Renderer.addRenderableSoldier(soldier2);

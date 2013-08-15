@@ -12,12 +12,12 @@ define([], function ()
 
     function RenderableMap(map)
     {
-        this.map = map;
+        this.gameMap = map;
     }
 
     RenderableMap.prototype.render = function (context, scale, viewportRect)
     {
-        var tileSize = this.map.tileSize * scale;
+        var tileSize = this.gameMap.tileSize * scale;
 
         var xTileStart = Math.floor(viewportRect.x / tileSize);
         var xTileEnd = Math.ceil((viewportRect.x + viewportRect.width) / tileSize);
@@ -29,12 +29,17 @@ define([], function ()
         {
             for (var y = yTileStart; y < yTileEnd; y++)
             {
-                var tile = this.map.getTile(x, y);
+                var tile = this.gameMap.getTile(x, y);
                 if (tile)
                 {
                     context.beginPath();
-                    context.fillStyle = getColorForHeight(tile.height, this.map.maxHeight);
+                    context.fillStyle = "#000000";
                     context.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    context.fill();
+
+                    context.beginPath();
+                    context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
+                    context.rect(x * tileSize + 2, y * tileSize + 2, tileSize - 2, tileSize - 2);
                     context.fill();
                 }
             }

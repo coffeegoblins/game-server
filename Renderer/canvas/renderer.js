@@ -10,7 +10,7 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
         this.scale = 1; // TODO: It may be better to scale the canvas instead of the drawing
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
 
-        this.map = null;
+        this.renderableMap = null;
         this.renderables = [];
     }
 
@@ -27,9 +27,9 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
     {
         this.context.clearRect(0, 0, this.viewportRect.width, this.viewportRect.height);
 
-        if (this.map)
+        if (this.renderableMap)
         { // TODO: It may be nice to combine this in with the other renderables, but it will have to Renderer first
-            this.map.render(this.context, this.scale, this.viewportRect);
+            this.renderableMap.render(this.context, this.scale, this.viewportRect);
         }
 
         for (var i = 0; i < this.renderables.length; i++)
@@ -40,7 +40,7 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
 
     Renderer.prototype.addRenderableMap = function (renderableMap)
     {
-        this.map = new RenderableMap(renderableMap);
+        this.renderableMap = new RenderableMap(renderableMap);
     };
 
     Renderer.prototype.addRenderableSoldier = function (soldier)
@@ -48,9 +48,21 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
         this.renderables.push(new RenderableSoldier(soldier));
     };
 
+    Renderer.prototype.onCanvasClick = function(e)
+    {
+        var x = e.clientX - this.canvas.offsetLeft;
+        var y = e.clientY - this.canvas.offsetTop;
+
+        var tile = this.renderableMap.gameMap.getTileAtCoordinate(x, y);
+
+        console.log("Clicked! \n\tX: " + x + "\n\t" + "Y: " + y);
+        console.log(tile);
+    }
+
     Renderer.prototype.initialize = function (canvas)
     {
         this.canvas = canvas;
+        this.canvas.addEventListener('click', this.onCanvasClick.bind(this), false);
         this.context = canvas.getContext('2d'); // TODO: If this doesn't work, tell the user their browser sucks and exit gracefully
 
         handleResize.call(this);
