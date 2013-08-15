@@ -24,7 +24,9 @@ require(['map', 'soldier'], function (Map, Soldier)
         for (var x = 5; x < 200; x += 10)
         {
             for (var y = 5; y < 200; y += 10)
+            {
                 assertEquals(map.tiles[tileIndex++], map.getTileAtCoordinate(x, y));
+            }
         }
     };
 
