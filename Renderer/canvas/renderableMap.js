@@ -2,17 +2,16 @@ define([], function ()
 {
     'use strict';
 
-    function getColorForHeight(height, maxHeight)
-    { // Convert the height to a color gradient. Low is white. High is black.
-        var numericColor = Math.floor(255 * (1 - (height / maxHeight)));
-        var hexColor = numericColor.toString(16);
-        return '#' + hexColor + hexColor + hexColor;
-    }
-
-
     function RenderableMap(map)
     {
         this.gameMap = map;
+    }
+
+    function getColorForHeight(height, maxHeight)
+    {  // Convert the height to a color gradient. High is white. Low is black.
+        var numericColor = 128 + Math.floor(128 * (height / maxHeight));
+        var hexColor = numericColor.toString(16);
+        return '#' + hexColor + hexColor + hexColor;
     }
 
     RenderableMap.prototype.render = function (context, scale, viewportRect)
@@ -33,13 +32,8 @@ define([], function ()
                 if (tile)
                 {
                     context.beginPath();
-                    context.fillStyle = "#000000";
-                    context.rect(x * tileSize + viewportRect.x, y * tileSize + viewportRect.y, tileSize, tileSize);
-                    context.fill();
-
-                    context.beginPath();
                     context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
-                    context.rect(x * tileSize + 2 + viewportRect.x, y * tileSize + 2 + viewportRect.y, tileSize - 2, tileSize - 2);
+                    context.rect(x * tileSize + 1 - viewportRect.x, y * tileSize + 1 - viewportRect.y, tileSize - 1, tileSize - 1);
                     context.fill();
                 }
             }

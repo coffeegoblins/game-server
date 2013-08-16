@@ -17,7 +17,6 @@ define([], function ()
         this.tileSize = tileSize || 16;
         var halfWidth = (tileSize / 2);
 
-
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -86,7 +85,7 @@ define([], function ()
         return this.tiles[x + y * this.width];
     };
 
-    Map.prototype.maxHeight = 16;
+    Map.prototype.maxHeight = 10;
 
     return Map;
 });

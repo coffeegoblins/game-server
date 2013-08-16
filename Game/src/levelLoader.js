@@ -1,4 +1,4 @@
-define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], function (Renderer, Map, Soldier)
+define(['renderer', 'Game/src/map', 'Game/src/soldier'], function (Renderer, Map, Soldier)
 {
     'use strict';
 
@@ -52,5 +52,5 @@ define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], functio
         Renderer.addRenderableSoldier(soldier3);
     };
 
-    return new LevelLoader;
+    return new LevelLoader();
 });
