@@ -60,7 +60,7 @@ define([], function ()
         var targetTile = this.tiles[x2 + y2 * this.width];
 
         // TODO Synchronous Move Animation
-        currentTile.unit.move(x2, y2);
+        currentTile.unit.move(targetTile.xPosition, targetTile.yPosition);
 
         targetTile.unit = currentTile.unit;
         currentTile.unit = null;

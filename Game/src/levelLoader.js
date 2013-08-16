@@ -16,7 +16,7 @@ define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], functio
     LevelLoader.prototype.loadLevel = function (fileName)
     {
         // TODO: Asynchronous loading from file
-        var map = new Map(100, 100, 64);
+        this.map = new Map(100, 100, 64);
 
         // Build a hill for illustration purposes
         var height = 5;
@@ -27,7 +27,7 @@ define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], functio
         {
             for (var y = summitY - height; y <= summitY + height; y++)
             {
-                var tile = map.getTile(x, y);
+                var tile = this.map.getTile(x, y);
                 if (tile)
                 {
                     var xDelta = Math.abs(summitX - x);
@@ -37,15 +37,15 @@ define(['Renderer/canvas/renderer', 'Game/src/map', 'Game/src/soldier'], functio
             }
         }
 
-        Renderer.addRenderableMap(map);
+        Renderer.addRenderableMap(this.map);
 
         var soldier = new Soldier();
         var soldier2 = new Soldier();
         var soldier3 = new Soldier();
 
-        map.addUnit(soldier, 0, 0);
-        map.addUnit(soldier2, 1, 1);
-        map.addUnit(soldier3, 2, 2);
+        this.map.addUnit(soldier, 0, 0);
+        this.map.addUnit(soldier2, 1, 1);
+        this.map.addUnit(soldier3, 2, 2);
 
         Renderer.addRenderableSoldier(soldier);
         Renderer.addRenderableSoldier(soldier2);

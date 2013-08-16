@@ -1,4 +1,4 @@
-require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map', 'Game/src/levelLoader'], function (Scheduler, Renderer, Map, LevelLoader)
+require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map', 'Game/src/levelLoader', 'Game/src/commandManager'], function (Scheduler, Renderer, Map, LevelLoader, CommandManager)
 {
     'use strict';
     function onDocumentReady()

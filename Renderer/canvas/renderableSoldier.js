@@ -13,7 +13,7 @@ define([], function ()
     {
         context.beginPath();
         context.fillStyle = '#345';
-        context.rect(this.soldier.PositionX - this.soldierWidthOffset, this.soldier.PositionY - this.soldierHeightOffset, this.soldierWidthOffset * 2, this.soldierHeightOffset * 2);
+        context.rect(this.soldier.PositionX - this.soldierWidthOffset + viewportRect.x, this.soldier.PositionY - this.soldierHeightOffset + viewportRect.y, this.soldierWidthOffset * 2, this.soldierHeightOffset * 2);
         context.fill();
     };
 

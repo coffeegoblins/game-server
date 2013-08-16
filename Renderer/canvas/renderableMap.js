@@ -34,12 +34,12 @@ define([], function ()
                 {
                     context.beginPath();
                     context.fillStyle = "#000000";
-                    context.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    context.rect(x * tileSize + viewportRect.x, y * tileSize + viewportRect.y, tileSize, tileSize);
                     context.fill();
 
                     context.beginPath();
                     context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
-                    context.rect(x * tileSize + 2, y * tileSize + 2, tileSize - 2, tileSize - 2);
+                    context.rect(x * tileSize + 2 + viewportRect.x, y * tileSize + 2 + viewportRect.y, tileSize - 2, tileSize - 2);
                     context.fill();
                 }
             }
