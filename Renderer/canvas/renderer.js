@@ -28,7 +28,8 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
         this.context.clearRect(0, 0, this.viewportRect.width, this.viewportRect.height);
 
         if (this.renderableMap)
-        { // TODO: It may be nice to combine this in with the other renderables, but it will have to Renderer first
+        {
+            // TODO: It may be nice to combine this in with the other renderables, but it will have to Renderer first
             this.renderableMap.render(this.context, this.scale, this.viewportRect);
         }
 
