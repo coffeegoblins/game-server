@@ -1,4 +1,4 @@
-define(['Game/src/levelLoader', 'Game/src/turnManager'], function (LevelLoader, TurnManager)
+define(['Game/src/levelLoader'], function (LevelLoader)
 {
     'use strict';
 
@@ -10,19 +10,10 @@ define(['Game/src/levelLoader', 'Game/src/turnManager'], function (LevelLoader, 
         window.CommandManager = this;
     }
 
-    CommandManager.prototype.moveActiveUnit = function(x, y)
+    // TODO Add functions as needed
+    CommandManager.prototype.moveUnit = function(x, y, x2, y2)
     {
-        LevelLoader.map.moveActiveUnit(x, y);
-    }
-
-    CommandManager.prototype.endTurn = function()
-    {
-        TurnManager.endTurn();
-    }
-
-    CommandManager.prototype.printTurnQueue = function()
-    {
-        console.log(TurnManager.unitList);
+        LevelLoader.map.moveUnit(x, y, x2, y2);
     }
 
     return new CommandManager;

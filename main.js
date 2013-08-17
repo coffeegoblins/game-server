@@ -1,4 +1,4 @@
-require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map', 'Game/src/levelLoader', 'Game/src/commandManager'], function (Scheduler, Renderer, Map, LevelLoader, CommandManager)
+require(['Game/src/scheduler', 'renderer', 'Game/src/map', 'Game/src/levelLoader', 'Game/src/commandManager'], function (Scheduler, Renderer, Map, LevelLoader, CommandManager)
 {
     'use strict';
     function onDocumentReady()
@@ -7,7 +7,6 @@ require(['Game/src/scheduler', 'Renderer/canvas/renderer', 'Game/src/map', 'Game
         var canvas = document.getElementById('canvas');
 
         Renderer.initialize(canvas);
-
         Scheduler.start();
         LevelLoader.loadLevel("");
     }
