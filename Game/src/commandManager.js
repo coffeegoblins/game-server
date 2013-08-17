@@ -1,4 +1,4 @@
-define(['Game/src/levelLoader'], function (LevelLoader)
+define(['renderer', 'Game/src/levelLoader'], function (Renderer, LevelLoader)
 {
     'use strict';
 
@@ -16,5 +16,11 @@ define(['Game/src/levelLoader'], function (LevelLoader)
         LevelLoader.map.moveUnit(x, y, x2, y2);
     }
 
-    return new CommandManager;
+    CommandManager.moveViewport = function (x, y)
+    {
+        Renderer.viewportRect.x = x;
+        Renderer.viewportRect.y = y;
+    };
+
+    window.CommandManager = CommandManager;
 });

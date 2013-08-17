@@ -44,9 +44,6 @@ define(['Game/src/turnManager'], function (TurnManager)
         tile.unit = unit;
         unit.CurrentTile = tile;
 
-        unit.PositionX = tile.xPosition;
-        unit.PositionY = tile.yPosition;
-
         TurnManager.unitList.push(unit);
     };
 
