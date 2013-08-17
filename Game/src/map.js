@@ -1,4 +1,4 @@
-define([], function ()
+define(['Game/src/turnManager'], function (TurnManager)
 {
     'use strict';
 
@@ -43,27 +43,25 @@ define([], function ()
     {
         var tile = this.getTile(x,y);
         tile.unit = unit;
+        unit.CurrentTile = tile;
 
         unit.PositionX = tile.xPosition;
         unit.PositionY = tile.yPosition;
+
+        TurnManager.unitList.push(unit);
     };
 
     /**
-     * @param x The x coordinate of the start tile in the tile array
-     * @param y The y coordinate of the start tile in the tile array
-     * @param x2 The x coordinate of the target tile in the tile array
-     * @param y2 The y coordinate of the target tile in the tile array
+     * @param x The x coordinate of the target tile in the tile array
+     * @param y The y coordinate of the target tile in the tile array
      */
-    Map.prototype.moveUnit = function (x, y, x2, y2)
+    Map.prototype.moveActiveUnit = function (x, y)
     {
-        var currentTile = this.tiles[x + y * this.width];
-        var targetTile = this.tiles[x2 + y2 * this.width];
+        var targetTile = this.tiles[x + y * this.width];
+        var currentUnit = TurnManager.unitList[0];
 
         // TODO Synchronous Move Animation
-        currentTile.unit.move(targetTile.xPosition, targetTile.yPosition);
-
-        targetTile.unit = currentTile.unit;
-        currentTile.unit = null;
+        currentUnit.move(targetTile);
     };
 
     /**

@@ -40,7 +40,7 @@ require(['map', 'soldier'], function (Map, Soldier)
         assertNotNull(map.getTile(0, 0).unit);
         assertNull(map.getTile(1, 1).unit);
 
-        map.moveUnit(0, 0, 1, 1);
+        map.moveActiveUnit(0, 0, 1, 1);
 
         assertNull(map.getTile(0, 0).unit);
         assertNotNull(map.getTile(1, 1).unit);

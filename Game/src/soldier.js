@@ -7,15 +7,20 @@ define([], function ()
      */
     function Soldier()
     {
-        this.PositionX = 0;
-        this.PositionY = 0;
+        this.CurrentTile = null;
+        this.Name = "";
+        this.MOV = 10;
+        this.TotalMOV = 10;
     }
 
-    Soldier.prototype.move = function (x, y)
+    Soldier.prototype.move = function (targetTile)
     {
+        this.CurrentTile.unit = null;
+
         // TODO Animate
-        this.PositionX = x;
-        this.PositionY = y;
+        this.CurrentTile = targetTile;
+
+        targetTile.unit = this;
     };
 
     /**
