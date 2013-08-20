@@ -42,7 +42,8 @@ define(['Game/src/turnManager'], function (TurnManager)
     {
         var tile = this.getTile(x,y);
         tile.unit = unit;
-        unit.CurrentTile = tile;
+
+        unit.move(tile);
 
         TurnManager.unitList.push(unit);
     };

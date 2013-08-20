@@ -1,4 +1,4 @@
-define([], function ()
+define(['renderer'], function (Renderer)
 {
     'use strict';
 
@@ -36,6 +36,10 @@ define([], function ()
                 break;
             }
         }
+
+        currentUnit = this.unitList[0];
+
+        Renderer.camera.moveToUnit(currentUnit);
     };
 
     return new TurnManager;

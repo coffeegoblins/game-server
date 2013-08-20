@@ -1,4 +1,4 @@
-define(['renderer', 'Game/src/levelLoader'], function (Renderer, LevelLoader)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (Renderer, LevelLoader, TurnManager)
 {
     'use strict';
 
@@ -10,17 +10,22 @@ define(['renderer', 'Game/src/levelLoader'], function (Renderer, LevelLoader)
         window.CommandManager = this;
     }
 
-    // TODO Add functions as needed
-    CommandManager.prototype.moveUnit = function(x, y, x2, y2)
+    CommandManager.moveActiveUnit = function(x, y)
     {
-        LevelLoader.map.moveUnit(x, y, x2, y2);
+        LevelLoader.map.moveActiveUnit(x, y);
     }
 
-    CommandManager.moveViewport = function (x, y)
+    CommandManager.moveViewport = function (x, y, milliseconds)
     {
-        Renderer.viewportRect.x = x;
-        Renderer.viewportRect.y = y;
+        Renderer.camera.moveViewport(x, y, milliseconds);
     };
+
+    CommandManager.endTurn = function()
+    {
+        TurnManager.endTurn();
+
+        console.log(TurnManager.unitList);
+    }
 
     window.CommandManager = CommandManager;
 });

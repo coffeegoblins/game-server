@@ -1,5 +1,6 @@
-define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/renderableSoldier'],
-    function (Scheduler, RenderableMap, RenderableSoldier)
+define(['Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableSoldier',
+        'Renderer/src/camera/camera'],
+    function (Scheduler, RenderableMap, RenderableSoldier, Camera)
     {
         'use strict';
 
@@ -9,7 +10,7 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
             this.context = null;
 
             this.scale = 1; // TODO: It may be better to scale the canvas instead of the drawing in some cases
-            this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
+            this.camera = new Camera();
 
             this.renderableMap = null;
             this.renderables = [];
@@ -20,8 +21,7 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
 
-            this.viewportRect.width = this.canvas.clientWidth;
-            this.viewportRect.height = this.canvas.clientHeight;
+            this.camera.handleResize(this.canvas.clientWidth, this.canvas.clientHeight);
         }
 
         function onCanvasClick(e)
@@ -56,17 +56,19 @@ define(['Game/src/scheduler', 'Renderer/canvas/renderableMap', 'Renderer/canvas/
 
         function update(e, deltaTime)
         {
-            this.context.clearRect(0, 0, this.viewportRect.width, this.viewportRect.height);
+            this.context.clearRect(0, 0, this.camera.viewportRect.width, this.camera.viewportRect.height);
+
+            this.camera.update(e, deltaTime);
 
             if (this.renderableMap)
             {
                 // TODO: It may be nice to combine this in with the other renderables, but it will have to render the map first
-                this.renderableMap.render(this.context, this.scale, this.viewportRect);
+                this.renderableMap.render(this.context, this.scale, this.camera.viewportRect);
             }
 
             for (var i = 0; i < this.renderables.length; i++)
             {
-                this.renderables[i].render(this.context, this.scale, this.viewportRect);
+                this.renderables[i].render(this.context, this.scale, this.camera.viewportRect);
             }
         }
 

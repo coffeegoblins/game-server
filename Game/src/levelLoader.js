@@ -40,8 +40,11 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier'], function (Renderer, Map
         Renderer.addRenderableMap(this.map);
 
         var soldier = new Soldier();
+        soldier.Name = "A";
         var soldier2 = new Soldier();
+        soldier2.Name = "B";
         var soldier3 = new Soldier();
+        soldier3.Name = "C";
 
         this.map.addUnit(soldier, 0, 0);
         this.map.addUnit(soldier2, 1, 1);
