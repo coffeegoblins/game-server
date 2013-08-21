@@ -1,4 +1,4 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (Renderer, LevelLoader, TurnManager)
+require(['renderer', './levelLoader', './turnManager'], function (Renderer, LevelLoader, TurnManager)
 {
     'use strict';
 
@@ -10,22 +10,22 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (R
         window.CommandManager = this;
     }
 
-    CommandManager.moveActiveUnit = function(x, y)
+    CommandManager.moveActiveUnit = function (x, y)
     {
         LevelLoader.map.moveActiveUnit(x, y);
-    }
+    };
 
     CommandManager.moveViewport = function (x, y, milliseconds)
     {
         Renderer.camera.moveViewport(x, y, milliseconds);
     };
 
-    CommandManager.endTurn = function()
+    CommandManager.endTurn = function ()
     {
         TurnManager.endTurn();
 
         console.log(TurnManager.unitList);
-    }
+    };
 
     window.CommandManager = CommandManager;
 });

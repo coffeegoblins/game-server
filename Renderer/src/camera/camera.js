@@ -15,12 +15,12 @@ define([], function ()
         this.centerY = this.viewportRect.y + height / 2;
         this.viewportRect.width = width;
         this.viewportRect.height = height;
-    }
+    };
 
     Camera.prototype.moveToUnit = function(unit)
     {
         this.moveViewport(unit.x, unit.y, 1);
-    }
+    };
 
     Camera.prototype.moveViewport = function(targetX, targetY, seconds)
     {
@@ -33,7 +33,7 @@ define([], function ()
         this.deltaY = this.targetY - this.centerY;
         this.transitionTime = seconds;
         this.timeElapsed = 0;
-    }
+    };
 
     Camera.prototype.update = function(e, deltaTime)
     {
@@ -59,7 +59,7 @@ define([], function ()
                 console.log("End second: " + new Date().getSeconds());
             }
         }
-    }
+    };
 
     return Camera;
 });

@@ -1,4 +1,4 @@
-define([], function ()
+define(function ()
 {
     'use strict';
 
@@ -95,17 +95,6 @@ define([], function ()
             previousEvent = currentEvent;
             currentEvent = currentEvent.next;
         }
-    };
-
-
-    Scheduler.prototype.limitExecution = function ()
-    {
-        // TODO:
-    };
-
-    Scheduler.prototype.throttle = function ()
-    {
-        // TODO:
     };
 
     Scheduler.prototype.priority = {

@@ -1,4 +1,4 @@
-define(['Game/src/turnManager'], function (TurnManager)
+define(['./turnManager'], function (TurnManager)
 {
     'use strict';
 

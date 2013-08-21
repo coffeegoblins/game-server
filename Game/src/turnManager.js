@@ -7,30 +7,30 @@ define(['renderer'], function (Renderer)
      */
     function TurnManager()
     {
-        this.unitList = new Array();
+        this.unitList = [];
     }
 
-    TurnManager.prototype.endTurn = function()
+    TurnManager.prototype.endTurn = function ()
     {
         // Remove the soldier from the front
-        var currentUnit = this.unitList.splice(0, 1)[0];
+        var currentUnit = this.unitList.shift();
 
         // +1 MOV for all other units
         for (var i = 0; i < this.unitList.length; ++i)
         {
-            if (this.unitList[i].MOV != this.unitList[i].TotalMOV)
+            if (this.unitList[i].MOV !== this.unitList[i].TotalMOV)
             {
                 this.unitList[i].MOV++;
             }
         }
 
         // Place in queue at appropriate spot
-        for (var i = this.unitList.length - 1; i > 0; --i)
+        for (i = this.unitList.length - 1; i > 0; --i)
         {
             var comparisonUnit = this.unitList[i];
 
             if (currentUnit.TotalMOV - currentUnit.MOV >= comparisonUnit.TotalMOV - comparisonUnit.MOV ||
-                comparisonUnit.MOV == comparisonUnit.TotalMOV)
+                comparisonUnit.MOV === comparisonUnit.TotalMOV)
             {
                 this.unitList.splice(i + 1, 0, currentUnit);
                 break;
@@ -42,5 +42,5 @@ define(['renderer'], function (Renderer)
         Renderer.camera.moveToUnit(currentUnit);
     };
 
-    return new TurnManager;
+    return new TurnManager();
 });

@@ -4,10 +4,10 @@ require(['camera/camera'], function (Camera)
 
     var CameraTest = new TestCase('CameraTest');
 
-    CameraTest.prototype.setUp = function()
+    CameraTest.prototype.setUp = function ()
     {
         this.camera = new Camera();
-    }
+    };
 
     CameraTest.prototype.testMoveViewport = function ()
     {

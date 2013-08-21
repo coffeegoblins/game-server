@@ -1,6 +1,5 @@
-define(['Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableSoldier',
-        'Renderer/src/camera/camera'],
-    function (Scheduler, RenderableMap, RenderableSoldier, Camera)
+define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera'],
+    function (InputHandler, Scheduler, RenderableMap, RenderableSoldier, Camera)
     {
         'use strict';
 
@@ -14,6 +13,8 @@ define(['Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src
 
             this.renderableMap = null;
             this.renderables = [];
+
+            InputHandler.registerEvent('canvas', onClick, this);
         }
 
         function handleResize()
@@ -24,34 +25,10 @@ define(['Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src
             this.camera.handleResize(this.canvas.clientWidth, this.canvas.clientHeight);
         }
 
-        function onCanvasClick(e)
+        function onClick(e, x, y)
         {
-            var x = e.clientX - this.canvas.offsetLeft;
-            var y = e.clientY - this.canvas.offsetTop;
-
-            var tile = this.renderableMap.gameMap.getTileAtCoordinate(x, y);
-
             console.log("Clicked! \n\tX: " + x + "\n\t" + "Y: " + y);
-            console.log(tile);
-        }
-
-        function onCanvasTouch(e)
-        {
-            if (e.changedTouches)
-            {
-                for (var i = 0; i < e.changedTouches.length; i++)
-                {
-                    var x = e.changedTouches[i].pageX - this.canvas.offsetLeft;
-                    var y = e.changedTouches[i].pageY - this.canvas.offsetTop;
-
-                    var tile = this.renderableMap.gameMap.getTileAtCoordinate(x, y);
-
-                    console.log("Touched! \n\tX: " + x + "\n\t" + "Y: " + y);
-                    console.log(tile);
-                }
-            }
-
-            e.preventDefault();
+            console.log(this.renderableMap.gameMap.getTileAtCoordinate(x, y));
         }
 
         function update(e, deltaTime)
@@ -90,16 +67,6 @@ define(['Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src
             handleResize.call(this);
             window.addEventListener('resize', handleResize.bind(this));
             Scheduler.schedule({context: this, method: update, priority: Scheduler.priority.render});
-
-            // Hook into input events
-            this.canvas.addEventListener('click', onCanvasClick.bind(this), false);
-            if (('ontouchstart' in window) || ('onmsgesturechange' in window))
-            {
-                var boundTouchHandler = onCanvasTouch.bind(this);
-                this.canvas.addEventListener('touchstart', boundTouchHandler);
-                this.canvas.addEventListener('MSPointerDown', boundTouchHandler);
-                document.body.msTouchAction = 'none';
-            }
         };
 
         return new Renderer();

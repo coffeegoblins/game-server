@@ -1,10 +1,23 @@
+// Mocking dependencies
+define('renderer', function ()
+{
+    function MockRenderer() {}
+
+    function MockCamera() {}
+
+    MockCamera.prototype.moveToUnit = function () {};
+    MockRenderer.camera = new MockCamera();
+
+    return MockRenderer;
+});
+
 require(['turnManager', 'soldier'], function (TurnManager, Soldier)
 {
     'use strict';
 
     var TurnManagerTest = new TestCase('TurnManagerTest');
 
-    TurnManagerTest.prototype.setUp = function()
+    TurnManagerTest.prototype.setUp = function ()
     {
         this.soldierA = new Soldier();
         this.soldierA.Name = "Soldier A";
@@ -26,12 +39,12 @@ require(['turnManager', 'soldier'], function (TurnManager, Soldier)
         TurnManager.unitList.push(this.soldierB);
         TurnManager.unitList.push(this.soldierC);
         TurnManager.unitList.push(this.soldierD);
-    }
+    };
 
-    TurnManagerTest.prototype.tearDown = function()
+    TurnManagerTest.prototype.tearDown = function ()
     {
         TurnManager.unitList = [];
-    }
+    };
 
     TurnManagerTest.prototype.testEndTurnWithOtherMovedUnits = function ()
     {
@@ -73,6 +86,6 @@ require(['turnManager', 'soldier'], function (TurnManager, Soldier)
 
         var lastUnitInQueue = TurnManager.unitList[TurnManager.unitList.length - 1];
 
-        assertEquals("Soldier A expected at the end of the queue, but it was: " + lastUnitInQueue.Name + "\n", this.soldierA, lastUnitInQueue)
+        assertEquals("Soldier A expected at the end of the queue, but it was: " + lastUnitInQueue.Name + "\n", this.soldierA, lastUnitInQueue);
     };
 });
