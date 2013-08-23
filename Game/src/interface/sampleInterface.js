@@ -7,7 +7,7 @@ define(['Game/src/inputHandler', 'text!Game/content/sampleInterface.html'], func
         test.innerHTML = SampleInterfaceView;
         document.body.appendChild(test.firstChild);
 
-        var outputFunction = function () { alert(this.id); };
+        var outputFunction = function () { console.log(this.id); };
         InputHandler.registerEvent('testButton1', outputFunction);
         InputHandler.registerEvent('testButton2', outputFunction);
         InputHandler.registerEvent('testButton3', outputFunction);
