@@ -1,5 +1,5 @@
 require.config({
-    baseUrl: '/test/src',
+    baseUrl: '/test',
     shim: {},
     paths: {
     }

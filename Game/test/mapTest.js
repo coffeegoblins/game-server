@@ -11,7 +11,16 @@ define('renderer', function ()
     return MockRenderer;
 });
 
-require(['map', 'soldier'], function (Map, Soldier)
+define('Game/src/turnManager', function ()
+{
+    function Map() {}
+
+    Map.unitList = [];
+
+    return Map;
+});
+
+require(['src/map', 'src/soldier'], function (Map, Soldier)
 {
     'use strict';
 

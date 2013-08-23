@@ -11,7 +11,7 @@ define('renderer', function ()
     return MockRenderer;
 });
 
-require(['turnManager', 'soldier'], function (TurnManager, Soldier)
+require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
 {
     'use strict';
 

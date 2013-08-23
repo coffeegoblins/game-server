@@ -1,5 +1,5 @@
-define(['renderer', './map', './soldier'],
-    function (Renderer, Map, Soldier)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/sampleInterface'],
+    function (Renderer, Map, Soldier, SampleInterface)
     {
         'use strict';
 
@@ -54,6 +54,8 @@ define(['renderer', './map', './soldier'],
             Renderer.addRenderableSoldier(soldier);
             Renderer.addRenderableSoldier(soldier2);
             Renderer.addRenderableSoldier(soldier3);
+
+            new SampleInterface();
         };
 
         return new LevelLoader();

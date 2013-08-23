@@ -1,4 +1,4 @@
-require(['utility'], function (Utility)
+require(['src/utility'], function (Utility)
 {
     'use strict';
 

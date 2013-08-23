@@ -1,4 +1,4 @@
-require(['renderer', './levelLoader', './turnManager'], function (Renderer, LevelLoader, TurnManager)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (Renderer, LevelLoader, TurnManager)
 {
     'use strict';
 
@@ -7,7 +7,6 @@ require(['renderer', './levelLoader', './turnManager'], function (Renderer, Leve
      */
     function CommandManager()
     {
-        window.CommandManager = this;
     }
 
     CommandManager.moveActiveUnit = function (x, y)
@@ -28,4 +27,6 @@ require(['renderer', './levelLoader', './turnManager'], function (Renderer, Leve
     };
 
     window.CommandManager = CommandManager;
+
+    return CommandManager;
 });

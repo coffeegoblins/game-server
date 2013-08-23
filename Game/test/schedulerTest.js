@@ -1,4 +1,4 @@
-require(['scheduler'], function (Scheduler)
+require(['src/scheduler'], function (Scheduler)
 {
     'use strict';
 
