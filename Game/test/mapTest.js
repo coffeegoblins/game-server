@@ -35,21 +35,7 @@ require(['src/map', 'src/soldier'], function (Map, Soldier)
         {
             for (var x = 0; x < 20; x++)
             {
-                assertEquals(map.tiles[tileIndex++], map.getTile(x, y));
-            }
-        }
-    };
-
-    MapTest.prototype.testGetTileAtPosition = function ()
-    {
-        var map = new Map(20, 20, 10);
-
-        var tileIndex = 0;
-        for (var y = 5; y < 200; y += 10)
-        {
-            for (var x = 5; x < 200; x += 10)
-            {
-                assertEquals(map.tiles[tileIndex++], map.getTileAtCoordinate(x, y));
+                assertTrue(map.tiles[tileIndex++] === map.getTile(x, y));
             }
         }
     };
@@ -61,12 +47,12 @@ require(['src/map', 'src/soldier'], function (Map, Soldier)
         var soldier = new Soldier();
         map.addUnit(soldier, 0, 0);
 
-        assertNotNull(map.getTile(0, 0).unit);
-        assertNull(map.getTile(1, 1).unit);
+        assertTrue(map.getTile(0, 0).unit === soldier);
+        assertTrue(map.getTile(1, 1).unit == null);
 
         map.moveActiveUnit(1, 1);
 
-        assertNull(map.getTile(0, 0).unit);
-        assertNotNull(map.getTile(1, 1).unit);
+        assertTrue(map.getTile(0, 0).unit == null);
+        assertTrue(map.getTile(1, 1).unit === soldier);
     };
 });

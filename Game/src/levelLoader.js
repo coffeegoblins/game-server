@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/sampleInterface'],
-    function (Renderer, Map, Soldier, SampleInterface)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/sampleInterface', 'Game/src/worldObject'],
+    function (Renderer, Map, Soldier, SampleInterface, WorldObject)
     {
         'use strict';
 
@@ -8,7 +8,6 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
          */
         function LevelLoader()
         {
-
         }
 
         /**
@@ -17,18 +16,19 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
         LevelLoader.prototype.loadLevel = function (fileName)
         {
             // TODO: Asynchronous loading from file
-            this.map = new Map(100, 100, 64);
+            this.map = new Map(100, 100);
 
             // Build a hill for illustration purposes
             var height = 5;
             var summitX = 10;
             var summitY = 5;
 
-            for (var x = summitX - height; x <= summitX + height; x++)
+            var x, y, tile;
+            for (x = summitX - height; x <= summitX + height; x++)
             {
-                for (var y = summitY - height; y <= summitY + height; y++)
+                for (y = summitY - height; y <= summitY + height; y++)
                 {
-                    var tile = this.map.getTile(x, y);
+                    tile = this.map.getTile(x, y);
                     if (tile)
                     {
                         var xDelta = Math.abs(summitX - x);
@@ -40,12 +40,13 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
 
             Renderer.addRenderableMap(this.map);
 
+
             var soldier = new Soldier();
-            soldier.Name = "A";
+            soldier.name = "A";
             var soldier2 = new Soldier();
-            soldier2.Name = "B";
+            soldier2.name = "B";
             var soldier3 = new Soldier();
-            soldier3.Name = "C";
+            soldier3.name = "C";
 
             this.map.addUnit(soldier, 0, 0);
             this.map.addUnit(soldier2, 1, 1);
@@ -55,6 +56,28 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
             Renderer.addRenderableSoldier(soldier2);
             Renderer.addRenderableSoldier(soldier3);
 
+            // Add objects
+            var worldObject = new WorldObject(2, 2);
+            this.map.addObject(worldObject, 4, 4);
+            Renderer.addRenderableObject(worldObject);
+
+            for (var i = 0; i < 100; i++)
+            {
+                worldObject = new WorldObject();
+                do
+                {
+                    x = Math.floor(Math.random() * this.map.width);
+                    y = Math.floor(Math.random() * this.map.height);
+
+                    tile = this.map.getTile(x, y);
+                }
+                while (tile.content != null || tile.unit != null);
+
+                this.map.addObject(worldObject, x, y);
+                Renderer.addRenderableObject(worldObject);
+            }
+
+            // Show the test UI
             new SampleInterface();
         };
 

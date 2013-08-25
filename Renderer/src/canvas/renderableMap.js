@@ -14,28 +14,34 @@ define([], function ()
         return '#' + hexColor + hexColor + hexColor;
     }
 
+    /**
+     * @param x The x coordinate of the tile in game space
+     * @param y The y coordinate of the tile in game space
+     * @param scale The current scale of the renderer
+     */
+    RenderableMap.prototype.getTileAtCoordinate = function (x, y, scale)
+    {
+        return this.gameMap.getTile(Math.floor(x / scale), Math.floor(y / scale));
+    };
+
     RenderableMap.prototype.render = function (context, scale, viewportRect)
     {
-        var tileSize = this.gameMap.tileSize * scale;
+        this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / scale));
+        this.visibleTileTop = Math.max(0, Math.floor(viewportRect.y / scale));
 
-        var xTileStart = Math.floor(viewportRect.x / tileSize);
-        var xTileEnd = Math.ceil((viewportRect.x + viewportRect.width) / tileSize);
+        this.visibleTileRight = Math.min(this.gameMap.width - 1, Math.ceil((viewportRect.x + viewportRect.width) / scale));
+        this.visibleTileBottom = Math.min(this.gameMap.height - 1, Math.ceil((viewportRect.y + viewportRect.height) / scale));
 
-        var yTileStart = Math.floor(viewportRect.y / tileSize);
-        var yTileEnd = Math.ceil((viewportRect.y + viewportRect.height) / tileSize);
-
-        for (var x = xTileStart; x < xTileEnd; x++)
+        for (var x = this.visibleTileLeft; x <= this.visibleTileRight; x++)
         {
-            for (var y = yTileStart; y < yTileEnd; y++)
+            for (var y = this.visibleTileTop; y <= this.visibleTileBottom; y++)
             {
                 var tile = this.gameMap.getTile(x, y);
-                if (tile)
-                {
-                    context.beginPath();
-                    context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
-                    context.rect(x * tileSize + 1 - viewportRect.x, y * tileSize + 1 - viewportRect.y, tileSize - 1, tileSize - 1);
-                    context.fill();
-                }
+
+                context.beginPath();
+                context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
+                context.rect(x * scale + 1 - viewportRect.x, y * scale + 1 - viewportRect.y, scale - 1, scale - 1);
+                context.fill();
             }
         }
     };

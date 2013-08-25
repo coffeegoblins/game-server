@@ -18,7 +18,7 @@ define(['renderer'], function (Renderer)
         // +1 MOV for all other units
         for (var i = 0; i < this.unitList.length; ++i)
         {
-            if (this.unitList[i].MOV !== this.unitList[i].TotalMOV)
+            if (this.unitList[i].MOV !== this.unitList[i].totalMOV)
             {
                 this.unitList[i].MOV++;
             }
@@ -29,8 +29,8 @@ define(['renderer'], function (Renderer)
         {
             var comparisonUnit = this.unitList[i];
 
-            if (currentUnit.TotalMOV - currentUnit.MOV >= comparisonUnit.TotalMOV - comparisonUnit.MOV ||
-                comparisonUnit.MOV === comparisonUnit.TotalMOV)
+            if (currentUnit.totalMOV - currentUnit.MOV >= comparisonUnit.totalMOV - comparisonUnit.MOV ||
+                comparisonUnit.MOV === comparisonUnit.totalMOV)
             {
                 this.unitList.splice(i + 1, 0, currentUnit);
                 break;

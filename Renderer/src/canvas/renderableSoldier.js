@@ -1,22 +1,31 @@
-define([], function ()
+define(function ()
 {
     'use strict';
 
     function RenderableSoldier(soldier)
     {
         this.soldier = soldier;
-        this.soldierWidthOffset = 25; // Width / 2
-        this.soldierHeightOffset = 25;
     }
+
+    RenderableSoldier.prototype.isVisible = function(left, right, top, bottom)
+    {
+        return  this.soldier.tileX <= right &&
+                this.soldier.tileY <= bottom &&
+                this.soldier.tileX >= left &&
+                this.soldier.tileY >= top;
+    };
 
     RenderableSoldier.prototype.render = function (context, scale, viewportRect)
     {
+        var size = Math.floor(scale * 0.75);
+        var offset = 1 + ((scale - size) / 2);
+
+        var xPosition = this.soldier.tileX * scale + offset - viewportRect.x;
+        var yPosition = this.soldier.tileY * scale + offset - viewportRect.y;
+
         context.beginPath();
         context.fillStyle = '#345';
-        context.rect(this.soldier.CurrentTile.xPosition - this.soldierWidthOffset - viewportRect.x,
-                     this.soldier.CurrentTile.yPosition - this.soldierHeightOffset - viewportRect.y,
-                     this.soldierWidthOffset * 2,
-                     this.soldierHeightOffset * 2);
+        context.rect(xPosition, yPosition, size, size);
         context.fill();
     };
 

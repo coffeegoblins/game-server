@@ -1,5 +1,5 @@
-define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera'],
-    function (InputHandler, Scheduler, RenderableMap, RenderableSoldier, Camera)
+define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableObject', 'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera'],
+    function (InputHandler, Scheduler, RenderableMap, RenderableObject, RenderableSoldier, Camera)
     {
         'use strict';
 
@@ -8,8 +8,9 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
             this.canvas = null;
             this.context = null;
 
-            this.scale = 1; // TODO: It may be better to scale the canvas instead of the drawing in some cases
+            this.scale = 64; // TODO: It may be better to scale the canvas instead of the drawing in some cases
             this.camera = new Camera();
+            this.camera.scale = this.scale;
 
             this.renderableMap = null;
             this.renderables = [];
@@ -17,18 +18,18 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
             InputHandler.registerEvent('canvas', onClick, this);
         }
 
+
         function handleResize()
         {
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
-
-            this.camera.handleResize(this.canvas.clientWidth, this.canvas.clientHeight);
+            this.camera.handleResize(this.canvas.width, this.canvas.height);
         }
 
         function onClick(e, x, y)
         {
             console.log("Clicked! \n\tX: " + x + "\n\t" + "Y: " + y);
-            console.log(this.renderableMap.gameMap.getTileAtCoordinate(x, y));
+            console.log(this.renderableMap.getTileAtCoordinate(x, y, this.scale));
         }
 
         function update(e, deltaTime)
@@ -37,21 +38,31 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
 
             this.camera.update(e, deltaTime);
 
-            if (this.renderableMap)
-            {
-                // TODO: It may be nice to combine this in with the other renderables, but it will have to render the map first
-                this.renderableMap.render(this.context, this.scale, this.camera.viewportRect);
-            }
+            if (!this.renderableMap)
+                return;
+
+            var map = this.renderableMap;
+            map.render(this.context, this.scale, this.camera.viewportRect);
 
             for (var i = 0; i < this.renderables.length; i++)
             {
-                this.renderables[i].render(this.context, this.scale, this.camera.viewportRect);
+                var renderable = this.renderables[i];
+                if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
+                {
+                    renderable.render(this.context, this.scale, this.camera.viewportRect);
+                }
             }
         }
+
 
         Renderer.prototype.addRenderableMap = function (renderableMap)
         {
             this.renderableMap = new RenderableMap(renderableMap);
+        };
+
+        Renderer.prototype.addRenderableObject = function (object)
+        {
+            this.renderables.unshift(new RenderableObject(object));
         };
 
         Renderer.prototype.addRenderableSoldier = function (soldier)

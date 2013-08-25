@@ -5,33 +5,43 @@ define(['Game/src/turnManager'], function (TurnManager)
     /**
      * @param width The number of tiles on the horizontal axis of the renderableMap
      * @param height The number of tiles on the vertical axis of the renderableMap
-     * @param tileSize The size of the tiles in game space
      * @constructor
      */
-    function Map(width, height, tileSize)
+    function Map(width, height)
     {
         this.width = width;
         this.height = height;
 
         this.tiles = [];
-        this.tileSize = tileSize || 16;
-        var halfWidth = (tileSize / 2);
-
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
-            {
-                this.tiles.push(
-                {
-                    contents: null,
-                    xPosition: x * tileSize + halfWidth,
-                    yPosition: y * tileSize + halfWidth,
-                    unit:null,
-                    height: 0
-                });
-            }
+                this.tiles.push({height: 0});
         }
     }
+
+    /**
+     * @param object The object to add
+     * @param x The X position of target tile
+     * @param y The Y position of target tile
+     */
+    Map.prototype.addObject = function (object, x, y)
+    {
+        object.tileX = x;
+        object.tileY = y;
+
+        for (var tileX = x; tileX < x + object.sizeX; tileX++)
+        {
+            for (var tileY = y; tileY < y + object.sizeY; tileY++)
+            {
+                var tile = this.getTile(tileX, tileY);
+                if (tile)
+                {
+                    tile.content = object;
+                }
+            }
+        }
+    };
 
     /**
      * @param unit The unit to add
@@ -40,10 +50,11 @@ define(['Game/src/turnManager'], function (TurnManager)
      */
     Map.prototype.addUnit = function (unit, x, y)
     {
-        var tile = this.getTile(x,y);
+        var tile = this.getTile(x, y);
         tile.unit = unit;
 
-        unit.move(tile);
+        unit.tileX = x;
+        unit.tileY = y;
 
         TurnManager.unitList.push(unit);
     };
@@ -54,11 +65,17 @@ define(['Game/src/turnManager'], function (TurnManager)
      */
     Map.prototype.moveActiveUnit = function (x, y)
     {
-        var targetTile = this.tiles[x + y * this.width];
-        var currentUnit = TurnManager.unitList[0];
+        var tile = this.getTile(x, y);
+        if (tile != null)
+        {
+            var unit = TurnManager.unitList[0];
+            var previousTile = this.getTile(unit.tileX, unit.tileY);
+            if (previousTile && previousTile.unit === unit)
+                previousTile.unit = null;
 
-        // TODO Synchronous Move Animation
-        currentUnit.move(targetTile);
+            unit.move(tile, x, y);
+            tile.unit = unit;
+        }
     };
 
     /**
@@ -71,14 +88,19 @@ define(['Game/src/turnManager'], function (TurnManager)
     };
 
     /**
-     * @param x The x coordinate of the tile in game space
-     * @param y The y coordinate of the tile in game space
+     * @param object The object to remove
      */
-    Map.prototype.getTileAtCoordinate = function (x, y)
+    Map.prototype.removeObject = function (object)
     {
-        x = Math.floor(x / this.tileSize);
-        y = Math.floor(y / this.tileSize);
-        return this.tiles[x + y * this.width];
+        for (var tileX = object.tileX; tileX < object.tileX + object.sizeX; tileX++)
+        {
+            for (var tileY = object.tileY; tileY < object.tileY + object.sizeY; tileY++)
+            {
+                var tile = this.getTile(tileX, tileY);
+                if (tile && tile.content === object)
+                    tile.content = null;
+            }
+        }
     };
 
     Map.prototype.maxHeight = 10;
