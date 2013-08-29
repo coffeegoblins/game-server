@@ -8,10 +8,7 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
             this.canvas = null;
             this.context = null;
 
-            this.scale = 64; // TODO: It may be better to scale the canvas instead of the drawing in some cases
             this.camera = new Camera();
-            this.camera.scale = this.scale;
-
             this.renderableMap = null;
             this.renderables = [];
 
@@ -28,8 +25,7 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
 
         function onClick(e, x, y)
         {
-            console.log("Clicked! \n\tX: " + x + "\n\t" + "Y: " + y);
-            console.log(this.renderableMap.getTileAtCoordinate(x, y, this.scale));
+            this.renderableMap.moveActiveUnit(x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
         }
 
         function update(e, deltaTime)
@@ -42,14 +38,14 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
                 return;
 
             var map = this.renderableMap;
-            map.render(this.context, this.scale, this.camera.viewportRect);
+            map.render(this.context, this.camera.scale, this.camera.viewportRect);
 
             for (var i = 0; i < this.renderables.length; i++)
             {
                 var renderable = this.renderables[i];
                 if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
                 {
-                    renderable.render(this.context, this.scale, this.camera.viewportRect);
+                    renderable.render(this.context, this.camera.scale, this.camera.viewportRect);
                 }
             }
         }

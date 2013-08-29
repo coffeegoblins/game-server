@@ -1,13 +1,15 @@
-define(function ()
+define(['Game/src/imageCache'], function (ImageCache)
 {
     'use strict';
 
     function RenderableSoldier(soldier)
     {
         this.soldier = soldier;
+
+        ImageCache.loadImage('soldier', 'Renderer/src/canvas/content/awesome.png');
     }
 
-    RenderableSoldier.prototype.isVisible = function(left, right, top, bottom)
+    RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)
     {
         return  this.soldier.tileX <= right &&
                 this.soldier.tileY <= bottom &&
@@ -17,16 +19,17 @@ define(function ()
 
     RenderableSoldier.prototype.render = function (context, scale, viewportRect)
     {
-        var size = Math.floor(scale * 0.75);
-        var offset = 1 + ((scale - size) / 2);
+        var image = ImageCache.getImage('soldier');
+        if (image)
+        {
+            var size = Math.floor(scale * 0.8);
+            var offset = 1 + ((scale - size) / 2);
 
-        var xPosition = this.soldier.tileX * scale + offset - viewportRect.x;
-        var yPosition = this.soldier.tileY * scale + offset - viewportRect.y;
+            var xPosition = this.soldier.tileX * scale + offset - viewportRect.x;
+            var yPosition = this.soldier.tileY * scale + offset - viewportRect.y;
 
-        context.beginPath();
-        context.fillStyle = '#345';
-        context.rect(xPosition, yPosition, size, size);
-        context.fill();
+            context.drawImage(image.data, 0, 0, image.width, image.height, xPosition, yPosition, size, size);
+        }
     };
 
     return RenderableSoldier;

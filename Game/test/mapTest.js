@@ -13,11 +13,12 @@ define('renderer', function ()
 
 define('Game/src/turnManager', function ()
 {
-    function Map() {}
+    function TurnManager() {}
 
-    Map.unitList = [];
+    TurnManager.unitList = [];
+    TurnManager.endTurn = function () {};
 
-    return Map;
+    return TurnManager;
 });
 
 require(['src/map', 'src/soldier'], function (Map, Soldier)

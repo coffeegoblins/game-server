@@ -66,7 +66,7 @@ define(['Game/src/turnManager'], function (TurnManager)
     Map.prototype.moveActiveUnit = function (x, y)
     {
         var tile = this.getTile(x, y);
-        if (tile != null)
+        if (tile && !tile.unit && !tile.content)
         {
             var unit = TurnManager.unitList[0];
             var previousTile = this.getTile(unit.tileX, unit.tileY);
@@ -75,6 +75,8 @@ define(['Game/src/turnManager'], function (TurnManager)
 
             unit.move(tile, x, y);
             tile.unit = unit;
+
+            TurnManager.endTurn();
         }
     };
 

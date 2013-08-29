@@ -24,6 +24,11 @@ define([], function ()
         return this.gameMap.getTile(Math.floor(x / scale), Math.floor(y / scale));
     };
 
+    RenderableMap.prototype.moveActiveUnit = function (x, y, scale)
+    {
+        this.gameMap.moveActiveUnit(Math.floor(x / scale), Math.floor(y / scale));
+    };
+
     RenderableMap.prototype.render = function (context, scale, viewportRect)
     {
         this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / scale));

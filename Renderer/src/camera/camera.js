@@ -7,7 +7,7 @@ define([], function ()
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
         this.centerX = 0;
         this.centerY = 0;
-        this.scale = 1;
+        this.scale = 64; // TODO: It may be better to scale the canvas instead of the drawing in some cases
     }
 
     Camera.prototype.handleResize = function (width, height)
@@ -42,14 +42,16 @@ define([], function ()
         if (this.transitionTime != null)
         {
             this.timeElapsed += deltaTime;
-            var partialTime = deltaTime / this.transitionTime;
+            if (this.timeElapsed < this.transitionTime)
+            {
+                var partialTime = deltaTime / this.transitionTime;
 
-            this.centerX += this.deltaX * partialTime;
-            this.centerY += this.deltaY * partialTime;
-            this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
-            this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
-
-            if (this.timeElapsed >= this.transitionTime)
+                this.centerX += this.deltaX * partialTime;
+                this.centerY += this.deltaY * partialTime;
+                this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
+                this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
+            }
+            else
             {
                 this.transitionTime = null;
                 this.centerX = this.targetX;
