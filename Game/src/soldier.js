@@ -10,17 +10,9 @@ define(function ()
         this.name = null;
         this.tileX = 0;
         this.tileY = 0;
-        this.MOV = 10;
-        this.totalMOV = 10;
+        this.ap = 42;
+        this.maxAP = 42;
     }
-
-    Soldier.prototype.move = function (tile, x, y)
-    {
-        // TODO Animate
-
-        this.tileX = x;
-        this.tileY = y;
-    };
 
     return Soldier;
 });

@@ -1,4 +1,5 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (Renderer, LevelLoader, TurnManager)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager'],
+    function (Renderer, LevelLoader, TurnManager, PathManager)
 {
     'use strict';
 
@@ -24,6 +25,13 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager'], function (R
         TurnManager.endTurn();
 
         console.log(TurnManager.unitList);
+    };
+
+    CommandManager.getAvailableTiles = function()
+    {
+        PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.unitList[0]);
+
+        console.log(LevelLoader.map);
     };
 
     window.CommandManager = CommandManager;

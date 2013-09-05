@@ -53,8 +53,7 @@ define(['Game/src/turnManager'], function (TurnManager)
         var tile = this.getTile(x, y);
         tile.unit = unit;
 
-        unit.tileX = x;
-        unit.tileY = y;
+        unit.move(tile, x, y);
 
         TurnManager.unitList.push(unit);
     };
@@ -73,7 +72,9 @@ define(['Game/src/turnManager'], function (TurnManager)
             if (previousTile && previousTile.unit === unit)
                 previousTile.unit = null;
 
-            unit.move(tile, x, y);
+            unit.tileX = x;
+            unit.tileY = y;
+
             tile.unit = unit;
 
             TurnManager.endTurn();
@@ -86,6 +87,9 @@ define(['Game/src/turnManager'], function (TurnManager)
      */
     Map.prototype.getTile = function (x, y)
     {
+        if (x < 0 || y < 0 || x > this.width || y > this.height)
+            return null;
+
         return this.tiles[x + y * this.width];
     };
 

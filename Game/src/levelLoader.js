@@ -40,7 +40,6 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
 
             Renderer.addRenderableMap(this.map);
 
-
             var soldier = new Soldier();
             soldier.name = "A";
             var soldier2 = new Soldier();
@@ -70,6 +69,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
                     y = Math.floor(Math.random() * this.map.height);
 
                     tile = this.map.getTile(x, y);
+                    tile.height = Infinity;
                 }
                 while (tile.content != null || tile.unit != null);
 

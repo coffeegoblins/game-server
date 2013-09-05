@@ -1,5 +1,6 @@
-define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableObject', 'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera'],
-    function (InputHandler, Scheduler, RenderableMap, RenderableObject, RenderableSoldier, Camera)
+define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableObject',
+        'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera', 'Renderer/src/canvas/renderablePath'],
+    function (InputHandler, Scheduler, RenderableMap, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {
         'use strict';
 
@@ -40,6 +41,9 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
             var map = this.renderableMap;
             map.render(this.context, this.camera.scale, this.camera.viewportRect);
 
+            if (this.renderablePath)
+                this.renderablePath.render(this.context, this.camera.scale, this.camera.viewportRect);
+
             for (var i = 0; i < this.renderables.length; i++)
             {
                 var renderable = this.renderables[i];
@@ -54,6 +58,16 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/rend
         Renderer.prototype.addRenderableMap = function (renderableMap)
         {
             this.renderableMap = new RenderableMap(renderableMap);
+        };
+
+        Renderer.prototype.clearRenderablePath = function()
+        {
+            this.renderablePath = null;
+        };
+
+        Renderer.prototype.setRenderablePath = function (renderablePath, maxDistance)
+        {
+            this.renderablePath = new RenderablePath(renderablePath, maxDistance);
         };
 
         Renderer.prototype.addRenderableObject = function (object)

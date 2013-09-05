@@ -7,6 +7,7 @@ define('renderer', function ()
 
     MockCamera.prototype.moveToUnit = function () {};
     MockRenderer.camera = new MockCamera();
+    MockRenderer.clearRenderablePath = function () {};
 
     return MockRenderer;
 });

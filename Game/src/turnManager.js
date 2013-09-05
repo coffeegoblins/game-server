@@ -15,12 +15,12 @@ define(['renderer'], function (Renderer)
         // Remove the soldier from the front
         var currentUnit = this.unitList.shift();
 
-        // +1 MOV for all other units
+        // +1 CurrentAP for all other units
         for (var i = 0; i < this.unitList.length; ++i)
         {
-            if (this.unitList[i].MOV !== this.unitList[i].totalMOV)
+            if (this.unitList[i].ap !== this.unitList[i].maxAP)
             {
-                this.unitList[i].MOV++;
+                this.unitList[i].ap++;
             }
         }
 
@@ -29,8 +29,8 @@ define(['renderer'], function (Renderer)
         {
             var comparisonUnit = this.unitList[i];
 
-            if (currentUnit.totalMOV - currentUnit.MOV >= comparisonUnit.totalMOV - comparisonUnit.MOV ||
-                comparisonUnit.MOV === comparisonUnit.totalMOV)
+            if (currentUnit.maxAP - currentUnit.ap >= comparisonUnit.maxAP - comparisonUnit.ap ||
+                comparisonUnit.ap === comparisonUnit.maxAP)
             {
                 this.unitList.splice(i + 1, 0, currentUnit);
                 break;
@@ -40,6 +40,7 @@ define(['renderer'], function (Renderer)
         currentUnit = this.unitList[0];
 
         Renderer.camera.moveToUnit(currentUnit);
+        Renderer.clearRenderablePath();
     };
 
     return new TurnManager();
