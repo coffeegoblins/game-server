@@ -1,5 +1,5 @@
-define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/canvas/renderableMap', 'Renderer/src/canvas/renderableObject',
-        'Renderer/src/canvas/renderableSoldier', 'Renderer/src/camera/camera', 'Renderer/src/canvas/renderablePath'],
+define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableMap', 'Renderer/src/renderableObject',
+        'Renderer/src/renderableSoldier', 'Renderer/src/camera/camera', 'Renderer/src/renderablePath'],
     function (InputHandler, Scheduler, RenderableMap, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {
         'use strict';

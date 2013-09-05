@@ -6,7 +6,7 @@ define(['Game/src/imageCache'], function (ImageCache)
     {
         this.soldier = soldier;
 
-        ImageCache.loadImage('soldier', 'Renderer/src/canvas/content/awesome.png');
+        ImageCache.loadImage('soldier', 'Renderer/content/awesome.png');
     }
 
     RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)

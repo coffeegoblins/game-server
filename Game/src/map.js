@@ -51,9 +51,11 @@ define(['Game/src/turnManager'], function (TurnManager)
     Map.prototype.addUnit = function (unit, x, y)
     {
         var tile = this.getTile(x, y);
-        tile.unit = unit;
 
-        unit.move(tile, x, y);
+        unit.tileX = x;
+        unit.tileY = y;
+
+        tile.unit = unit;
 
         TurnManager.unitList.push(unit);
     };
