@@ -23,11 +23,11 @@ define(['renderer'], function (Renderer)
         {
             currentNode = this.getClosestTile(this.processingNodes);
 
-            if(currentNode.distance > unit.ap)
+            if(currentNode == null || currentNode.distance == Infinity || currentNode.distance > unit.ap)
             {
                 // We're past the boundary that the unit can move
                 Renderer.setRenderablePath(this.completedNodes, unit.ap);
-                return;
+                return this.completedNodes;
             }
 
             this.completedNodes.push(currentNode);
