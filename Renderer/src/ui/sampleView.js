@@ -1,10 +1,10 @@
-define(['Game/src/inputHandler', 'text!Game/content/sampleInterface.html'], function (InputHandler, SampleInterfaceView)
+define(['Game/src/inputHandler', 'text!Renderer/content/sampleView.html'], function (InputHandler, SampleViewText)
 {
     'use strict';
-    function SampleInterface()
+    function SampleView()
     {
         var test = document.createElement('div');
-        test.innerHTML = SampleInterfaceView;
+        test.innerHTML = SampleViewText;
         document.body.appendChild(test.firstChild);
 
         var outputFunction = function () { console.log(this.id); };
@@ -13,5 +13,5 @@ define(['Game/src/inputHandler', 'text!Game/content/sampleInterface.html'], func
         InputHandler.registerEvent('testButton3', outputFunction);
     }
 
-    return SampleInterface;
+    return SampleView;
 });

@@ -18,10 +18,10 @@ define([], function ()
         this.viewportRect.height = height;
     };
 
-    Camera.prototype.moveToUnit = function (unit)
+    Camera.prototype.moveToUnit = function (unit, seconds)
     {
         var offset = this.scale / 2;
-        this.moveViewport(unit.tileX * this.scale + offset, unit.tileY * this.scale + offset, 1);
+        this.moveViewport(unit.tileX * this.scale + offset, unit.tileY * this.scale + offset, seconds);
     };
 
     Camera.prototype.moveViewport = function (targetX, targetY, seconds)
@@ -34,7 +34,6 @@ define([], function ()
         this.deltaX = this.targetX - this.centerX;
         this.deltaY = this.targetY - this.centerY;
         this.transitionTime = seconds;
-        this.timeElapsed = 0;
     };
 
     Camera.prototype.update = function (e, deltaTime)
@@ -54,6 +53,7 @@ define([], function ()
             else
             {
                 this.transitionTime = null;
+                this.timeElapsed = 0;
                 this.centerX = this.targetX;
                 this.centerY = this.targetY;
                 this.viewportRect.x = this.centerX - this.viewportRect.width / 2;

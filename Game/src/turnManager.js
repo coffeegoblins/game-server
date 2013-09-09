@@ -1,4 +1,4 @@
-define(['renderer'], function (Renderer)
+define(['renderer', 'Renderer/src/ui/activeUnitView'], function (Renderer, ActiveUnitView)
 {
     'use strict';
 
@@ -8,7 +8,15 @@ define(['renderer'], function (Renderer)
     function TurnManager()
     {
         this.unitList = [];
+        this.activeUnitView = new ActiveUnitView();
     }
+
+    TurnManager.prototype.beginTurn = function()
+    {
+        Renderer.camera.moveToUnit(this.unitList[0], 1);
+
+        Renderer.clearRenderablePath();
+    };
 
     TurnManager.prototype.endTurn = function ()
     {
@@ -37,11 +45,14 @@ define(['renderer'], function (Renderer)
             }
         }
 
-        currentUnit = this.unitList[0];
-
-        Renderer.camera.moveToUnit(currentUnit);
-        Renderer.clearRenderablePath();
+        this.activeUnitView.hide(0.5, this, onActiveUnitViewHidden);
+        this.beginTurn();
     };
+
+    function onActiveUnitViewHidden()
+    {
+        this.activeUnitView.show(this.unitList[0], 0.5, this, null);
+    }
 
     return new TurnManager();
 });

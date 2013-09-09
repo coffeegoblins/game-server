@@ -1,5 +1,6 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/sampleInterface', 'Game/src/worldObject'],
-    function (Renderer, Map, Soldier, SampleInterface, WorldObject)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleView', 'Game/src/worldObject',
+        'Game/src/turnManager'],
+    function (Renderer, Map, Soldier, SampleUI, WorldObject, TurnManager)
     {
         'use strict';
 
@@ -51,9 +52,11 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
             this.map.addUnit(soldier2, 1, 1);
             this.map.addUnit(soldier3, 2, 2);
 
-            Renderer.addRenderableSoldier(soldier);
-            Renderer.addRenderableSoldier(soldier2);
-            Renderer.addRenderableSoldier(soldier3);
+            Renderer.addRenderableSoldier(soldier, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
+            Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesome_sad.png", "Renderer/content/awesome_sad.png");
+            Renderer.addRenderableSoldier(soldier3, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
+
+            TurnManager.activeUnitView.show(TurnManager.unitList[0], 0, this, null);
 
             // Add objects
             var worldObject = new WorldObject(2, 2);
@@ -77,8 +80,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/interface/samp
                 Renderer.addRenderableObject(worldObject);
             }
 
-            // Show the test UI
-            new SampleInterface();
+            TurnManager.beginTurn();
         };
 
         return new LevelLoader();

@@ -75,9 +75,9 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             this.renderables.unshift(new RenderableObject(object));
         };
 
-        Renderer.prototype.addRenderableSoldier = function (soldier)
+        Renderer.prototype.addRenderableSoldier = function (soldier, unitImage, previewImage)
         {
-            this.renderables.push(new RenderableSoldier(soldier));
+            this.renderables.push(new RenderableSoldier(soldier, unitImage, previewImage));
         };
 
         Renderer.prototype.initialize = function (canvas)

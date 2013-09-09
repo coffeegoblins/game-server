@@ -34,6 +34,18 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         console.log(LevelLoader.map);
     };
 
+    CommandManager.setActiveUnitHP = function(hp, seconds)
+    {
+        TurnManager.unitList[0].hp = hp;
+        TurnManager.activeUnitView.hpBar.transitionProgress(hp, seconds);
+    };
+
+    CommandManager.setActiveUnitAP = function(ap, seconds)
+    {
+        TurnManager.unitList[0].ap = ap;
+        TurnManager.activeUnitView.apBar.transitionProgress(ap, seconds);
+    };
+
     window.CommandManager = CommandManager;
 
     return CommandManager;

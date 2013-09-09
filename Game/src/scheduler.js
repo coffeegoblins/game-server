@@ -62,7 +62,7 @@ define(function ()
     };
 
     /* @param {object} eventData The event to unschedule */
-    Scheduler.prototype.unschedule = function (eventData)
+    function unschedule(eventData)
     {
         var previousEvent = eventQueue;
         var currentEvent = eventQueue.next;
@@ -77,7 +77,7 @@ define(function ()
             previousEvent = currentEvent;
             currentEvent = currentEvent.next;
         }
-    };
+    }
 
     /* @param id The id property on the event to unschedule */
     Scheduler.prototype.unscheduleById = function (id)
@@ -126,10 +126,27 @@ define(function ()
         while (currentEvent)
         {
             var eventData = currentEvent.eventData;
+
+            if (eventData.totalTime != null)
+            {
+                eventData.totalTime -= deltaTime;
+                if(eventData.totalTime < 0)
+                {
+                    eventData.completedMethod.call(eventData.context, eventData);
+                    unschedule(eventData);
+
+                    previousEvent = currentEvent;
+                    currentEvent = currentEvent.next;
+
+                    continue;
+                }
+            }
+
             eventData.timeRemaining -= deltaTime;
             if (eventData.timeRemaining < 0)
             {
                 eventData.method.call(eventData.context, eventData, deltaTime);
+
                 eventData.timeRemaining += eventData.interval;
                 if (eventData.timeRemaining < 0)
                     eventData.timeRemaining = 0;

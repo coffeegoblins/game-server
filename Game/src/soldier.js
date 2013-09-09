@@ -10,6 +10,8 @@ define(function ()
         this.name = null;
         this.tileX = 0;
         this.tileY = 0;
+        this.hp = 100;
+        this.maxHP = 100;
         this.ap = 42;
         this.maxAP = 42;
     }
