@@ -12,10 +12,10 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             this.camera = new Camera();
             this.renderableMap = null;
             this.renderables = [];
+            this.renderablePaths = [];
 
             InputHandler.registerEvent('canvas', onClick, this);
         }
-
 
         function handleResize()
         {
@@ -26,7 +26,8 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
 
         function onClick(e, x, y)
         {
-            this.renderableMap.moveActiveUnit(x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
+            this.renderableMap.onClick(e, x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
+            //this.renderableMap.moveActiveUnit(x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
         }
 
         function update(e, deltaTime)
@@ -41,10 +42,13 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             var map = this.renderableMap;
             map.render(this.context, this.camera.scale, this.camera.viewportRect);
 
-            if (this.renderablePath)
-                this.renderablePath.render(this.context, this.camera.scale, this.camera.viewportRect);
+            // Pathing needs to be drawn after the map and before the objects
+            for (var i = 0; i < this.renderablePaths.length; i++)
+            {
+                this.renderablePaths[i].render(this.context, this.camera.scale, this.camera.viewportRect);
+            }
 
-            for (var i = 0; i < this.renderables.length; i++)
+            for (i = 0; i < this.renderables.length; i++)
             {
                 var renderable = this.renderables[i];
                 if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
@@ -54,20 +58,26 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             }
         }
 
-
         Renderer.prototype.addRenderableMap = function (renderableMap)
         {
             this.renderableMap = new RenderableMap(renderableMap);
         };
 
-        Renderer.prototype.clearRenderablePath = function()
+        Renderer.prototype.clearRenderablePathById = function(id)
         {
-            this.renderablePath = null;
+            for (var i = 0; i < this.renderablePaths.length; ++i)
+            {
+                if (this.renderablePaths[i].id == id)
+                {
+                    this.renderablePaths.splice(i, 1);
+                    return;
+                }
+            }
         };
 
-        Renderer.prototype.setRenderablePath = function (renderablePath, maxDistance)
+        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a)
         {
-            this.renderablePath = new RenderablePath(renderablePath, maxDistance);
+            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a));
         };
 
         Renderer.prototype.addRenderableObject = function (object)

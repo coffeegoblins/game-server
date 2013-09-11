@@ -1,4 +1,5 @@
-define(['Game/src/turnManager'], function (TurnManager)
+define(['renderer', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView'],
+function (Renderer, TurnManager, PathManager, ActionBarView)
 {
     'use strict';
 
@@ -18,6 +19,23 @@ define(['Game/src/turnManager'], function (TurnManager)
             for (var x = 0; x < width; x++)
                 this.tiles.push({height: 0});
         }
+
+        TurnManager.registerBeginTurnEvent("onBeginTurn", onBeginTurn, this);
+        TurnManager.registerEndTurnEvent("onEndTurn", onEndTurn, this);
+    }
+
+    function onBeginTurn(activeUnit)
+    {
+        Renderer.camera.moveToUnit(activeUnit, 1);
+        Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, activeUnit), 0, 255, 0, 0.4);
+    }
+
+    function onEndTurn(activeUnit)
+    {
+        Renderer.clearRenderablePathById("availableTiles");
+        Renderer.clearRenderablePathById("selectedPath");
+
+        TurnManager.beginTurn();
     }
 
     /**
@@ -60,6 +78,51 @@ define(['Game/src/turnManager'], function (TurnManager)
         TurnManager.unitList.push(unit);
     };
 
+    Map.prototype.onClick = function(e, x, y, scale)
+    {
+        Renderer.clearRenderablePathById("selectedPath");
+
+        var tileX = Math.floor(x / scale);
+        var tileY = Math.floor(y / scale);
+
+        var tile = this.getTile(tileX, tileY);
+        if (tile)
+        {
+            ActionBarView.hideActions();
+
+            this.selectedTileX = tileX;
+            this.selectedTileY = tileY;
+
+            if (tile.content != null)
+            {
+                // TODO Content Logic
+                return;
+            }
+
+            if (tile.unit != null)
+            {
+                // TODO Attack Logic
+                return;
+            }
+
+            Renderer.addRenderablePath("selectedPath", PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY), 255, 100, 0, 0.75);
+            ActionBarView.showActions([
+                {id: "Move", method: onMoveAction, context: this},
+                {id: "EndTurn", method: onEndTurnAction, context: this}
+            ]);
+        }
+    };
+
+    function onMoveAction()
+    {
+        this.moveActiveUnit(this.selectedTileX, this.selectedTileY);
+    }
+
+    function onEndTurnAction()
+    {
+        TurnManager.endTurn();
+    }
+
     /**
      * @param x The x coordinate of the target tile in the tile array
      * @param y The y coordinate of the target tile in the tile array
@@ -78,8 +141,6 @@ define(['Game/src/turnManager'], function (TurnManager)
             unit.tileY = y;
 
             tile.unit = unit;
-
-            TurnManager.endTurn();
         }
     };
 

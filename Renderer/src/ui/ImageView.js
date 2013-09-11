@@ -1,14 +1,14 @@
 define([], function ()
 {
     'use strict';
-    function ImageView(parentDiv, id, width, height, imageFile)
+    function ImageView(parentDiv, id, width, height, image)
     {
         this.parentDiv = parentDiv;
         this.opacity = 1;
 
         this.img = document.createElement("img");
         this.img.id = id;
-        this.img.src = imageFile;
+        this.img.src = image ? image.path : null;
         this.img.style.width = width + "%";
         this.img.style.height = height + "%";
 

@@ -2,21 +2,30 @@ define(function ()
 {
     'use strict';
 
-    function RenderablePath(nodes, maxDistance)
+    function RenderablePath(id, nodes, r, g, b, a)
     {
+        this.id = id;
         this.nodes = nodes;
-        this.maxDistance = maxDistance;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+
+        this.maxDistance = 0;
+
+        for (var i = 0; i < this.nodes.length; ++i)
+        {
+            if (this.nodes[i].distance > this.maxDistance)
+                this.maxDistance = this.nodes[i].distance;
+        }
     }
 
     RenderablePath.prototype.render = function (context, scale, viewportRect)
     {
         for (var i = 0; i < this.nodes.length; ++i)
         {
-            // + 100 so it's not black
-            var numericColor = Math.floor(155 * (this.nodes[i].distance / this.maxDistance)) + 100;
-
             context.beginPath();
-            context.fillStyle = "rgba(0," + numericColor + ",0,0.4)";
+            context.fillStyle = "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
             context.rect(this.nodes[i].x * scale + 1 - viewportRect.x, this.nodes[i].y * scale + 1 - viewportRect.y, scale - 1, scale - 1);
             context.fill();
         }

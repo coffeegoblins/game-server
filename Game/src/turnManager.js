@@ -1,4 +1,4 @@
-define(['renderer', 'Renderer/src/ui/activeUnitView'], function (Renderer, ActiveUnitView)
+define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (PathManager, ActiveUnitView)
 {
     'use strict';
 
@@ -8,20 +8,41 @@ define(['renderer', 'Renderer/src/ui/activeUnitView'], function (Renderer, Activ
     function TurnManager()
     {
         this.unitList = [];
+        this.activeUnit = null;
         this.activeUnitView = new ActiveUnitView();
+        this.registeredBeginTurnEvents = [];
+        this.registeredEndTurnEvents = [];
     }
+
+    TurnManager.prototype.registerBeginTurnEvent = function (id, method, context)
+    {
+        this.registeredBeginTurnEvents.push({context: context, method: method});
+    };
+
+    TurnManager.prototype.registerEndTurnEvent = function (id, method, context)
+    {
+        this.registeredEndTurnEvents.push({context: context, method: method});
+    };
 
     TurnManager.prototype.beginTurn = function()
     {
-        Renderer.camera.moveToUnit(this.unitList[0], 1);
+        this.activeUnit = this.unitList[0];
 
-        Renderer.clearRenderablePath();
+        for (var i = 0; i < this.registeredBeginTurnEvents.length; ++i)
+        {
+            var registeredEvent = this.registeredBeginTurnEvents[i];
+            if (registeredEvent)
+            {
+                registeredEvent.method.call(registeredEvent.context, this.unitList[0]);
+            }
+        }
     };
 
     TurnManager.prototype.endTurn = function ()
     {
         // Remove the soldier from the front
         var currentUnit = this.unitList.shift();
+        this.activeUnit = null;
 
         // +1 CurrentAP for all other units
         for (var i = 0; i < this.unitList.length; ++i)
@@ -46,7 +67,15 @@ define(['renderer', 'Renderer/src/ui/activeUnitView'], function (Renderer, Activ
         }
 
         this.activeUnitView.hide(0.5, this, onActiveUnitViewHidden);
-        this.beginTurn();
+
+        for ( i = 0; i < this.registeredEndTurnEvents.length; ++i)
+        {
+            var registeredEvent = this.registeredEndTurnEvents[i];
+            if (registeredEvent)
+            {
+                registeredEvent.method.call(registeredEvent.context, currentUnit);
+            }
+        }
     };
 
     function onActiveUnitViewHidden()

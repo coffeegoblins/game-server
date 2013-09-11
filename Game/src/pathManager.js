@@ -1,4 +1,4 @@
-define(['renderer'], function (Renderer)
+define([], function ()
 {
     'use strict';
 
@@ -12,9 +12,47 @@ define(['renderer'], function (Renderer)
         this.map = null;
     }
 
+    PathManager.prototype.calculatePath = function(map, unit, targetX, targetY)
+    {
+        var currentNode = null;
+
+        for (var i = 0; i < this.completedNodes.length; ++i)
+        {
+            if (this.completedNodes[i].x == targetX && this.completedNodes[i].y == targetY)
+            {
+                currentNode = this.completedNodes[i];
+                break;
+            }
+        }
+
+        var pathNodes = [];
+
+        while(currentNode.x != unit.tileX || currentNode.y != unit.tileY)
+        {
+            pathNodes.unshift(currentNode);
+
+            currentNode = this.findClosestNeighbor(currentNode);
+        }
+
+        return pathNodes;
+    };
+
+    PathManager.prototype.findClosestNeighbor = function(node)
+    {
+        var lowestIndex = 0;
+
+        for (var i = 0; i < node.neighbors.length; ++i)
+        {
+            if(node.neighbors[i].distance < node.neighbors[lowestIndex].distance)
+                lowestIndex = i;
+        }
+
+        return node.neighbors[lowestIndex];
+    };
+
     PathManager.prototype.calculateAvailableTiles = function(map, unit)
     {
-        var currentNode = { distance:0, x: unit.tileX, y: unit.tileY };
+        var currentNode = { distance:0, x: unit.tileX, y: unit.tileY, neighbors: [] };
         this.map = map;
         this.completedNodes = [];
         this.processingNodes = [currentNode];
@@ -26,23 +64,22 @@ define(['renderer'], function (Renderer)
             if(currentNode == null || currentNode.distance == Infinity || currentNode.distance > unit.ap)
             {
                 // We're past the boundary that the unit can move
-                Renderer.setRenderablePath(this.completedNodes, unit.ap);
                 return this.completedNodes;
             }
 
             this.completedNodes.push(currentNode);
 
             var diagonalDistance = currentNode.distance + this.diagonalMoveCost;
-            this.evaluateNeighbor(currentNode.x - 1, currentNode.y - 1, diagonalDistance);
-            this.evaluateNeighbor(currentNode.x + 1, currentNode.y - 1, diagonalDistance);
-            this.evaluateNeighbor(currentNode.x - 1, currentNode.y + 1, diagonalDistance);
-            this.evaluateNeighbor(currentNode.x + 1, currentNode.y + 1, diagonalDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y - 1, diagonalDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y - 1, diagonalDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y + 1, diagonalDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y + 1, diagonalDistance);
 
             var straightDistance = currentNode.distance + this.defaultMoveCost;
-            this.evaluateNeighbor(currentNode.x, currentNode.y - 1, straightDistance);
-            this.evaluateNeighbor(currentNode.x, currentNode.y + 1, straightDistance);
-            this.evaluateNeighbor(currentNode.x - 1, currentNode.y, straightDistance);
-            this.evaluateNeighbor(currentNode.x + 1, currentNode.y, straightDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x, currentNode.y - 1, straightDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x, currentNode.y + 1, straightDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y, straightDistance);
+            this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y, straightDistance);
         }
     };
 
@@ -59,7 +96,7 @@ define(['renderer'], function (Renderer)
         return nodes.splice(lowestIndex, 1)[0];
     };
 
-    PathManager.prototype.evaluateNeighbor = function(x, y, additionalDistance)
+    PathManager.prototype.evaluateNeighbor = function(currentNode, x, y, additionalDistance)
     {
         var tile = this.map.getTile(x, y);
         if (tile)
@@ -79,17 +116,22 @@ define(['renderer'], function (Renderer)
 
             if(!node)
             {
-                node = {distance: Infinity, x: x, y: y};
+                node = {distance: Infinity, x: x, y: y, neighbors: [currentNode]};
                 this.processingNodes.push(node);
             }
 
             var distance = additionalDistance + tile.height;
 
             if (tile.unit != null)
+            {
                 distance = Infinity;
+                return;
+            }
 
             if (distance < node.distance)
                 node.distance = distance;
+
+            currentNode.neighbors.push(node);
         }
     };
 

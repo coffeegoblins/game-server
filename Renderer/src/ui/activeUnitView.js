@@ -25,14 +25,6 @@ function (Renderer, RenderableProgressBar, ImageView, Scheduler)
         this.unitPreview.setOpacity(opacity);
         this.hpBar.setOpacity(opacity);
         this.apBar.setOpacity(opacity);
-
-        this.refresh();
-    };
-
-    ActiveUnitView.prototype.refresh = function()
-    {
-        document.body.removeChild(this.parentDiv);
-        document.body.appendChild(this.parentDiv);
     };
 
     ActiveUnitView.prototype.show = function(unit, seconds, context, callback)

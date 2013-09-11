@@ -24,6 +24,11 @@ define([], function ()
         return this.gameMap.getTile(Math.floor(x / scale), Math.floor(y / scale));
     };
 
+    RenderableMap.prototype.onClick = function(e, x, y, scale)
+    {
+        this.gameMap.onClick(e, x, y, scale);
+    };
+
     RenderableMap.prototype.moveActiveUnit = function (x, y, scale)
     {
         this.gameMap.moveActiveUnit(Math.floor(x / scale), Math.floor(y / scale));

@@ -61,6 +61,11 @@ define(function ()
         previousEvent.next = {eventData: eventData, next: currentEvent};
     };
 
+    Scheduler.prototype.unschedule = function(eventData)
+    {
+        unschedule(eventData);
+    };
+
     /* @param {object} eventData The event to unschedule */
     function unschedule(eventData)
     {
