@@ -1,68 +1,67 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager',
-        'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect'],
-function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect)
-{
-    'use strict';
-
-    /**
-     * @constructor
-     */
-    function CommandManager()
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect'],
+    function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect)
     {
-    }
+        'use strict';
 
-    CommandManager.moveActiveUnit = function (x, y)
-    {
-        LevelLoader.map.moveActiveUnit(x, y);
-    };
+        /**
+         * @constructor
+         */
+        function CommandManager()
+        {
+        }
 
-    CommandManager.moveViewport = function (x, y, milliseconds)
-    {
-        Renderer.camera.moveViewport(x, y, milliseconds);
-    };
+        CommandManager.moveActiveUnit = function (x, y)
+        {
+            LevelLoader.map.moveActiveUnit(x, y);
+        };
 
-    CommandManager.endTurn = function ()
-    {
-        TurnManager.endTurn();
+        CommandManager.moveViewport = function (x, y, milliseconds)
+        {
+            Renderer.camera.moveViewport(x, y, milliseconds);
+        };
 
-        console.log(TurnManager.unitList);
-    };
+        CommandManager.endTurn = function ()
+        {
+            TurnManager.endTurn();
 
-    CommandManager.getAvailableTiles = function()
-    {
-        PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.unitList[0]);
+            console.log(TurnManager.unitList);
+        };
 
-        console.log(LevelLoader.map);
-    };
+        CommandManager.getAvailableTiles = function ()
+        {
+            PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.unitList[0]);
 
-    CommandManager.setActiveUnitHP = function(hp, seconds)
-    {
-        TurnManager.unitList[0].hp = hp;
-        TurnManager.activeUnitView.hpBar.transitionProgress(hp, seconds);
-    };
+            console.log(LevelLoader.map);
+        };
 
-    CommandManager.setActiveUnitAP = function(ap, seconds)
-    {
-        TurnManager.unitList[0].ap = ap;
-        TurnManager.activeUnitView.apBar.transitionProgress(ap, seconds);
-    };
+        CommandManager.setActiveUnitHP = function (hp, seconds)
+        {
+            TurnManager.unitList[0].hp = hp;
+            TurnManager.activeUnitView.hpBar.transitionProgress(hp, seconds);
+        };
 
-    CommandManager.transitionEffect = function(control, styleName, targetValue, seconds)
-    {
-        TransitionEffect.transitionStyle(control, styleName, targetValue, seconds);
-    }
+        CommandManager.setActiveUnitAP = function (ap, seconds)
+        {
+            TurnManager.unitList[0].ap = ap;
+            TurnManager.activeUnitView.apBar.transitionProgress(ap, seconds);
+        };
 
-    CommandManager.blinkEffect = function(control, seconds)
-    {
-        BlinkEffect.blink(control, seconds);
-    }
+        CommandManager.transitionEffect = function (control, styleName, targetValue, seconds)
+        {
+            TransitionEffect.transitionStyle(control, styleName, targetValue, seconds);
+        };
 
-    CommandManager.stopBlinkEffect = function(control)
-    {
-        BlinkEffect.stopBlink(control);
-    }
+        CommandManager.blinkEffect = function (control, seconds)
+        {
+            BlinkEffect.blink(control, seconds);
+        };
 
-    window.CommandManager = CommandManager;
+        CommandManager.stopBlinkEffect = function (control)
+        {
+            BlinkEffect.stopBlink(control);
+        };
 
-    return CommandManager;
-});
+        window.CommandManager = CommandManager;
+
+        return CommandManager;
+    });

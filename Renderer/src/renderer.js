@@ -1,6 +1,12 @@
-define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableMap', 'Renderer/src/renderableObject',
-        'Renderer/src/renderableSoldier', 'Renderer/src/camera/camera', 'Renderer/src/renderablePath'],
-    function (InputHandler, Scheduler, RenderableMap, RenderableObject, RenderableSoldier, Camera, RenderablePath)
+define(['Game/src/inputHandler',
+        'Game/src/scheduler',
+        'Renderer/src/renderableMap',
+        'Renderer/src/renderableLadder',
+        'Renderer/src/renderableObject',
+        'Renderer/src/renderableSoldier',
+        'Renderer/src/camera/camera',
+        'Renderer/src/renderablePath'],
+    function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {
         'use strict';
 
@@ -75,14 +81,20 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             }
         };
 
-        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a, blink)
+
+        Renderer.prototype.addRenderableLadder = function (ladder)
         {
-            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a, blink));
+            this.renderables.unshift(new RenderableLadder(ladder));
         };
 
         Renderer.prototype.addRenderableObject = function (object)
         {
             this.renderables.unshift(new RenderableObject(object));
+        };
+
+        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a)
+        {
+            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a));
         };
 
         Renderer.prototype.addRenderableSoldier = function (soldier, unitImage, previewImage)

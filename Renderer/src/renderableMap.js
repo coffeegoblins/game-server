@@ -9,7 +9,7 @@ define([], function ()
 
     function getColorForHeight(height, maxHeight)
     {  // Convert the height to a color gradient. High is white. Low is black.
-        var numericColor = 128 + Math.floor(128 * (height / maxHeight));
+        var numericColor = 64 + Math.floor(192 * (height / maxHeight));
         var hexColor = numericColor.toString(16);
         return '#' + hexColor + hexColor + hexColor;
     }
@@ -34,13 +34,13 @@ define([], function ()
         this.gameMap.moveActiveUnit(Math.floor(x / scale), Math.floor(y / scale));
     };
 
-    RenderableMap.prototype.render = function (context, scale, viewportRect)
+    RenderableMap.prototype.render = function (context, tileSize, viewportRect)
     {
-        this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / scale));
-        this.visibleTileTop = Math.max(0, Math.floor(viewportRect.y / scale));
+        this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / tileSize));
+        this.visibleTileTop = Math.max(0, Math.floor(viewportRect.y / tileSize));
 
-        this.visibleTileRight = Math.min(this.gameMap.width - 1, Math.ceil((viewportRect.x + viewportRect.width) / scale));
-        this.visibleTileBottom = Math.min(this.gameMap.height - 1, Math.ceil((viewportRect.y + viewportRect.height) / scale));
+        this.visibleTileRight = Math.min(this.gameMap.width - 1, Math.ceil((viewportRect.x + viewportRect.width) / tileSize));
+        this.visibleTileBottom = Math.min(this.gameMap.height - 1, Math.ceil((viewportRect.y + viewportRect.height) / tileSize));
 
         for (var x = this.visibleTileLeft; x <= this.visibleTileRight; x++)
         {
@@ -50,7 +50,7 @@ define([], function ()
 
                 context.beginPath();
                 context.fillStyle = getColorForHeight(tile.height, this.gameMap.maxHeight);
-                context.rect(x * scale + 1 - viewportRect.x, y * scale + 1 - viewportRect.y, scale - 1, scale - 1);
+                context.rect(x * tileSize + 1 - viewportRect.x, y * tileSize + 1 - viewportRect.y, tileSize - 1, tileSize - 1);
                 context.fill();
             }
         }

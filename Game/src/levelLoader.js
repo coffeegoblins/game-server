@@ -1,12 +1,8 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleView', 'Game/src/worldObject',
-        'Game/src/turnManager'],
-    function (Renderer, Map, Soldier, SampleUI, WorldObject, TurnManager)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager)
     {
         'use strict';
 
-        /**
-         * @constructor
-         */
         function LevelLoader()
         {
         }
@@ -17,9 +13,9 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleV
         LevelLoader.prototype.loadLevel = function (fileName)
         {
             // TODO: Asynchronous loading from file
-            this.map = new Map(100, 100);
+            this.map = new Map(100, 100, 4);
 
-            // Build a hill for illustration purposes
+            // Build a hill
             var height = 5;
             var summitX = 10;
             var summitY = 5;
@@ -34,8 +30,19 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleV
                     {
                         var xDelta = Math.abs(summitX - x);
                         var yDelta = Math.abs(summitY - y);
-                        tile.height = height - Math.max(xDelta, yDelta);
+                        tile.height += height - Math.max(xDelta, yDelta);
                     }
+                }
+            }
+
+            // Build a pit
+            for (x = 1; x <= 3; x++)
+            {
+                for (y = 8; y <= 10; y++)
+                {
+                    tile = this.map.getTile(x, y);
+                    if (tile)
+                        tile.height = 0;
                 }
             }
 
@@ -63,6 +70,22 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleV
             this.map.addObject(worldObject, 4, 4);
             Renderer.addRenderableObject(worldObject);
 
+            var ladder = new Ladder('up');
+            this.map.addObject(ladder, 2, 8);
+            Renderer.addRenderableLadder(ladder);
+
+            ladder = new Ladder('down');
+            this.map.addObject(ladder, 2, 10);
+            Renderer.addRenderableLadder(ladder);
+
+            ladder = new Ladder('left');
+            this.map.addObject(ladder, 1, 9);
+            Renderer.addRenderableLadder(ladder);
+
+            ladder = new Ladder('right');
+            this.map.addObject(ladder, 3, 9);
+            Renderer.addRenderableLadder(ladder);
+
             for (var i = 0; i < 100; i++)
             {
                 worldObject = new WorldObject();
@@ -72,7 +95,6 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Renderer/src/ui/sampleV
                     y = Math.floor(Math.random() * this.map.height);
 
                     tile = this.map.getTile(x, y);
-                    tile.height = Infinity;
                 }
                 while (tile.content != null || tile.unit != null);
 
