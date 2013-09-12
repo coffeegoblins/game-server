@@ -33,13 +33,6 @@ define(function ()
         window.cancelAnimationFrame(updateLoopId);
     };
 
-    /*
-     * @param eventData The event to schedule
-     * @param {Object} eventData.context The context to execute the method under
-     * @param {function} eventData.method The method to execute
-     * @param {Number} [eventData.interval=0] The time in seconds between executions
-     * @param {Number} [eventData.priority=Scheduler.priority.update] Methods with higher priority are executed first
-     */
     Scheduler.prototype.schedule = function (eventData)
     {
         if (eventData.interval == null)
@@ -137,7 +130,9 @@ define(function ()
                 eventData.totalTime -= deltaTime;
                 if(eventData.totalTime < 0)
                 {
-                    eventData.completedMethod.call(eventData.context, eventData);
+                    if (eventData.completedMethod)
+                        eventData.completedMethod.call(eventData.completedContext, eventData);
+
                     unschedule(eventData);
 
                     previousEvent = currentEvent;

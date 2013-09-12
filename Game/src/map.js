@@ -35,6 +35,7 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         Renderer.clearRenderablePathById("availableTiles");
         Renderer.clearRenderablePathById("selectedPath");
 
+        ActionBarView.hideActions();
         TurnManager.beginTurn();
     }
 
@@ -105,7 +106,9 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
                 return;
             }
 
-            Renderer.addRenderablePath("selectedPath", PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY), 255, 100, 0, 0.75);
+            Renderer.addRenderablePath("selectedPath", PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY),
+                                        255, 165, 0, 1, 1.5);
+
             ActionBarView.showActions([
                 {id: "Move", method: onMoveAction, context: this},
                 {id: "EndTurn", method: onEndTurnAction, context: this}
@@ -116,7 +119,15 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
     function onMoveAction()
     {
         this.moveActiveUnit(this.selectedTileX, this.selectedTileY);
-    }
+
+        Renderer.clearRenderablePathById("availableTiles");
+        Renderer.clearRenderablePathById("selectedPath");
+
+        ActionBarView.hideActions();
+        Renderer.camera.moveToUnit(TurnManager.activeUnit, 1);
+
+        Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, TurnManager.activeUnit), 0, 255, 0, 0.4);
+}
 
     function onEndTurnAction()
     {

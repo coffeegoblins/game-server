@@ -1,11 +1,13 @@
-define(['renderer', 'Renderer/src/ui/renderableProgressBar', 'Renderer/src/ui/ImageView', 'Game/src/scheduler'],
-function (Renderer, RenderableProgressBar, ImageView, Scheduler)
+define(['renderer', 'Renderer/src/ui/renderableProgressBar', 'Renderer/src/ui/ImageView', 'Game/src/scheduler',
+        'Renderer/src/effects/transitionEffect'],
+function (Renderer, RenderableProgressBar, ImageView, Scheduler, TransitionEffect)
 {
     'use strict';
     function ActiveUnitView()
     {
-        this.opacity = 1;
         this.parentDiv = document.createElement('div');
+        this.parentDiv.id = "ActiveUnitView";
+        this.parentDiv.style.opacity = 1;
         this.parentDiv.style.width = "20%";
         this.parentDiv.style.height = "20%";
         this.parentDiv.style.position = "absolute";
@@ -13,19 +15,11 @@ function (Renderer, RenderableProgressBar, ImageView, Scheduler)
         this.parentDiv.style.top = "1%";
 
         this.unitPreview = new ImageView(this.parentDiv, "activeUnitPreview", 50, 80, null);
-        this.hpBar = new RenderableProgressBar(this.parentDiv, "activeUnitHP", 100, 10, "black", "orange");
-        this.apBar = new RenderableProgressBar(this.parentDiv, "activeUnitAP", 100, 10, "black", "green");
+        this.hpBar = new RenderableProgressBar(this.parentDiv, "activeUnitHP", 100, 10, "black", "green");
+        this.apBar = new RenderableProgressBar(this.parentDiv, "activeUnitAP", 100, 10, "black", "orange");
 
         document.body.appendChild(this.parentDiv);
     }
-
-    ActiveUnitView.prototype.setOpacity = function(opacity)
-    {
-        this.opacity = opacity;
-        this.unitPreview.setOpacity(opacity);
-        this.hpBar.setOpacity(opacity);
-        this.apBar.setOpacity(opacity);
-    };
 
     ActiveUnitView.prototype.show = function(unit, seconds, context, callback)
     {
@@ -44,62 +38,13 @@ function (Renderer, RenderableProgressBar, ImageView, Scheduler)
         this.apBar.setProgress(unit.ap);
         this.apBar.setMaxProgress(unit.maxAP);
 
-        this.opacityCallbackContext = context;
-        this.opacityCallback = callback;
-
-        this.transitionOpacity(1, seconds, onFadedIn);
+        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 1, seconds, context, callback);
     };
 
     ActiveUnitView.prototype.hide = function(seconds, context, callback)
     {
-        this.opacityCallbackContext = context;
-        this.opacityCallback = callback;
-
-        this.transitionOpacity(0, seconds, onFadedOut);
+        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 0, seconds, context, callback);
     };
-
-    ActiveUnitView.prototype.transitionOpacity = function(targetOpacity, seconds, callback)
-    {
-        this.deltaOpacity = targetOpacity - this.opacity;
-        this.totalOpacityTime = seconds;
-
-        if (this.opacityEvent)
-        {
-            Scheduler.unscheduleById("activeUnitViewOpacity");
-        }
-
-        this.opacityEvent = {
-            id: "activeUnitViewOpacity",
-            interval:0.001,
-            totalTime: seconds,
-            method: onOpacityUpdate,
-            completedMethod: callback,
-            context: this
-        };
-
-        Scheduler.schedule(this.opacityEvent);
-    };
-
-    function onOpacityUpdate(eventData, deltaTime)
-    {
-        this.setOpacity(this.opacity + this.deltaOpacity * deltaTime / this.totalOpacityTime);
-    }
-
-    function onFadedIn(context, eventData)
-    {
-        this.setOpacity(1);
-
-        if (this.opacityCallback)
-            this.opacityCallback.call(this.opacityCallbackContext);
-    }
-
-    function onFadedOut(context, eventData)
-    {
-        this.setOpacity(0);
-
-        if (this.opacityCallback)
-            this.opacityCallback.call(this.opacityCallbackContext);
-    }
 
     return ActiveUnitView;
 });

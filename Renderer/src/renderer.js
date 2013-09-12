@@ -75,9 +75,9 @@ define(['Game/src/inputHandler', 'Game/src/scheduler', 'Renderer/src/renderableM
             }
         };
 
-        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a)
+        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a, blink)
         {
-            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a));
+            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a, blink));
         };
 
         Renderer.prototype.addRenderableObject = function (object)

@@ -4,7 +4,6 @@ define([], function ()
     function ImageView(parentDiv, id, width, height, image)
     {
         this.parentDiv = parentDiv;
-        this.opacity = 1;
 
         this.img = document.createElement("img");
         this.img.id = id;
@@ -14,12 +13,6 @@ define([], function ()
 
         this.parentDiv.appendChild(this.img);
     }
-
-    ImageView.prototype.setOpacity = function(opacity)
-    {
-        this.opacity = opacity;
-        this.img.style.opacity = opacity;
-    };
 
     return ImageView;
 });

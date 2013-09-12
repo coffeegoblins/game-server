@@ -1,5 +1,6 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager'],
-    function (Renderer, LevelLoader, TurnManager, PathManager)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager',
+        'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect'],
+function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect)
 {
     'use strict';
 
@@ -45,6 +46,21 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         TurnManager.unitList[0].ap = ap;
         TurnManager.activeUnitView.apBar.transitionProgress(ap, seconds);
     };
+
+    CommandManager.transitionEffect = function(control, styleName, targetValue, seconds)
+    {
+        TransitionEffect.transitionStyle(control, styleName, targetValue, seconds);
+    }
+
+    CommandManager.blinkEffect = function(control, seconds)
+    {
+        BlinkEffect.blink(control, seconds);
+    }
+
+    CommandManager.stopBlinkEffect = function(control)
+    {
+        BlinkEffect.stopBlink(control);
+    }
 
     window.CommandManager = CommandManager;
 

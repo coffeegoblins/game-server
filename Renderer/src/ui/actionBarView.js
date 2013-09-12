@@ -1,5 +1,5 @@
-define(['Game/src/inputHandler', 'Renderer/src/ui/ImageView', 'Game/src/imageCache'],
-function (InputHandler, ImageView, ImageCache)
+define(['Game/src/inputHandler', 'Renderer/src/ui/ImageView', 'Game/src/imageCache', 'Renderer/src/effects/transitionEffect'],
+function (InputHandler, ImageView, ImageCache, TransitionEffect)
 {
     'use strict';
     function ActionBarView()
@@ -23,18 +23,28 @@ function (InputHandler, ImageView, ImageCache)
 
     ActionBarView.prototype.hideActions = function()
     {
-        this.parentDiv.innerHTML = "";
+        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 0, 0.5, this, onActionBarHidden);
 
         for (var i = 0; i < this.actionsList.length; ++i)
         {
             InputHandler.unregisterEvent(this.actionsList[i].id);
         }
-
-        this.actionsList = [];
     };
+
+    function onActionBarHidden(eventData)
+    {
+        this.parentDiv.style.display = "none";
+        this.parentDiv.innerHTML = "";
+        this.actionsList = [];
+    }
 
     ActionBarView.prototype.showActions = function(actions)
     {
+        this.parentDiv.style.display = "block";
+        this.parentDiv.innerHTML = "";
+        this.actionsList = [];
+        this.parentDiv.style.opacity = 0;
+
         for (var i = 0; i < actions.length; ++i)
         {
             this.actionsList.push(actions[i]);
@@ -43,6 +53,8 @@ function (InputHandler, ImageView, ImageCache)
 
             InputHandler.registerEvent(actions[i].id, actions[i].method, actions[i].context);
         }
+
+        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 1, 0.5);
     };
 
     return new ActionBarView;
