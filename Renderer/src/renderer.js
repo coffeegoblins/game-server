@@ -92,9 +92,9 @@ define(['Game/src/inputHandler',
             this.renderables.unshift(new RenderableObject(object));
         };
 
-        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a)
+        Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a, blink)
         {
-            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a));
+            this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a, blink));
         };
 
         Renderer.prototype.addRenderableSoldier = function (soldier, unitImage, previewImage)

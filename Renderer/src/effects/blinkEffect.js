@@ -7,18 +7,18 @@ define(['Game/src/scheduler'],
 
         }
 
-        BlinkEffect.prototype.stopBlink = function(control)
+        BlinkEffect.prototype.stopBlink = function (control)
         {
             Scheduler.unscheduleById(control.id + "opacity");
-            control.style["opacity"] = 1;
+            control.style.opacity = 1;
         };
 
-        BlinkEffect.prototype.blink = function(control, seconds)
+        BlinkEffect.prototype.blink = function (control, seconds)
         {
             // Stop existing operation on that style's opacity
             this.stopBlink(control);
 
-            var currentValue = parseFloat(control.style["opacity"]);
+            var currentValue = parseFloat(control.style.opacity);
 
             this.blinkEvent = {
                 id: control.id + "opacity",
@@ -33,12 +33,12 @@ define(['Game/src/scheduler'],
             Scheduler.schedule(this.blinkEvent);
         };
 
-        BlinkEffect.prototype.blink = function(control, seconds)
+        BlinkEffect.prototype.blink = function (control, seconds)
         {
             // Stop existing operation on that style's opacity
             this.stopBlink(control);
 
-            var currentValue = parseFloat(control.style["opacity"]);
+            var currentValue = parseFloat(control.style.opacity);
 
             this.blinkEvent = {
                 id: control.id + "opacity",
@@ -59,7 +59,7 @@ define(['Game/src/scheduler'],
             eventData.currentDegree += Math.PI * deltaTime / eventData.deltaValue;
             eventData.currentValue = Math.abs(Math.cos(eventData.currentDegree)); // Abs to stay between 0 and 1
 
-            eventData.control.style["opacity"] = eventData.currentValue;
+            eventData.control.style.opacity = eventData.currentValue;
         }
 
         return new BlinkEffect();

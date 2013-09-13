@@ -38,12 +38,12 @@ function (Renderer, RenderableProgressBar, ImageView, Scheduler, TransitionEffec
         this.apBar.setProgress(unit.ap);
         this.apBar.setMaxProgress(unit.maxAP);
 
-        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 1, seconds, context, callback);
+        TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 1, seconds, context, callback);
     };
 
     ActiveUnitView.prototype.hide = function(seconds, context, callback)
     {
-        TransitionEffect.transitionStyle(this.parentDiv, "opacity", 0, seconds, context, callback);
+        TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 0, seconds, context, callback);
     };
 
     return ActiveUnitView;

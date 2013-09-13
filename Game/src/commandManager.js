@@ -34,21 +34,9 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
             console.log(LevelLoader.map);
         };
 
-        CommandManager.setActiveUnitHP = function (hp, seconds)
+        CommandManager.transitionEffect = function (control, styleName, suffix, targetValue, seconds)
         {
-            TurnManager.unitList[0].hp = hp;
-            TurnManager.activeUnitView.hpBar.transitionProgress(hp, seconds);
-        };
-
-        CommandManager.setActiveUnitAP = function (ap, seconds)
-        {
-            TurnManager.unitList[0].ap = ap;
-            TurnManager.activeUnitView.apBar.transitionProgress(ap, seconds);
-        };
-
-        CommandManager.transitionEffect = function (control, styleName, targetValue, seconds)
-        {
-            TransitionEffect.transitionStyle(control, styleName, targetValue, seconds);
+            TransitionEffect.transitionFloat(control, styleName, suffix, targetValue, seconds);
         };
 
         CommandManager.blinkEffect = function (control, seconds)

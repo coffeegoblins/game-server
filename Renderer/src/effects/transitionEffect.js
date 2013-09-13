@@ -1,51 +1,66 @@
 define(['Game/src/scheduler'],
-function (Scheduler)
-{
-    'use strict';
-    function TransitionEffect()
+    function (Scheduler)
     {
+        'use strict';
+        function TransitionEffect()
+        {
 
-    }
+        }
 
-    TransitionEffect.prototype.transitionStyle = function(control, styleName, targetValue, seconds, context, callback)
-    {
-        // Stop existing operation on that style's value
-        Scheduler.unscheduleById(control.id + styleName);
+        TransitionEffect.prototype.transitionFloat = function (control, styleName, suffix, targetValue, seconds, context, callback)
+        {
+            // Stop existing operation on that style's value
+            Scheduler.unscheduleById(control.id + styleName);
 
-        var currentValue = parseFloat(control.style[styleName]);
+            var currentValue = parseFloat(control.style[styleName]);
 
-        this.transitionEvent = {
-            id: control.id + styleName,
-            control: control,
-            styleName: styleName,
-            currentValue: currentValue,
-            targetValue: targetValue,
-            deltaValue: targetValue - currentValue,
-            totalTime: seconds,
-            context: this,
-            method: onValueUpdate,
-            completedContext: this,
-            completedMethod: onValueUpdateCompleted,
-            callbackContext: context,
-            callbackMethod: callback
+            this.transitionEvent = {
+                id: control.id + styleName,
+                control: control,
+                styleName: styleName,
+                suffix: suffix,
+                currentValue: currentValue,
+                targetValue: targetValue,
+                deltaValue: targetValue - currentValue,
+                totalTime: seconds,
+                endTime: seconds,
+                context: this,
+                method: onValueUpdate,
+                completedContext: this,
+                completedMethod: onValueUpdateCompleted,
+                callbackContext: context,
+                callbackMethod: callback
+            };
+
+            Scheduler.schedule(this.transitionEvent);
         };
 
-        Scheduler.schedule(this.transitionEvent);
-    };
+        function onValueUpdate(eventData, deltaTime)
+        {
+            eventData.currentValue = eventData.currentValue + eventData.deltaValue * deltaTime / eventData.totalTime;
 
-    function onValueUpdate(eventData, deltaTime)
-    {
-        eventData.currentValue = eventData.currentValue + eventData.deltaValue * deltaTime / eventData.totalTime;
-        eventData.control.style[eventData.styleName] = eventData.currentValue;
-    }
+            var value = eventData.currentValue;
+            if (eventData.suffix)
+            {
+                value += eventData.suffix;
+            }
 
-    function onValueUpdateCompleted(eventData, deltaTime)
-    {
-        eventData.control.style[eventData.styleName] = eventData.targetValue;
+            eventData.control.style[eventData.styleName] = value;
+        }
 
-        if (eventData.callbackMethod)
-            eventData.callbackMethod.call(eventData.callbackContext);
-    }
+        function onValueUpdateCompleted(eventData, deltaTime)
+        {
+            var value = eventData.currentValue;
+            if (eventData.suffix)
+            {
+                value += eventData.suffix;
+            }
 
-    return new TransitionEffect();
-});
+            eventData.control.style[eventData.styleName] = value;
+
+            if (eventData.callbackMethod)
+                eventData.callbackMethod.call(eventData.callbackContext);
+        }
+
+        return new TransitionEffect();
+    });
