@@ -60,7 +60,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
             this.map.addUnit(soldier3, 2, 2);
 
             Renderer.addRenderableSoldier(soldier, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
-            Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesome_sad.png", "Renderer/content/awesome_sad.png");
+            Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesomeSad.png", "Renderer/content/awesomeSad.png");
             Renderer.addRenderableSoldier(soldier3, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
 
             TurnManager.activeUnitView.show(TurnManager.unitList[0], 0, this, null);

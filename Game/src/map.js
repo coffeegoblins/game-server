@@ -110,11 +110,15 @@ define(['renderer', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/sr
                     return;
                 }
 
-                Renderer.addRenderablePath("selectedPath", PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY), 255, 165, 0, 1, 1.5);
-                ActionBarView.showActions([
-                    {id: "Move", method: this.onMoveAction, context: this},
-                    {id: "EndTurn", method: this.onEndTurnAction, context: this}
-                ]);
+                var path = PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY);
+                if (path)
+                {
+                    Renderer.addRenderablePath("selectedPath", path, 255, 165, 0, 1, 1.5);
+                    ActionBarView.showActions([
+                        {id: "Move", method: this.onMoveAction, context: this},
+                        {id: "EndTurn", method: this.onEndTurnAction, context: this}
+                    ]);
+                }
             }
         };
 

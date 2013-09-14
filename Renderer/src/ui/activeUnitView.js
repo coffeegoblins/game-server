@@ -1,50 +1,44 @@
-define(['renderer', 'Renderer/src/ui/renderableProgressBar', 'Renderer/src/ui/ImageView', 'Game/src/scheduler',
-        'Renderer/src/effects/transitionEffect'],
-function (Renderer, RenderableProgressBar, ImageView, Scheduler, TransitionEffect)
-{
-    'use strict';
-    function ActiveUnitView()
+define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar', 'Game/src/scheduler', 'Renderer/src/effects/transitionEffect', 'text!Renderer/content/activeUnitView.html'],
+    function (Renderer, Template, RenderableProgressBar, Scheduler, TransitionEffect)
     {
-        this.parentDiv = document.createElement('div');
-        this.parentDiv.id = "ActiveUnitView";
-        this.parentDiv.style.opacity = 1;
-        this.parentDiv.style.width = "20%";
-        this.parentDiv.style.height = "20%";
-        this.parentDiv.style.position = "absolute";
-        this.parentDiv.style.left = "1%";
-        this.parentDiv.style.top = "1%";
-
-        this.unitPreview = new ImageView(this.parentDiv, "activeUnitPreview", 50, 80, null);
-        this.hpBar = new RenderableProgressBar(this.parentDiv, "activeUnitHP", 100, 10, "black", "green");
-        this.apBar = new RenderableProgressBar(this.parentDiv, "activeUnitAP", 100, 10, "black", "orange");
-
-        document.body.appendChild(this.parentDiv);
-    }
-
-    ActiveUnitView.prototype.show = function(unit, seconds, context, callback)
-    {
-        // TODO Find a better way to get the active unit preview image
-        for (var i = 0; i < Renderer.renderables.length; ++i)
+        'use strict';
+        function ActiveUnitView()
         {
-            if (unit === Renderer.renderables[i].unit)
-            {
-                this.unitPreview.img.src = Renderer.renderables[i].previewImage;
-                break;
-            }
+            this.element = document.createElement('div');
+            this.element.id = "activeUnitView";
+            this.element.innerHTML = Template;
+
+            this.previewImage = this.element.querySelector('img');
+            this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
+            this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
+
+            document.body.appendChild(this.element);
         }
 
-        this.hpBar.setProgress(unit.hp);
-        this.hpBar.setMaxProgress(unit.maxHP);
-        this.apBar.setProgress(unit.ap);
-        this.apBar.setMaxProgress(unit.maxAP);
+        ActiveUnitView.prototype.show = function (unit, seconds, context, callback)
+        {
+            // TODO Find a better way to get the active unit preview image
+            for (var i = 0; i < Renderer.renderables.length; ++i)
+            {
+                if (unit === Renderer.renderables[i].unit)
+                {
+                    this.previewImage.src = Renderer.renderables[i].previewImage;
+                    break;
+                }
+            }
 
-        TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 1, seconds, context, callback);
-    };
+            this.hpBar.setProgress(unit.hp);
+            this.hpBar.setMaxProgress(unit.maxHP);
+            this.apBar.setProgress(unit.ap);
+            this.apBar.setMaxProgress(unit.maxAP);
 
-    ActiveUnitView.prototype.hide = function(seconds, context, callback)
-    {
-        TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 0, seconds, context, callback);
-    };
+            TransitionEffect.transitionFloat(this.element, "opacity", null, 1, seconds, context, callback);
+        };
 
-    return ActiveUnitView;
-});
+        ActiveUnitView.prototype.hide = function (seconds, context, callback)
+        {
+            TransitionEffect.transitionFloat(this.element, "opacity", null, 0, seconds, context, callback);
+        };
+
+        return ActiveUnitView;
+    });

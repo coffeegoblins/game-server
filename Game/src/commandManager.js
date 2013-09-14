@@ -23,15 +23,11 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         CommandManager.endTurn = function ()
         {
             TurnManager.endTurn();
-
-            console.log(TurnManager.unitList);
         };
 
         CommandManager.getAvailableTiles = function ()
         {
             PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.unitList[0]);
-
-            console.log(LevelLoader.map);
         };
 
         CommandManager.transitionEffect = function (control, styleName, suffix, targetValue, seconds)

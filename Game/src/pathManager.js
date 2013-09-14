@@ -33,7 +33,7 @@ define(function ()
         this.map = map;
         this.unit = unit;
 
-        var currentNode = null;
+        var currentNode;
         for (var i = 0; i < this.completedNodes.length; ++i)
         {
             if (this.completedNodes[i].x === targetX && this.completedNodes[i].y === targetY)
@@ -42,6 +42,9 @@ define(function ()
                 break;
             }
         }
+
+        if (!currentNode)
+            return;
 
         var pathNodes = [];
         while (currentNode.x !== unit.tileX || currentNode.y !== unit.tileY)

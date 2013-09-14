@@ -38,6 +38,8 @@ define(function ()
         window.addEventListener('touchstart', onTouch);
         window.addEventListener('MSPointerDown', onTouch);
         document.body.msTouchAction = 'none';
+
+        document.body.className += ' touch';
     }
 
 

@@ -26,9 +26,6 @@ define([], function ()
 
     Camera.prototype.moveViewport = function (targetX, targetY, seconds)
     {
-        console.log("Moving to (" + targetX + "," + targetY + ") in " + seconds + " seconds...");
-        console.log("Starting second: " + new Date().getSeconds());
-
         this.targetX = targetX;
         this.targetY = targetY;
         this.deltaX = this.targetX - this.centerX;
@@ -58,9 +55,6 @@ define([], function ()
                 this.centerY = this.targetY;
                 this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
                 this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
-
-                console.log("Destination Reached.");
-                console.log("End second: " + new Date().getSeconds());
             }
         }
     };

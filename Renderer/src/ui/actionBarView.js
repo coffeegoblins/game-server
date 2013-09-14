@@ -1,66 +1,70 @@
-define(['Game/src/inputHandler', 'Renderer/src/ui/ImageView', 'Game/src/imageCache', 'Renderer/src/effects/transitionEffect'],
-    function (InputHandler, ImageView, ImageCache, TransitionEffect)
+define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
+    function (InputHandler, TransitionEffect)
     {
         'use strict';
         function ActionBarView()
         {
             this.actionsList = [];
+            this.imageList = {
+                'Move': 'Renderer/content/awesome.png',
+                'EndTurn': 'Renderer/content/awesomeSad.png'
+            };
 
-            this.parentDiv = document.createElement('div');
-            this.parentDiv.style.width = "100%";
-            this.parentDiv.style.height = "10%";
-            this.parentDiv.style.position = "absolute";
-            this.parentDiv.style.left = "0";
-            this.parentDiv.style.bottom = "0";
-            this.parentDiv.style.padding = "1%";
-            this.parentDiv.style.backgroundColor = "rgba(0,0,0,0.25)";
+            this.element = document.createElement('div');
+            this.element.id = 'actionBarView';
+            this.element.style.display = 'none';
 
-            document.body.appendChild(this.parentDiv);
+            this.containerElement = document.createElement('div');
+            this.element.appendChild(this.containerElement);
 
-            ImageCache.loadImage("Move", "Renderer/content/awesome.png");
-            ImageCache.loadImage("EndTurn", "Renderer/content/awesome_sad.png");
+            document.body.appendChild(this.element);
         }
 
         ActionBarView.prototype.hideActions = function ()
         {
-            TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 0, 0.5, this, onActionBarHidden);
-
-            for (var i = 0; i < this.actionsList.length; ++i)
+            var element = this.element;
+            TransitionEffect.transitionFloat(this.element, 'opacity', null, 0, 0.5, null, function ()
             {
-                InputHandler.unregisterEvent(this.actionsList[i].id);
-            }
+                element.style.display = 'none';
+            });
         };
-
-        function onActionBarHidden(eventData)
-        {
-            this.parentDiv.style.display = "none";
-            this.actionsList = [];
-
-            while (this.parentDiv.firstChild)
-                this.parentDiv.removeChild(this.parentDiv.firstChild);
-        }
 
         ActionBarView.prototype.showActions = function (actions)
         {
-            this.parentDiv.style.display = "block";
+            this.element.style.opacity = 0;
+            this.element.style.display = 'block';
 
-            while (this.parentDiv.firstChild)
-                this.parentDiv.removeChild(this.parentDiv.firstChild);
-
-            this.actionsList = [];
-            this.parentDiv.style.opacity = 0;
-
+            var fragment = document.createDocumentFragment();
             for (var i = 0; i < actions.length; ++i)
             {
-                this.actionsList.push(actions[i]);
+                var action = actions[i];
+                var image = this.containerElement.querySelector('#' + action.id);
+                if (!image)
+                {
+                    // If the action didn't already exist, create and register a visual for it
+                    image = document.createElement('img');
+                    image.id = action.id;
+                    image.src = this.imageList[action.id];
 
-                new ImageView(this.parentDiv, actions[i].id, 10, 100, ImageCache.getImage(actions[i].id));
+                    InputHandler.registerEvent(action.id, action.method, action.context);
+                }
 
-                InputHandler.registerEvent(actions[i].id, actions[i].method, actions[i].context);
+                fragment.appendChild(image);
             }
 
-            TransitionEffect.transitionFloat(this.parentDiv, "opacity", null, 1, 0.5);
+            // Remove and unregister any actions that are no longer needed
+            while (this.containerElement.firstChild)
+            {
+                InputHandler.unregisterEvent(this.containerElement.firstChild.id);
+                this.containerElement.removeChild(this.containerElement.firstChild);
+            }
+
+            // Update the actions
+            this.actionsList = actions.slice(0);
+            this.containerElement.appendChild(fragment);
+
+            TransitionEffect.transitionFloat(this.element, 'opacity', null, 1, 0.5);
         };
 
-        return new ActionBarView;
+        return new ActionBarView();
     });
