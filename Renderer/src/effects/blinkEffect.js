@@ -27,33 +27,13 @@ define(['Game/src/scheduler'],
                 currentValue: currentValue,
                 deltaValue: seconds,
                 context: this,
-                method: onValueUpdate
+                method: onBlinkUpdate
             };
 
             Scheduler.schedule(this.blinkEvent);
         };
 
-        BlinkEffect.prototype.blink = function (control, seconds)
-        {
-            // Stop existing operation on that style's opacity
-            this.stopBlink(control);
-
-            var currentValue = parseFloat(control.style.opacity);
-
-            this.blinkEvent = {
-                id: control.id + "opacity",
-                control: control,
-                currentDegree: 0,
-                currentValue: currentValue,
-                deltaValue: seconds,
-                context: this,
-                method: onValueUpdate
-            };
-
-            Scheduler.schedule(this.blinkEvent);
-        };
-
-        function onValueUpdate(eventData, deltaTime)
+        function onBlinkUpdate(eventData, deltaTime)
         {
             // Cosine is in radians
             eventData.currentDegree += Math.PI * deltaTime / eventData.deltaValue;

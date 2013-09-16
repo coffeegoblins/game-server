@@ -17,27 +17,18 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
             this.containerElement = document.createElement('div');
             this.element.appendChild(this.containerElement);
 
+            this.fragment = document.createDocumentFragment();
+
             document.body.appendChild(this.element);
         }
 
-        ActionBarView.prototype.hideActions = function ()
+        ActionBarView.prototype.addActions = function(actions)
         {
-            var element = this.element;
-            TransitionEffect.transitionFloat(this.element, 'opacity', null, 0, 0.5, null, function ()
-            {
-                element.style.display = 'none';
-            });
-        };
-
-        ActionBarView.prototype.showActions = function (actions)
-        {
-            this.element.style.opacity = 0;
-            this.element.style.display = 'block';
-
-            var fragment = document.createDocumentFragment();
             for (var i = 0; i < actions.length; ++i)
             {
                 var action = actions[i];
+                this.actionsList.push(actions[i]);
+
                 var image = this.containerElement.querySelector('#' + action.id);
                 if (!image)
                 {
@@ -49,19 +40,53 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
                     InputHandler.registerEvent(action.id, action.method, action.context);
                 }
 
-                fragment.appendChild(image);
+                this.fragment.appendChild(image);
             }
 
+            this.containerElement.appendChild(this.fragment);
+        };
+
+        ActionBarView.prototype.removeActions = function(actions)
+        {
+            for (var i = 0; i < actions.length; ++i)
+            {
+                var action = actions[i];
+                var index = this.actionsList.indexOf(action);
+
+                if (index > -1)
+                    this.actionsList.splice(index, 1);
+
+                var image = this.containerElement.querySelector('#' + action.id);
+                if (image)
+                {
+                    InputHandler.unregisterEvent(image.id);
+                    this.containerElement.removeChild(image);
+                }
+            }
+        };
+
+        ActionBarView.prototype.removeAllActions = function()
+        {
             // Remove and unregister any actions that are no longer needed
             while (this.containerElement.firstChild)
             {
                 InputHandler.unregisterEvent(this.containerElement.firstChild.id);
                 this.containerElement.removeChild(this.containerElement.firstChild);
             }
+        };
 
-            // Update the actions
-            this.actionsList = actions.slice(0);
-            this.containerElement.appendChild(fragment);
+        ActionBarView.prototype.hideActions = function ()
+        {
+            var element = this.element;
+            TransitionEffect.transitionFloat(this.element, 'opacity', null, 0, 0.5, null, function ()
+            {
+                element.style.display = 'none';
+            });
+        };
+
+        ActionBarView.prototype.showActions = function ()
+        {
+            this.element.style.display = 'block';
 
             TransitionEffect.transitionFloat(this.element, 'opacity', null, 1, 0.5);
         };
