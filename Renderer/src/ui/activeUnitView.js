@@ -33,15 +33,15 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             this.apBar.setProgress(activeUnit.ap);
             this.apBar.setMaxProgress(activeUnit.maxAP);
 
-            TransitionEffect.transitionFloat(this.element, "opacity", null, 1, 0.5, this, function() {
-                this.element.style.opactiy = 1;
+            TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function() {
+                this.element.style['opacity'] = 1;
             });
         };
 
         ActiveUnitView.prototype.onEndTurn = function(activeUnit)
         {
-            TransitionEffect.transitionFloat(this.element, "opacity", null, 0, 0.5, this, function() {
-                this.element.style.opacity = 0;
+            TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 0, 0.5, this, function() {
+                this.element.style['opacity'] = 0;
             });
         };
 

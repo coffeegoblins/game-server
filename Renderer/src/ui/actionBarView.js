@@ -93,7 +93,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
         ActionBarView.prototype.hideActions = function ()
         {
             var element = this.element;
-            TransitionEffect.transitionFloat(this.element, 'opacity', null, 0, 0.5, null, function ()
+            TransitionEffect.transitionFloat('actionBarViewOpacity', this.element.style, 'opacity', null, 0, 0.5, null, function ()
             {
                 element.style.display = 'none';
             });
@@ -102,7 +102,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
         ActionBarView.prototype.showActions = function ()
         {
             this.element.style.display = 'block';
-            TransitionEffect.transitionFloat(this.element, 'opacity', null, 1, 0.5);
+            TransitionEffect.transitionFloat('actionBarViewOpacity', this.element.style, 'opacity', null, 1, 0.5);
         };
 
         return new ActionBarView();
