@@ -1,5 +1,6 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager',
+        'Game/src/pathManager', 'Renderer/src/ui/activeUnitView'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, PathManager, ActiveUnitView)
     {
         'use strict';
 
@@ -7,7 +8,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
         {
         }
 
-        /**
+         /**
          * @param fileName The name of the file to load
          */
         LevelLoader.prototype.loadLevel = function (fileName)
@@ -63,8 +64,6 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
             Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesomeSad.png", "Renderer/content/awesomeSad.png");
             Renderer.addRenderableSoldier(soldier3, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
 
-            TurnManager.activeUnitView.show(TurnManager.unitList[0], 0, this, null);
-
             // Add objects
             var worldObject = new WorldObject(2, 2);
             this.map.addObject(worldObject, 4, 4);
@@ -101,6 +100,13 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                 this.map.addObject(worldObject, x, y);
                 Renderer.addRenderableObject(worldObject);
             }
+
+            var activeUnitView = new ActiveUnitView();
+
+            TurnManager.registerBeginTurnEvent("activeUnitView", activeUnitView.onBeginTurn.bind(activeUnitView), activeUnitView);
+            TurnManager.registerEndTurnEvent("activeUnitView", activeUnitView.onEndTurn.bind(activeUnitView), activeUnitView);
+
+            TurnManager.registerBeginTurnEvent("camera", Renderer.camera.onBeginTurn.bind(Renderer.camera), Renderer.camera);
 
             TurnManager.beginTurn();
         };

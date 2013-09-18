@@ -30,7 +30,6 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
 
     function onBeginTurn(activeUnit)
     {
-        Renderer.camera.moveToUnit(activeUnit, 1);
         Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, activeUnit), 0, 255, 0, 0.4);
         Renderer.blinkUnit(activeUnit, 1.5);
         ActionBarView.showActions();
@@ -51,7 +50,6 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         Renderer.clearRenderablePathById("selectedPath");
 
         ActionBarView.hideActions();
-        TurnManager.beginTurn();
     }
 
     /**
@@ -168,7 +166,7 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         var tile = this.getTile(x, y);
         if (tile && !tile.unit && !tile.content)
         {
-            var unit = TurnManager.unitList[0];
+            var unit = TurnManager.activeUnit;
             var previousTile = this.getTile(unit.tileX, unit.tileY);
             if (previousTile && previousTile.unit === unit)
                 previousTile.unit = null;

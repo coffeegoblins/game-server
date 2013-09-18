@@ -7,6 +7,7 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             this.element = document.createElement('div');
             this.element.id = "activeUnitView";
             this.element.innerHTML = Template;
+            this.element.style.opacity = 0;
 
             this.previewImage = this.element.querySelector('img');
             this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
@@ -15,29 +16,33 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             document.body.appendChild(this.element);
         }
 
-        ActiveUnitView.prototype.show = function (unit, seconds, context, callback)
+        ActiveUnitView.prototype.onBeginTurn = function(activeUnit)
         {
             // TODO Find a better way to get the active unit preview image
             for (var i = 0; i < Renderer.renderables.length; ++i)
             {
-                if (unit === Renderer.renderables[i].unit)
+                if (activeUnit === Renderer.renderables[i].unit)
                 {
                     this.previewImage.src = Renderer.renderables[i].previewImage;
                     break;
                 }
             }
 
-            this.hpBar.setProgress(unit.hp);
-            this.hpBar.setMaxProgress(unit.maxHP);
-            this.apBar.setProgress(unit.ap);
-            this.apBar.setMaxProgress(unit.maxAP);
+            this.hpBar.setProgress(activeUnit.hp);
+            this.hpBar.setMaxProgress(activeUnit.maxHP);
+            this.apBar.setProgress(activeUnit.ap);
+            this.apBar.setMaxProgress(activeUnit.maxAP);
 
-            TransitionEffect.transitionFloat(this.element, "opacity", null, 1, seconds, context, callback);
+            TransitionEffect.transitionFloat(this.element, "opacity", null, 1, 0.5, this, function() {
+                this.element.style.opactiy = 1;
+            });
         };
 
-        ActiveUnitView.prototype.hide = function (seconds, context, callback)
+        ActiveUnitView.prototype.onEndTurn = function(activeUnit)
         {
-            TransitionEffect.transitionFloat(this.element, "opacity", null, 0, seconds, context, callback);
+            TransitionEffect.transitionFloat(this.element, "opacity", null, 0, 0.5, this, function() {
+                this.element.style.opacity = 0;
+            });
         };
 
         return ActiveUnitView;

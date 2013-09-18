@@ -1,4 +1,4 @@
-define([], function ()
+define(function ()
 {
     'use strict';
 
@@ -16,6 +16,11 @@ define([], function ()
         this.centerY = this.viewportRect.y + height / 2;
         this.viewportRect.width = width;
         this.viewportRect.height = height;
+    };
+
+    Camera.prototype.onBeginTurn = function (unit)
+    {
+        this.moveToUnit(unit, 1);
     };
 
     Camera.prototype.moveToUnit = function (unit, seconds)

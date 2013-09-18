@@ -27,7 +27,7 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
 
         CommandManager.getAvailableTiles = function ()
         {
-            PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.unitList[0]);
+            PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.activeUnit);
         };
 
         CommandManager.transitionEffect = function (control, styleName, suffix, targetValue, seconds)

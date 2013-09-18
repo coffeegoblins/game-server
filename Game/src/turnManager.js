@@ -1,4 +1,4 @@
-define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (PathManager, ActiveUnitView)
+define(function ()
 {
     'use strict';
 
@@ -9,7 +9,6 @@ define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (Pat
     {
         this.unitList = [];
         this.activeUnit = null;
-        this.activeUnitView = new ActiveUnitView();
         this.registeredBeginTurnEvents = [];
         this.registeredEndTurnEvents = [];
     }
@@ -33,7 +32,7 @@ define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (Pat
             var registeredEvent = this.registeredBeginTurnEvents[i];
             if (registeredEvent)
             {
-                registeredEvent.method.call(registeredEvent.context, this.unitList[0]);
+                registeredEvent.method.call(registeredEvent.context, this.activeUnit);
             }
         }
     };
@@ -66,8 +65,6 @@ define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (Pat
             }
         }
 
-        this.activeUnitView.hide(0.5, this, onActiveUnitViewHidden);
-
         for ( i = 0; i < this.registeredEndTurnEvents.length; ++i)
         {
             var registeredEvent = this.registeredEndTurnEvents[i];
@@ -76,12 +73,9 @@ define(['Game/src/pathManager', 'Renderer/src/ui/activeUnitView'], function (Pat
                 registeredEvent.method.call(registeredEvent.context, currentUnit);
             }
         }
-    };
 
-    function onActiveUnitViewHidden()
-    {
-        this.activeUnitView.show(this.unitList[0], 0.5, this, null);
-    }
+        this.beginTurn();
+    };
 
     return new TurnManager();
 });
