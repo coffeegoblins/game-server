@@ -40,11 +40,8 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
     {
         Renderer.stopBlinkUnit(activeUnit);
 
-        ActionBarView.removeActions([
-            {id: "Move", method: this.onMoveAction, context: this}
-            // TODO Hide content action
-            // TODO Hide attack action
-        ]);
+        // TODO Hide content and attack action
+        ActionBarView.removeActions('Move');
 
         Renderer.clearRenderablePathById("availableTiles");
         Renderer.clearRenderablePathById("selectedPath");
@@ -102,11 +99,8 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         {
             Renderer.clearRenderablePathById("selectedPath");
 
-            ActionBarView.removeActions([
-                {id: "Move", method: this.onMoveAction, context: this}
-                // TODO Hide content action
-                // TODO Hide attack action
-            ]);
+            // TODO Hide content and attack action
+            ActionBarView.removeActions('Move');
 
             this.selectedTileX = tileX;
             this.selectedTileY = tileY;
@@ -143,11 +137,8 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
 
         Renderer.camera.moveToUnit(TurnManager.activeUnit, 1);
 
-        ActionBarView.removeActions([
-            {id: "Move", method: this.onMoveAction, context: this}
-            // TODO Hide content action
-            // TODO Hide attack action
-        ]);
+        // TODO Hide content and attack action
+        ActionBarView.removeActions('Move');
 
         Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, TurnManager.activeUnit), 0, 255, 0, 0.4);
     };

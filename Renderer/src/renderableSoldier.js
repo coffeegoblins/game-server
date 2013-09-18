@@ -7,8 +7,8 @@ define(['Game/src/imageCache'], function (ImageCache)
         this.unit = soldier;
         this.unitImage = ImageCache.loadImage(unitImage, unitImage);
         this.previewImage = previewImage;
-        this.style = [];
-        this.style["opacity"] = 1;
+        this.style = {};
+        this.style.opacity = 1;
     }
 
     RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)
@@ -29,7 +29,7 @@ define(['Game/src/imageCache'], function (ImageCache)
             var xPosition = this.unit.tileX * tileSize + offset - viewportRect.x;
             var yPosition = this.unit.tileY * tileSize + offset - viewportRect.y;
 
-            context.globalAlpha = this.style["opacity"];
+            context.globalAlpha = this.style.opacity;
             context.drawImage(this.unitImage.data, xPosition, yPosition, size, size);
             context.globalAlpha = 1;
         }

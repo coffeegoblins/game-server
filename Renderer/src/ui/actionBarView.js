@@ -17,57 +17,72 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
             this.containerElement = document.createElement('div');
             this.element.appendChild(this.containerElement);
 
-            this.fragment = document.createDocumentFragment();
-
             document.body.appendChild(this.element);
         }
 
-        ActionBarView.prototype.addActions = function(actions)
+        ActionBarView.prototype.addActions = function (actions)
         {
+            var fragment = document.createDocumentFragment();
             for (var i = 0; i < actions.length; ++i)
             {
                 var action = actions[i];
-                this.actionsList.push(actions[i]);
-
-                var image = this.containerElement.querySelector('#' + action.id);
-                if (!image)
+                if (!this.getActionById(action.id))
                 {
                     // If the action didn't already exist, create and register a visual for it
-                    image = document.createElement('img');
+                    var image = document.createElement('img');
                     image.id = action.id;
                     image.src = this.imageList[action.id];
 
+                    action.image = image;
+                    this.actionsList.push(action);
                     InputHandler.registerEvent(action.id, action.method, action.context);
-                }
 
-                this.fragment.appendChild(image);
+                    fragment.appendChild(image);
+                }
             }
 
-            this.containerElement.appendChild(this.fragment);
+            this.containerElement.appendChild(fragment);
         };
 
-        ActionBarView.prototype.removeActions = function(actions)
+        ActionBarView.prototype.getActionById = function (id)
         {
-            for (var i = 0; i < actions.length; ++i)
+            for (var i = 0; i < this.actionsList.length; i++)
             {
-                var action = actions[i];
-                var index = this.actionsList.indexOf(action);
+                var action = this.actionsList[i];
+                if (action.id === id)
+                    return action;
+            }
+        };
 
-                if (index > -1)
-                    this.actionsList.splice(index, 1);
-
-                var image = this.containerElement.querySelector('#' + action.id);
-                if (image)
+        ActionBarView.prototype.removeActionById = function (id)
+        {
+            for (var i = 0; i < this.actionsList.length; i++)
+            {
+                var action = this.actionsList[i];
+                if (action.id === id)
                 {
-                    InputHandler.unregisterEvent(image.id);
-                    this.containerElement.removeChild(image);
+                    if (action.image)
+                    {
+                        this.containerElement.removeChild(action.image);
+                    }
+
+                    InputHandler.unregisterEvent(action.id);
+                    this.actionsList.splice(i, 1);
+                    break;
                 }
             }
         };
 
-        ActionBarView.prototype.removeAllActions = function()
+        ActionBarView.prototype.removeActions = function ()
+        {
+            for (var i = 0; i < arguments.length; ++i)
+                this.removeActionById(arguments[i]);
+        };
+
+        ActionBarView.prototype.removeAllActions = function ()
         {
             // Remove and unregister any actions that are no longer needed
+            this.actionsList.length = 0;
             while (this.containerElement.firstChild)
             {
                 InputHandler.unregisterEvent(this.containerElement.firstChild.id);
@@ -87,7 +102,6 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
         ActionBarView.prototype.showActions = function ()
         {
             this.element.style.display = 'block';
-
             TransitionEffect.transitionFloat(this.element, 'opacity', null, 1, 0.5);
         };
 
