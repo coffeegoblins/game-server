@@ -11,22 +11,38 @@ define(function ()
         this.diagonalMoveCost = 14;
     }
 
-    function canMoveToDiagonal(map, x, y, directionX, directionY)
+    PathManager.prototype.canMoveToDiagonal = function (currentNode, directionX, directionY)
     {
-        var tile = map.getTile(x + directionX, y + directionY);
-        if (tile && (tile.content || tile.unit))
+        return this.canMoveToTile(currentNode, directionX, directionY) &&
+               this.canMoveToTile(currentNode, directionX, 0) &&
+               this.canMoveToTile(currentNode, 0, directionY);
+    };
+
+    PathManager.prototype.canMoveToTile = function (currentNode, directionX, directionY)
+    {
+        // Don't allow traversal over other units
+        var destinationTile = this.map.getTile(currentNode.x + directionX, currentNode.y + directionY);
+        if (!destinationTile || destinationTile.unit != null)
             return false;
 
-        tile = map.getTile(x + directionX, y);
-        if (tile && (tile.content || tile.unit))
+        var sourceIsClimbable, destinationIsClimbable;
+        if (this.unit.canClimbObjects && (directionX === 0 || directionY === 0))
+        {
+            sourceIsClimbable = (currentNode.tile.content && currentNode.tile.content.isClimbable);
+            destinationIsClimbable = (destinationTile.content && destinationTile.content.isClimbable);
+        }
+
+        // Don't allow traversal over world objects
+        if (destinationTile.content && !destinationIsClimbable)
             return false;
 
-        tile = map.getTile(x, y + directionY);
-        if (tile && (tile.content || tile.unit))
+
+        // Don't allow traversal over nodes with an unclimbable height gap
+        if (Math.abs(currentNode.tile.height - destinationTile.height) > this.unit.maxMoveableHeight && !sourceIsClimbable && !destinationIsClimbable)
             return false;
 
         return true;
-    }
+    };
 
     PathManager.prototype.calculatePath = function (map, unit, targetX, targetY)
     {
@@ -61,7 +77,6 @@ define(function ()
     PathManager.prototype.findClosestNeighbor = function (node)
     {
         var lowestIndex = 0;
-
         for (var i = 0; i < node.neighbors.length; ++i)
         {
             if (node.neighbors[i].distance < node.neighbors[lowestIndex].distance)
@@ -84,7 +99,6 @@ define(function ()
         while (true)
         {
             currentNode = this.getClosestTile(this.processingNodes);
-
             if (currentNode == null || currentNode.distance === Infinity || currentNode.distance > unit.ap)
             {
                 // We're past the boundary that the unit can move
@@ -94,23 +108,23 @@ define(function ()
             this.completedNodes.push(currentNode);
 
             var diagonalDistance = currentNode.distance + this.diagonalMoveCost;
-            if (canMoveToDiagonal(map, currentNode.x, currentNode.y, -1, -1))
-                this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y - 1, diagonalDistance);
+            if (this.canMoveToDiagonal(currentNode, -1, -1))
+                this.evaluateNeighbor(currentNode, -1, -1, diagonalDistance);
 
-            if (canMoveToDiagonal(map, currentNode.x, currentNode.y, 1, -1))
-                this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y - 1, diagonalDistance);
+            if (this.canMoveToDiagonal(currentNode, 1, -1))
+                this.evaluateNeighbor(currentNode, 1, -1, diagonalDistance);
 
-            if (canMoveToDiagonal(map, currentNode.x, currentNode.y, -1, 1))
-                this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y + 1, diagonalDistance);
+            if (this.canMoveToDiagonal(currentNode, -1, 1))
+                this.evaluateNeighbor(currentNode, -1, 1, diagonalDistance);
 
-            if (canMoveToDiagonal(map, currentNode.x, currentNode.y, 1, 1))
-                this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y + 1, diagonalDistance);
+            if (this.canMoveToDiagonal(currentNode, 1, 1))
+                this.evaluateNeighbor(currentNode, 1, 1, diagonalDistance);
 
             var straightDistance = currentNode.distance + this.defaultMoveCost;
-            this.evaluateNeighbor(currentNode, currentNode.x, currentNode.y - 1, straightDistance);
-            this.evaluateNeighbor(currentNode, currentNode.x, currentNode.y + 1, straightDistance);
-            this.evaluateNeighbor(currentNode, currentNode.x - 1, currentNode.y, straightDistance);
-            this.evaluateNeighbor(currentNode, currentNode.x + 1, currentNode.y, straightDistance);
+            this.evaluateNeighbor(currentNode, 0, -1, straightDistance);
+            this.evaluateNeighbor(currentNode, 0, 1, straightDistance);
+            this.evaluateNeighbor(currentNode, -1, 0, straightDistance);
+            this.evaluateNeighbor(currentNode, 1, 0, straightDistance);
         }
 
         this.map = null;
@@ -122,7 +136,6 @@ define(function ()
     PathManager.prototype.getClosestTile = function (nodes)
     {
         var lowestIndex = 0;
-
         for (var i = 0; i < nodes.length; ++i)
         {
             if (nodes[i].distance < nodes[lowestIndex].distance)
@@ -132,32 +145,15 @@ define(function ()
         return nodes.splice(lowestIndex, 1)[0];
     };
 
-    PathManager.prototype.evaluateNeighbor = function (currentNode, x, y, additionalDistance)
+    PathManager.prototype.evaluateNeighbor = function (currentNode, directionX, directionY, additionalDistance)
     {
+        var x = currentNode.x + directionX;
+        var y = currentNode.y + directionY;
+
         var tile = this.map.getTile(x, y);
         if (tile)
         {
-            // Don't allow traversal over other units
-            if (tile.unit != null)
-                return;
-
-            // Don't allow traversal over world objects
-            var isClimbable;
-            if (tile.content)
-            {
-                // Unless this unit can climb them
-                if (tile.content.isClimbable && this.unit.canClimbObjects)
-                {
-                    isClimbable = true;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            // Don't allow traversal over nodes with an unclimbable height gap
-            if (Math.abs(currentNode.tile.height - tile.height) > this.unit.maxMoveableHeight && !isClimbable)
+            if (!this.canMoveToTile(currentNode, directionX, directionY))
                 return;
 
             // Make sure this node hasn't already been checked

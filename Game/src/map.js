@@ -33,7 +33,9 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, activeUnit), 0, 255, 0, 0.4);
         Renderer.blinkUnit(activeUnit, 1.5);
         ActionBarView.showActions();
-        ActionBarView.addActions([{id: "EndTurn", method: this.onEndTurnAction, context: this}]);
+        ActionBarView.addActions([
+            {id: "EndTurn", method: this.onEndTurnAction, context: this}
+        ]);
     }
 
     function onEndTurn(activeUnit)
@@ -89,6 +91,21 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         TurnManager.unitList.push(unit);
     };
 
+    Map.prototype.canMoveToTile = function (unit, tileX, tileY)
+    {
+        var tile = this.getTile(tileX, tileY);
+        if (!tile || tile.unit)
+            return false;
+
+        if (tile.content)
+        {
+            if (!tile.content.isClimbable || !unit.canClimbObjects)
+                return false;
+        }
+
+        return true;
+    };
+
     Map.prototype.onClick = function (e, x, y, scale)
     {
         var tileX = Math.floor(x / scale);
@@ -105,10 +122,13 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
             this.selectedTileX = tileX;
             this.selectedTileY = tileY;
 
-            if (tile.content && (!tile.content.isClimbable || !TurnManager.activeUnit.canClimbObjects))
+            if (tile.content)
             {
-                // TODO Content logic, Show action
-                return;
+                if (!tile.content.isClimbable || !TurnManager.activeUnit.canClimbObjects)
+                {
+                    // TODO Content logic, Show action
+                    return;
+                }
             }
 
             if (tile.unit)
@@ -155,9 +175,9 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
     Map.prototype.moveActiveUnit = function (x, y)
     {
         var tile = this.getTile(x, y);
-        if (tile && !tile.unit && !tile.content)
+        var unit = TurnManager.activeUnit;
+        if (this.canMoveToTile(unit, x, y))
         {
-            var unit = TurnManager.activeUnit;
             var previousTile = this.getTile(unit.tileX, unit.tileY);
             if (previousTile && previousTile.unit === unit)
                 previousTile.unit = null;

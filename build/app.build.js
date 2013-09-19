@@ -6,7 +6,7 @@
         require: 'lib/require',
         i18n: 'lib/i18n',
         text: 'lib/text',
-        renderer: 'Renderer/src/canvas/renderer'
+        renderer: 'Renderer/src/renderer'
     },
     optimize: 'uglify2',
     optimizeCss: "standard",
