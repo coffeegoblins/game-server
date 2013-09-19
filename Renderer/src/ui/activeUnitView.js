@@ -45,5 +45,10 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             });
         };
 
+        ActiveUnitView.prototype.previewAP = function(ap)
+        {
+            this.apBar.blinkPortion(ap);
+        }
+
         return ActiveUnitView;
     });

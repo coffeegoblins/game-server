@@ -101,11 +101,6 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                 Renderer.addRenderableObject(worldObject);
             }
 
-            var activeUnitView = new ActiveUnitView();
-
-            TurnManager.registerBeginTurnEvent("activeUnitView", activeUnitView.onBeginTurn.bind(activeUnitView), activeUnitView);
-            TurnManager.registerEndTurnEvent("activeUnitView", activeUnitView.onEndTurn.bind(activeUnitView), activeUnitView);
-
             TurnManager.registerBeginTurnEvent("camera", Renderer.camera.onBeginTurn.bind(Renderer.camera), Renderer.camera);
 
             TurnManager.beginTurn();

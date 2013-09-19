@@ -42,6 +42,13 @@ html, body {
 
 #activeUnitView .innerBar {
     border-radius: 5px;
+    float: left;
+    height: 100%;
+}
+
+#activeUnitView .innerBarPreview {
+    border-radius: 5px;
+    float: right;
     height: 100%;
 }
 
@@ -49,7 +56,15 @@ html, body {
     background-color: green;
 }
 
+#activeUnitHP .innerBarPreview {
+    background-color: blue;
+}
+
 #activeUnitAP .innerBar {
+    background-color: orange;
+}
+
+#activeUnitAP .innerBarPreview {
     background-color: orange;
 }
 
