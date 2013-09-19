@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView'],
-function (Renderer, TurnManager, PathManager, ActionBarView)
+define(['renderer', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView'],
+function (Renderer, TurnManager, PathManager, ActionBarView, ActiveUnitView)
 {
     'use strict';
 
@@ -26,6 +26,11 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
 
         TurnManager.registerBeginTurnEvent("onBeginTurn", onBeginTurn, this);
         TurnManager.registerEndTurnEvent("onEndTurn", onEndTurn, this);
+
+        this.activeUnitView = new ActiveUnitView();
+
+        TurnManager.registerBeginTurnEvent("activeUnitView", this.activeUnitView.onBeginTurn.bind(this.activeUnitView), this.activeUnitView);
+        TurnManager.registerEndTurnEvent("activeUnitView", this.activeUnitView.onEndTurn.bind(this.activeUnitView), this.activeUnitView);
     }
 
     function onBeginTurn(activeUnit)
@@ -97,6 +102,7 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
         var tile = this.getTile(tileX, tileY);
         if (tile)
         {
+            this.activeUnitView.previewAP(0);
             Renderer.clearRenderablePathById("selectedPath");
 
             // TODO Hide content and attack action
@@ -120,6 +126,8 @@ function (Renderer, TurnManager, PathManager, ActionBarView)
             var path = PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY);
             if (path)
             {
+                this.activeUnitView.previewAP(path[path.length - 1].distance);
+
                 Renderer.addRenderablePath("selectedPath", path, 255, 165, 0, 1, 1.5);
                 ActionBarView.addActions([
                     {id: "Move", method: this.onMoveAction, context: this}

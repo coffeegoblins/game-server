@@ -1,4 +1,4 @@
-define([], function ()
+define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
 {
     'use strict';
     function RenderableProgressBar(element)
@@ -9,18 +9,29 @@ define([], function ()
 
         this.element = element;
         this.foregroundElement = element.querySelector('.innerBar');
+        this.previewElement = element.querySelector('.innerBarPreview');
     }
 
     RenderableProgressBar.prototype.setProgress = function (progress)
     {
         this.progress = progress;
         this.foregroundElement.style.width = this.progress / this.maxProgress * 100 + "%";
+        this.previewElement.style.width = "0%";
     };
+
+    RenderableProgressBar.prototype.blinkPortion = function (portion)
+    {
+        this.foregroundElement.style.width = (this.progress - portion) / this.maxProgress * 100 + "%";
+        this.previewElement.style.width = portion / this.maxProgress * 100 + "%";
+
+        BlinkEffect.blink(this.previewElement, 1);
+    }
 
     RenderableProgressBar.prototype.setMaxProgress = function (maxProgress)
     {
         this.maxProgress = maxProgress;
         this.foregroundElement.style.width = this.progress / this.maxProgress * 100 + "%";
+        this.previewElement.style.width = "0%";
     };
 
     return RenderableProgressBar;
