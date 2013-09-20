@@ -45,6 +45,11 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
             BlinkEffect.stopBlink(control);
         };
 
+        CommandManager.setActiveUnitAP = function (ap)
+        {
+            TurnManager.activeUnit.ap = ap;
+        };
+
         window.CommandManager = CommandManager;
 
         return CommandManager;

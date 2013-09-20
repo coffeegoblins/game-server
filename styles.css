@@ -48,7 +48,7 @@ html, body {
 
 #activeUnitView .innerBarPreview {
     border-radius: 5px;
-    float: right;
+    float: left;
     height: 100%;
 }
 

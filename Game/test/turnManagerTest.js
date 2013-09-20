@@ -90,4 +90,18 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
 
         assertEquals("Soldier A expected at the end of the queue, but it was: " + lastUnitInQueue.name + "\n", this.soldierA, lastUnitInQueue);
     };
+
+    TurnManagerTest.prototype.testEndTurnUnitStillAtFront = function ()
+    {
+        this.soldierA.ap = 10;
+        this.soldierB.ap = 1;
+        this.soldierC.ap = 1;
+        this.soldierD.ap = 1;
+
+        TurnManager.endTurn();
+
+        var firstInQueue = TurnManager.unitList[0];
+
+        assertEquals("Soldier A expected at the beginning of the queue, but it was: " + firstInQueue.name + "\n", this.soldierA, firstInQueue);
+    };
 });

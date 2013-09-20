@@ -53,16 +53,24 @@ define(function ()
         }
 
         // Place in queue at appropriate spot
-        for (i = this.unitList.length - 1; i > 0; --i)
+        for (i = this.unitList.length - 1; i >= 0; --i)
         {
             var comparisonUnit = this.unitList[i];
 
-            if (currentUnit.maxAP - currentUnit.ap >= comparisonUnit.maxAP - comparisonUnit.ap ||
-                comparisonUnit.ap === comparisonUnit.maxAP)
+            var currentUnitTurnsToMove = currentUnit.maxAP - currentUnit.ap;
+            var comparisonUnitTurnsToMove = comparisonUnit.maxAP - comparisonUnit.ap;
+
+            if (currentUnitTurnsToMove >= comparisonUnitTurnsToMove)
             {
                 this.unitList.splice(i + 1, 0, currentUnit);
                 break;
             }
+        }
+
+        if (i < 0)
+        {
+            // The unit is still at the front
+            this.unitList.unshift(currentUnit);
         }
 
         for ( i = 0; i < this.registeredEndTurnEvents.length; ++i)

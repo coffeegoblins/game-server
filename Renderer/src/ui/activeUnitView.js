@@ -48,7 +48,12 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
         ActiveUnitView.prototype.previewAP = function(ap)
         {
             this.apBar.blinkPortion(ap);
-        }
+        };
+
+        ActiveUnitView.prototype.setAP = function(ap)
+        {
+            this.apBar.setProgress(ap);
+        };
 
         return ActiveUnitView;
     });

@@ -146,7 +146,8 @@ function (Renderer, TurnManager, PathManager, ActionBarView, ActiveUnitView)
             var path = PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY);
             if (path)
             {
-                this.activeUnitView.previewAP(path[path.length - 1].distance);
+                this.selectedTileCost = path[path.length - 1].distance;
+                this.activeUnitView.previewAP(this.selectedTileCost);
 
                 Renderer.addRenderablePath("selectedPath", path, 255, 165, 0, 1, 1.5);
                 ActionBarView.addActions([
@@ -159,6 +160,10 @@ function (Renderer, TurnManager, PathManager, ActionBarView, ActiveUnitView)
     Map.prototype.onMoveAction = function ()
     {
         this.moveActiveUnit(this.selectedTileX, this.selectedTileY);
+
+        TurnManager.activeUnit.ap -= this.selectedTileCost;
+
+        this.activeUnitView.setAP(TurnManager.activeUnit.ap);
 
         Renderer.clearRenderablePathById("availableTiles");
         Renderer.clearRenderablePathById("selectedPath");
