@@ -126,7 +126,7 @@ define(function ()
                 if (eventData.endTime < 0)
                 {
                     if (eventData.completedMethod)
-                        eventData.completedMethod.call(eventData.completedContext, eventData);
+                        eventData.completedMethod.call(eventData.context, eventData);
 
                     scheduler.unschedule(eventData);
 

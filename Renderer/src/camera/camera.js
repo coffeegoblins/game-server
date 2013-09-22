@@ -12,21 +12,40 @@ define(function ()
 
     Camera.prototype.handleResize = function (width, height)
     {
-        this.centerX = this.viewportRect.x + width / 2;
-        this.centerY = this.viewportRect.y + height / 2;
         this.viewportRect.width = width;
         this.viewportRect.height = height;
+
+        if (this.targetX != null)
+        {
+            this.centerX = this.targetX;
+        }
+        else
+        {
+            this.centerX = this.viewportRect.x + width / 2;
+        }
+
+        if (this.targetY != null)
+        {
+            this.centerY = this.targetY;
+        }
+        else
+        {
+            this.centerY = this.viewportRect.y + height / 2;
+        }
+
+        this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
+        this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
     };
 
     Camera.prototype.onBeginTurn = function (unit)
     {
-        this.moveToUnit(unit, 1);
+        this.moveToUnit(unit);
     };
 
-    Camera.prototype.moveToUnit = function (unit, seconds)
+    Camera.prototype.moveToUnit = function (unit)
     {
         var offset = this.scale / 2;
-        this.moveViewport(unit.tileX * this.scale + offset, unit.tileY * this.scale + offset, seconds);
+        this.moveViewport(unit.tileX * this.scale + offset, unit.tileY * this.scale + offset, 1);
     };
 
     Camera.prototype.moveViewport = function (targetX, targetY, seconds)

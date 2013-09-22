@@ -29,11 +29,6 @@ define([], function ()
         this.gameMap.onClick(e, x, y, scale);
     };
 
-    RenderableMap.prototype.moveActiveUnit = function (x, y, scale)
-    {
-        this.gameMap.moveActiveUnit(Math.floor(x / scale), Math.floor(y / scale));
-    };
-
     RenderableMap.prototype.render = function (context, tileSize, viewportRect)
     {
         this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / tileSize));

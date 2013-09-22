@@ -35,7 +35,6 @@ function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableOb
     function onClick(e, x, y)
     {
         this.renderableMap.onClick(e, x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
-        //this.renderableMap.moveActiveUnit(x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
     }
 
     function update(e, deltaTime)
@@ -75,7 +74,7 @@ function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableOb
     {
         for (var i = 0; i < this.renderablePaths.length; ++i)
         {
-            if (this.renderablePaths[i].id == id)
+            if (this.renderablePaths[i].id === id)
             {
                 this.renderablePaths.splice(i, 1);
                 return;
@@ -117,9 +116,9 @@ function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableOb
         }
     };
 
-    Renderer.prototype.addRenderablePath = function (id, nodes, r, g, b, a, blink)
+    Renderer.prototype.addRenderablePath = function (id, nodes, isSelected)
     {
-        this.renderablePaths.push(new RenderablePath(id, nodes, r, g, b, a, blink));
+        this.renderablePaths.push(new RenderablePath(id, nodes, isSelected));
     };
 
     Renderer.prototype.addRenderableSoldier = function (soldier, unitImage, previewImage)

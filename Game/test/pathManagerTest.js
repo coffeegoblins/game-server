@@ -25,7 +25,7 @@ require(['src/pathManager', 'src/map'], function (PathManager, Map)
         var completedNodes = PathManager.calculateAvailableTiles(map, unit);
 
         assertEquals("Invalid number of tiles calculated", 16, completedNodes.length);
-    }
+    };
 
     PathManagerTest.prototype.testHeightIsUsed = function ()
     {
@@ -40,7 +40,7 @@ require(['src/pathManager', 'src/map'], function (PathManager, Map)
 
         for (var i = 0; i < completedNodes.length; ++i)
         {
-            if (completedNodes[i].x == 1 && completedNodes[i].y == 1)
+            if (completedNodes[i].x === 1 && completedNodes[i].y === 1)
             {
                 targetNode = completedNodes[i];
             }
@@ -76,7 +76,7 @@ require(['src/pathManager', 'src/map'], function (PathManager, Map)
 
         for (var i = 0; i < completedNodes.length; ++i)
         {
-            if (completedNodes[i].x == 1 && completedNodes[i].y == 1)
+            if (completedNodes[i].x === 1 && completedNodes[i].y === 1)
             {
                 nodeFound = true;
             }
