@@ -176,7 +176,11 @@ define(function ()
                 this.processingNodes.push(node);
             }
 
-            var distance = additionalDistance + tile.height;
+            var distance = additionalDistance;
+            var heightDifference = tile.height - currentNode.tile.height;
+            if (Math.abs(heightDifference) <= this.unit.maxMoveableHeight)
+                distance += heightDifference;
+
             if (distance < node.distance)
                 node.distance = distance;
 

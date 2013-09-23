@@ -1,14 +1,11 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager',
-        'Game/src/pathManager', 'Renderer/src/ui/activeUnitView'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, PathManager, ActiveUnitView)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager)
     {
         'use strict';
 
-        function LevelLoader()
-        {
-        }
+        function LevelLoader() { }
 
-         /**
+        /**
          * @param fileName The name of the file to load
          */
         LevelLoader.prototype.loadLevel = function (fileName)
@@ -101,7 +98,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                 Renderer.addRenderableObject(worldObject);
             }
 
-            TurnManager.registerBeginTurnEvent("camera", Renderer.camera.onBeginTurn.bind(Renderer.camera), Renderer.camera);
+            TurnManager.registerBeginTurnEvent("camera", Renderer.camera.onBeginTurn, Renderer.camera);
 
             TurnManager.beginTurn();
         };

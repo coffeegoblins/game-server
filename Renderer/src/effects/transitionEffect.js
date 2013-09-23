@@ -26,7 +26,6 @@ define(['Game/src/scheduler'],
                 endTime: seconds,
                 context: this,
                 method: onValueUpdate,
-                completedContext: this,
                 completedMethod: onValueUpdateCompleted,
                 callbackContext: context,
                 callbackMethod: callback
