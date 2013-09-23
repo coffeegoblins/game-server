@@ -11,6 +11,8 @@ define(function ()
         this.activeUnit = null;
         this.registeredBeginTurnEvents = [];
         this.registeredEndTurnEvents = [];
+
+        this.endTurnPercentageCost = 0.75;
     }
 
     TurnManager.prototype.registerBeginTurnEvent = function (id, method, context)
@@ -37,23 +39,37 @@ define(function ()
         }
     };
 
+    TurnManager.prototype.incrementAP = function()
+    {
+        var nextUnit = this.unitList[0];
+        var apIncrement = nextUnit.maxAP - nextUnit.ap;
+
+        // Ensure the next in queue is ready to go
+        nextUnit.ap = nextUnit.maxAP;
+
+        // Increment the same amount for all other units
+        for (var i = 1; i < this.unitList.length; ++i)
+        {
+            var unit = this.unitList[i];
+            var missingAP = unit.maxAP - unit.ap;
+
+            // Min() with missing AP to ensure we never go over max AP
+            unit.ap += Math.min(apIncrement, missingAP);
+        }
+    };
+
     TurnManager.prototype.endTurn = function ()
     {
-        // Remove the soldier from the front
-        var currentUnit = this.unitList.shift();
         this.activeUnit = null;
 
-        // +1 CurrentAP for all other units
-        for (var i = 0; i < this.unitList.length; ++i)
-        {
-            if (this.unitList[i].ap !== this.unitList[i].maxAP)
-            {
-                this.unitList[i].ap++;
-            }
-        }
+        // Remove the soldier from the front
+        var currentUnit = this.unitList.shift();
+        currentUnit.ap *= this.endTurnPercentageCost;
+
+        this.incrementAP();
 
         // Place in queue at appropriate spot
-        for (i = this.unitList.length - 1; i >= 0; --i)
+        for (var i = this.unitList.length - 1; i >= 0; --i)
         {
             var comparisonUnit = this.unitList[i];
 

@@ -1,18 +1,3 @@
-// Mocking dependencies
-define('renderer', function ()
-{
-    function MockRenderer() {}
-
-    function MockCamera() {}
-
-    MockCamera.prototype.moveToUnit = function () {};
-
-    MockRenderer.camera = new MockCamera();
-    MockRenderer.clearRenderablePath = function () {};
-
-    return MockRenderer;
-});
-
 require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
 {
     'use strict';
@@ -22,19 +7,18 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
     TurnManagerTest.prototype.setUp = function ()
     {
         this.soldierA = new Soldier();
-        this.soldierA.name = "Soldier A";
-        this.soldierA.maxAP = 10;
-
         this.soldierB = new Soldier();
-        this.soldierB.name = "Soldier B";
-        this.soldierB.maxAP = 10;
-
         this.soldierC = new Soldier();
-        this.soldierC.name = "Soldier C";
-        this.soldierC.maxAP = 10;
-
         this.soldierD = new Soldier();
+
+        this.soldierA.name = "Soldier A";
+        this.soldierB.name = "Soldier B";
+        this.soldierC.name = "Soldier C";
         this.soldierD.name = "Soldier D";
+
+        this.soldierA.maxAP = 10;
+        this.soldierB.maxAP = 10;
+        this.soldierC.maxAP = 10;
         this.soldierD.maxAP = 10;
 
         TurnManager.unitList.push(this.soldierA);
@@ -62,21 +46,6 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
         assertEquals("Soldier A expected at position 2, but it was: " + expectedUnit.name + "\n", this.soldierA, expectedUnit);
     };
 
-    TurnManagerTest.prototype.testEndTurnIncrementsMOV = function ()
-    {
-        this.soldierA.ap = 8;
-        this.soldierB.ap = 10;
-        this.soldierC.ap = 6;
-        this.soldierD.ap = 5;
-
-        TurnManager.endTurn();
-
-        assertEquals(8, this.soldierA.ap);
-        assertEquals(10, this.soldierB.ap);
-        assertEquals(7, this.soldierC.ap);
-        assertEquals(6, this.soldierD.ap);
-    };
-
     TurnManagerTest.prototype.testEndTurnWithUnmovedUnits = function ()
     {
         this.soldierA.ap = 10;
@@ -91,17 +60,43 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
         assertEquals("Soldier A expected at the end of the queue, but it was: " + lastUnitInQueue.name + "\n", this.soldierA, lastUnitInQueue);
     };
 
-    TurnManagerTest.prototype.testEndTurnUnitStillAtFront = function ()
+    TurnManagerTest.prototype.testEndTurnDoesntIncrementAPWhenNextUnitAtMaxAP = function ()
     {
-        this.soldierA.ap = 10;
-        this.soldierB.ap = 1;
-        this.soldierC.ap = 1;
-        this.soldierD.ap = 1;
+        this.soldierB.ap = 10;
+        this.soldierC.ap = 6;
+        this.soldierD.ap = 5;
 
         TurnManager.endTurn();
 
-        var firstInQueue = TurnManager.unitList[0];
+        assertEquals(10, this.soldierB.ap);
+        assertEquals(6, this.soldierC.ap);
+        assertEquals(5, this.soldierD.ap);
+    };
 
-        assertEquals("Soldier A expected at the beginning of the queue, but it was: " + firstInQueue.name + "\n", this.soldierA, firstInQueue);
+    TurnManagerTest.prototype.testAPOnlyIncrementedWhenNeeded = function ()
+    {
+        this.soldierA.ap = 5;
+        this.soldierB.ap = 2;
+        this.soldierC.ap = 1;
+        this.soldierD.ap = 8;
+
+        TurnManager.incrementAP();
+
+        assertEquals(10, this.soldierA.ap);
+        assertEquals(7, this.soldierB.ap);
+        assertEquals(6, this.soldierC.ap);
+        assertEquals(10, this.soldierD.ap);
+    };
+
+    TurnManagerTest.prototype.testEndTurnDecrementsActiveUnitAP = function ()
+    {
+        this.soldierA.ap = 1;
+
+        var expectedCost = this.soldierA.ap * TurnManager.endTurnPercentageCost;
+
+        TurnManager.endTurn();
+
+        // Soldier B through D are incremented by 5
+        assertEquals(expectedCost, this.soldierA.ap);
     };
 });
