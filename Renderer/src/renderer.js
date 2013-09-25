@@ -41,8 +41,6 @@ function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableOb
     {
         this.context.clearRect(0, 0, this.camera.viewportRect.width, this.camera.viewportRect.height);
 
-        this.camera.update(e, deltaTime);
-
         if (!this.renderableMap)
             return;
 

@@ -1,4 +1,4 @@
-define(function ()
+define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
 {
     'use strict';
 
@@ -12,29 +12,17 @@ define(function ()
 
     Camera.prototype.handleResize = function (width, height)
     {
+        var currentCenterX = this.viewportRect.x + this.viewportRect.width / 2;
+        var currentCenterY = this.viewportRect.y + this.viewportRect.height / 2;
+
         this.viewportRect.width = width;
         this.viewportRect.height = height;
 
-        if (this.targetX != null)
-        {
-            this.centerX = this.targetX;
-        }
-        else
-        {
-            this.centerX = this.viewportRect.x + width / 2;
-        }
+        this.viewportRect.x = currentCenterX - width / 2;
+        this.viewportRect.y = currentCenterY - height / 2;
 
-        if (this.targetY != null)
-        {
-            this.centerY = this.targetY;
-        }
-        else
-        {
-            this.centerY = this.viewportRect.y + height / 2;
-        }
-
-        this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
-        this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
+        if (this.targetUnit)
+            this.moveToUnit(this.targetUnit);
     };
 
     Camera.prototype.onBeginTurn = function (unit)
@@ -45,42 +33,16 @@ define(function ()
     Camera.prototype.moveToUnit = function (unit)
     {
         var offset = this.scale / 2;
-        this.moveViewport(unit.tileX * this.scale + offset, unit.tileY * this.scale + offset, 1);
+
+        this.targetUnit = unit;
+
+        TransitionEffect.transitionFloat("moveToUnitX", this.viewportRect, 'x', null, unit.tileX * this.scale + offset - this.viewportRect.width / 2, 1, this, this.onMovedToUnit);
+        TransitionEffect.transitionFloat("moveToUnitY", this.viewportRect, 'y', null, unit.tileY * this.scale + offset - this.viewportRect.height / 2, 1, this, this.onMovedToUnit);
     };
 
-    Camera.prototype.moveViewport = function (targetX, targetY, seconds)
+    Camera.prototype.onMovedToUnit = function()
     {
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.deltaX = this.targetX - this.centerX;
-        this.deltaY = this.targetY - this.centerY;
-        this.transitionTime = seconds;
-    };
-
-    Camera.prototype.update = function (e, deltaTime)
-    {
-        if (this.transitionTime != null)
-        {
-            this.timeElapsed += deltaTime;
-            if (this.timeElapsed < this.transitionTime)
-            {
-                var partialTime = deltaTime / this.transitionTime;
-
-                this.centerX += this.deltaX * partialTime;
-                this.centerY += this.deltaY * partialTime;
-                this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
-                this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
-            }
-            else
-            {
-                this.transitionTime = null;
-                this.timeElapsed = 0;
-                this.centerX = this.targetX;
-                this.centerY = this.targetY;
-                this.viewportRect.x = this.centerX - this.viewportRect.width / 2;
-                this.viewportRect.y = this.centerY - this.viewportRect.height / 2;
-            }
-        }
+        this.targetUnit = null;
     };
 
     return Camera;
