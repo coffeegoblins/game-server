@@ -49,7 +49,7 @@ define(['Game/src/scheduler'],
 
         function onValueUpdateCompleted(eventData, deltaTime)
         {
-            var value = eventData.currentValue;
+            var value = eventData.targetValue;
             if (eventData.suffix)
             {
                 value += eventData.suffix;
