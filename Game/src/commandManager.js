@@ -8,12 +8,8 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
          */
         function CommandManager()
         {
-        }
 
-        CommandManager.moveActiveUnit = function (x, y)
-        {
-            LevelLoader.map.moveActiveUnit(x, y);
-        };
+        }
 
         CommandManager.moveViewport = function (x, y, milliseconds)
         {

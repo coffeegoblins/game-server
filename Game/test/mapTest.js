@@ -1,29 +1,4 @@
-// Mocking dependencies
-define('renderer', function ()
-{
-    function MockRenderer() {}
-
-    function MockCamera() {}
-
-    MockCamera.prototype.moveToUnit = function () {};
-    MockRenderer.camera = new MockCamera();
-    MockRenderer.setRenderablePath = function () {};
-    MockRenderer.clearRenderablePath = function () {};
-
-    return MockRenderer;
-});
-
-define('Game/src/turnManager', function ()
-{
-    function TurnManager() {}
-
-    TurnManager.unitList = [];
-    TurnManager.endTurn = function () {};
-
-    return TurnManager;
-});
-
-require(['src/map', 'src/soldier'], function (Map, Soldier)
+require(['src/map'], function (Map)
 {
     'use strict';
 
@@ -41,21 +16,5 @@ require(['src/map', 'src/soldier'], function (Map, Soldier)
                 assertTrue(map.tiles[tileIndex++] === map.getTile(x, y));
             }
         }
-    };
-
-    MapTest.prototype.testMoveUnit = function ()
-    {
-        var map = new Map(20, 20, 10);
-
-        var soldier = new Soldier();
-        map.addUnit(soldier, 0, 0);
-
-        assertTrue(map.getTile(0, 0).unit === soldier);
-        assertTrue(map.getTile(1, 1).unit == null);
-
-        map.moveActiveUnit(1, 1);
-
-        assertTrue(map.getTile(0, 0).unit == null);
-        assertTrue(map.getTile(1, 1).unit === soldier);
     };
 });

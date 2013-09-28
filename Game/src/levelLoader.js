@@ -10,7 +10,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
          */
         LevelLoader.prototype.loadLevel = function (fileName)
         {
-            // TODO: Asynchronous loading from file
+            // TODO: Asynchronous loading from file, update gui appropriately
             this.map = new Map(100, 100, 4);
 
             // Build a hill
@@ -54,8 +54,13 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
             soldier3.name = "C";
 
             this.map.addUnit(soldier, 0, 0);
+            TurnManager.unitList.push(soldier);
+
             this.map.addUnit(soldier2, 1, 1);
+            TurnManager.unitList.push(soldier2);
+
             this.map.addUnit(soldier3, 2, 2);
+            TurnManager.unitList.push(soldier3);
 
             Renderer.addRenderableSoldier(soldier, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
             Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesomeSad.png", "Renderer/content/awesomeSad.png");
@@ -98,9 +103,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                 Renderer.addRenderableObject(worldObject);
             }
 
-            TurnManager.registerBeginTurnEvent("camera", Renderer.camera.onBeginTurn, Renderer.camera);
-
-            TurnManager.beginTurn();
+            return this.map;
         };
 
         return new LevelLoader();

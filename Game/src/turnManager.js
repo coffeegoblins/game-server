@@ -97,8 +97,6 @@ define(function ()
                 registeredEvent.method.call(registeredEvent.context, currentUnit);
             }
         }
-
-        this.beginTurn();
     };
 
     return new TurnManager();

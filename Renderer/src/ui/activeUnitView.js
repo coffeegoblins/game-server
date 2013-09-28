@@ -41,6 +41,8 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
 
         ActiveUnitView.prototype.onEndTurn = function ()
         {
+            this.apBar.stopBlink();
+
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 0, 0.5, this, function ()
             {
                 this.element.style.opacity = 0;
@@ -49,12 +51,13 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
 
         ActiveUnitView.prototype.previewAP = function (ap)
         {
-            this.apBar.blinkPortion(ap);
-        };
+            if (ap === 0)
+            {
+                this.apBar.stopBlink();
+                return;
+            }
 
-        ActiveUnitView.prototype.stopPreviewAP = function ()
-        {
-            this.apBar.stopBlink();
+            this.apBar.blinkPortion(ap);
         };
 
         ActiveUnitView.prototype.setAP = function (ap)

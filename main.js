@@ -1,5 +1,5 @@
-require(['Game/src/scheduler', 'renderer', 'Game/src/map', 'Game/src/levelLoader', 'Game/src/commandManager'],
-    function (Scheduler, Renderer, Map, LevelLoader, CommandManager)
+require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/commandManager'],
+    function (Scheduler, Renderer, PlotManager, CommandManager)
     {
         'use strict';
         function onDocumentReady()
@@ -9,7 +9,7 @@ require(['Game/src/scheduler', 'renderer', 'Game/src/map', 'Game/src/levelLoader
 
             Renderer.initialize(canvas);
             Scheduler.start();
-            LevelLoader.loadLevel();
+            PlotManager.initialize();
         }
 
         if (document.readyState === 'complete')

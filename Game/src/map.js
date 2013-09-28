@@ -1,288 +1,136 @@
-define(['renderer', 'Game/src/scheduler', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView'],
-    function (Renderer, Scheduler, TurnManager, PathManager, ActionBarView, ActiveUnitView)
+define(function ()
+{
+    'use strict';
+
+    /**
+     * @param width The number of tiles on the horizontal axis of the renderableMap
+     * @param height The number of tiles on the vertical axis of the renderableMap
+     * @param initialHeight The height all tiles are initialized to. Default is 0.
+     * @constructor
+     */
+    function Map(width, height, initialHeight)
     {
-        'use strict';
+        this.width = width;
+        this.height = height;
+        this.registeredTileClickedEvents = [];
 
-        /**
-         * @param width The number of tiles on the horizontal axis of the renderableMap
-         * @param height The number of tiles on the vertical axis of the renderableMap
-         * @param initialHeight The height all tiles are initialized to. Default is 0.
-         * @constructor
-         */
-        function Map(width, height, initialHeight)
+        if (initialHeight == null)
+            initialHeight = 0;
+
+        this.tiles = [];
+        for (var y = 0; y < height; y++)
         {
-            this.width = width;
-            this.height = height;
+            for (var x = 0; x < width; x++)
+                this.tiles.push({height: initialHeight});
+        }
+    }
 
-            if (initialHeight == null)
-                initialHeight = 0;
+    Map.prototype.registerTileClickedEvent = function (id, method, context)
+    {
+        this.registeredTileClickedEvents.push({context: context, method: method});
+    };
 
-            this.tiles = [];
-            for (var y = 0; y < height; y++)
+    /**
+     * @param object The object to add
+     * @param x The X position of target tile
+     * @param y The Y position of target tile
+     */
+    Map.prototype.addObject = function (object, x, y)
+    {
+        object.tileX = x;
+        object.tileY = y;
+
+        for (var tileX = x; tileX < x + object.sizeX; tileX++)
+        {
+            for (var tileY = y; tileY < y + object.sizeY; tileY++)
             {
-                for (var x = 0; x < width; x++)
-                    this.tiles.push({height: initialHeight});
-            }
-
-            TurnManager.registerBeginTurnEvent("onBeginTurn", onBeginTurn, this);
-            TurnManager.registerEndTurnEvent("onEndTurn", onEndTurn, this);
-
-            this.activeUnitView = new ActiveUnitView();
-
-            TurnManager.registerBeginTurnEvent("activeUnitView", this.activeUnitView.onBeginTurn, this.activeUnitView);
-            TurnManager.registerEndTurnEvent("activeUnitView", this.activeUnitView.onEndTurn, this.activeUnitView);
-        }
-
-        function onBeginTurn(activeUnit)
-        {
-            Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, activeUnit), false);
-            Renderer.blinkUnit(activeUnit, 1.5);
-            ActionBarView.showActions();
-            ActionBarView.addActions([
-                {id: "EndTurn", method: this.onEndTurnAction, context: this}
-            ]);
-        }
-
-        function onEndTurn(activeUnit)
-        {
-            Renderer.stopBlinkUnit(activeUnit);
-            this.activeUnitView.stopPreviewAP();
-
-            // TODO Hide content and attack action
-            ActionBarView.removeActions('Move');
-
-            Renderer.clearRenderablePathById("availableTiles");
-            Renderer.clearRenderablePathById("selectedPath");
-
-            ActionBarView.hideActions();
-        }
-
-        /**
-         * @param object The object to add
-         * @param x The X position of target tile
-         * @param y The Y position of target tile
-         */
-        Map.prototype.addObject = function (object, x, y)
-        {
-            object.tileX = x;
-            object.tileY = y;
-
-            for (var tileX = x; tileX < x + object.sizeX; tileX++)
-            {
-                for (var tileY = y; tileY < y + object.sizeY; tileY++)
+                var tile = this.getTile(tileX, tileY);
+                if (tile)
                 {
-                    var tile = this.getTile(tileX, tileY);
-                    if (tile)
-                    {
-                        tile.content = object;
-                    }
+                    tile.content = object;
                 }
             }
-        };
+        }
+    };
 
-        /**
-         * @param unit The unit to add
-         * @param x The X position of target tile
-         * @param y The Y position of target tile
-         */
-        Map.prototype.addUnit = function (unit, x, y)
+    /**
+     * @param unit The unit to add
+     * @param x The X position of target tile
+     * @param y The Y position of target tile
+     */
+    Map.prototype.addUnit = function (unit, x, y)
+    {
+        var tile = this.getTile(x, y);
+
+        unit.tileX = x;
+        unit.tileY = y;
+
+        tile.unit = unit;
+    };
+
+    Map.prototype.canMoveToTile = function (unit, tileX, tileY)
+    {
+        var tile = this.getTile(tileX, tileY);
+        if (!tile || tile.unit)
+            return false;
+
+        if (tile.content)
         {
-            var tile = this.getTile(x, y);
-
-            unit.tileX = x;
-            unit.tileY = y;
-
-            tile.unit = unit;
-
-            TurnManager.unitList.push(unit);
-        };
-
-        Map.prototype.canMoveToTile = function (unit, tileX, tileY)
-        {
-            var tile = this.getTile(tileX, tileY);
-            if (!tile || tile.unit)
+            if (!tile.content.isClimbable || !unit.canClimbObjects)
                 return false;
+        }
 
-            if (tile.content)
-            {
-                if (!tile.content.isClimbable || !unit.canClimbObjects)
-                    return false;
-            }
+        return true;
+    };
 
-            return true;
-        };
+    Map.prototype.onClick = function (e, x, y, scale)
+    {
+        var tileX = Math.floor(x / scale);
+        var tileY = Math.floor(y / scale);
 
-        Map.prototype.onClick = function (e, x, y, scale)
+        var tile = this.getTile(tileX, tileY);
+        if (tile)
         {
-            var tileX = Math.floor(x / scale);
-            var tileY = Math.floor(y / scale);
-
-            var tile = this.getTile(tileX, tileY);
-            if (tile)
+            for (var i = 0; i < this.registeredTileClickedEvents.length; ++i)
             {
-                this.activeUnitView.previewAP(0);
-                Renderer.clearRenderablePathById("selectedPath");
-
-                // TODO Hide content and attack action
-                ActionBarView.removeActions('Move');
-
-                this.selectedTileX = tileX;
-                this.selectedTileY = tileY;
-
-                if (tile.content)
+                var registeredEvent = this.registeredTileClickedEvents[i];
+                if (registeredEvent)
                 {
-                    if (!tile.content.isClimbable || !TurnManager.activeUnit.canClimbObjects)
-                    {
-                        // TODO Content logic, Show action
-                        return;
-                    }
-                }
-
-                if (tile.unit)
-                {
-                    // TODO Attack logic, Show action
-                    return;
-                }
-
-                this.activePath = PathManager.calculatePath(this, TurnManager.activeUnit, tileX, tileY);
-                if (this.activePath)
-                {
-                    this.selectedTileCost = this.activePath[this.activePath.length - 1].distance;
-                    this.activeUnitView.previewAP(this.selectedTileCost);
-
-                    Renderer.addRenderablePath("selectedPath", this.activePath, true);
-                    ActionBarView.addActions([
-                        {id: "Move", method: this.onMoveAction, context: this}
-                    ]);
+                    registeredEvent.method.call(registeredEvent.context, tile, tileX, tileY);
                 }
             }
-        };
+        }
+    };
 
-        Map.prototype.onMoveAction = function ()
+    /**
+     * @param x The x coordinate of the tile in the tile array
+     * @param y The y coordinate of the tile in the tile array
+     */
+    Map.prototype.getTile = function (x, y)
+    {
+        if (x < 0 || y < 0 || x > this.width - 1 || y > this.height - 1)
+            return null;
+
+        return this.tiles[x + y * this.width];
+    };
+
+    /**
+     * @param object The object to remove
+     */
+    Map.prototype.removeObject = function (object)
+    {
+        for (var tileX = object.tileX; tileX < object.tileX + object.sizeX; tileX++)
         {
-            if (!this.activePath)
-                return;
-
-            var unit = TurnManager.activeUnit;
-            var startTile = this.getTile(unit.tileX, unit.tileY);
-            startTile.unit = null;
-
-            var startAp = unit.ap;
-            var endAp = startAp - this.selectedTileCost;
-            var progressTime = 0;
-            var totalTime = this.selectedTileCost / 20;
-
-            var path = this.activePath.slice();
-            path.unshift({x: unit.tileX, y: unit.tileY});
-
-            var progressPercentage = 0;
-            for (var i = 1; i < path.length; i++)
+            for (var tileY = object.tileY; tileY < object.tileY + object.sizeY; tileY++)
             {
-                var node = path[i];
-                node.startPercentage = progressPercentage;
-                node.endPercentage = node.distance / this.selectedTileCost;
-                node.percentageShare = node.endPercentage - node.startPercentage;
-                progressPercentage = node.endPercentage;
+                var tile = this.getTile(tileX, tileY);
+                if (tile && tile.content === object)
+                    tile.content = null;
             }
+        }
+    };
 
-            var currentNode = path.shift();
-            var nextNode = path.shift();
+    Map.prototype.maxHeight = 16;
 
-            Scheduler.schedule({
-                context: this,
-                endTime: totalTime,
-                method: function (e, deltaTime)
-                {
-                    progressTime += deltaTime;
-                    var progressPercentage = progressTime / totalTime;
-                    while (progressPercentage > nextNode.endPercentage)
-                    {
-                        currentNode = nextNode;
-                        nextNode = path.shift();
-                    }
-
-                    var nodeProgressPercentage = (progressPercentage - nextNode.startPercentage) / nextNode.percentageShare;
-
-                    unit.tileX = currentNode.x + ((nextNode.x - currentNode.x) * nodeProgressPercentage);
-                    unit.tileY = currentNode.y + ((nextNode.y - currentNode.y) * nodeProgressPercentage);
-
-                    unit.ap = startAp + (endAp - startAp) * progressPercentage;
-                    this.activeUnitView.setAP(unit.ap);
-                },
-                completedMethod: function (e)
-                {
-                    unit.tileX = nextNode.x;
-                    unit.tileY = nextNode.y;
-                    nextNode.tile.unit = unit;
-
-                    unit.ap = endAp;
-                    this.activeUnitView.setAP(unit.ap);
-
-                    Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this, unit), false);
-                    Scheduler.unschedule(e);
-                }
-            });
-
-            ActionBarView.removeActions('Move');
-            Renderer.clearRenderablePathById("availableTiles");
-            Renderer.clearRenderablePathById("selectedPath");
-        };
-
-        Map.prototype.onEndTurnAction = function ()
-        {
-            TurnManager.endTurn();
-        };
-
-        /**
-         * @param x The x coordinate of the target tile in the tile array
-         * @param y The y coordinate of the target tile in the tile array
-         */
-        Map.prototype.moveActiveUnit = function (x, y)
-        {
-            var tile = this.getTile(x, y);
-            var unit = TurnManager.activeUnit;
-            if (this.canMoveToTile(unit, x, y))
-            {
-                var previousTile = this.getTile(unit.tileX, unit.tileY);
-                if (previousTile && previousTile.unit === unit)
-                    previousTile.unit = null;
-
-                unit.tileX = x;
-                unit.tileY = y;
-
-                tile.unit = unit;
-            }
-        };
-
-        /**
-         * @param x The x coordinate of the tile in the tile array
-         * @param y The y coordinate of the tile in the tile array
-         */
-        Map.prototype.getTile = function (x, y)
-        {
-            if (x < 0 || y < 0 || x > this.width - 1 || y > this.height - 1)
-                return null;
-
-            return this.tiles[x + y * this.width];
-        };
-
-        /**
-         * @param object The object to remove
-         */
-        Map.prototype.removeObject = function (object)
-        {
-            for (var tileX = object.tileX; tileX < object.tileX + object.sizeX; tileX++)
-            {
-                for (var tileY = object.tileY; tileY < object.tileY + object.sizeY; tileY++)
-                {
-                    var tile = this.getTile(tileX, tileY);
-                    if (tile && tile.content === object)
-                        tile.content = null;
-                }
-            }
-        };
-
-        Map.prototype.maxHeight = 16;
-
-        return Map;
-    });
+    return Map;
+});
