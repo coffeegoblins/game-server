@@ -4,6 +4,11 @@ html, body {
     height: 100%;
     overflow: hidden;
     background-color: #000;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 #canvas {

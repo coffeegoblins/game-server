@@ -23,6 +23,12 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
             this.moveToUnit(this.targetUnit, this.callbackContext, this.callback);
     };
 
+    Camera.prototype.moveViewport = function (deltaX, deltaY)
+    {
+        this.viewportRect.x += deltaX;
+        this.viewportRect.y += deltaY;
+    };
+
     Camera.prototype.moveToUnit = function (unit, context, callback)
     {
         var offset = this.scale / 2;
@@ -38,7 +44,7 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         TransitionEffect.transitionFloat("moveToUnitY", this.viewportRect, 'y', null, this.targetY, 1, this, this.onMovedToUnit);
     };
 
-    Camera.prototype.onMovedToUnit = function()
+    Camera.prototype.onMovedToUnit = function ()
     {
         if (this.viewportRect.x === this.targetX && this.viewportRect.y === this.targetY)
         {

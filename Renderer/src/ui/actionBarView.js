@@ -35,7 +35,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
 
                     action.image = image;
                     this.actionsList.push(action);
-                    InputHandler.registerEvent(action.id, action.method, action.context);
+                    InputHandler.registerClickEvent(action.id, action.method, action.context);
 
                     fragment.appendChild(image);
                 }
@@ -66,7 +66,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
                         this.containerElement.removeChild(action.image);
                     }
 
-                    InputHandler.unregisterEvent(action.id);
+                    InputHandler.unregisterClickEvent(action.id);
                     this.actionsList.splice(i, 1);
                     break;
                 }
@@ -85,7 +85,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
             this.actionsList.length = 0;
             while (this.containerElement.firstChild)
             {
-                InputHandler.unregisterEvent(this.containerElement.firstChild.id);
+                InputHandler.unregisterClickEvent(this.containerElement.firstChild.id);
                 this.containerElement.removeChild(this.containerElement.firstChild);
             }
         };
