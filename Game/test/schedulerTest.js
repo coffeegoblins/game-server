@@ -15,7 +15,7 @@ require(['src/scheduler'], function (Scheduler)
         Scheduler.clear();
     };
 
-    SchedulerTest.prototype.testSchedule = function (queue)
+    SchedulerTest.prototype.testIntervalMethodIsCalled = function (queue)
     {
         var wasExecuted;
 
@@ -33,7 +33,25 @@ require(['src/scheduler'], function (Scheduler)
         });
     };
 
-    SchedulerTest.prototype.testUnschedule = function (queue)
+    SchedulerTest.prototype.testCompletedMethodIsCalledWhenEndTimeSet = function (queue)
+    {
+        var wasExecuted;
+
+        queue.call('Scheduling the event', function (callbacks)
+        {
+            var scheduledEvent = {endTime: 0};
+            scheduledEvent.completedMethod = callbacks.add(function () { wasExecuted = true; });
+
+            Scheduler.schedule(scheduledEvent);
+        });
+
+        queue.call('Verifying that the scheduled completed method was called', function ()
+        {
+            assertTrue(wasExecuted);
+        });
+    };
+
+    SchedulerTest.prototype.testUnscheduleRemovesEvent = function (queue)
     {
         var wasExecuted;
 
