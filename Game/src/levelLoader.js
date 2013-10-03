@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager', 'Renderer/src/ui/renderableTurnQueue'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue)
     {
         'use strict';
 
@@ -48,10 +48,13 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
 
             var soldier = new Soldier();
             soldier.name = "A";
+            soldier.type = "Archer";
             var soldier2 = new Soldier();
             soldier2.name = "B";
+            soldier2.type = "Melee";
             var soldier3 = new Soldier();
             soldier3.name = "C";
+            soldier3.type = "Archer";
 
             this.map.addUnit(soldier, 0, 0);
             TurnManager.unitList.push(soldier);
@@ -61,6 +64,13 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
 
             this.map.addUnit(soldier3, 2, 2);
             TurnManager.unitList.push(soldier3);
+
+            RenderableTurnQueue.addUnit(soldier, 0);
+            RenderableTurnQueue.addUnit(soldier2, 0);
+            RenderableTurnQueue.addUnit(soldier3, 0);
+
+            TurnManager.registerBeginTurnEvent("RenderableTurnQueueBeginTurn", RenderableTurnQueue.onBeginTurn, RenderableTurnQueue);
+            TurnManager.registerEndTurnEvent("RenderableTurnQueueEndTurn", RenderableTurnQueue.onEndTurn, RenderableTurnQueue);
 
             Renderer.addRenderableSoldier(soldier, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
             Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesomeSad.png", "Renderer/content/awesomeSad.png");

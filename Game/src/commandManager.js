@@ -1,5 +1,6 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect'],
-    function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect',
+        'Renderer/src/ui/renderableTurnQueue'],
+    function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
@@ -10,6 +11,11 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         {
 
         }
+
+        CommandManager.addUnitToQueue = function(unit, position)
+        {
+            RenderableTurnQueue.addUnit(unit, position);
+        };
 
         CommandManager.moveViewport = function (x, y, milliseconds)
         {

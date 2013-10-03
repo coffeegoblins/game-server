@@ -6,8 +6,9 @@ define(['Game/src/inputHandler',
         'Renderer/src/renderableSoldier',
         'Renderer/src/camera/camera',
         'Renderer/src/renderablePath',
-        'Renderer/src/effects/blinkEffect'],
-    function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect)
+        'Renderer/src/effects/blinkEffect',
+        'Renderer/src/ui/renderableTurnQueue'],
+    function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
@@ -30,6 +31,7 @@ define(['Game/src/inputHandler',
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
             this.camera.handleResize(this.canvas.width, this.canvas.height);
+            RenderableTurnQueue.handleResize(this.canvas.width, this.canvas.height);
         }
 
         function onClick(e, x, y)

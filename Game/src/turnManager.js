@@ -60,43 +60,39 @@ define(function ()
 
     TurnManager.prototype.endTurn = function ()
     {
-        this.activeUnit = null;
-
         // Remove the soldier from the front
         var currentUnit = this.unitList.shift();
+
+        // Pay the end turn penalty
         currentUnit.ap *= this.endTurnPercentageCost;
 
         this.incrementAP();
 
         // Place in queue at appropriate spot
-        for (var i = this.unitList.length - 1; i >= 0; --i)
+        for (var placementIndex = this.unitList.length - 1; placementIndex >= 0; --placementIndex)
         {
-            var comparisonUnit = this.unitList[i];
+            var comparisonUnit = this.unitList[placementIndex];
 
             var currentUnitTurnsToMove = currentUnit.maxAP - currentUnit.ap;
             var comparisonUnitTurnsToMove = comparisonUnit.maxAP - comparisonUnit.ap;
 
             if (currentUnitTurnsToMove >= comparisonUnitTurnsToMove)
             {
-                this.unitList.splice(i + 1, 0, currentUnit);
+                this.unitList.splice(placementIndex + 1, 0, currentUnit);
                 break;
             }
         }
 
-        if (i < 0)
-        {
-            // The unit is still at the front
-            this.unitList.unshift(currentUnit);
-        }
-
-        for ( i = 0; i < this.registeredEndTurnEvents.length; ++i)
+        for (var i = 0; i < this.registeredEndTurnEvents.length; ++i)
         {
             var registeredEvent = this.registeredEndTurnEvents[i];
             if (registeredEvent)
             {
-                registeredEvent.method.call(registeredEvent.context, currentUnit);
+                registeredEvent.method.call(registeredEvent.context, currentUnit, placementIndex + 1);
             }
         }
+
+        this.activeUnit = null;
     };
 
     return new TurnManager();

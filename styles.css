@@ -32,6 +32,21 @@ html, body {
     background-color: rgba(225, 255, 255, 0.2);
 }
 
+#turnQueue {
+    position: fixed;
+    opacity: 1;
+    left: 16px;
+    top: 225px;
+}
+
+#turnQueue img {
+    position: relative;
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 2px;
+}
+
 #activeUnitView img {
     height: 128px;
     width: 128px;
@@ -81,6 +96,16 @@ html, body {
     width: 64px;
 }
 
+.touch #turnQueue {
+    left: 8px;
+    top: 150px;
+}
+
+.touch #turnQueue img {
+    width: 32px;
+    height: 32px;
+}
+
 #actionBarView {
     position: fixed;
     left: 50%;
@@ -120,6 +145,16 @@ html, body {
 }
 
 @media only screen and (orientation: landscape) {
+    .touch #turnQueue {
+        left: 100px;
+        top: 8px;
+    }
+
+    .touch #turnQueue img {
+        width: 32px;
+        height: 32px;
+    }
+
     .touch #actionBarView {
         left: auto;
         bottom: auto;
