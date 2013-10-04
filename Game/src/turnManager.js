@@ -83,6 +83,8 @@ define(function ()
             }
         }
 
+        this.activeUnit = null;
+
         for (var i = 0; i < this.registeredEndTurnEvents.length; ++i)
         {
             var registeredEvent = this.registeredEndTurnEvents[i];
@@ -91,8 +93,6 @@ define(function ()
                 registeredEvent.method.call(registeredEvent.context, currentUnit, placementIndex + 1);
             }
         }
-
-        this.activeUnit = null;
     };
 
     return new TurnManager();

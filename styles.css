@@ -37,6 +37,9 @@ html, body {
     opacity: 1;
     left: 16px;
     top: 225px;
+    padding: 8px;
+    border-radius: 16px;
+    background-color: rgba(225, 255, 255, 0.2);
 }
 
 #turnQueue img {
@@ -44,7 +47,6 @@ html, body {
     display: block;
     width: 64px;
     height: 64px;
-    margin: 2px;
 }
 
 #activeUnitView img {
@@ -151,6 +153,7 @@ html, body {
     }
 
     .touch #turnQueue img {
+        display: inline-block;
         width: 32px;
         height: 32px;
     }

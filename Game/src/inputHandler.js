@@ -190,7 +190,6 @@ define(function ()
         document.body.className += ' touch';
     }
 
-
     function InputHandler() { }
 
     InputHandler.disableInput = function ()
