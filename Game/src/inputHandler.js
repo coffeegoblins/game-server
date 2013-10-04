@@ -70,6 +70,8 @@ define(function ()
                 activeTouches[touch.id] = {initialEvent: touch, previousX: touch.pageX, previousY: touch.pageY};
             }
         }
+
+        e.preventDefault();
     }
 
     function onTouchMove(e)
