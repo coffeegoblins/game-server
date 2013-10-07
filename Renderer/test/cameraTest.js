@@ -1,8 +1,11 @@
-require(['camera/camera'], function (Camera)
+define(['Renderer/src/camera/camera'], function (Camera)
 {
     'use strict';
 
-    var CameraTest = new TestCase('CameraTest');
+    function CameraTest()
+    {
+        this.name = 'Camera Test';
+    }
 
     CameraTest.prototype.setUp = function ()
     {
@@ -11,6 +14,8 @@ require(['camera/camera'], function (Camera)
 
     CameraTest.prototype.testCamera = function ()
     {
-        // TODO Tests aren't being found
+        assertFail('TODO: Actually write some tests');
     };
+
+    return CameraTest;
 });

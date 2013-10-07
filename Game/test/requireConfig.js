@@ -1,6 +1,9 @@
 require.config({
-    baseUrl: '/test',
+    baseUrl: '',
     shim: {},
     paths: {
+        Game: '../',
+        Renderer: '../../Renderer',
+        TestFramework: '../../TestFramework'
     }
 });

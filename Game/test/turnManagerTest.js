@@ -1,10 +1,13 @@
-require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
+define(['Game/src/turnManager', 'Game/src/soldier'], function (TurnManager, Soldier)
 {
     'use strict';
 
-    var TurnManagerTest = new TestCase('TurnManagerTest');
+    function TurnManagerTest()
+    {
+        this.name = 'Turn Manager Test';
+    }
 
-    TurnManagerTest.prototype.setUp = function ()
+    TurnManagerTest.prototype.setup = function ()
     {
         this.soldierA = new Soldier();
         this.soldierB = new Soldier();
@@ -29,7 +32,7 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
 
     TurnManagerTest.prototype.tearDown = function ()
     {
-        TurnManager.unitList = [];
+        TurnManager.unitList.length = 0;
     };
 
     TurnManagerTest.prototype.testEndTurnWithOtherMovedUnits = function ()
@@ -99,4 +102,6 @@ require(['src/turnManager', 'src/soldier'], function (TurnManager, Soldier)
         // Soldier B through D are incremented by 5
         assertEquals(expectedCost, this.soldierA.ap);
     };
+
+    return TurnManagerTest;
 });

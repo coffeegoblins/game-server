@@ -1,8 +1,11 @@
-require(['src/utility'], function (Utility)
+define(['Game/src/utility'], function (Utility)
 {
     'use strict';
 
-    var UtilityTest = new TestCase('UtilityTest');
+    function UtilityTest()
+    {
+        this.name = 'Utility Test';
+    }
 
     UtilityTest.prototype.testRemoveElement = function ()
     {
@@ -24,4 +27,6 @@ require(['src/utility'], function (Utility)
         assertEquals('value1', input[0].property1);
         assertEquals('value3', input[1].property1);
     };
+
+    return UtilityTest;
 });

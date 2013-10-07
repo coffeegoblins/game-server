@@ -1,10 +1,13 @@
-require(['src/map'], function (Map)
+define(['Game/src/map'], function (Map)
 {
     'use strict';
 
-    var MapTest = new TestCase('MapTest');
+    function MapTest()
+    {
+        this.name = 'Map Test';
+    }
 
-    MapTest.prototype.testGetTile = function ()
+    MapTest.prototype.getTile = function ()
     {
         var map = new Map(20, 20, 1);
 
@@ -13,8 +16,10 @@ require(['src/map'], function (Map)
         {
             for (var x = 0; x < 20; x++)
             {
-                assertTrue(map.tiles[tileIndex++] === map.getTile(x, y));
+                assertEquals(map.tiles[tileIndex++], map.getTile(x, y));
             }
         }
     };
+
+    return MapTest;
 });

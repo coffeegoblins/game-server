@@ -1,28 +1,10 @@
-require(['src/pathManager'], function (PathManager)
+define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 {
     'use strict';
 
-    function MockMap()
+    function PathManagerTest()
     {
-        this.tiles = [];
-        for (var x = 0; x < 4; x++)
-        {
-            this.tiles[x] = [];
-            for (var y = 0; y < 4; y++)
-                this.tiles[x][y] = {height: 0};
-        }
-
-        this.addObject = function (object, x, y)
-        {
-            this.tiles[x][y].content = object;
-        };
-
-        this.getTile = function (x, y)
-        {
-            var row = this.tiles[x];
-            if (row)
-                return row[y];
-        };
+        this.name = 'Path Manager Test';
     }
 
     function getCompletedNodeAt(completedNodes, x, y)
@@ -35,11 +17,9 @@ require(['src/pathManager'], function (PathManager)
         }
     }
 
-    var PathManagerTest = new TestCase('PathManagerTest');
-
     PathManagerTest.prototype.testAPGreaterThanBoundary = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: PathManager.diagonalMoveCost * 10, tileX: 0, tileY: 0};
 
         var completedNodes = PathManager.calculateAvailableTiles(map, unit);
@@ -48,13 +28,13 @@ require(['src/pathManager'], function (PathManager)
 
     PathManagerTest.prototype.testHeightIsUsed = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: PathManager.diagonalMoveCost + 1, maxMoveableHeight: 2, tileX: 0, tileY: 0};
         map.getTile(1, 1).height = 1;
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
 
-        assertNotNull('Target Node is null', targetNode);
+        assertTruthy('Target Node is null', targetNode);
         assertEquals('Height did not contribute to the move factor', PathManager.diagonalMoveCost + 1, targetNode.distance);
     };
 
@@ -73,27 +53,27 @@ require(['src/pathManager'], function (PathManager)
 
     PathManagerTest.prototype.testUnitBlocksTile = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, tileX: 0, tileY: 0};
         map.getTile(1, 1).unit = {tileX: 1, tileY: 1};
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
-        assertUndefined('Tile was not blocked by unit', targetNode);
+        assertFalsy('Tile was not blocked by unit', targetNode);
     };
 
     PathManagerTest.prototype.testWorldObjectBlocksTile = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, tileX: 0, tileY: 0};
         map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
-        assertUndefined('Tile was not blocked by world object', targetNode);
+        assertFalsy('Tile was not blocked by world object', targetNode);
     };
 
     PathManagerTest.prototype.testDiagonalMovementNearWorldObjects = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, tileX: 1, tileY: 0};
         map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -101,23 +81,23 @@ require(['src/pathManager'], function (PathManager)
         var pathNodes = PathManager.calculatePath(map, unit, 2, 1);
 
         assertEquals('Path was not the correct length', 2, pathNodes.length);
-        assertTrue('First path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 0);
-        assertTrue('Second path node was incorrect', pathNodes[1].x === 2 && pathNodes[1].y === 1);
+        assertTruthy('First path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 0);
+        assertTruthy('Second path node was incorrect', pathNodes[1].x === 2 && pathNodes[1].y === 1);
     };
 
     PathManagerTest.prototype.testProhibitiveTileHeightDifferences = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, maxMoveableHeight: 2, tileX: 1, tileY: 0};
         map.getTile(1, 1).height = 3;
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
-        assertUndefined('Tile was not blocked by prohibitive height difference', targetNode);
+        assertFalsy('Tile was not blocked by prohibitive height difference', targetNode);
     };
 
     PathManagerTest.prototype.testClimbableWorldObjects = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, canClimbObjects: true, maxMoveableHeight: 2, tileX: 1, tileY: 0};
         map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -125,17 +105,17 @@ require(['src/pathManager'], function (PathManager)
         map.getTile(1, 2).height = 10;
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
-        assertNotUndefined('Climbable object could not be accessed', targetNode);
+        assertTruthy('Climbable object could not be accessed', targetNode);
 
         var pathNodes = PathManager.calculatePath(map, unit, 1, 2);
         assertEquals('Path was not the correct length', 2, pathNodes.length);
-        assertTrue('First path node was incorrect', pathNodes[0].x === 1 && pathNodes[0].y === 1);
-        assertTrue('Second path node was incorrect', pathNodes[1].x === 1 && pathNodes[1].y === 2);
+        assertTruthy('First path node was incorrect', pathNodes[0].x === 1 && pathNodes[0].y === 1);
+        assertTruthy('Second path node was incorrect', pathNodes[1].x === 1 && pathNodes[1].y === 2);
     };
 
     PathManagerTest.prototype.testDiagonalMovementNearClimbableWorldObjects = function ()
     {
-        var map = new MockMap();
+        var map = new Map(4, 4);
         var unit = {ap: 20, canClimbObjects: true, tileX: 1, tileY: 0};
         map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -143,6 +123,8 @@ require(['src/pathManager'], function (PathManager)
         var pathNodes = PathManager.calculatePath(map, unit, 2, 1);
 
         assertEquals('Path was not the correct length', 1, pathNodes.length);
-        assertTrue('Path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 1);
+        assertTruthy('Path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 1);
     };
+
+    return PathManagerTest;
 });

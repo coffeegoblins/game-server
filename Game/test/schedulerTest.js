@@ -1,10 +1,13 @@
-require(['src/scheduler'], function (Scheduler)
+define(['Game/src/scheduler'], function (Scheduler)
 {
     'use strict';
 
-    var SchedulerTest = new AsyncTestCase('SchedulerTest');
+    function SchedulerTest()
+    {
+        this.name = 'Scheduler Test';
+    }
 
-    SchedulerTest.prototype.setUp = function ()
+    SchedulerTest.prototype.setup = function ()
     {
         Scheduler.start();
     };
@@ -15,111 +18,75 @@ require(['src/scheduler'], function (Scheduler)
         Scheduler.clear();
     };
 
-    SchedulerTest.prototype.testIntervalMethodIsCalled = function (queue)
+    SchedulerTest.prototype.testIntervalMethodIsCalled = function ()
     {
-        var wasExecuted;
+        var wasExecuted = false;
+        Scheduler.schedule({method: function () { wasExecuted = true; }});
 
-        queue.call('Scheduling the event', function (callbacks)
+        async(function ()
         {
-            var scheduledEvent = {};
-            scheduledEvent.method = callbacks.add(function () { wasExecuted = true; });
-
-            Scheduler.schedule(scheduledEvent);
-        });
-
-        queue.call('Verifying that the scheduled method was called', function ()
-        {
-            assertTrue(wasExecuted);
-        });
+            return wasExecuted;
+        }, 'Scheduled event was not called', 100);
     };
 
-    SchedulerTest.prototype.testCompletedMethodIsCalledWhenEndTimeSet = function (queue)
+    SchedulerTest.prototype.testCompletedMethodIsCalledWhenEndTimeSet = function ()
     {
-        var wasExecuted;
+        var wasExecuted = false;
+        Scheduler.schedule({endTime: 0, completedMethod: function () { wasExecuted = true; }});
 
-        queue.call('Scheduling the event', function (callbacks)
+        async(function ()
         {
-            var scheduledEvent = {endTime: 0};
-            scheduledEvent.completedMethod = callbacks.add(function () { wasExecuted = true; });
-
-            Scheduler.schedule(scheduledEvent);
-        });
-
-        queue.call('Verifying that the scheduled completed method was called', function ()
-        {
-            assertTrue(wasExecuted);
-        });
+            return wasExecuted;
+        }, 'Scheduled event was not called', 100);
     };
 
     SchedulerTest.prototype.testUnscheduleRemovesEvent = function (queue)
     {
-        var wasExecuted;
+        var wasExecuted = false;
+        var scheduledEvent = {method: function () { wasExecuted = true; }};
 
-        queue.call('Scheduling the event', function ()
+        Scheduler.schedule(scheduledEvent);
+        Scheduler.unschedule(scheduledEvent);
+
+        asyncWait(100);
+        async(function ()
         {
-            var scheduledEvent = {};
-            scheduledEvent.method = function () { wasExecuted = true; };
-
-            Scheduler.schedule(scheduledEvent);
-            Scheduler.unschedule(scheduledEvent);
-        });
-
-        queue.call("Verifying that the scheduled method wasn't called", function ()
-        {
-            assertUndefined(wasExecuted);
+            assertFalsy(wasExecuted);
         });
     };
 
     SchedulerTest.prototype.testUnscheduleById = function (queue)
     {
         var wasExecuted;
+        Scheduler.schedule({id: 'testEvent', method: function () { wasExecuted = true; }});
+        Scheduler.unscheduleById('testEvent');
 
-        queue.call('Scheduling the event', function ()
+        asyncWait(100);
+        async(function ()
         {
-            var scheduledEvent = {id: 'testEvent'};
-            scheduledEvent.method = function () { wasExecuted = true; };
-
-            Scheduler.schedule(scheduledEvent);
-            Scheduler.unscheduleById('testEvent');
-        });
-
-        queue.call("Verifying that the scheduled method wasn't called", function ()
-        {
-            assertUndefined(wasExecuted);
+            assertFalsy(wasExecuted);
         });
     };
 
     SchedulerTest.prototype.testPriority = function (queue)
     {
         var executionOrder = [];
+        Scheduler.schedule({priority: 1, method: function () { executionOrder.push('method1'); }});
+        Scheduler.schedule({priority: 3, method: function () { executionOrder.push('method2'); }});
+        Scheduler.schedule({priority: 2, method: function () { executionOrder.push('method3'); }});
 
-        queue.call('Scheduling the events', function (callbacks)
+        async(function ()
         {
-            var scheduledEvent1 = {priority: 1};
-            scheduledEvent1.method = callbacks.add(function () {
-                executionOrder.push('method1');
-            });
+            return executionOrder.length === 3;
+        }, 'The scheduled events were not called');
 
-            var scheduledEvent2 = {priority: 3};
-            scheduledEvent2.method = callbacks.add(function () {
-                executionOrder.push('method2');
-            });
-
-            var scheduledEvent3 = {priority: 2};
-            scheduledEvent3.method = callbacks.add(function () {
-                executionOrder.push('method3');
-            });
-
-            Scheduler.schedule(scheduledEvent1);
-            Scheduler.schedule(scheduledEvent2);
-            Scheduler.schedule(scheduledEvent3);
-        });
-
-        queue.call('Verifying that the methods were called in the right order', function ()
+        async(function ()
         {
             assertEquals('method2', executionOrder[0]);
             assertEquals('method3', executionOrder[1]);
             assertEquals('method1', executionOrder[2]);
         });
     };
+
+    return SchedulerTest;
 });
