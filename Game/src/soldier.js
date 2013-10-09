@@ -16,6 +16,9 @@ define(function ()
         this.maxAP = 42;
         this.maxMoveableHeight = 2;
         this.canClimbObjects = true;
+        this.attackRange = 3;
+        this.attackPower = 25;
+        this.attackCost = 25;
     }
 
     return Soldier;

@@ -1,14 +1,12 @@
-define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
+define(['Renderer/src/effects/blinkEffect', 'Renderer/src/effects/transitionEffect'], function (BlinkEffect, TransitionEffect)
 {
     'use strict';
     function RenderableProgressBar(element)
     {
-        this.progress = 100;
-        this.maxProgress = 100;
-        this.timeElapsed = 0;
-
         this.element = element;
         this.foregroundElement = element.querySelector('.innerBar');
+        this.foregroundElement.style.width = "100%";
+
         this.previewElement = element.querySelector('.innerBarPreview');
     }
 
@@ -18,19 +16,13 @@ define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
         BlinkEffect.blink(this.previewElement, 1);
     };
 
-    RenderableProgressBar.prototype.setProgress = function (progress)
+    RenderableProgressBar.prototype.setProgress = function (id, progress, maxProgress)
     {
-        this.progress = Math.min(progress, this.maxProgress);
+        var progressPercentage = progress / maxProgress * 100;
 
-        var progressPercentage = this.progress / this.maxProgress * 100;
-        this.foregroundElement.style.width = progressPercentage + "%";
-        this.previewElement.style.width = this.foregroundElement.style.width;
-    };
-
-    RenderableProgressBar.prototype.setMaxProgress = function (maxProgress)
-    {
-        this.maxProgress = maxProgress;
-        this.setProgress(this.progress);
+        TransitionEffect.transitionFloat(id, this.foregroundElement.style, 'width', "%", progressPercentage, 1, this, function(){
+            this.foregroundElement.style.width = progressPercentage + "%";
+        });
     };
 
     RenderableProgressBar.prototype.stopBlink = function ()

@@ -28,10 +28,8 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
                 }
             }
 
-            this.hpBar.setProgress(activeUnit.hp);
-            this.hpBar.setMaxProgress(activeUnit.maxHP);
-            this.apBar.setProgress(activeUnit.ap);
-            this.apBar.setMaxProgress(activeUnit.maxAP);
+            this.hpBar.setProgress('hpBar', activeUnit.hp, activeUnit.maxHP);
+            this.apBar.setProgress('apBar', activeUnit.ap, activeUnit.maxAP);
 
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()
             {
@@ -60,9 +58,9 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             this.apBar.blinkPortion(ap);
         };
 
-        ActiveUnitView.prototype.setAP = function (ap)
+        ActiveUnitView.prototype.setAP = function (ap, maxAP)
         {
-            this.apBar.setProgress(ap);
+            this.apBar.setProgress('apBar', ap, maxAP);
         };
 
         return ActiveUnitView;

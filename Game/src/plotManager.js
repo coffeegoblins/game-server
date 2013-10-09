@@ -45,7 +45,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
             // TODO Hide content and attack action
             ActionBarView.hideActions();
-            ActionBarView.removeActions('Move');
+            ActionBarView.removeActions('Move', 'Attack');
 
             Renderer.clearRenderablePathById('availableTiles');
             Renderer.clearRenderablePathById('selectedPath');
@@ -55,11 +55,12 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
+            this.selectedTile = selectedTile;
             this.activeUnitView.previewAP(0);
-            Renderer.clearRenderablePathById("selectedPath");
+            Renderer.clearRenderablePathById('selectedPath');
 
             // TODO Hide content and attack action
-            ActionBarView.removeActions('Move');
+            ActionBarView.removeActions('Move', 'Attack');
 
             if (selectedTile.content)
             {
@@ -72,7 +73,14 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
             if (selectedTile.unit)
             {
-                // TODO Attack logic, Show action
+                var distance = Math.sqrt(Math.pow(tileX - TurnManager.activeUnit.tileX, 2) + Math.pow(tileY - TurnManager.activeUnit.tileY, 2));
+
+                if (distance < TurnManager.activeUnit.attackRange && TurnManager.activeUnit.ap >= TurnManager.activeUnit.attackCost)
+                {
+                    ActionBarView.addActions([
+                        {id: 'Attack', method: this.onAttackAction, context: this}
+                    ]);
+                }
                 return;
             }
 
@@ -82,11 +90,20 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 this.selectedTileCost = this.activePath[this.activePath.length - 1].distance;
                 this.activeUnitView.previewAP(this.selectedTileCost);
 
-                Renderer.addRenderablePath("selectedPath", this.activePath, true);
+                Renderer.addRenderablePath('selectedPath', this.activePath, true);
                 ActionBarView.addActions([
-                    {id: "Move", method: this.onMoveAction, context: this}
+                    {id: 'Move', method: this.onMoveAction, context: this}
                 ]);
             }
+        };
+
+        PlotManager.prototype.onAttackAction = function ()
+        {
+            this.selectedTile.unit.hp -= TurnManager.activeUnit.attackPower;
+            TurnManager.activeUnit.ap -= TurnManager.activeUnit.attackCost;
+            this.activeUnitView.setAP(TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP);
+
+            ActionBarView.removeActions('Attack');
         };
 
         PlotManager.prototype.onMoveAction = function ()
@@ -137,7 +154,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                     unit.tileY = currentNode.y + ((nextNode.y - currentNode.y) * nodeProgressPercentage);
 
                     unit.ap = startAp + (endAp - startAp) * progressPercentage;
-                    this.activeUnitView.setAP(unit.ap);
+                    this.activeUnitView.setAP(unit.ap, unit.maxAP);
                 },
                 completedMethod: function (e)
                 {
@@ -146,7 +163,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                     nextNode.tile.unit = unit;
 
                     unit.ap = endAp;
-                    this.activeUnitView.setAP(unit.ap);
+                    this.activeUnitView.setAP(unit.ap, unit.maxAP);
 
                     Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this.currentMap, unit), false);
                     InputHandler.enableInput();
