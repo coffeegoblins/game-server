@@ -40,7 +40,7 @@ define(['Game/src/scheduler'], function (Scheduler)
         }, 'Scheduled event was not called', 100);
     };
 
-    SchedulerTest.prototype.testUnscheduleRemovesEvent = function (queue)
+    SchedulerTest.prototype.testUnscheduleRemovesEvent = function ()
     {
         var wasExecuted = false;
         var scheduledEvent = {method: function () { wasExecuted = true; }};
@@ -55,7 +55,7 @@ define(['Game/src/scheduler'], function (Scheduler)
         });
     };
 
-    SchedulerTest.prototype.testUnscheduleById = function (queue)
+    SchedulerTest.prototype.testUnscheduleById = function ()
     {
         var wasExecuted;
         Scheduler.schedule({id: 'testEvent', method: function () { wasExecuted = true; }});
@@ -68,7 +68,7 @@ define(['Game/src/scheduler'], function (Scheduler)
         });
     };
 
-    SchedulerTest.prototype.testPriority = function (queue)
+    SchedulerTest.prototype.testPriority = function ()
     {
         var executionOrder = [];
         Scheduler.schedule({priority: 1, method: function () { executionOrder.push('method1'); }});

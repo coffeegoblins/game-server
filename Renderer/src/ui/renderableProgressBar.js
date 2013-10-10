@@ -19,8 +19,14 @@ define(['Renderer/src/effects/blinkEffect', 'Renderer/src/effects/transitionEffe
     RenderableProgressBar.prototype.setProgress = function (id, progress, maxProgress)
     {
         var progressPercentage = progress / maxProgress * 100;
+        this.foregroundElement.style.width = progressPercentage + "%";
+    };
 
-        TransitionEffect.transitionFloat(id, this.foregroundElement.style, 'width', "%", progressPercentage, 1, this, function(){
+    RenderableProgressBar.prototype.transitionProgress = function (id, progress, maxProgress, seconds)
+    {
+        var progressPercentage = progress / maxProgress * 100;
+
+        TransitionEffect.transitionFloat(id, this.foregroundElement.style, 'width', "%", progressPercentage, seconds, this, function(){
             this.foregroundElement.style.width = progressPercentage + "%";
         });
     };

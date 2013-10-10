@@ -28,8 +28,8 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
                 }
             }
 
-            this.hpBar.setProgress('hpBar', activeUnit.hp, activeUnit.maxHP);
-            this.apBar.setProgress('apBar', activeUnit.ap, activeUnit.maxAP);
+            this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
+            this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
 
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()
             {

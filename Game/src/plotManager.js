@@ -101,7 +101,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
         {
             this.selectedTile.unit.hp -= TurnManager.activeUnit.attackPower;
             TurnManager.activeUnit.ap -= TurnManager.activeUnit.attackCost;
-            this.activeUnitView.setAP(TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP);
+            this.activeUnitView.transitionProgress('AttackAction', TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP, 1);
 
             ActionBarView.removeActions('Attack');
         };
@@ -156,7 +156,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                     unit.ap = startAp + (endAp - startAp) * progressPercentage;
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
                 },
-                completedMethod: function (e)
+                completedMethod: function ()
                 {
                     unit.tileX = nextNode.x;
                     unit.tileY = nextNode.y;
