@@ -34,7 +34,7 @@ define(['Game/src/spriteSheet'], function (SpriteSheet)
         this.map.onClick(e, x, y, scale);
     };
 
-    RenderableMap.prototype.render = function (context, tileSize, viewportRect)
+    RenderableMap.prototype.render = function (context, deltaTime, tileSize, viewportRect)
     {
         this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / tileSize));
         this.visibleTileTop = Math.max(0, Math.floor(viewportRect.y / tileSize));

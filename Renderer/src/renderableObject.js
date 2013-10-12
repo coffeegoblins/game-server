@@ -15,7 +15,7 @@ define(function ()
                 this.object.tileY + this.object.sizeY >= top;
     };
 
-    RenderableObject.prototype.render = function (context, tileSize, viewportRect)
+    RenderableObject.prototype.render = function (context, deltaTime, tileSize, viewportRect)
     {
         var scaledWidth = tileSize * this.object.sizeX;
         var scaledHeight = tileSize * this.object.sizeY;

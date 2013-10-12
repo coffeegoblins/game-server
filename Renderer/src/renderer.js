@@ -52,12 +52,12 @@ define(['Game/src/inputHandler',
                 return;
 
             var map = this.renderableMap;
-            map.render(this.context, this.camera.scale, this.camera.viewportRect);
+            map.render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
 
             // Pathing needs to be drawn after the map and before the objects
             for (var i = 0; i < this.renderablePaths.length; i++)
             {
-                this.renderablePaths[i].render(this.context, this.camera.scale, this.camera.viewportRect);
+                this.renderablePaths[i].render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
             }
 
             for (i = 0; i < this.renderables.length; i++)
@@ -65,7 +65,7 @@ define(['Game/src/inputHandler',
                 var renderable = this.renderables[i];
                 if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
                 {
-                    renderable.render(this.context, this.camera.scale, this.camera.viewportRect);
+                    renderable.render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
                 }
             }
         }

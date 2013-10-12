@@ -52,10 +52,11 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             if (ap === 0)
             {
                 this.apBar.stopBlink();
-                return;
             }
-
-            this.apBar.blinkPortion(ap);
+            else
+            {
+                this.apBar.blinkPortion(ap);
+            }
         };
 
         ActiveUnitView.prototype.setAP = function (ap, maxAP)

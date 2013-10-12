@@ -28,7 +28,7 @@ define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
         }
     }
 
-    RenderablePath.prototype.render = function (context, scale, viewportRect)
+    RenderablePath.prototype.render = function (context, deltaTime, scale, viewportRect)
     {
         this.colorArray[3] = this.style.opacity;
         context.fillStyle = 'rgba(' + this.colorArray.join() + ')';

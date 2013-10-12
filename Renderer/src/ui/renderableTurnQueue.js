@@ -6,15 +6,12 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         {
             this.images = {
                 'Archer': 'Renderer/content/archer.png',
-                'Melee': 'Renderer/content/meleeAttack.png'
+                'Melee': 'Renderer/content/soldier.png'
             };
 
             this.unitList = [];
-
             this.element = document.createElement('div');
             this.element.id = 'turnQueue';
-            this.imageSize = null;
-
             document.body.appendChild(this.element);
         }
 

@@ -49,7 +49,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                         this.map.addUnit(soldier, object.x, object.y);
                         TurnManager.unitList.push(soldier);
                         RenderableTurnQueue.addUnit(soldier);
-                        Renderer.addRenderableSoldier(soldier, object.unitImage, object.previewImage);
+                        Renderer.addRenderableSoldier(soldier, object.unitSheet, object.previewImage);
                         break;
                 }
             }

@@ -10,7 +10,7 @@ define(['Game/src/imageCache', 'Renderer/src/renderableObject'], function (Image
     RenderableLadder.prototype = Object.create(RenderableObject.prototype);
     RenderableLadder.prototype.constructor = RenderableLadder;
 
-    RenderableLadder.prototype.render = function (context, tileSize, viewportRect)
+    RenderableLadder.prototype.render = function (context, deltaTime, tileSize, viewportRect)
     {
         if (this.image.isLoaded)
         {
