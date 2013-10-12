@@ -8,6 +8,22 @@ define(function ()
         return ('ontouchstart' in window) || ('onmsgesturechange' in window);
     };
 
+    Utility.merge = function ()
+    {
+        var baseObject = arguments[0];
+        for (var i = 1; i < arguments.length; i++)
+        {
+            var argument = arguments[i];
+            if (argument)
+            {
+                for (var property in argument)
+                    baseObject[property] = argument[property];
+            }
+        }
+
+        return baseObject;
+    };
+
     /**
      * Removes an element from the given array
      * @param array

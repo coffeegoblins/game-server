@@ -8,22 +8,45 @@ define(function ()
      * @param initialHeight The height all tiles are initialized to. Default is 0.
      * @constructor
      */
-    function Map(width, height, initialHeight)
+    function Map()
+    {
+        this.tiles = [];
+        this.registeredTileClickedEvents = [];
+    }
+
+    Map.prototype.create = function (width, height, initialHeight)
     {
         this.width = width;
         this.height = height;
-        this.registeredTileClickedEvents = [];
 
         if (initialHeight == null)
             initialHeight = 0;
 
-        this.tiles = [];
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
                 this.tiles.push({height: initialHeight});
         }
-    }
+    };
+
+    Map.prototype.load = function (mapData)
+    {
+        this.tileSheet = mapData.tileSheet;
+        this.height = mapData.heights.length;
+        this.width = mapData.heights[0].length;
+
+        for (var y = 0; y < this.height; y++)
+        {
+            for (var x = 0; x < this.width; x++)
+            {
+                var tileIndex = x + y * this.width;
+                this.tiles[tileIndex] = {
+                    height: mapData.heights[y][x],
+                    spriteIndex: mapData.sprites[y][x]
+                };
+            }
+        }
+    };
 
     Map.prototype.registerTileClickedEvent = function (id, method, context)
     {

@@ -1,13 +1,15 @@
-define(function ()
+define(['./utility'], function (Utility)
 {
     'use strict';
 
-    function WorldObject(sizeX, sizeY)
+    var defaults = {
+        sizeX: 1,
+        sizeY: 1
+    };
+
+    function WorldObject(properties)
     {
-        this.tileX = 0;
-        this.tileY = 0;
-        this.sizeX = sizeX || 1;
-        this.sizeY = sizeY || 1;
+        Utility.merge(this, defaults, properties);
     }
 
     return WorldObject;

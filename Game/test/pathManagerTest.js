@@ -19,21 +19,23 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testAPGreaterThanBoundary = function ()
     {
-        var map = new Map(4, 4);
-        var unit = {ap: PathManager.diagonalMoveCost * 10, tileX: 0, tileY: 0};
+        var map = new Map();
+        map.create(4, 4);
 
+        var unit = {ap: PathManager.diagonalMoveCost * 10, tileX: 0, tileY: 0};
         var completedNodes = PathManager.calculateAvailableTiles(map, unit);
         assertEquals('Invalid number of tiles calculated', 16, completedNodes.length);
     };
 
     PathManagerTest.prototype.testHeightIsUsed = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: PathManager.diagonalMoveCost + 1, maxMoveableHeight: 2, tileX: 0, tileY: 0};
         map.getTile(1, 1).height = 1;
 
         var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, unit), 1, 1);
-
         assertTruthy('Target Node is null', targetNode);
         assertEquals('Height did not contribute to the move factor', PathManager.diagonalMoveCost + 1, targetNode.distance);
     };
@@ -53,7 +55,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testUnitBlocksTile = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, tileX: 0, tileY: 0};
         map.getTile(1, 1).unit = {tileX: 1, tileY: 1};
 
@@ -63,7 +67,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testWorldObjectBlocksTile = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, tileX: 0, tileY: 0};
         map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -73,7 +79,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testDiagonalMovementNearWorldObjects = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, tileX: 1, tileY: 0};
         map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -87,7 +95,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testProhibitiveTileHeightDifferences = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, maxMoveableHeight: 2, tileX: 1, tileY: 0};
         map.getTile(1, 1).height = 3;
 
@@ -97,7 +107,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testClimbableWorldObjects = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, canClimbObjects: true, maxMoveableHeight: 2, tileX: 1, tileY: 0};
         map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
@@ -115,7 +127,9 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testDiagonalMovementNearClimbableWorldObjects = function ()
     {
-        var map = new Map(4, 4);
+        var map = new Map();
+        map.create(4, 4);
+
         var unit = {ap: 20, canClimbObjects: true, tileX: 1, tileY: 0};
         map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 

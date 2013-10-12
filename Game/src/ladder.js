@@ -1,25 +1,16 @@
-define(['Game/src/worldObject'], function (WorldObject)
+define(['./utility', './worldObject'], function (Utility, WorldObject)
 {
     'use strict';
 
-    function Ladder(direction, size)
+    var defaults = {
+        direction: 'top',
+        isClimbable: true
+    };
+
+    function Ladder(properties)
     {
-        this.direction = direction;
-        this.isClimbable = true;
-
-        var sizeX, sizeY;
-        if (/left|right/.test(this.direction))
-        {
-            sizeX = size || 1;
-            sizeY = 1;
-        }
-        else
-        {
-            sizeX = 1;
-            sizeY = size || 1;
-        }
-
-        WorldObject.call(this, sizeX, sizeY);
+        properties = Utility.merge({}, defaults, properties);
+        WorldObject.call(this, properties);
     }
 
     Ladder.prototype = Object.create(WorldObject.prototype);

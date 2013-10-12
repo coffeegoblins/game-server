@@ -9,7 +9,8 @@ define(['Game/src/map'], function (Map)
 
     MapTest.prototype.getTile = function ()
     {
-        var map = new Map(20, 20, 1);
+        var map = new Map();
+        map.create(20, 20, 1);
 
         var tileIndex = 0;
         for (var y = 0; y < 20; y++)

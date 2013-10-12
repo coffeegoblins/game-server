@@ -7,18 +7,21 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.initialize = function ()
         {
-            this.currentMap = LevelLoader.loadLevel("Level1");
-            this.currentMap.registerTileClickedEvent("PlotManager", this.onTileSelected, this);
+            LevelLoader.loadLevel("level1", function (map)
+            {
+                this.currentMap = map;
+                this.currentMap.registerTileClickedEvent("PlotManager", this.onTileSelected, this);
 
-            this.activeUnitView = new ActiveUnitView();
+                this.activeUnitView = new ActiveUnitView();
 
-            TurnManager.registerBeginTurnEvent("activeUnitView", this.activeUnitView.onBeginTurn, this.activeUnitView);
-            TurnManager.registerEndTurnEvent("activeUnitView", this.activeUnitView.onEndTurn, this.activeUnitView);
+                TurnManager.registerBeginTurnEvent("activeUnitView", this.activeUnitView.onBeginTurn, this.activeUnitView);
+                TurnManager.registerEndTurnEvent("activeUnitView", this.activeUnitView.onEndTurn, this.activeUnitView);
 
-            TurnManager.registerBeginTurnEvent("plotManager", this.onBeginTurn, this);
-            TurnManager.registerEndTurnEvent("plotManager", this.onEndTurn, this);
+                TurnManager.registerBeginTurnEvent("plotManager", this.onBeginTurn, this);
+                TurnManager.registerEndTurnEvent("plotManager", this.onEndTurn, this);
 
-            TurnManager.beginTurn();
+                TurnManager.beginTurn();
+            }.bind(this));
         };
 
         PlotManager.prototype.onBeginTurn = function (activeUnit)

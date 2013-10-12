@@ -4,7 +4,7 @@ define(function ()
 
     var images = {};
 
-    function onImageLoaded(e)
+    function onImageLoaded()
     {
         this.width = this.data.width;
         this.height = this.data.height;

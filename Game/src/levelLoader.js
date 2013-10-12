@@ -5,115 +5,60 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
 
         function LevelLoader() { }
 
-        /**
-         * @param fileName The name of the file to load
-         */
-        LevelLoader.prototype.loadLevel = function (fileName)
+        LevelLoader.prototype.loadLevel = function (fileName, onComplete)
         {
-            // TODO: Asynchronous loading from file, update gui appropriately
-            this.map = new Map(100, 100, 4);
+            var request = new XMLHttpRequest();
+            request.overrideMimeType('application/json');
+            request.open('GET', 'Game/content/' + fileName + '.json');
 
-            // Build a hill
-            var height = 5;
-            var summitX = 10;
-            var summitY = 5;
-
-            var x, y, tile;
-            for (x = summitX - height; x <= summitX + height; x++)
+            var self = this;
+            request.onreadystatechange = function ()
             {
-                for (y = summitY - height; y <= summitY + height; y++)
-                {
-                    tile = this.map.getTile(x, y);
-                    if (tile)
-                    {
-                        var xDelta = Math.abs(summitX - x);
-                        var yDelta = Math.abs(summitY - y);
-                        tile.height += height - Math.max(xDelta, yDelta);
-                    }
-                }
-            }
+                if (request.readyState === 4 && request.status === 200)
+                    self.onLevelLoaded(JSON.parse(request.responseText), onComplete);
+            };
 
-            // Build a pit
-            for (x = 1; x <= 3; x++)
-            {
-                for (y = 8; y <= 10; y++)
-                {
-                    tile = this.map.getTile(x, y);
-                    if (tile)
-                        tile.height = 0;
-                }
-            }
+            request.send();
+        };
 
+        LevelLoader.prototype.onLevelLoaded = function (levelData, onComplete)
+        {
+            this.map = new Map();
+            this.map.load(levelData);
             Renderer.addRenderableMap(this.map);
 
-            var soldier = new Soldier();
-            soldier.name = "A";
-            soldier.type = "Archer";
-            var soldier2 = new Soldier();
-            soldier2.name = "B";
-            soldier2.type = "Melee";
-            var soldier3 = new Soldier();
-            soldier3.name = "C";
-            soldier3.type = "Archer";
+            for (var i = 0; i < levelData.objects.length; i++)
+            {
+                var object = levelData.objects[i];
+                switch (object.objectType)
+                {
+                    case 'ladder':
+                        var ladder = new Ladder(object.properties);
+                        this.map.addObject(ladder, object.x, object.y);
+                        Renderer.addRenderableLadder(ladder);
+                        break;
 
-            this.map.addUnit(soldier, 0, 0);
-            TurnManager.unitList.push(soldier);
+                    case 'object':
+                        var worldObject = new WorldObject(object.properties);
+                        this.map.addObject(worldObject, object.x, object.y);
+                        Renderer.addRenderableObject(worldObject);
+                        break;
 
-            this.map.addUnit(soldier2, 1, 1);
-            TurnManager.unitList.push(soldier2);
-
-            this.map.addUnit(soldier3, 2, 2);
-            TurnManager.unitList.push(soldier3);
-
-            RenderableTurnQueue.addUnit(soldier, 0);
-            RenderableTurnQueue.addUnit(soldier2, 0);
-            RenderableTurnQueue.addUnit(soldier3, 0);
+                    case 'soldier':
+                        var soldier = new Soldier(object.properties);
+                        this.map.addUnit(soldier, object.x, object.y);
+                        TurnManager.unitList.push(soldier);
+                        RenderableTurnQueue.addUnit(soldier);
+                        Renderer.addRenderableSoldier(soldier, object.unitImage, object.previewImage);
+                        break;
+                }
+            }
 
             TurnManager.registerBeginTurnEvent("RenderableTurnQueueBeginTurn", RenderableTurnQueue.onBeginTurn, RenderableTurnQueue);
             TurnManager.registerEndTurnEvent("RenderableTurnQueueEndTurn", RenderableTurnQueue.onEndTurn, RenderableTurnQueue);
 
-            Renderer.addRenderableSoldier(soldier, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
-            Renderer.addRenderableSoldier(soldier2, "Renderer/content/awesomeSad.png", "Renderer/content/awesomeSad.png");
-            Renderer.addRenderableSoldier(soldier3, "Renderer/content/awesome.png", "Renderer/content/awesome.png");
-
-            // Add objects
-            var worldObject = new WorldObject(2, 2);
-            this.map.addObject(worldObject, 4, 4);
-            Renderer.addRenderableObject(worldObject);
-
-            var ladder = new Ladder('up');
-            this.map.addObject(ladder, 2, 8);
-            Renderer.addRenderableLadder(ladder);
-
-            ladder = new Ladder('down');
-            this.map.addObject(ladder, 2, 10);
-            Renderer.addRenderableLadder(ladder);
-
-            ladder = new Ladder('left');
-            this.map.addObject(ladder, 1, 9);
-            Renderer.addRenderableLadder(ladder);
-
-            ladder = new Ladder('right');
-            this.map.addObject(ladder, 3, 9);
-            Renderer.addRenderableLadder(ladder);
-
-            for (var i = 0; i < 100; i++)
-            {
-                worldObject = new WorldObject();
-                do
-                {
-                    x = Math.floor(Math.random() * this.map.width);
-                    y = Math.floor(Math.random() * this.map.height);
-
-                    tile = this.map.getTile(x, y);
-                }
-                while (tile.content != null || tile.unit != null);
-
-                this.map.addObject(worldObject, x, y);
-                Renderer.addRenderableObject(worldObject);
-            }
-
-            return this.map;
+            if (onComplete)
+                onComplete(this.map);
         };
 
         return new LevelLoader();

@@ -5,10 +5,23 @@ define(['Game/src/imageCache'], function (ImageCache)
     function RenderableSoldier(soldier, unitImage, previewImage)
     {
         this.unit = soldier;
-        this.unitImage = ImageCache.loadImage(unitImage, unitImage);
-        this.previewImage = previewImage;
         this.style = {};
         this.style.opacity = 1;
+
+        if (unitImage)
+        {
+            unitImage = 'Renderer/content/' + unitImage + '.png';
+            this.unitImage = ImageCache.loadImage(unitImage, unitImage);
+        }
+
+        if (previewImage)
+        {
+            previewImage = 'Renderer/content/' + previewImage + '.png';
+        }
+        else
+        {
+            this.previewImage = unitImage;
+        }
     }
 
     RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)

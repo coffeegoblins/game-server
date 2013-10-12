@@ -1,24 +1,22 @@
-define(function ()
+define(['./utility'], function (Utility)
 {
     'use strict';
 
-    /**
-     * @constructor
-     */
-    function Soldier()
+    var defaults = {
+        hp: 100,
+        maxHP: 100,
+        ap: 42,
+        maxAP: 42,
+        maxMoveableHeight: 2,
+        canClimbObjects: true,
+        attackRange: 3,
+        attackPower: 25,
+        attackCost: 25
+    };
+
+    function Soldier(properties)
     {
-        this.name = null;
-        this.tileX = 0;
-        this.tileY = 0;
-        this.hp = 100;
-        this.maxHP = 100;
-        this.ap = 42;
-        this.maxAP = 42;
-        this.maxMoveableHeight = 2;
-        this.canClimbObjects = true;
-        this.attackRange = 3;
-        this.attackPower = 25;
-        this.attackCost = 25;
+        Utility.merge(this, defaults, properties);
     }
 
     return Soldier;
