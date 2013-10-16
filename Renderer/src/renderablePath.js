@@ -15,16 +15,26 @@ define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
         }
 
         this.style = {};
-        if (isSelected)
+
+        // TODO Lookup
+        if (id === 'attack')
         {
-            this.colorArray = [255, 165, 0];
-            this.style.opacity = 1;
-            BlinkEffect.blink(this, 1.5);
+            this.colorArray = [75, 155, 75];
+            this.style.opacity = 0.4;
         }
         else
         {
-            this.colorArray = [255, 165, 0];
-            this.style.opacity = 0.4;
+            if (isSelected)
+            {
+                this.colorArray = [255, 165, 0];
+                this.style.opacity = 1;
+                BlinkEffect.blink(this, 1.5);
+            }
+            else
+            {
+                this.colorArray = [255, 165, 0];
+                this.style.opacity = 0.4;
+            }
         }
     }
 

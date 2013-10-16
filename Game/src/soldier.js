@@ -9,9 +9,10 @@ define(['./utility'], function (Utility)
         maxAP: 42,
         maxMoveableHeight: 2,
         canClimbObjects: true,
-        attackRange: 3,
+        attackRange: 20,
         attackPower: 25,
-        attackCost: 25
+        attackCost: 25,
+        weapon: 'bow'
     };
 
     function Soldier(properties)

@@ -24,6 +24,34 @@ define(function ()
         return baseObject;
     };
 
+    Utility.containsElement = function (array, element)
+    {
+        var elementCount = array.length;
+        for (var i = 0; i < elementCount; i++)
+        {
+            if (array[i] === element)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    Utility.containsElementWithProperty = function (array, property, value)
+    {
+        var elementCount = array.length;
+        for (var i = 0; i < elementCount; i++)
+        {
+            if (array[i][property] === value)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
     /**
      * Removes an element from the given array
      * @param array

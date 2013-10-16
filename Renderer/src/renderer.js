@@ -75,6 +75,11 @@ define(['Game/src/inputHandler',
             this.renderableMap = new RenderableMap(renderableMap);
         };
 
+        Renderer.prototype.clearRenderablePaths = function()
+        {
+            this.renderablePaths = [];
+        };
+
         Renderer.prototype.clearRenderablePathById = function (id)
         {
             for (var i = 0; i < this.renderablePaths.length; ++i)
