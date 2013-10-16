@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager', 'Renderer/src/ui/renderableTurnQueue'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager', 'Renderer/src/ui/renderableTurnQueue', 'loadLevelData'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue, loadLevelData)
     {
         'use strict';
 
@@ -7,18 +7,11 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
 
         LevelLoader.prototype.loadLevel = function (fileName, onComplete)
         {
-            var request = new XMLHttpRequest();
-            request.overrideMimeType('application/json');
-            request.open('GET', 'Game/content/' + fileName + '.json');
-
             var self = this;
-            request.onreadystatechange = function ()
+            loadLevelData(fileName, function (levelData)
             {
-                if (request.readyState === 4 && request.status === 200)
-                    self.onLevelLoaded(JSON.parse(request.responseText), onComplete);
-            };
-
-            request.send();
+                self.onLevelLoaded(levelData, onComplete);
+            });
         };
 
         LevelLoader.prototype.onLevelLoaded = function (levelData, onComplete)
