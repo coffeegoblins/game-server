@@ -50,6 +50,12 @@ define(['Game/src/utility'], function (Utility)
 
     Map.prototype.registerTileClickedEvent = function (id, method, context)
     {
+        for (var i = 0; i < this.registeredTileClickedEvents.length; i++)
+        {
+            if (id === this.registeredTileClickedEvents[i].id)
+                return;
+        }
+
         this.registeredTileClickedEvents.push({id: id, context: context, method: method});
     };
 

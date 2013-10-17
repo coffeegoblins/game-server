@@ -78,8 +78,19 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
         AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
-            if (selectedTile.unit === TurnManager.activeUnit)
-                return; // Clicked on self
+            // Clicked on self or non-unit tile
+            if (selectedTile.unit === TurnManager.activeUnit || !selectedTile.unit)
+            {
+                if (this.selectedTile)
+                {
+                    this.selectedTile = null;
+                    this.selectedNode = null;
+                    this.activeUnitView.previewAP(0);
+                    this.revertActionBar();
+                }
+
+                return;
+            }
 
             this.selectedNode = Utility.getElementByProperty(this.availableAttackTiles, 'tile', selectedTile);
 
@@ -136,8 +147,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
         AttackManager.prototype.revertActionBar = function ()
         {
-            this.currentMap.unregisterTileClickedEventById('attackManager');
-
             ActionBarView.removeAllActions();
             ActionBarView.addActions(this.actionBarSnapshot.pop());
         };
