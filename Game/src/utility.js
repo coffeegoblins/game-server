@@ -52,6 +52,20 @@ define(function ()
         return false;
     };
 
+    Utility.getElementByProperty = function (array, property, value)
+    {
+        var elementCount = array.length;
+        for (var i = 0; i < elementCount; i++)
+        {
+            if (array[i][property] === value)
+            {
+                return array[i];
+            }
+        }
+
+        return null;
+    };
+
     /**
      * Removes an element from the given array
      * @param array

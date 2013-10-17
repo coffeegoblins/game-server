@@ -5,41 +5,12 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
         function AttackManager(currentMap, activeUnitView)
         {
-            this.path = [];
-            this.currentMap = currentMap;
-            this.currentMap.registerTileClickedEvent('attackManager', this.onTileSelected, this);
-
-            this.activeUnitView = activeUnitView;
-
             this.actionBarSnapshot = [];
+            this.availableAttackTiles = [];
+
+            this.currentMap = currentMap;
+            this.activeUnitView = activeUnitView;
         }
-
-        AttackManager.prototype.initialize = function ()
-        {
-
-        };
-
-        AttackManager.prototype.onTileSelected = function(selectedTile, tileX, tileY)
-        {
-            if (selectedTile.unit == null)
-                return;
-
-            if (!Utility.containsElementWithProperty(this.path, 'tile', selectedTile))
-                return;
-
-            // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
-
-            this.activeUnitView.previewAP(TurnManager.activeUnit.attackCost);
-
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions([
-                {id: 'Cancel', method: this.onAttackCancelled, context: this},
-                {id: 'Attack', method: this.onAttackConfirmed, context: this}
-            ]);
-
-            this.selectedTile = selectedTile;
-        };
 
         AttackManager.prototype.onAttackAction = function ()
         {
@@ -47,8 +18,9 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
 
             ActionBarView.removeAllActions();
-
-            ActionBarView.addActions([{id: 'Cancel', method: this.onAttackActionCancelled, context: this}]);
+            ActionBarView.addActions([
+                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
+            ]);
 
             switch (TurnManager.activeUnit.weapon)
             {
@@ -74,55 +46,100 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             }
         };
 
-        AttackManager.prototype.revertActionBar = function ()
-        {
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions(this.actionBarSnapshot.pop());
-        };
-
-        AttackManager.prototype.onAttackConfirmed = function ()
-        {
-            Renderer.clearRenderablePaths();
-
-            while (this.actionBarSnapshot.length > 0)
-                this.revertActionBar();
-
-            this.selectedTile.unit.hp -= TurnManager.activeUnit.attackPower;
-            TurnManager.activeUnit.ap -= TurnManager.activeUnit.attackCost;
-
-            this.activeUnitView.setAP(TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP);
-        };
-
-        AttackManager.prototype.onAttackCancelled = function ()
-        {
-            // TODO Clear selected unit highlight
-            this.revertActionBar();
-        };
-
         AttackManager.prototype.onAttackActionCancelled = function ()
         {
             Renderer.clearRenderablePaths();
             this.revertActionBar();
+
+            this.currentMap.unregisterTileClickedEventById('attackManager');
         };
 
         AttackManager.prototype.onShortShotAction = function ()
         {
             Renderer.clearRenderablePaths();
+            this.currentMap.registerTileClickedEvent('attackManager', this.onTileSelected, this);
 
-            this.path = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.attackRange,
-                                                            TurnManager.activeUnit.maxMoveableHeight, true);
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap,
+                TurnManager.activeUnit.maxMoveableHeight, true);
 
-            Renderer.addRenderablePath('attack', this.path, false);
+            Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
         };
 
         AttackManager.prototype.onLongShotAction = function ()
         {
             Renderer.clearRenderablePaths();
+            this.currentMap.registerTileClickedEvent('attackManager', this.onTileSelected, this);
 
-            this.path = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.attackRange * 2,
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap * 2,
                 TurnManager.activeUnit.maxMoveableHeight, true);
 
-            Renderer.addRenderablePath('attack', this.path, false);
+            Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
+        };
+
+        AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
+        {
+            if (selectedTile.unit === TurnManager.activeUnit)
+                return; // Clicked on self
+
+            this.selectedNode = Utility.getElementByProperty(this.availableAttackTiles, 'tile', selectedTile);
+
+            if (!this.selectedNode)
+                return;
+
+            // Save the current action bar state
+            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+
+            ActionBarView.removeAllActions();
+            ActionBarView.addActions([
+                {id: 'Cancel', method: this.onAttackCancelled, context: this},
+                {id: 'Attack', method: this.onAttackConfirmed, context: this}
+            ]);
+
+            this.selectedTileCost = this.selectedNode.distance / 2;
+            this.activeUnitView.previewAP(this.selectedTileCost);
+
+            this.selectedTile = selectedTile;
+        };
+
+        AttackManager.prototype.onAttackConfirmed = function ()
+        {
+            var unit = this.selectedTile.unit;
+
+            unit.hp -= TurnManager.activeUnit.attackPower;
+            if (unit.hp < 0)
+            {
+                // TODO Destroy unit
+            }
+
+            TurnManager.activeUnit.ap -= this.selectedTileCost;
+
+            this.activeUnitView.previewAP(0);
+            this.activeUnitView.setAP(TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP);
+
+            this.selectedNode = null;
+            this.selectedTile = null;
+
+            Renderer.clearRenderablePaths();
+
+            while (this.actionBarSnapshot.length > 0)
+                this.revertActionBar();
+
+            this.currentMap.unregisterTileClickedEventById('attackManager');
+        };
+
+        AttackManager.prototype.onAttackCancelled = function ()
+        {
+            // TODO Clear selected unit highlight
+            this.currentMap.unregisterTileClickedEventById('attackManager');
+            this.revertActionBar();
+        };
+
+        AttackManager.prototype.revertActionBar = function ()
+        {
+            this.currentMap.unregisterTileClickedEventById('attackManager');
+
+            ActionBarView.removeAllActions();
+            ActionBarView.addActions(this.actionBarSnapshot.pop());
         };
 
         return AttackManager;

@@ -1,4 +1,4 @@
-define(function ()
+define(['Game/src/utility'], function (Utility)
 {
     'use strict';
 
@@ -50,7 +50,12 @@ define(function ()
 
     Map.prototype.registerTileClickedEvent = function (id, method, context)
     {
-        this.registeredTileClickedEvents.push({context: context, method: method});
+        this.registeredTileClickedEvents.push({id: id, context: context, method: method});
+    };
+
+    Map.prototype.unregisterTileClickedEventById = function (id)
+    {
+        Utility.removeElementByProperty(this.registeredTileClickedEvents, 'id', id);
     };
 
     /**

@@ -5,65 +5,73 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
         function MovementManager(currentMap, activeUnitView)
         {
-            this.path = [];
+            this.actionBarSnapshot = [];
 
             this.currentMap = currentMap;
-            this.currentMap.registerTileClickedEvent('moveManager', this.onTileSelected, this);
             this.activeUnitView = activeUnitView;
-
-            this.actionBarSnapshot = [];
         }
 
         MovementManager.prototype.onMoveAction = function ()
         {
-            Renderer.clearRenderablePaths();
+            // Save the current action bar state
+            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
 
-            this.path = PathManager.calculateAvailableTiles(this.currentMap,
+            ActionBarView.removeAllActions();
+            ActionBarView.addActions([{id: 'Cancel', method: this.onMoveActionCancelled, context: this}]);
+
+            this.availableMoveTiles = PathManager.calculateAvailableTiles(this.currentMap,
                 TurnManager.activeUnit.tileX,
                 TurnManager.activeUnit.tileY,
                 TurnManager.activeUnit.ap,
                 TurnManager.activeUnit.maxMoveableHeight,
                 false);
 
-            Renderer.addRenderablePath('moveTiles', this.path, false);
+            Renderer.clearRenderablePaths();
+            Renderer.addRenderablePath('moveTiles', this.availableMoveTiles, false);
+
+            this.currentMap.registerTileClickedEvent('moveManager', this.onTileSelected, this);
+        };
+
+        MovementManager.prototype.onMoveActionCancelled = function()
+        {
+            this.currentMap.unregisterTileClickedEventById('moveManager');
+
+            Renderer.clearRenderablePaths();
+
+            this.selectedPath = null;
+            this.activeUnitView.previewAP(0);
+            this.availableMoveTiles = null;
+            this.selectedTileCost = null;
+
+            this.revertActionBar();
         };
 
         MovementManager.prototype.onTileSelected = function(selectedTile, tileX, tileY)
         {
-            // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+            if (selectedTile.unit != null)
+                return; // Clicked on active unit
 
-            if (!this.path)
-                return;
-
-            if (!Utility.containsElementWithProperty(this.path, 'tile', selectedTile))
-                return;
-
-            this.activePath = PathManager.calculatePath(this.path, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
-            if (this.activePath)
+            if (!Utility.containsElementWithProperty(this.availableMoveTiles, 'tile', selectedTile) && this.selectedPath != null)
             {
-                // Save the current action bar state
-                this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+                this.selectedPath = null;
+                this.activeUnitView.previewAP(0);
 
-                ActionBarView.removeAllActions();
-                ActionBarView.addActions([
-                    {id: 'Cancel', method: this.onMoveCancelled, context: this},
-                    {id: 'Move', method: this.onMoveConfirmed, context: this}
-                ]);
+                ActionBarView.removeActionById('Move');
+                return;
+            }
 
-                this.selectedTileCost = this.activePath[this.activePath.length - 1].distance;
+            this.selectedPath = PathManager.calculatePath(this.availableMoveTiles, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
+            if (this.selectedPath)
+            {
+                ActionBarView.addActions([{id: 'Move', method: this.onMoveConfirmed, context: this}]);
+
+                this.selectedTileCost = this.selectedPath[this.selectedPath.length - 1].distance;
                 this.activeUnitView.previewAP(this.selectedTileCost);
 
-                Renderer.addRenderablePath('selectedPath', this.activePath, true);
+                Renderer.addRenderablePath('selectedPath', this.selectedPath, true);
             }
 
             this.selectedTile = selectedTile;
-        };
-
-        MovementManager.prototype.onMoveCancelled = function ()
-        {
-            Renderer.clearRenderablePathById('selectedPath');
-            this.revertActionBar();
         };
 
         MovementManager.prototype.onMoveConfirmed = function ()
@@ -79,7 +87,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             var progressTime = 0;
             var totalTime = this.selectedTileCost / 35;
 
-            var path = this.activePath.slice();
+            var path = this.selectedPath.slice();
             path.unshift({x: unit.tileX, y: unit.tileY});
 
             var progressPercentage = 0;
@@ -125,12 +133,16 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                     unit.ap = endAp;
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
 
-                    Renderer.addRenderablePath("availableTiles", PathManager.calculateAvailableTiles(this.currentMap, unit), false);
                     InputHandler.enableInput();
+
+                    this.currentMap.unregisterTileClickedEventById('moveManager');
                 }
             });
 
-            this.path = null;
+            this.availableMoveTiles = null;
+            this.selectedPath = null;
+            this.activeUnitView.previewAP(0);
+            this.selectedTileCost = null;
 
             Renderer.clearRenderablePaths();
 
