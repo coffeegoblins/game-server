@@ -51,13 +51,13 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             Renderer.clearRenderablePaths();
             this.revertActionBar();
 
-            this.currentMap.unregisterTileClickedEventById('attackManager');
+            this.currentMap.off('tileClick', this, this.onTileSelected);
         };
 
         AttackManager.prototype.onShortShotAction = function ()
         {
             Renderer.clearRenderablePaths();
-            this.currentMap.registerTileClickedEvent('attackManager', this.onTileSelected, this);
+            this.currentMap.on('tileClick', this, this.onTileSelected);
 
             this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap,
                 TurnManager.activeUnit.maxMoveableHeight, true);
@@ -68,7 +68,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         AttackManager.prototype.onLongShotAction = function ()
         {
             Renderer.clearRenderablePaths();
-            this.currentMap.registerTileClickedEvent('attackManager', this.onTileSelected, this);
+            this.currentMap.on('tileClick', this, this.onTileSelected);
 
             this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap * 2,
                 TurnManager.activeUnit.maxMoveableHeight, true);
@@ -135,13 +135,13 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             while (this.actionBarSnapshot.length > 0)
                 this.revertActionBar();
 
-            this.currentMap.unregisterTileClickedEventById('attackManager');
+            this.currentMap.off('tileClick', this, this.onTileSelected);
         };
 
         AttackManager.prototype.onAttackCancelled = function ()
         {
             // TODO Clear selected unit highlight
-            this.currentMap.unregisterTileClickedEventById('attackManager');
+            this.currentMap.off('tileClick', this, this.onTileSelected);
             this.revertActionBar();
         };
 

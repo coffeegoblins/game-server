@@ -1,10 +1,9 @@
-define(function ()
+define(['./eventManager'], function (EventManager)
 {
     'use strict';
 
     var handleInput = true;
     var registeredClickEvents = {};
-    var registeredDragEvents = {};
     var mouseEvent;
     var activeTouches = {};
 
@@ -134,21 +133,19 @@ define(function ()
         if (registeredEvent)
         {
             var context = registeredEvent.context || e.target;
-            registeredEvent.method.call(context, e, e.pageX, e.pageY);
+            registeredEvent.method.call(context, e);
+        }
+        else
+        {
+            InputHandler.trigger('click', e);
         }
     }
 
     function sendDrag(eventObject)
     {
-        var registeredEvent = registeredDragEvents[eventObject.initialEvent.target.id];
-        if (registeredEvent)
-        {
-            var deltaX = eventObject.previousX - eventObject.currentEvent.pageX;
-            var deltaY = eventObject.previousY - eventObject.currentEvent.pageY;
-
-            var context = registeredEvent.context || eventObject.initialEvent.target;
-            registeredEvent.method.call(context, eventObject.currentEvent, deltaX, deltaY);
-        }
+        var deltaX = eventObject.previousX - eventObject.currentEvent.pageX;
+        var deltaY = eventObject.previousY - eventObject.currentEvent.pageY;
+        InputHandler.trigger('drag', eventObject.currentEvent, deltaX, deltaY);
     }
 
     // Block anything we don't want to happen
@@ -209,20 +206,11 @@ define(function ()
         registeredClickEvents[id] = {context: context, method: method};
     };
 
-    InputHandler.registerDragEvent = function (id, method, context)
-    {
-        registeredDragEvents[id] = {context: context, method: method};
-    };
-
     InputHandler.unregisterClickEvent = function (id)
     {
         registeredClickEvents[id] = undefined;
     };
 
-    InputHandler.unregisterDragEvent = function (id)
-    {
-        registeredDragEvents[id] = undefined;
-    };
-
+    EventManager.register(InputHandler);
     return InputHandler;
 });

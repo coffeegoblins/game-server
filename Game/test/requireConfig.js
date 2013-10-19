@@ -4,6 +4,7 @@ require.config({
     paths: {
         Game: '../',
         Renderer: '../../Renderer',
-        TestFramework: '../../TestFramework'
+        TestFramework: '../../TestFramework',
+        loadLevelData: 'Game/src/loadLocalLevelData'
     }
 });

@@ -12,17 +12,17 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
             LevelLoader.loadLevel("level1", function (map)
             {
                 this.currentMap = map;
-                this.currentMap.registerTileClickedEvent('plotManager', this.onTileSelected, this);
+                this.currentMap.on('tileClick', this, this.onTileSelected);
 
                 this.activeUnitView = new ActiveUnitView();
                 this.attackManager = new AttackManager(this.currentMap, this.activeUnitView);
                 this.movementManager = new MovementManager(this.currentMap, this.activeUnitView);
 
-                TurnManager.registerBeginTurnEvent('activeUnitView', this.activeUnitView.onBeginTurn, this.activeUnitView);
-                TurnManager.registerEndTurnEvent('activeUnitView', this.activeUnitView.onEndTurn, this.activeUnitView);
+                TurnManager.on('beginTurn', this.activeUnitView, this.activeUnitView.onBeginTurn);
+                TurnManager.on('endTurn', this.activeUnitView, this.activeUnitView.onEndTurn);
 
-                TurnManager.registerBeginTurnEvent('plotManager', this.onBeginTurn, this);
-                TurnManager.registerEndTurnEvent('plotManager', this.onEndTurn, this);
+                TurnManager.on('beginTurn', this, this.onBeginTurn);
+                TurnManager.on('endTurn', this, this.onEndTurn);
 
                 TurnManager.beginTurn();
             }.bind(this));
@@ -42,6 +42,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 {id: 'Move', method: this.movementManager.onMoveAction, context: this.movementManager},
                 {id: 'Attack', method: this.attackManager.onAttackAction, context: this.attackManager}
             ]);
+
             ActionBarView.showActions();
             InputHandler.enableInput();
         };
@@ -69,7 +70,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 if (!selectedTile.content.isClimbable || !TurnManager.activeUnit.canClimbObjects)
                 {
                     // TODO Content logic, Show action
-                    return;
                 }
             }
         };

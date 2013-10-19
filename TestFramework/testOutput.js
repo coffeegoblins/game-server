@@ -12,11 +12,8 @@ define(function ()
         return element;
     }
 
-
     TestOutput.display = function (results)
     {
-        document.body.appendChild(createTextElement('span', 'Running tests . . .'));
-
         var testCount = 0;
         var failCount = 0;
         var warningCount = 0;

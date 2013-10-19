@@ -1,0 +1,46 @@
+{
+    "archer": {
+        "animations": {
+            "idle": {
+                "spriteSheet": "archerIdle",
+                "tileHeight": 100,
+                "tileWidth": 100,
+                "frameStart": 0,
+                "frameEnd": 32,
+                "speed": 0.075,
+                "frames": {
+                    "0": 5,
+                    "17": 1.5,
+                    "27": 2
+                }
+            },
+            "walk": {
+                "spriteSheet": "archerWalk",
+                "tileHeight": 100,
+                "tileWidth": 100,
+                "frameStart": 0,
+                "frameEnd": 15,
+                "speed": 0.1
+            },
+            "run": {
+                "spriteSheet": "archerRun",
+                "tileHeight": 100,
+                "tileWidth": 100,
+                "frameStart": 0,
+                "frameEnd": 15,
+                "speed": 0.03
+            },
+            "attack": {
+                "spriteSheet": "archerShoot",
+                "tileHeight": 100,
+                "tileWidth": 100,
+                "frameStart": 0,
+                "frameEnd": 27,
+                "speed": 0.05,
+                "frames": {
+                    "20": 0.5
+                }
+            }
+        }
+    }
+}
