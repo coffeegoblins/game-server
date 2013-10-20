@@ -12,80 +12,101 @@ define(function ()
         return element;
     }
 
-
     TestOutput.display = function (results)
     {
-        document.body.appendChild(createTextElement('span', 'Running tests . . .'));
-
         var testCount = 0;
         var failCount = 0;
         var warningCount = 0;
 
-        var fragment = document.createDocumentFragment();
+        var passesDiv = document.body.querySelector('#passes');
+        var failureDiv = document.body.querySelector('#failures');
+        var bannerDiv = document.body.querySelector('#banner');
+
         for (var i = 0; i < results.length; i++)
         {
-            var scenarioResults = results[i];
-            testCount += scenarioResults.testCount;
+            var passedFragment = document.createDocumentFragment();
+            var failedFragment = document.createDocumentFragment();
 
-            var scenarioHeaderElement = createTextElement('h1', scenarioResults.name);
-            fragment.appendChild(scenarioHeaderElement);
+            var scenarioResult = results[i];
+            testCount += scenarioResult.testCount;
 
-            if (scenarioResults.setupException)
+            if (scenarioResult.setupException)
             {
                 warningCount++;
-                fragment.appendChild(createTextElement('h3', 'Failed during setup', 'warning'));
-                fragment.appendChild(createTextElement('p', scenarioResults.setupException.stack, 'exception'));
+                failedFragment.appendChild(createTextElement('h3', 'Failed during setup', 'warning'));
+                failedFragment.appendChild(createTextElement('p', scenarioResult.setupException.stack, 'exception'));
             }
 
-            for (var j = 0; j < scenarioResults.tests.length; j++)
+            for (var j = 0; j < scenarioResult.tests.length; j++)
             {
-                var testResults = scenarioResults.tests[j];
-                var testHeaderElement = createTextElement('h2', testResults.name);
-                fragment.appendChild(testHeaderElement);
+                var testResult = scenarioResult.tests[j];
+                var testHeaderElement = createTextElement('h2', testResult.name);
 
-                if (testResults.setupException)
+                if (testResult.exception)
                 {
-                    warningCount++;
-                    fragment.appendChild(createTextElement('h3', 'Failed during setup', 'warning'));
-                    fragment.appendChild(createTextElement('p', testResults.setupException.stack, 'exception'));
+                    testHeaderElement.className = 'error';
+                    failedFragment.appendChild(testHeaderElement);
+                }
+                else if (testResult.setupException || testResult.tearDownException)
+                {
+                    testHeaderElement.className = 'warning';
+                    passedFragment.appendChild(testHeaderElement);
+                }
+                else
+                {
+                    passedFragment.appendChild(testHeaderElement);
                 }
 
-                if (testResults.exception)
+                if (testResult.setupException)
+                {
+                    warningCount++;
+                    failedFragment.appendChild(createTextElement('h3', 'Failed during setup', 'warning'));
+                    failedFragment.appendChild(createTextElement('p', testResult.setupException.stack, 'exception'));
+                }
+
+                if (testResult.exception)
                 {
                     failCount++;
-                    scenarioResults.hasError = true;
-                    fragment.appendChild(createTextElement('h3', 'Failed during execution', 'error'));
-                    fragment.appendChild(createTextElement('p', testResults.exception.stack, 'exception'));
+                    scenarioResult.hasError = true;
+                    failedFragment.appendChild(createTextElement('h3', 'Failed during execution', 'error'));
+                    failedFragment.appendChild(createTextElement('p', testResult.exception.stack, 'exception'));
                 }
 
-                if (testResults.tearDownException)
+                if (testResult.tearDownException)
                 {
                     warningCount++;
-                    fragment.appendChild(createTextElement('h3', 'Failed during tearDown', 'warning'));
-                    fragment.appendChild(createTextElement('p', testResults.tearDownException.stack, 'exception'));
+                    failedFragment.appendChild(createTextElement('h3', 'Failed during tearDown', 'warning'));
+                    failedFragment.appendChild(createTextElement('p', testResult.tearDownException.stack, 'exception'));
                 }
-
-                if (testResults.exception)
-                    testHeaderElement.className = 'error';
-                else if (testResults.setupException || testResults.tearDownException)
-                    testHeaderElement.className = 'warning';
             }
 
-            if (scenarioResults.tearDownException)
+            if (scenarioResult.tearDownException)
             {
                 warningCount++;
-                fragment.appendChild(createTextElement('h3', 'Failed during tearDown', 'warning'));
-                fragment.appendChild(createTextElement('p', scenarioResults.tearDownException.stack, 'exception'));
+                failedFragment.appendChild(createTextElement('h3', 'Failed during tearDown', 'warning'));
+                failedFragment.appendChild(createTextElement('p', scenarioResult.tearDownException.stack, 'exception'));
             }
 
-            if (scenarioResults.hasError)
-                scenarioHeaderElement.className = 'error';
-            else if (scenarioResults.setupException || scenarioResults.tearDownException)
-                scenarioHeaderElement.className = 'warning';
-        }
+            if (passedFragment.hasChildNodes())
+            {
+                var scenarioHeaderElement = createTextElement('h1', scenarioResult.name);
 
-        while (document.body.firstChild)
-            document.body.removeChild(document.body.firstChild);
+                if (scenarioResult.setupException || scenarioResult.tearDownException)
+                    scenarioHeaderElement.className = 'warning';
+
+                passedFragment.insertBefore(scenarioHeaderElement, passedFragment.firstChild);
+            }
+
+            if (failedFragment.hasChildNodes())
+            {
+                var scenarioHeaderFailedElement = createTextElement('h1', scenarioResult.name);
+                scenarioHeaderFailedElement.className = 'error';
+                failedFragment.insertBefore(scenarioHeaderFailedElement, failedFragment.firstChild);
+            }
+
+            passesDiv.appendChild(passedFragment);
+            failureDiv.appendChild(failedFragment);
+        }
 
         var report = window.formatMessage('{0} out of {1} tests passed. {2} warnings occurred.', [testCount - failCount, testCount, warningCount]);
 
@@ -95,8 +116,7 @@ define(function ()
         else if (warningCount)
             resultBannerClass += ' resultBannerWarning';
 
-        fragment.insertBefore(createTextElement('span', report, resultBannerClass), fragment.firstChild);
-        document.body.appendChild(fragment);
+        bannerDiv.appendChild(createTextElement('span', report, resultBannerClass));
     };
 
     return TestOutput;

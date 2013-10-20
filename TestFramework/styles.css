@@ -2,16 +2,34 @@ body {
     margin: 0;
 }
 
+#verticalSplit {
+    width: 100%;
+    overflow: auto;
+}
+
+#passes {
+    float: left;
+    width: 50%
+}
+
+#failures {
+    float: right;
+    width: 50%;
+}
+
 h1 {
-    font-size: 200%;
+    margin-left: 10px;
+    font-size: 140%;
 }
 
 h2 {
-    font-size: 140%;
+    margin: 0px 10px;
+    font-size: 100%;
     padding-left: 16px;
 }
 
 h3 {
+    margin: 10px;
     font-size: 120%;
     padding-left: 32px;
 }
@@ -29,7 +47,7 @@ h3 {
 }
 
 .resultBannerError {
-    background-color: red;
+    background-color: #c83232;
 }
 
 .warning {
@@ -37,10 +55,11 @@ h3 {
 }
 
 .error {
-    color: red;
+    color: #c83232;
 }
 
 .exception {
     white-space: pre;
     padding-left: 64px;
+    margin: 0px 0px 16px 0px;
 }

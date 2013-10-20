@@ -60,7 +60,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                 return;
             }
 
-            this.selectedPath = PathManager.calculatePath(this.availableMoveTiles, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
+            this.selectedPath = PathManager.calculatePathFromNodes(this.availableMoveTiles, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
             if (this.selectedPath)
             {
                 ActionBarView.addActions([{id: 'Move', method: this.onMoveConfirmed, context: this}]);

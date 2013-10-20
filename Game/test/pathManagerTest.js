@@ -17,7 +17,7 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
         }
     }
 
-    PathManagerTest.prototype.setUp = function()
+    PathManagerTest.prototype.setup = function()
     {
         this.map = new Map();
         this.map.create(4, 4);
@@ -59,43 +59,36 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
         ];
 
         var returnedNode = PathManager.getClosestTile(nodes);
+
         assertEquals('Incorrect node was returned.', 4, returnedNode.distance);
     };
 
     PathManagerTest.prototype.testUnitBlocksTile = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
+        this.map.getTile(1, 1).unit = {tileX: 1, tileY: 1};
 
-        var unit = {ap: 20, tileX: 0, tileY: 0};
-        map.getTile(1, 1).unit = {tileX: 1, tileY: 1};
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 0, false);
+        var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
 
-        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, 0, 0, 20, 0, false), 1, 1);
         assertFalsy('Tile was not blocked by unit', targetNode);
     };
 
     PathManagerTest.prototype.testWorldObjectBlocksTile = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
+        this.map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
-        var unit = {ap: 20, tileX: 0, tileY: 0};
-        map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 0, false);
+        var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
 
-        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, 0, 0, 20, 0, false), 1, 1);
         assertFalsy('Tile was not blocked by world object', targetNode);
     };
 
     PathManagerTest.prototype.testDiagonalMovementNearWorldObjects = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
+        this.map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
-        var unit = {ap: 20, tileX: 1, tileY: 0};
-        map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
-
-        PathManager.calculateAvailableTiles(map, 1, 0, 20, 1, true);
-        var pathNodes = PathManager.calculatePath(map, 1, 0, 2, 1);
+        var nodes = PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 10, true);
+        var pathNodes = PathManager.calculatePathFromNodes(nodes, 1, 0, 2, 1);
 
         assertEquals('Path was not the correct length', 2, pathNodes.length);
         assertTruthy('First path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 0);
@@ -104,49 +97,36 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testProhibitiveTileHeightDifferences = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
-
         var unit = {ap: 20, maxMoveableHeight: 2, tileX: 1, tileY: 0};
-        map.getTile(1, 1).height = 3;
+        this.map.getTile(1, 1).height = 3;
 
-        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, 1, 0, 20, 2, false), 1, 1);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 2, false);
+        var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
+
         assertFalsy('Tile was not blocked by prohibitive height difference', targetNode);
     };
 
     PathManagerTest.prototype.testClimbableWorldObjects = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
+        this.map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
-        var unit = {ap: 20, canClimbObjects: true, maxMoveableHeight: 2, tileX: 1, tileY: 0};
-        map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
+        this.map.getTile(1, 1).height = 10;
+        this.map.getTile(1, 2).height = 10;
 
-        map.getTile(1, 1).height = 10;
-        map.getTile(1, 2).height = 10;
+        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 2, true, true), 1, 1);
 
-        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(map, 1, 0, 20, 2, true), 1, 1);
         assertTruthy('Climbable object could not be accessed', targetNode);
-
-        var pathNodes = PathManager.calculatePath(map, 1, 0, 1, 2);
-        assertEquals('Path was not the correct length', 2, pathNodes.length);
-        assertTruthy('First path node was incorrect', pathNodes[0].x === 1 && pathNodes[0].y === 1);
-        assertTruthy('Second path node was incorrect', pathNodes[1].x === 1 && pathNodes[1].y === 2);
     };
 
     PathManagerTest.prototype.testDiagonalMovementNearClimbableWorldObjects = function ()
     {
-        var map = new Map();
-        map.create(4, 4);
+        this.map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
-        var unit = {ap: 20, canClimbObjects: true, tileX: 1, tileY: 0};
-        map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 0, true, true);
+        var targetPath = PathManager.calculatePathFromNodes(pathNodes, 1, 0, 2, 1);
 
-        PathManager.calculateAvailableTiles(map, unit);
-        var pathNodes = PathManager.calculatePath(map, 1, 0, 2, 1);
-
-        assertEquals('Path was not the correct length', 1, pathNodes.length);
-        assertTruthy('Path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 1);
+        assertEquals('Path was not the correct length', 1, targetPath.length);
+        assertTruthy('Path node was incorrect', targetPath[0].x === 2 && targetPath[0].y === 1);
     };
 
     return PathManagerTest;
