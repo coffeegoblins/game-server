@@ -22,8 +22,8 @@ define(['Game/src/inputHandler',
             this.renderables = [];
             this.renderablePaths = [];
 
-            InputHandler.registerClickEvent('canvas', onClick, this);
-            InputHandler.registerDragEvent('canvas', onDrag, this);
+            InputHandler.on('click', this, onClick);
+            InputHandler.on('drag', this, onDrag);
         }
 
         function handleResize()
@@ -34,9 +34,9 @@ define(['Game/src/inputHandler',
             RenderableTurnQueue.handleResize(this.canvas.width, this.canvas.height);
         }
 
-        function onClick(e, x, y)
+        function onClick(e)
         {
-            this.renderableMap.onClick(e, x + this.camera.viewportRect.x, y + this.camera.viewportRect.y, this.camera.scale);
+            this.renderableMap.onClick(e, e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y, this.camera.scale);
         }
 
         function onDrag(e, deltaX, deltaY)
@@ -75,7 +75,7 @@ define(['Game/src/inputHandler',
             this.renderableMap = new RenderableMap(renderableMap);
         };
 
-        Renderer.prototype.clearRenderablePaths = function()
+        Renderer.prototype.clearRenderablePaths = function ()
         {
             this.renderablePaths = [];
         };

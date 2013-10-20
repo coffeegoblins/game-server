@@ -26,8 +26,7 @@ define(function ()
 
     Utility.containsElement = function (array, element)
     {
-        var elementCount = array.length;
-        for (var i = 0; i < elementCount; i++)
+        for (var i = 0; i < array.length; i++)
         {
             if (array[i] === element)
             {
@@ -40,8 +39,7 @@ define(function ()
 
     Utility.containsElementWithProperty = function (array, property, value)
     {
-        var elementCount = array.length;
-        for (var i = 0; i < elementCount; i++)
+        for (var i = 0; i < array.length; i++)
         {
             if (array[i][property] === value)
             {
@@ -54,16 +52,13 @@ define(function ()
 
     Utility.getElementByProperty = function (array, property, value)
     {
-        var elementCount = array.length;
-        for (var i = 0; i < elementCount; i++)
+        for (var i = 0; i < array.length; i++)
         {
             if (array[i][property] === value)
             {
                 return array[i];
             }
         }
-
-        return null;
     };
 
     /**
@@ -73,14 +68,10 @@ define(function ()
      */
     Utility.removeElement = function (array, element)
     {
-        var elementCount = array.length;
-        for (var i = 0; i < elementCount; i++)
+        var index = array.indexOf(element);
+        if (index >= 0)
         {
-            if (array[i] === element)
-            {
-                array.splice(i, 1);
-                break;
-            }
+            array.splice(index, 1);
         }
     };
 
@@ -92,14 +83,33 @@ define(function ()
      */
     Utility.removeElementByProperty = function (array, property, value)
     {
-        var elementCount = array.length;
-        for (var i = 0; i < elementCount; i++)
+        for (var i = 0; i < array.length; i++)
         {
-            if (array[i][property] === value)
+            var object = array[i];
+            if (object[property] === value)
             {
                 array.splice(i, 1);
-                break;
+                return object;
             }
+        }
+    };
+
+    Utility.removeElementByProperties = function (array, properties)
+    {
+        for (var i = 0; i < array.length; i++)
+        {
+            var isMatching = true;
+            for (var property in properties)
+            {
+                if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if (isMatching)
+                return array.splice(i, 1)[0];
         }
     };
 

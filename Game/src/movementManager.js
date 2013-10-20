@@ -17,7 +17,9 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
 
             ActionBarView.removeAllActions();
-            ActionBarView.addActions([{id: 'Cancel', method: this.onMoveActionCancelled, context: this}]);
+            ActionBarView.addActions([
+                {id: 'Cancel', method: this.onMoveActionCancelled, context: this}
+            ]);
 
             this.availableMoveTiles = PathManager.calculateAvailableTiles(this.currentMap,
                 TurnManager.activeUnit.tileX,
@@ -29,12 +31,12 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             Renderer.clearRenderablePaths();
             Renderer.addRenderablePath('moveTiles', this.availableMoveTiles, false);
 
-            this.currentMap.registerTileClickedEvent('moveManager', this.onTileSelected, this);
+            this.currentMap.on('tileClick', this, this.onTileSelected);
         };
 
-        MovementManager.prototype.onMoveActionCancelled = function()
+        MovementManager.prototype.onMoveActionCancelled = function ()
         {
-            this.currentMap.unregisterTileClickedEventById('moveManager');
+            this.currentMap.off('tileClick', this, this.onTileSelected);
 
             Renderer.clearRenderablePaths();
 
@@ -46,7 +48,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             this.revertActionBar();
         };
 
-        MovementManager.prototype.onTileSelected = function(selectedTile, tileX, tileY)
+        MovementManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
             if (selectedTile.unit != null)
                 return; // Clicked on active unit
@@ -63,7 +65,9 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             this.selectedPath = PathManager.calculatePathFromNodes(this.availableMoveTiles, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
             if (this.selectedPath)
             {
-                ActionBarView.addActions([{id: 'Move', method: this.onMoveConfirmed, context: this}]);
+                ActionBarView.addActions([
+                    {id: 'Move', method: this.onMoveConfirmed, context: this}
+                ]);
 
                 this.selectedTileCost = this.selectedPath[this.selectedPath.length - 1].distance;
                 this.activeUnitView.previewAP(this.selectedTileCost);
@@ -108,7 +112,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                 endTime: totalTime,
                 method: function (e, deltaTime)
                 {
-                   progressTime += deltaTime;
+                    progressTime += deltaTime;
                     var progressPercentage = progressTime / totalTime;
                     while (progressPercentage > nextNode.endPercentage)
                     {
@@ -134,8 +138,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
 
                     InputHandler.enableInput();
-
-                    this.currentMap.unregisterTileClickedEventById('moveManager');
+                    this.currentMap.off('tileClick', this, this.onTileSelected);
                 }
             });
 

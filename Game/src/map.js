@@ -1,4 +1,4 @@
-define(['Game/src/utility'], function (Utility)
+define(['./eventManager'], function (EventManager)
 {
     'use strict';
 
@@ -11,7 +11,6 @@ define(['Game/src/utility'], function (Utility)
     function Map()
     {
         this.tiles = [];
-        this.registeredTileClickedEvents = [];
     }
 
     Map.prototype.create = function (width, height, initialHeight)
@@ -46,22 +45,6 @@ define(['Game/src/utility'], function (Utility)
                 };
             }
         }
-    };
-
-    Map.prototype.registerTileClickedEvent = function (id, method, context)
-    {
-        for (var i = 0; i < this.registeredTileClickedEvents.length; i++)
-        {
-            if (id === this.registeredTileClickedEvents[i].id)
-                return;
-        }
-
-        this.registeredTileClickedEvents.push({id: id, context: context, method: method});
-    };
-
-    Map.prototype.unregisterTileClickedEventById = function (id)
-    {
-        Utility.removeElementByProperty(this.registeredTileClickedEvents, 'id', id);
     };
 
     /**
@@ -125,14 +108,7 @@ define(['Game/src/utility'], function (Utility)
         var tile = this.getTile(tileX, tileY);
         if (tile)
         {
-            for (var i = 0; i < this.registeredTileClickedEvents.length; ++i)
-            {
-                var registeredEvent = this.registeredTileClickedEvents[i];
-                if (registeredEvent)
-                {
-                    registeredEvent.method.call(registeredEvent.context, tile, tileX, tileY);
-                }
-            }
+            this.trigger('tileClick', tile, tileX, tileY);
         }
     };
 
@@ -166,5 +142,6 @@ define(['Game/src/utility'], function (Utility)
 
     Map.prototype.maxHeight = 16;
 
+    EventManager.register(Map.prototype);
     return Map;
 });

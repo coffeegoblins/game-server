@@ -4,11 +4,14 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
 
     var isReady = false;
     var onReady = function () {isReady = true;};
+
     var scenarios = [];
     var output = [];
 
     var currentScenario;
     var currentTestIndex;
+    var onCompleteCallback;
+
 
     function TestFramework() { }
 
@@ -79,23 +82,26 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
 
         if (scenarios.length)
             beginExecutingScenario();
+        else if (onCompleteCallback)
+            onCompleteCallback(output);
         else
             TestOutput.display(output);
     }
 
-    TestFramework.runTests = function (testScenarios)
+    TestFramework.runTests = function (testScenarios, onComplete)
     {
         if (!isReady)
         {
             onReady = function ()
             {
                 isReady = true;
-                TestFramework.runTests(testScenarios);
+                TestFramework.runTests(testScenarios, onComplete);
             };
 
             return;
         }
 
+        onCompleteCallback = onComplete;
         for (var i = 0; i < testScenarios.length; i++)
         {
             var methods = [];

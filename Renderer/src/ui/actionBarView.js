@@ -6,8 +6,10 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
         {
             this.actionsList = [];
             this.imageList = {
-                'Move': 'Renderer/content/move.png',
-                'EndTurn': 'Renderer/content/endTurn.png'
+                'Attack': 'Renderer/content/attackIcon.png',
+                'Cancel': 'Renderer/content/cancelIcon.png',
+                'EndTurn': 'Renderer/content/endTurnIcon.png',
+                'Move': 'Renderer/content/moveIcon.png'
             };
 
             this.element = document.createElement('div');

@@ -1,45 +1,21 @@
-define(function ()
+define(['./eventManager'], function (EventManager)
 {
     'use strict';
 
-    /**
-     * @constructor
-     */
     function TurnManager()
     {
         this.unitList = [];
         this.activeUnit = null;
-        this.registeredBeginTurnEvents = [];
-        this.registeredEndTurnEvents = [];
-
         this.endTurnPercentageCost = 0.75;
     }
 
-    TurnManager.prototype.registerBeginTurnEvent = function (id, method, context)
-    {
-        this.registeredBeginTurnEvents.push({context: context, method: method});
-    };
-
-    TurnManager.prototype.registerEndTurnEvent = function (id, method, context)
-    {
-        this.registeredEndTurnEvents.push({context: context, method: method});
-    };
-
-    TurnManager.prototype.beginTurn = function()
+    TurnManager.prototype.beginTurn = function ()
     {
         this.activeUnit = this.unitList[0];
-
-        for (var i = 0; i < this.registeredBeginTurnEvents.length; ++i)
-        {
-            var registeredEvent = this.registeredBeginTurnEvents[i];
-            if (registeredEvent)
-            {
-                registeredEvent.method.call(registeredEvent.context, this.activeUnit);
-            }
-        }
+        this.trigger('beginTurn', this.activeUnit);
     };
 
-    TurnManager.prototype.incrementAP = function()
+    TurnManager.prototype.incrementAP = function ()
     {
         var nextUnit = this.unitList[0];
         var apIncrement = nextUnit.maxAP - nextUnit.ap;
@@ -84,16 +60,9 @@ define(function ()
         }
 
         this.activeUnit = null;
-
-        for (var i = 0; i < this.registeredEndTurnEvents.length; ++i)
-        {
-            var registeredEvent = this.registeredEndTurnEvents[i];
-            if (registeredEvent)
-            {
-                registeredEvent.method.call(registeredEvent.context, currentUnit, placementIndex + 1);
-            }
-        }
+        this.trigger('endTurn', currentUnit, placementIndex + 1);
     };
 
+    EventManager.register(TurnManager.prototype);
     return new TurnManager();
 });
