@@ -57,6 +57,15 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         AttackManager.prototype.onShortShotAction = function ()
         {
             Renderer.clearRenderablePaths();
+
+            // Save the current action bar state
+            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+
+            ActionBarView.removeAllActions();
+            ActionBarView.addActions([
+                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
+            ]);
+
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
             this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap,
@@ -68,6 +77,15 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         AttackManager.prototype.onLongShotAction = function ()
         {
             Renderer.clearRenderablePaths();
+
+            // Save the current action bar state
+            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+
+            ActionBarView.removeAllActions();
+            ActionBarView.addActions([
+                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
+            ]);
+
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
             this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap * 2,
@@ -141,7 +159,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         AttackManager.prototype.onAttackCancelled = function ()
         {
             // TODO Clear selected unit highlight
-            this.currentMap.off('tileClick', this, this.onTileSelected);
             this.revertActionBar();
         };
 
