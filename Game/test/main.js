@@ -1,6 +1,7 @@
 require(
     [
         'TestFramework/testRunner',
+        './attackManagerTest',
         './eventManagerTest',
         './mapTest',
         './pathManagerTest',
@@ -8,12 +9,13 @@ require(
         './turnManagerTest',
         './utilityTest'
     ],
-    function (TestRunner, EventManager, MapTest, PathManagerTest, SchedulerTest, TurnManagerTest, UtilityTest)
+    function (TestRunner, AttackManagerTest, EventTest, MapTest, PathManagerTest, SchedulerTest, TurnManagerTest, UtilityTest)
     {
         'use strict';
 
         TestRunner.runTests([
-            new EventManager(),
+            new AttackManagerTest(),
+            new EventTest(),
             new MapTest(),
             new PathManagerTest(),
             new SchedulerTest(),

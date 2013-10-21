@@ -21,6 +21,8 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 TurnManager.on('beginTurn', this.activeUnitView, this.activeUnitView.onBeginTurn);
                 TurnManager.on('endTurn', this.activeUnitView, this.activeUnitView.onEndTurn);
 
+                TurnManager.on('beginTurn', this.attackManager, this.attackManager.onBeginTurn);
+
                 TurnManager.on('beginTurn', this, this.onBeginTurn);
                 TurnManager.on('endTurn', this, this.onEndTurn);
 

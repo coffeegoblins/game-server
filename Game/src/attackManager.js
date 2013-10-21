@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turnManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Game/src/Utility'],
-    function (Renderer, Scheduler, PathManager, TurnManager, ActionBarView, ActiveUnitView, Utility)
+define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Game/src/Utility'],
+    function (Renderer, PathManager, ActionBarView, Utility)
     {
         'use strict';
 
@@ -12,6 +12,11 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             this.activeUnitView = activeUnitView;
         }
 
+        AttackManager.prototype.onBeginTurn = function(activeUnit)
+        {
+            this.activeUnit = activeUnit;
+        };
+
         AttackManager.prototype.onAttackAction = function ()
         {
             // Save the current action bar state
@@ -22,7 +27,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                 {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
-            switch (TurnManager.activeUnit.weapon)
+            switch (this.activeUnit.weapon)
             {
                 case 'bow':
                     ActionBarView.addActions([
@@ -68,8 +73,8 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap,
-                TurnManager.activeUnit.maxMoveableHeight, true);
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, this.activeUnit.tileX, this.activeUnit.tileY, this.activeUnit.ap,
+                this.activeUnit.maxMoveableHeight, true);
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
         };
@@ -88,8 +93,8 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, TurnManager.activeUnit.ap * 2,
-                TurnManager.activeUnit.maxMoveableHeight, true);
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, this.activeUnit.tileX, this.activeUnit.tileY, this.activeUnit.ap * 2,
+                this.activeUnit.maxMoveableHeight, true);
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
         };
@@ -97,7 +102,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
             // Clicked on self or non-unit tile
-            if (selectedTile.unit === TurnManager.activeUnit || !selectedTile.unit)
+            if (selectedTile.unit === this.activeUnit || !selectedTile.unit)
             {
                 if (this.selectedTile)
                 {
@@ -134,16 +139,16 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
         {
             var unit = this.selectedTile.unit;
 
-            unit.hp -= TurnManager.activeUnit.attackPower;
+            unit.hp -= this.activeUnit.attackPower;
             if (unit.hp < 0)
             {
                 // TODO Destroy unit
             }
 
-            TurnManager.activeUnit.ap -= this.selectedTileCost;
+            this.activeUnit.ap -= this.selectedTileCost;
 
             this.activeUnitView.previewAP(0);
-            this.activeUnitView.setAP(TurnManager.activeUnit.ap, TurnManager.activeUnit.maxAP);
+            this.activeUnitView.setAP(this.activeUnit.ap, this.activeUnit.maxAP);
 
             this.selectedNode = null;
             this.selectedTile = null;
