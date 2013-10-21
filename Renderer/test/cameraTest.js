@@ -7,7 +7,7 @@ define(['Renderer/src/camera/camera'], function (Camera)
         this.name = 'Camera Test';
     }
 
-    CameraTest.prototype.setUp = function ()
+    CameraTest.prototype.setup = function ()
     {
         this.camera = new Camera();
     };
