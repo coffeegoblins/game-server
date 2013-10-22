@@ -1,4 +1,4 @@
-define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Game/src/Utility'],
+define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Game/src/utility'],
     function (Renderer, PathManager, ActionBarView, Utility)
     {
         'use strict';

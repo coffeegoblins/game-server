@@ -1,4 +1,4 @@
-define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turnManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Game/src/inputHandler', 'Game/src/Utility'],
+define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turnManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Game/src/inputHandler', 'Game/src/utility'],
     function (Renderer, Scheduler, PathManager, TurnManager, ActionBarView, ActiveUnitView, InputHandler, Utility)
     {
         'use strict';
