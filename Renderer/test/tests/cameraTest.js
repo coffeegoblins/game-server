@@ -12,9 +12,24 @@ define(['Renderer/src/camera/camera'], function (Camera)
         this.camera = new Camera();
     };
 
-    CameraTest.prototype.testCamera = function ()
+    CameraTest.prototype.testMoveToUnitContinuesOnResize = function ()
     {
-        assertFail('TODO: Actually write some tests');
+        var actualUnit = null;
+
+        this.camera.targetUnit = {tileX: 1, tileY: 1};
+        this.camera.callbackContext = this;
+
+        this.camera.handleResize(100, 100);
+
+        this.camera.callback = function(targetUnit)
+        {
+            actualUnit = targetUnit;
+        };
+
+        async(function()
+        {
+            return actualUnit;
+        }, '', 2000);
     };
 
     return CameraTest;
