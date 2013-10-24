@@ -34,8 +34,8 @@ define(['Game/src/scheduler'], function (Scheduler)
         var wasExecuted = false;
         var wasCompletedExecuted = false;
 
-        Scheduler.schedule({completedMethod: function() { wasCompletedExecuted = true; },
-                            method: function () { wasExecuted = true; }});
+        Scheduler.schedule({completedMethod: function () { wasCompletedExecuted = true; },
+            method: function () { wasExecuted = true; }});
 
         async(function ()
         {
@@ -67,7 +67,7 @@ define(['Game/src/scheduler'], function (Scheduler)
         Scheduler.schedule(scheduledEvent);
         Scheduler.unschedule(scheduledEvent);
 
-        asyncWait(100);
+        asyncWait(40);
         async(function ()
         {
             assertFalsy(wasExecuted);
@@ -80,7 +80,7 @@ define(['Game/src/scheduler'], function (Scheduler)
         Scheduler.schedule({id: 'testEvent', method: function () { wasExecuted = true; }});
         Scheduler.unscheduleById('testEvent');
 
-        asyncWait(100);
+        asyncWait(40);
         async(function ()
         {
             assertFalsy(wasExecuted);

@@ -1,4 +1,4 @@
-define(['Renderer/src/camera/camera'], function (Camera)
+define(['Game/src/scheduler', 'Renderer/src/camera/camera'], function (Scheduler, Camera)
 {
     'use strict';
 
@@ -6,6 +6,16 @@ define(['Renderer/src/camera/camera'], function (Camera)
     {
         this.name = 'Camera Test';
     }
+
+    CameraTest.prototype.scenarioSetup = function ()
+    {
+        Scheduler.start();
+    };
+
+    CameraTest.prototype.scenarioTearDown = function ()
+    {
+        Scheduler.stop();
+    };
 
     CameraTest.prototype.setup = function ()
     {
@@ -21,15 +31,15 @@ define(['Renderer/src/camera/camera'], function (Camera)
 
         this.camera.handleResize(100, 100);
 
-        this.camera.callback = function(targetUnit)
+        this.camera.callback = function (targetUnit)
         {
             actualUnit = targetUnit;
         };
 
-        async(function()
+        async(function ()
         {
-            return actualUnit;
-        }, '', 2000);
+            return actualUnit != null;
+        }, '', 1200);
     };
 
     return CameraTest;
