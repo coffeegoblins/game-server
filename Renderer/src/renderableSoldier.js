@@ -1,12 +1,10 @@
-define(['Game/src/imageCache', 'Game/src/spriteSheet', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, AnimationDefinitions)
+define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, SpriteSheet)
 {
     'use strict';
 
-    var animationDefinitions = JSON.parse(AnimationDefinitions);
-
     function createAnimation(name)
     {
-        var anim = animationDefinitions.archer.animations[name];
+        var anim = soldierAnimations.archer.animations[name];
         var spriteSheet = new SpriteSheet(anim.spriteSheet, 'Renderer/content/' + anim.spriteSheet + '.png', {
             tileWidth: anim.tileWidth,
             tileHeight: anim.tileHeight

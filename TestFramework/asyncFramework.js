@@ -67,23 +67,33 @@ define(function ()
             message = arguments[1];
             timeout = arguments[2];
         }
-        else
+        else if (typeof arguments[1] === 'number')
         {
             timeout = arguments[1];
         }
+        else
+        {
+            message = arguments[1];
+        }
+
+        if (timeout == null || typeof timeout !== 'number')
+            timeout = 1000;
 
         if (!asyncQueue.length)
             delay(executeAsyncQueue);
 
-        asyncQueue.push({method: arguments[0], message: message, timeout: timeout || 1000});
+        asyncQueue.push({method: arguments[0], message: message, timeout: timeout});
     };
 
     window.asyncWait = function (duration)
     {
+        if (duration == null || typeof duration !== 'number')
+            duration = 1000;
+
         if (!asyncQueue.length)
             delay(executeAsyncQueue);
 
-        asyncQueue.push({timeout: duration || 1000, isWait: true});
+        asyncQueue.push({timeout: duration, isWait: true});
     };
 
     return AsyncFramework;

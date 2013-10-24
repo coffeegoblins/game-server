@@ -61,6 +61,27 @@ define(function ()
         }
     };
 
+    Utility.getElementByProperties = function (array, properties)
+    {
+        for (var i = 0; i < array.length; i++)
+        {
+            var isMatching = true;
+            for (var property in properties)
+            {
+                if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if (isMatching)
+            {
+                return array[i];
+            }
+        }
+    };
+
     /**
      * Removes an element from the given array
      * @param array

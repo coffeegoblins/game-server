@@ -178,3 +178,18 @@ html, body {
         margin: 0 0 4px 0;
     }
 }
+
+#testResults {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 16px;
+}
+
+#testResults.warning {
+    background-color: #ffe303;
+}
+
+#testResults.error {
+    background-color: #c83232;
+}

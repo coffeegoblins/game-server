@@ -1,4 +1,6 @@
-{
+'use strict';
+
+window.soldierAnimations = {
     "archer": {
         "animations": {
             "idle": {
@@ -43,4 +45,4 @@
             }
         }
     }
-}
+};

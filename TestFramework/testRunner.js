@@ -11,6 +11,7 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
     var currentScenario;
     var currentTestIndex;
     var onCompleteCallback;
+    var useLogger;
 
 
     function TestFramework() { }
@@ -22,6 +23,9 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
 
     AsyncFramework.onMethodException = function (e)
     {
+        if (useLogger)
+            console.log(e.stack);
+
         currentScenario.output.tests[currentTestIndex].exception = e;
         onScenarioTestFinished();
     };
@@ -36,6 +40,9 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
         }
         catch (e)
         {
+            if (useLogger)
+                console.log(e.stack);
+
             return e;
         }
     }
@@ -88,20 +95,22 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
             TestOutput.display(output);
     }
 
-    TestFramework.runTests = function (testScenarios, onComplete)
+    TestFramework.runTests = function (testScenarios, onComplete, logErrors)
     {
         if (!isReady)
         {
             onReady = function ()
             {
                 isReady = true;
-                TestFramework.runTests(testScenarios, onComplete);
+                TestFramework.runTests(testScenarios, onComplete, logErrors);
             };
 
             return;
         }
 
+        useLogger = logErrors;
         onCompleteCallback = onComplete;
+
         for (var i = 0; i < testScenarios.length; i++)
         {
             var methods = [];

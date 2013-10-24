@@ -18,9 +18,9 @@ define(function ()
         var failCount = 0;
         var warningCount = 0;
 
-        var passesDiv = document.body.querySelector('#passes');
-        var failureDiv = document.body.querySelector('#failures');
-        var bannerDiv = document.body.querySelector('#banner');
+        var passesDiv = document.getElementById('passes');
+        var failureDiv = document.getElementById('failures');
+        var bannerDiv = document.getElementById('banner');
 
         for (var i = 0; i < results.length; i++)
         {
@@ -87,28 +87,23 @@ define(function ()
                 failedFragment.appendChild(createTextElement('p', scenarioResult.tearDownException.stack, 'exception'));
             }
 
-            if (passedFragment.hasChildNodes())
+            if (passedFragment.firstChild)
             {
                 var scenarioHeaderElement = createTextElement('h1', scenarioResult.name);
-
                 if (scenarioResult.setupException || scenarioResult.tearDownException)
                     scenarioHeaderElement.className = 'warning';
 
                 passedFragment.insertBefore(scenarioHeaderElement, passedFragment.firstChild);
+                passesDiv.appendChild(passedFragment);
             }
 
-            if (failedFragment.hasChildNodes())
+            if (failedFragment.firstChild)
             {
-                var scenarioHeaderFailedElement = createTextElement('h1', scenarioResult.name);
-                scenarioHeaderFailedElement.className = 'error';
+                var scenarioHeaderFailedElement = createTextElement('h1', scenarioResult.name, 'error');
                 failedFragment.insertBefore(scenarioHeaderFailedElement, failedFragment.firstChild);
+                failureDiv.appendChild(failedFragment);
             }
-
-            passesDiv.appendChild(passedFragment);
-            failureDiv.appendChild(failedFragment);
         }
-
-        var report = window.formatMessage('{0} out of {1} tests passed. {2} warnings occurred.', [testCount - failCount, testCount, warningCount]);
 
         var resultBannerClass = 'resultBanner';
         if (failCount)
@@ -116,6 +111,7 @@ define(function ()
         else if (warningCount)
             resultBannerClass += ' resultBannerWarning';
 
+        var report = window.formatMessage('{0} out of {1} tests passed. {2} warnings occurred.', [testCount - failCount, testCount, warningCount]);
         bannerDiv.appendChild(createTextElement('span', report, resultBannerClass));
     };
 

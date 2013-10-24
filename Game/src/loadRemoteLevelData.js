@@ -2,7 +2,7 @@ define(function ()
 {
     'use strict';
 
-    return  function (fileName, onComplete)
+    return function (fileName, onComplete)
     {
         var request = new XMLHttpRequest();
         request.overrideMimeType('application/json');

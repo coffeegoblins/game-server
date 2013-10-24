@@ -1,43 +1,58 @@
-define(function ()
+define(['./utility'], function (Utility)
 {
     'use strict';
 
-    /**
-     * @constructor
-     */
+    var directions = [
+        [-1, -1],
+        [-1, 1],
+        [1, 1],
+        [1, -1],
+        [0, 1],
+        [0, -1],
+        [1, 0],
+        [-1, 0]
+    ];
+
     function PathManager()
     {
-        this.defaultMoveCost = 10;
-        this.diagonalMoveCost = 14;
     }
 
-    PathManager.prototype.calculatePathFromNodes = function (nodes, x, y, targetX, targetY)
+    PathManager.defaultMoveCost = 10;
+    PathManager.diagonalMoveCost = 14;
+
+    PathManager.canMoveToDiagonal = function (map, currentNode, directionX, directionY, options)
     {
-        var currentNode;
-
-        for (var i = 0; i < nodes.length; ++i)
-        {
-            if (nodes[i].x === targetX && nodes[i].y === targetY)
-            {
-                currentNode = nodes[i];
-                break;
-            }
-        }
-
-        if (!currentNode)
-            return;
-
-        var pathNodes = [];
-        while (currentNode.x !== x || currentNode.y !== y)
-        {
-            pathNodes.unshift(currentNode);
-            currentNode = this.findClosestNeighbor(currentNode);
-        }
-
-        return pathNodes;
+        return PathManager.canMoveToTile(map, currentNode, directionX, directionY, options) &&
+               PathManager.canMoveToTile(map, currentNode, directionX, 0, options) &&
+               PathManager.canMoveToTile(map, currentNode, 0, directionY, options);
     };
 
-    PathManager.prototype.findClosestNeighbor = function (node)
+    PathManager.canMoveToTile = function (map, currentNode, directionX, directionY, options)
+    {
+        // Don't allow traversal over other units
+        var destinationTile = map.getTile(currentNode.x + directionX, currentNode.y + directionY);
+        if (!destinationTile || (destinationTile.unit != null && !options.ignoreUnits))
+            return false;
+
+        var sourceIsClimbable, destinationIsClimbable;
+        if (options.canClimbObjects && (directionX === 0 || directionY === 0))
+        {
+            sourceIsClimbable = (currentNode.tile.content && currentNode.tile.content.isClimbable);
+            destinationIsClimbable = (destinationTile.content && destinationTile.content.isClimbable);
+        }
+
+        // Don't allow traversal over world objects
+        if (destinationTile.content && !destinationIsClimbable)
+            return false;
+
+        // Don't allow traversal over nodes with an unclimbable height gap
+        if (Math.abs(currentNode.tile.height - destinationTile.height) > options.maxClimbableHeight && !sourceIsClimbable && !destinationIsClimbable)
+            return false;
+
+        return true;
+    };
+
+    PathManager.findClosestNeighbor = function (node)
     {
         var lowestIndex = 0;
         for (var i = 0; i < node.neighbors.length; ++i)
@@ -49,93 +64,7 @@ define(function ()
         return node.neighbors[lowestIndex];
     };
 
-    PathManager.prototype.calculateAvailableTiles = function (map, x, y, maxDistance, maxClimbableHeight, ignoreUnits, canClimbObjects)
-    {
-        var currentNode = { distance: 0, x: x, y: y, tile: map.getTile(x, y), neighbors: [] };
-
-        this.map = map;
-
-        this.completedNodes = [];
-        this.processingNodes = [currentNode];
-
-        while (true)
-        {
-            currentNode = this.getClosestTile(this.processingNodes);
-            if (currentNode == null || currentNode.distance === Infinity || currentNode.distance > maxDistance)
-            {
-                // We're past the boundary that the unit can move
-                break;
-            }
-
-            this.completedNodes.push(currentNode);
-
-            var diagonalDistance = currentNode.distance + this.diagonalMoveCost;
-
-            if (this.canMoveToDiagonal(currentNode, -1, -1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, -1, -1, diagonalDistance, maxClimbableHeight);
-
-            if (this.canMoveToDiagonal(currentNode, 1, -1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, 1, -1, diagonalDistance, maxClimbableHeight);
-
-            if (this.canMoveToDiagonal(currentNode, -1, 1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, -1, 1, diagonalDistance, maxClimbableHeight);
-
-            if (this.canMoveToDiagonal(currentNode, 1, 1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, 1, 1, diagonalDistance, maxClimbableHeight);
-
-            var straightDistance = currentNode.distance + this.defaultMoveCost;
-
-            if (this.canMoveToTile(currentNode, 0, -1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, 0, -1, straightDistance, maxClimbableHeight);
-
-            if (this.canMoveToTile(currentNode, 0, 1, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, 0, 1, straightDistance, maxClimbableHeight);
-
-            if (this.canMoveToTile(currentNode, -1, 0, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, -1, 0, straightDistance, maxClimbableHeight);
-
-            if (this.canMoveToTile(currentNode, 1, 0, maxClimbableHeight, ignoreUnits, canClimbObjects))
-                this.evaluateNeighbor(currentNode, 1, 0, straightDistance, maxClimbableHeight);
-        }
-
-        this.map = null;
-
-        return this.completedNodes;
-    };
-
-    PathManager.prototype.canMoveToDiagonal = function (currentNode, directionX, directionY, maxClimbableHeight, ignoreUnits, canClimbObjects)
-    {
-        return this.canMoveToTile(currentNode, directionX, directionY, maxClimbableHeight, ignoreUnits, canClimbObjects) &&
-               this.canMoveToTile(currentNode, directionX, 0, maxClimbableHeight, ignoreUnits, canClimbObjects) &&
-               this.canMoveToTile(currentNode, 0, directionY, maxClimbableHeight, ignoreUnits, canClimbObjects);
-    };
-
-    PathManager.prototype.canMoveToTile = function (currentNode, directionX, directionY, maxClimbableHeight, ignoreUnits, canClimbObjects)
-    {
-        // Don't allow traversal over other units
-        var destinationTile = this.map.getTile(currentNode.x + directionX, currentNode.y + directionY);
-        if (!destinationTile || (destinationTile.unit != null && !ignoreUnits))
-            return false;
-
-        var sourceIsClimbable, destinationIsClimbable;
-        if (canClimbObjects && (directionX === 0 || directionY === 0))
-        {
-            sourceIsClimbable = (currentNode.tile.content && currentNode.tile.content.isClimbable);
-            destinationIsClimbable = (destinationTile.content && destinationTile.content.isClimbable);
-        }
-
-        // Don't allow traversal over world objects
-        if (destinationTile.content && !destinationIsClimbable)
-            return false;
-
-        // Don't allow traversal over nodes with an unclimbable height gap
-        if (Math.abs(currentNode.tile.height - destinationTile.height) > maxClimbableHeight && !sourceIsClimbable && !destinationIsClimbable)
-            return false;
-
-        return true;
-    };
-
-    PathManager.prototype.getClosestTile = function (nodes)
+    PathManager.getClosestTile = function (nodes)
     {
         var lowestIndex = 0;
         for (var i = 0; i < nodes.length; ++i)
@@ -147,45 +76,87 @@ define(function ()
         return nodes.splice(lowestIndex, 1)[0];
     };
 
-    PathManager.prototype.evaluateNeighbor = function (currentNode, directionX, directionY, additionalDistance, maxClimbableHeight)
+
+    PathManager.calculateAvailableTiles = function (map, options)
     {
-        var x = currentNode.x + directionX;
-        var y = currentNode.y + directionY;
+        var currentNode = {distance: 0, x: options.x, y: options.y, tile: map.getTile(options.x, options.y), neighbors: []};
+        var completedNodes = [];
+        var processingNodes = [currentNode];
 
-        var tile = this.map.getTile(x, y);
-        if (tile)
+        while (true)
         {
-            // Make sure this node hasn't already been checked
-            for (var i = 0; i < this.completedNodes.length; ++i)
+            // Make sure we don't pass the unit's movable boundary
+            currentNode = PathManager.getClosestTile(processingNodes);
+            if (currentNode == null || !isFinite(currentNode.distance) || currentNode.distance > options.maxDistance)
+                break;
+
+            completedNodes.push(currentNode);
+
+            // Check for potential nodes in all directions
+            for (var i = 0; i < directions.length; i++)
             {
-                if (this.completedNodes[i].x === x && this.completedNodes[i].y === y)
-                    return;
+                var xDirection = directions[i][0];
+                var yDirection = directions[i][1];
+
+                var x = currentNode.x + xDirection;
+                var y = currentNode.y + yDirection;
+                var tile = map.getTile(x, y);
+
+                // Make sure this node is valid hasn't already been checked
+                if (!tile || Utility.getElementByProperties(completedNodes, {x: x, y: y}))
+                    continue;
+
+                // See if the we can access the new tile
+                var isDiagonal = (xDirection !== 0 && yDirection !== 0);
+                if (isDiagonal)
+                {
+                    if (!PathManager.canMoveToDiagonal(map, currentNode, xDirection, yDirection, options))
+                        continue;
+                }
+                else if (!PathManager.canMoveToTile(map, currentNode, xDirection, yDirection, options))
+                {
+                    continue;
+                }
+
+                // Create the new node, or find it if it already exists
+                var newNode = Utility.getElementByProperties(processingNodes, {x: x, y: y});
+                if (!newNode)
+                {
+                    newNode = {distance: Infinity, x: x, y: y, tile: tile, neighbors: [currentNode]};
+                    processingNodes.push(newNode);
+                }
+
+                var heightDifference = tile.height - currentNode.tile.height;
+                var distance = currentNode.distance + (isDiagonal ? PathManager.diagonalMoveCost : PathManager.defaultMoveCost);
+
+                if (Math.abs(heightDifference) <= options.maxClimbableHeight)
+                    distance += heightDifference;
+
+                if (distance < newNode.distance)
+                    newNode.distance = distance;
+
+                currentNode.neighbors.push(newNode);
             }
-
-            var node = null;
-            for (i = 0; i < this.processingNodes.length; ++i)
-            {
-                if (this.processingNodes[i].x === x && this.processingNodes[i].y === y)
-                    node = this.processingNodes[i];
-            }
-
-            if (!node)
-            {
-                node = {distance: Infinity, x: x, y: y, tile: tile, neighbors: [currentNode]};
-                this.processingNodes.push(node);
-            }
-
-            var distance = additionalDistance;
-            var heightDifference = tile.height - currentNode.tile.height;
-            if (Math.abs(heightDifference) <= maxClimbableHeight)
-                distance += heightDifference;
-
-            if (distance < node.distance)
-                node.distance = distance;
-
-            currentNode.neighbors.push(node);
         }
+
+        return completedNodes;
     };
 
-    return new PathManager();
+    PathManager.calculatePathFromNodes = function (nodes, x, y, targetX, targetY)
+    {
+        var currentNode = Utility.getElementByProperties(nodes, {x: targetX, y: targetY});
+        if (!currentNode)
+            return;
+
+        var pathNodes = [];
+        while (currentNode.x !== x || currentNode.y !== y)
+        {
+            pathNodes.unshift(currentNode);
+            currentNode = PathManager.findClosestNeighbor(currentNode);
+        }
+
+        return pathNodes;
+    };
+
+    return PathManager;
 });

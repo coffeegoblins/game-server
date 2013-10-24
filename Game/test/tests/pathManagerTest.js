@@ -17,7 +17,7 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
         }
     }
 
-    PathManagerTest.prototype.setup = function()
+    PathManagerTest.prototype.setup = function ()
     {
         this.map = new Map();
         this.map.create(4, 4);
@@ -25,7 +25,13 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testMaxDistanceGreaterThanMapBoundary = function ()
     {
-        var completedNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, Infinity, 0, true);
+        var completedNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 0,
+            y: 0,
+            maxDistance: Infinity,
+            maxClimbableHeight: 0,
+            ignoreUnits: true
+        });
 
         assertEquals('Invalid number of tiles calculated', this.map.tiles.length, completedNodes.length);
     };
@@ -38,7 +44,13 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
         this.map.getTile(0, 0).height = 1;
         this.map.getTile(0, 2).height = 2;
 
-        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 1, expectedCost, topNodeHeight, true);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 0,
+            y: 1,
+            maxDistance: expectedCost,
+            maxClimbableHeight: topNodeHeight,
+            ignoreUnits: true
+        });
 
         var topNode = getCompletedNodeAt(pathNodes, 0, 0);
         var bottomNode = getCompletedNodeAt(pathNodes, 0, 2);
@@ -67,7 +79,13 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
     {
         this.map.getTile(1, 1).unit = {tileX: 1, tileY: 1};
 
-        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 0, false);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 0,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 0
+        });
+
         var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
 
         assertFalsy('Tile was not blocked by unit', targetNode);
@@ -77,7 +95,13 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
     {
         this.map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
-        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 0, false);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 0,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 0
+        });
+
         var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
 
         assertFalsy('Tile was not blocked by world object', targetNode);
@@ -87,7 +111,14 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
     {
         this.map.addObject({sizeX: 1, sizeY: 1}, 1, 1);
 
-        var nodes = PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 10, true);
+        var nodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 1,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 10,
+            ignoreUnits: true
+        });
+
         var pathNodes = PathManager.calculatePathFromNodes(nodes, 1, 0, 2, 1);
 
         assertEquals('Path was not the correct length', 2, pathNodes.length);
@@ -97,10 +128,15 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.testProhibitiveTileHeightDifferences = function ()
     {
-        var unit = {ap: 20, maxMoveableHeight: 2, tileX: 1, tileY: 0};
         this.map.getTile(1, 1).height = 3;
 
-        var pathNodes = PathManager.calculateAvailableTiles(this.map, 0, 0, 20, 2, false);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 0,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 2
+        });
+
         var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
 
         assertFalsy('Tile was not blocked by prohibitive height difference', targetNode);
@@ -113,8 +149,16 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
         this.map.getTile(1, 1).height = 10;
         this.map.getTile(1, 2).height = 10;
 
-        var targetNode = getCompletedNodeAt(PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 2, true, true), 1, 1);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 1,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 2,
+            ignoreUnits: true,
+            canClimbObjects: true
+        });
 
+        var targetNode = getCompletedNodeAt(pathNodes, 1, 1);
         assertTruthy('Climbable object could not be accessed', targetNode);
     };
 
@@ -122,7 +166,15 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
     {
         this.map.addObject({isClimbable: true, sizeX: 1, sizeY: 1}, 1, 1);
 
-        var pathNodes = PathManager.calculateAvailableTiles(this.map, 1, 0, 20, 0, true, true);
+        var pathNodes = PathManager.calculateAvailableTiles(this.map, {
+            x: 1,
+            y: 0,
+            maxDistance: 20,
+            maxClimbableHeight: 0,
+            ignoreUnits: true,
+            canClimbObjects: true
+        });
+
         var targetPath = PathManager.calculatePathFromNodes(pathNodes, 1, 0, 2, 1);
 
         assertEquals('Path was not the correct length', 1, targetPath.length);

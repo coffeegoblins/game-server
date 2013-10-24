@@ -1,15 +1,5 @@
-require(
-    [
-        'TestFramework/testRunner',
-        './cameraTest',
-        './renderableMapTest'
-    ],
-    function (TestRunner, CameraTest, RenderableMapTest)
-    {
-        'use strict';
-
-        TestRunner.runTests([
-            new CameraTest(),
-            new RenderableMapTest()
-        ]);
-    });
+require(['TestFramework/testRunner', './testDefinitions'], function (TestRunner, TestDefinitions)
+{
+    'use strict';
+    TestRunner.runTests(TestDefinitions);
+});

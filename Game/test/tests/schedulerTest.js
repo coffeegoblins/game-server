@@ -71,9 +71,15 @@ define(['Game/src/scheduler'], function (Scheduler)
     SchedulerTest.prototype.testPriority = function ()
     {
         var executionOrder = [];
-        Scheduler.schedule({priority: 1, method: function () { executionOrder.push('method1'); }});
-        Scheduler.schedule({priority: 3, method: function () { executionOrder.push('method2'); }});
-        Scheduler.schedule({priority: 2, method: function () { executionOrder.push('method3'); }});
+        var scheduledMethod = function (e)
+        {
+            executionOrder.push(e.name);
+            Scheduler.unschedule(e);
+        };
+
+        Scheduler.schedule({name: 'method1', priority: 1, method: scheduledMethod});
+        Scheduler.schedule({name: 'method2', priority: 3, method: scheduledMethod});
+        Scheduler.schedule({name: 'method3', priority: 2, method: scheduledMethod});
 
         async(function ()
         {

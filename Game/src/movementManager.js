@@ -21,12 +21,12 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                 {id: 'Cancel', method: this.onMoveActionCancelled, context: this}
             ]);
 
-            this.availableMoveTiles = PathManager.calculateAvailableTiles(this.currentMap,
-                TurnManager.activeUnit.tileX,
-                TurnManager.activeUnit.tileY,
-                TurnManager.activeUnit.ap,
-                TurnManager.activeUnit.maxMoveableHeight,
-                false);
+            this.availableMoveTiles = PathManager.calculateAvailableTiles(this.currentMap, {
+                x: TurnManager.activeUnit.tileX,
+                y: TurnManager.activeUnit.tileY,
+                maxDistance: TurnManager.activeUnit.ap,
+                maxClimbableHeight: TurnManager.activeUnit.maxMoveableHeight
+            });
 
             Renderer.clearRenderablePaths();
             Renderer.addRenderablePath('moveTiles', this.availableMoveTiles, false);

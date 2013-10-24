@@ -1,7 +1,7 @@
 define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/levelLoader', 'Game/src/turnManager',
-        'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Game/src/attackManager',
+        'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Game/src/attackManager',
         'Game/src/movementManager'],
-    function (Renderer, Scheduler, InputHandler, LevelLoader, TurnManager, PathManager, ActionBarView, ActiveUnitView, AttackManager, MovementManager)
+    function (Renderer, Scheduler, InputHandler, LevelLoader, TurnManager, ActionBarView, ActiveUnitView, AttackManager, MovementManager)
     {
         'use strict';
 

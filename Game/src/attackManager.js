@@ -12,7 +12,7 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             this.activeUnitView = activeUnitView;
         }
 
-        AttackManager.prototype.onBeginTurn = function(activeUnit)
+        AttackManager.prototype.onBeginTurn = function (activeUnit)
         {
             this.activeUnit = activeUnit;
         };
@@ -73,8 +73,13 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
 
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, this.activeUnit.tileX, this.activeUnit.tileY, this.activeUnit.ap,
-                this.activeUnit.maxMoveableHeight, true);
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, {
+                x: this.activeUnit.tileX,
+                y: this.activeUnit.tileY,
+                maxDistance: this.activeUnit.ap,
+                maxClimbableHeight: this.activeUnit.maxMoveableHeight,
+                ignoreUnits: true
+            });
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
         };
@@ -93,8 +98,13 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
 
             this.currentMap.on('tileClick', this, this.onTileSelected);
 
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, this.activeUnit.tileX, this.activeUnit.tileY, this.activeUnit.ap * 2,
-                this.activeUnit.maxMoveableHeight, true);
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, {
+                x: this.activeUnit.tileX,
+                y: this.activeUnit.tileY,
+                maxDistance: this.activeUnit.ap * 2,
+                maxClimbableHeight: this.activeUnit.maxMoveableHeight,
+                ignoreUnits: true
+            });
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
         };
