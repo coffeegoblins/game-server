@@ -29,6 +29,25 @@ define(['Game/src/scheduler'], function (Scheduler)
         }, 'Scheduled event was not called', 100);
     };
 
+    SchedulerTest.prototype.testCompletedMethodIsNotCalled = function ()
+    {
+        var wasExecuted = false;
+        var wasCompletedExecuted = false;
+
+        Scheduler.schedule({completedMethod: function() { wasCompletedExecuted = true; },
+                            method: function () { wasExecuted = true; }});
+
+        async(function ()
+        {
+            if (wasExecuted)
+            {
+                assertFalsy(wasCompletedExecuted);
+            }
+
+            return wasExecuted;
+        }, 'Scheduled event was not called', 100);
+    };
+
     SchedulerTest.prototype.testCompletedMethodIsCalledWhenEndTimeSet = function ()
     {
         var wasExecuted = false;

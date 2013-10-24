@@ -25,8 +25,8 @@ define(['Game/src/scheduler'],
                 totalTime: seconds,
                 endTime: seconds,
                 context: this,
-                method: onValueUpdate,
-                completedMethod: onValueUpdateCompleted,
+                method: this.onValueUpdate,
+                completedMethod: this.onValueUpdateCompleted,
                 callbackContext: context,
                 callbackMethod: callback
             };
@@ -34,7 +34,7 @@ define(['Game/src/scheduler'],
             Scheduler.schedule(this.transitionEvent);
         };
 
-        function onValueUpdate(eventData, deltaTime)
+        TransitionEffect.prototype.onValueUpdate = function(eventData, deltaTime)
         {
             eventData.currentValue = eventData.currentValue + eventData.deltaValue * deltaTime / eventData.totalTime;
 
@@ -45,9 +45,9 @@ define(['Game/src/scheduler'],
             }
 
             eventData.source[eventData.styleName] = value;
-        }
+        };
 
-        function onValueUpdateCompleted(eventData, deltaTime)
+        TransitionEffect.prototype.onValueUpdateCompleted = function(eventData, deltaTime)
         {
             var value = eventData.targetValue;
             if (eventData.suffix)
@@ -59,7 +59,7 @@ define(['Game/src/scheduler'],
 
             if (eventData.callbackMethod)
                 eventData.callbackMethod.call(eventData.callbackContext);
-        }
+        };
 
         return new TransitionEffect();
     });
