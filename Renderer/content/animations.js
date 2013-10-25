@@ -2,45 +2,37 @@
 
 window.soldierAnimations = {
     "archer": {
+        "spriteSheet": "archerSheetLong",
+        "tileHeight": 64,
+        "tileWidth": 64,
+
         "animations": {
             "idle": {
-                "spriteSheet": "archerIdle",
-                "tileHeight": 100,
-                "tileWidth": 100,
-                "frameStart": 0,
-                "frameEnd": 32,
+                "start": 16,
+                "end": 47,
                 "speed": 0.075,
                 "frames": {
-                    "0": 5,
-                    "17": 1.5,
-                    "27": 2
+                    "16": 5,
+                    "33": 1.5,
+                    "42": 2
                 }
             },
-            "walk": {
-                "spriteSheet": "archerWalk",
-                "tileHeight": 100,
-                "tileWidth": 100,
-                "frameStart": 0,
-                "frameEnd": 15,
-                "speed": 0.1
-            },
             "run": {
-                "spriteSheet": "archerRun",
-                "tileHeight": 100,
-                "tileWidth": 100,
-                "frameStart": 0,
-                "frameEnd": 15,
+                "start": 0,
+                "end": 15,
                 "speed": 0.03
             },
             "attack": {
-                "spriteSheet": "archerShoot",
-                "tileHeight": 100,
-                "tileWidth": 100,
-                "frameStart": 0,
-                "frameEnd": 27,
+                "start": 48,
+                "end": 79,
+                "speed": 0.05
+            },
+            "death": {
+                "start": 80,
+                "end": 111,
                 "speed": 0.05,
                 "frames": {
-                    "20": 0.5
+                    "111": Infinity
                 }
             }
         }

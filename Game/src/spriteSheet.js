@@ -9,7 +9,7 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
 
     function SpriteSheet(id, path, properties)
     {
-        this.animations = [];
+        this.animations = {};
         this.currentTile = 0;
         this.image = ImageCache.loadImage(id, path);
         Utility.merge(this, defaults, properties);
@@ -17,12 +17,10 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
 
     SpriteSheet.prototype.defineAnimation = function (name, properties)
     {
-        this.animations.push({
-            start: properties.frameStart,
-            end: properties.frameEnd,
-            frames: properties.frames || {},
-            speed: properties.speed
-        });
+        if (!properties.frames)
+            properties.frames = {};
+
+        this.animations[name] = properties;
     };
 
     SpriteSheet.prototype.getCurrentTileBounds = function ()
@@ -52,7 +50,7 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
 
     SpriteSheet.prototype.playAnimation = function (name)
     {
-        this.currentAnimation = this.animations[0]; // TODO: Fix this once we have multiple animations per file
+        this.currentAnimation = this.animations[name];
         this.currentTile = this.currentAnimation.start;
         this.animationTime = 0;
     };
@@ -73,28 +71,28 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
 
     SpriteSheet.prototype.updateAnimation = function (deltaTime)
     {
-        if (this.currentAnimation)
+        if (!this.currentAnimation)
+            return;
+
+        var frameTime = 0;
+        this.animationTime += deltaTime;
+
+        for (var i = this.currentAnimation.start; i <= this.currentAnimation.end; i++)
         {
-            this.animationTime += deltaTime;
+            if (this.currentAnimation.frames[i] != null)
+                frameTime += this.currentAnimation.frames[i];
+            else
+                frameTime += this.currentAnimation.speed;
 
-            var frameTime = 0;
-            for (var i = this.currentAnimation.start; i <= this.currentAnimation.end; i++)
+            if (this.animationTime < frameTime)
             {
-                if (this.currentAnimation.frames[i] != null)
-                    frameTime += this.currentAnimation.frames[i];
-                else
-                    frameTime += this.currentAnimation.speed;
-
-                if (this.animationTime < frameTime)
-                {
-                    this.setCurrentTile(i);
-                    return;
-                }
+                this.setCurrentTile(i);
+                return;
             }
-
-            this.animationTime -= frameTime;
-            this.setCurrentTile(this.currentAnimation.start);
         }
+
+        this.animationTime -= frameTime;
+        this.setCurrentTile(this.currentAnimation.start);
     };
 
     return SpriteSheet;

@@ -2,15 +2,23 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
 {
     'use strict';
 
-    function createAnimation(name)
+    function createSpriteSheet(type)
     {
-        var anim = soldierAnimations.archer.animations[name];
-        var spriteSheet = new SpriteSheet(anim.spriteSheet, 'Renderer/content/' + anim.spriteSheet + '.png', {
-            tileWidth: anim.tileWidth,
-            tileHeight: anim.tileHeight
+        var animationDefinition = soldierAnimations[type];
+        var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/' + animationDefinition.spriteSheet + '.png', {
+            tileWidth: animationDefinition.tileWidth,
+            tileHeight: animationDefinition.tileHeight
         });
 
-        spriteSheet.defineAnimation(name, anim);
+        for (var property in animationDefinition.animations)
+        {
+            var anim = animationDefinition.animations[property];
+            if (anim)
+            {
+                spriteSheet.defineAnimation(property, anim);
+            }
+        }
+
         return spriteSheet;
     }
 
@@ -36,13 +44,8 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
         switch (this.unit.type)
         {
             case 'Archer':
-                this.idleSheet = createAnimation('idle');
-                this.walkSheet = createAnimation('walk');
-                this.runSheet = createAnimation('run');
-                this.attackSheet = createAnimation('attack');
-
-                this.currentAnimation = this.idleSheet;
-                this.currentAnimation.playAnimation(this.currentAnimation.animations[0]);
+                this.spriteSheet = createSpriteSheet('archer');
+                this.spriteSheet.playAnimation('idle');
                 break;
         }
     }
@@ -58,18 +61,18 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
     RenderableSoldier.prototype.render = function (context, deltaTime, tileSize, viewportRect)
     {
         var xPosition, yPosition;
-        if (this.currentAnimation)
+        if (this.spriteSheet)
         {
-            if (this.currentAnimation.image.isLoaded)
+            if (this.spriteSheet.image.isLoaded)
             {
                 xPosition = this.unit.tileX * tileSize - viewportRect.x;
                 yPosition = this.unit.tileY * tileSize - viewportRect.y;
 
-                this.currentAnimation.updateAnimation(deltaTime);
-                var tileRect = this.currentAnimation.getCurrentTileBounds();
+                this.spriteSheet.updateAnimation(deltaTime);
+                var tileRect = this.spriteSheet.getCurrentTileBounds();
 
                 context.globalAlpha = this.style.opacity;
-                context.drawImage(this.currentAnimation.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
+                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
                 context.globalAlpha = 1;
             }
         }
