@@ -37,8 +37,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.onCameraMoved = function (activeUnit)
         {
-            Renderer.blinkUnit(activeUnit, 1.5);
-
             ActionBarView.addActions([
                 {id: 'EndTurn', method: this.onEndTurnAction, context: this},
                 {id: 'Move', method: this.movementManager.onMoveAction, context: this.movementManager},
@@ -52,12 +50,8 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
         PlotManager.prototype.onEndTurn = function (activeUnit)
         {
             InputHandler.disableInput();
-            Renderer.stopBlinkUnit(activeUnit);
-
             ActionBarView.hideActions();
-
             Renderer.clearRenderablePaths();
-
             TurnManager.beginTurn();
         };
 

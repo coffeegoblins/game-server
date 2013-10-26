@@ -131,9 +131,9 @@ define(['Game/src/inputHandler',
             this.renderablePaths.push(new RenderablePath(id, nodes, isSelected));
         };
 
-        Renderer.prototype.addRenderableSoldier = function (soldier, unitImage, previewImage)
+        Renderer.prototype.addRenderableSoldier = function (soldier, previewImage)
         {
-            this.renderables.push(new RenderableSoldier(soldier, unitImage, previewImage));
+            this.renderables.push(new RenderableSoldier(soldier, previewImage));
         };
 
         Renderer.prototype.initialize = function (canvas)

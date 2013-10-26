@@ -172,9 +172,9 @@
         {"objectType": "ladder", "x": 2, "y": 19, "properties": {"direction": "down"}},
         {"objectType": "ladder", "x": 1, "y": 18, "properties": {"direction": "left"}},
         {"objectType": "ladder", "x": 3, "y": 18, "properties": {"direction": "right"}},
-        {"objectType": "soldier", "x": 5, "y": 0, "unitImage": "archer", "properties": {"type": "Archer"}},
-        {"objectType": "soldier", "x": 1, "y": 5, "unitImage": "soldier", "properties": {"type": "Melee"}},
-        {"objectType": "soldier", "x": 9, "y": 4, "previewImage": "archer", "properties": {"type": "Archer"}}
+        {"objectType": "soldier", "x": 5, "y": 0, "previewImage": "archer", "properties": {"type": "archer"}},
+        {"objectType": "soldier", "x": 1, "y": 5, "previewImage": "soldier", "properties": {"type": "melee"}},
+        {"objectType": "soldier", "x": 9, "y": 4, "previewImage": "archer", "properties": {"type": "archer"}}
     ],
     "units": []
 }

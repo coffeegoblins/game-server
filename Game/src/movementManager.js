@@ -83,6 +83,8 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             InputHandler.disableInput();
 
             var unit = TurnManager.activeUnit;
+            unit.setState('run');
+
             var startTile = this.currentMap.getTile(unit.tileX, unit.tileY);
             startTile.unit = null;
 
@@ -120,10 +122,13 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                         nextNode = path.shift();
                     }
 
-                    var nodeProgressPercentage = (progressPercentage - nextNode.startPercentage) / nextNode.percentageShare;
+                    var deltaX = nextNode.x - currentNode.x;
+                    var deltaY = nextNode.y - currentNode.y;
+                    unit.setDirection(deltaX, deltaY);
 
-                    unit.tileX = currentNode.x + ((nextNode.x - currentNode.x) * nodeProgressPercentage);
-                    unit.tileY = currentNode.y + ((nextNode.y - currentNode.y) * nodeProgressPercentage);
+                    var nodeProgressPercentage = (progressPercentage - nextNode.startPercentage) / nextNode.percentageShare;
+                    unit.tileX = currentNode.x + (deltaX * nodeProgressPercentage);
+                    unit.tileY = currentNode.y + (deltaY * nodeProgressPercentage);
 
                     unit.ap = startAp + (endAp - startAp) * progressPercentage;
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
@@ -135,6 +140,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                     nextNode.tile.unit = unit;
 
                     unit.ap = endAp;
+                    unit.setState('idle');
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
 
                     InputHandler.enableInput();

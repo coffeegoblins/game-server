@@ -2,6 +2,24 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
 {
     'use strict';
 
+    function RenderableSoldier(unit, previewImage)
+    {
+        this.unit = unit;
+        this.style = {};
+        this.style.opacity = 1;
+
+        if (previewImage)
+        {
+            this.previewImage = 'Renderer/content/' + previewImage + '.png';
+        }
+
+        this.spriteSheet = createSpriteSheet(this.unit.type);
+        this.spriteSheet.playAnimation(this.unit.state);
+        this.spriteSheet.on('animationComplete', this, this.onAnimationComplete);
+
+        this.unit.on('stateChange', this.onStateChange.bind(this));
+    }
+
     function createSpriteSheet(type)
     {
         var animationDefinition = soldierAnimations[type];
@@ -22,71 +40,46 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
         return spriteSheet;
     }
 
-    function RenderableSoldier(unit, unitImage, previewImage)
-    {
-        this.unit = unit;
-        this.style = {};
-        this.style.opacity = 1;
-
-        if (previewImage)
-        {
-            this.previewImage = 'Renderer/content/' + previewImage + '.png';
-        }
-
-        if (unitImage)
-        {
-            var path = 'Renderer/content/' + unitImage + '.png';
-            this.unitImage = ImageCache.loadImage(unitImage, path);
-            if (!this.previewImage)
-                this.previewImage = path;
-        }
-
-        switch (this.unit.type)
-        {
-            case 'Archer':
-                this.spriteSheet = createSpriteSheet('archer');
-                this.spriteSheet.playAnimation('idle');
-                break;
-        }
-    }
-
     RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)
     {
-        return  this.unit.tileX <= right &&
-                this.unit.tileY <= bottom &&
-                this.unit.tileX >= left &&
-                this.unit.tileY >= top;
+        return this.unit.tileX <= right &&
+               this.unit.tileY <= bottom &&
+               this.unit.tileX >= left &&
+               this.unit.tileY >= top;
+    };
+
+    RenderableSoldier.prototype.onStateChange = function ()
+    {
+        this.spriteSheet.playAnimation(this.unit.state);
+    };
+
+    RenderableSoldier.prototype.onAnimationComplete = function (animation)
+    {
+        this.unit.trigger('animationComplete', animation.name);
     };
 
     RenderableSoldier.prototype.render = function (context, deltaTime, tileSize, viewportRect)
     {
-        var xPosition, yPosition;
-        if (this.spriteSheet)
+        if (this.spriteSheet.image.isLoaded)
         {
-            if (this.spriteSheet.image.isLoaded)
-            {
-                xPosition = this.unit.tileX * tileSize - viewportRect.x;
-                yPosition = this.unit.tileY * tileSize - viewportRect.y;
+            context.save();
 
-                this.spriteSheet.updateAnimation(deltaTime);
-                var tileRect = this.spriteSheet.getCurrentTileBounds();
+            var halfTileSize = tileSize / 2;
+            var xPosition = this.unit.tileX * tileSize - viewportRect.x + halfTileSize;
+            var yPosition = this.unit.tileY * tileSize - viewportRect.y + halfTileSize;
 
-                context.globalAlpha = this.style.opacity;
-                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
-                context.globalAlpha = 1;
-            }
-        }
-        else if (this.unitImage.isLoaded)
-        {
-            var size = Math.floor(tileSize * 0.8);
-            var offset = 1 + ((tileSize - size) / 2);
+            context.translate(xPosition, yPosition);
+            if (this.unit.direction)
+                context.rotate(this.unit.direction);
 
-            xPosition = this.unit.tileX * tileSize + offset - viewportRect.x;
-            yPosition = this.unit.tileY * tileSize + offset - viewportRect.y;
+            this.spriteSheet.updateAnimation(deltaTime);
+            var tileRect = this.spriteSheet.getCurrentTileBounds();
 
             context.globalAlpha = this.style.opacity;
-            context.drawImage(this.unitImage.data, xPosition, yPosition, size, size);
+            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
             context.globalAlpha = 1;
+
+            context.restore();
         }
     };
 

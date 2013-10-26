@@ -4,15 +4,11 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
     {
         'use strict';
 
-        /**
-         * @constructor
-         */
         function CommandManager()
         {
-
         }
 
-        CommandManager.addUnitToQueue = function(unit, position)
+        CommandManager.addUnitToQueue = function (unit, position)
         {
             RenderableTurnQueue.addUnit(unit, position);
         };
@@ -50,6 +46,15 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         CommandManager.setActiveUnitAP = function (ap)
         {
             TurnManager.activeUnit.ap = ap;
+        };
+
+        CommandManager.setAnimation = function (state)
+        {
+            TurnManager.activeUnit.setState(state);
+        };
+        CommandManager.setDirection = function (x, y)
+        {
+            TurnManager.activeUnit.setDirection(x, y);
         };
 
         window.CommandManager = CommandManager;

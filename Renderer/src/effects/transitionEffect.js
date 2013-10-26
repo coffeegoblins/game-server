@@ -4,7 +4,6 @@ define(['Game/src/scheduler'],
         'use strict';
         function TransitionEffect()
         {
-
         }
 
         TransitionEffect.prototype.transitionFloat = function (id, source, styleName, suffix, targetValue, seconds, context, callback)
@@ -36,7 +35,7 @@ define(['Game/src/scheduler'],
 
         TransitionEffect.prototype.onValueUpdate = function(eventData, deltaTime)
         {
-            eventData.currentValue = eventData.currentValue + eventData.deltaValue * deltaTime / eventData.totalTime;
+            eventData.currentValue += eventData.deltaValue * deltaTime / eventData.totalTime;
 
             var value = eventData.currentValue;
             if (eventData.suffix)

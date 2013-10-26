@@ -5,8 +5,8 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         function RenderableTurnQueue()
         {
             this.images = {
-                'Archer': 'Renderer/content/archer.png',
-                'Melee': 'Renderer/content/soldier.png'
+                'archer': 'Renderer/content/archer.png',
+                'melee': 'Renderer/content/soldier.png'
             };
 
             this.unitList = [];

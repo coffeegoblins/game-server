@@ -1,4 +1,4 @@
-define(['./imageCache', './utility'], function (ImageCache, Utility)
+define(['Game/src/eventManager', './imageCache', './utility'], function (EventManager, ImageCache, Utility)
 {
     'use strict';
 
@@ -20,6 +20,7 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
         if (!properties.frames)
             properties.frames = {};
 
+        properties.name = name;
         this.animations[name] = properties;
     };
 
@@ -51,7 +52,8 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
     SpriteSheet.prototype.playAnimation = function (name)
     {
         this.currentAnimation = this.animations[name];
-        this.currentTile = this.currentAnimation.start;
+        this.currentAnimation.isComplete = false;
+        this.setCurrentTile(this.currentAnimation.start);
         this.animationTime = 0;
     };
 
@@ -64,14 +66,9 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
         }
     };
 
-    SpriteSheet.prototype.stopAnimation = function ()
-    {
-        this.currentAnimation = null;
-    };
-
     SpriteSheet.prototype.updateAnimation = function (deltaTime)
     {
-        if (!this.currentAnimation)
+        if (!this.currentAnimation && !this.currentAnimation.isComplete)
             return;
 
         var frameTime = 0;
@@ -91,9 +88,18 @@ define(['./imageCache', './utility'], function (ImageCache, Utility)
             }
         }
 
-        this.animationTime -= frameTime;
-        this.setCurrentTile(this.currentAnimation.start);
+        if (this.currentAnimation.isLooping)
+        {
+            this.animationTime -= frameTime;
+            this.setCurrentTile(this.currentAnimation.start);
+        }
+        else
+        {
+            this.currentAnimation.isComplete = true;
+            this.trigger('animationComplete', this.currentAnimation);
+        }
     };
 
+    EventManager.register(SpriteSheet.prototype);
     return SpriteSheet;
 });
