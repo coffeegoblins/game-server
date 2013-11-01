@@ -38,9 +38,9 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
         PlotManager.prototype.onCameraMoved = function (activeUnit)
         {
             ActionBarView.addActions([
-                {id: 'EndTurn', method: this.onEndTurnAction, context: this},
                 {id: 'Move', method: this.movementManager.onMoveAction, context: this.movementManager},
-                {id: 'Attack', method: this.attackManager.onAttackAction, context: this.attackManager}
+                {id: 'Attack', method: this.attackManager.onAttackAction, context: this.attackManager},
+                {id: 'EndTurn', method: this.onEndTurnAction, context: this}
             ]);
 
             ActionBarView.showActions();

@@ -6,7 +6,9 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         {
             this.images = {
                 'archer': 'Renderer/content/archer.png',
-                'melee': 'Renderer/content/soldier.png'
+                'swordAndShield': 'Renderer/content/soldier.png',
+                'twoHanded': 'Renderer/content/soldier.png',
+                'dualWield': 'Renderer/content/soldier.png'
             };
 
             this.unitList = [];

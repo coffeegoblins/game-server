@@ -21,34 +21,33 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
         {
             // Save the current action bar state
             this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
-
             ActionBarView.removeAllActions();
-            ActionBarView.addActions([
-                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
-            ]);
 
-            switch (this.activeUnit.weapon)
+            var actions = [];
+            switch (this.activeUnit.type)
             {
-                case 'bow':
-                    ActionBarView.addActions([
-                        {id: 'ShortShot', method: this.onShortShotAction, context: this},
-                        {id: 'LongShot', method: this.onLongShotAction, context: this}
-                    ]);
-
-                    break;
-
-                case 'twoHandedSword':
-
-                    break;
-
-                case 'dualWieldSwords':
-
+                case 'archer':
+                    actions.push({id: 'ShortShot', method: this.onShortShotAction, context: this});
+                    actions.push({id: 'LongShot', method: this.onLongShotAction, context: this});
                     break;
 
                 case 'swordAndShield':
+                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
+                    actions.push({id: 'Shield Bash', method: this.onShieldBash, context: this});
+                    break;
 
+                case 'twoHanded':
+                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
+                    actions.push({id: 'Sweep', method: this.onSweepAction, context: this});
+                    break;
+
+                case 'dualWield':
+                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
                     break;
             }
+
+            actions.push({id: 'Cancel', method: this.onAttackActionCancelled, context: this});
+            ActionBarView.addActions(actions);
         };
 
         AttackManager.prototype.onAttackActionCancelled = function ()
@@ -59,33 +58,34 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             this.currentMap.off('tileClick', this, this.onTileSelected);
         };
 
+
+        AttackManager.prototype.onShieldBash = function ()
+        {
+            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.defaultMoveCost)});
+        };
+
+        AttackManager.prototype.onStrikeAction = function ()
+        {
+            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.defaultMoveCost)});
+        };
+
+        AttackManager.prototype.onSweepAction = function ()
+        {
+            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.diagonalMoveCost)});
+        };
+
         AttackManager.prototype.onShortShotAction = function ()
         {
-            Renderer.clearRenderablePaths();
-
-            // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
-
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions([
-                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
-            ]);
-
-            this.currentMap.on('tileClick', this, this.onTileSelected);
-
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, {
-                x: this.activeUnit.tileX,
-                y: this.activeUnit.tileY,
-                maxDistance: this.activeUnit.ap,
-                maxClimbableHeight: this.activeUnit.maxMoveableHeight,
-                ignoreUnits: true
-            });
-
-            Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
+            this.onActionSelected({maxDistance: this.activeUnit.ap});
         };
 
         AttackManager.prototype.onLongShotAction = function ()
         {
+            this.onActionSelected({maxDistance: this.activeUnit.ap * 2});
+        };
+
+        AttackManager.prototype.onActionSelected = function (options)
+        {
             Renderer.clearRenderablePaths();
 
             // Save the current action bar state
@@ -96,18 +96,20 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
                 {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
-            this.currentMap.on('tileClick', this, this.onTileSelected);
-
-            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, {
+            // Configure the path manager for the attach range
+            var pathOptions = Utility.merge({
                 x: this.activeUnit.tileX,
                 y: this.activeUnit.tileY,
-                maxDistance: this.activeUnit.ap * 2,
                 maxClimbableHeight: this.activeUnit.maxMoveableHeight,
                 ignoreUnits: true
-            });
+            }, options);
+
+            this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, pathOptions);
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
+            this.currentMap.on('tileClick', this, this.onTileSelected);
         };
+
 
         AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
@@ -126,7 +128,6 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             }
 
             this.selectedNode = Utility.getElementByProperty(this.availableAttackTiles, 'tile', selectedTile);
-
             if (!this.selectedNode)
                 return;
 
@@ -135,8 +136,8 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
 
             ActionBarView.removeAllActions();
             ActionBarView.addActions([
-                {id: 'Cancel', method: this.onAttackCancelled, context: this},
-                {id: 'Attack', method: this.onAttackConfirmed, context: this}
+                {id: 'Attack', method: this.onAttackConfirmed, context: this},
+                {id: 'Cancel', method: this.onAttackCancelled, context: this}
             ]);
 
             this.selectedTileCost = this.selectedNode.distance / 2;

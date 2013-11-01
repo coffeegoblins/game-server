@@ -1,5 +1,5 @@
-define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
-    function (InputHandler, TransitionEffect)
+define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/src/utility'],
+    function (InputHandler, TransitionEffect, Utility)
     {
         'use strict';
         function ActionBarView()
@@ -25,13 +25,14 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
         ActionBarView.prototype.addActions = function (actions)
         {
             var fragment = document.createDocumentFragment();
-            for (var i = 0; i < actions.length; ++i)
+            for (var i = 0; i < actions.length; i++)
             {
                 var action = actions[i];
-                if (!this.getActionById(action.id))
+                if (!Utility.getElementByProperty(this.actionsList, 'id', action.id))
                 {
                     // If the action didn't already exist, create and register a visual for it
                     var image = document.createElement('img');
+                    image.title = action.id;
                     image.id = action.id;
                     image.src = this.imageList[action.id];
 
@@ -46,39 +47,17 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
             this.containerElement.appendChild(fragment);
         };
 
-        ActionBarView.prototype.getActionById = function (id)
-        {
-            for (var i = 0; i < this.actionsList.length; i++)
-            {
-                var action = this.actionsList[i];
-                if (action.id === id)
-                    return action;
-            }
-        };
-
         ActionBarView.prototype.removeActionById = function (id)
         {
-            for (var i = 0; i < this.actionsList.length; i++)
+            var action = Utility.removeElementByProperty(this.actionsList, 'id', id);
+            if (action)
             {
-                var action = this.actionsList[i];
-                if (action.id === id)
+                InputHandler.unregisterClickEvent(id);
+                if (action.image)
                 {
-                    if (action.image)
-                    {
-                        this.containerElement.removeChild(action.image);
-                    }
-
-                    InputHandler.unregisterClickEvent(action.id);
-                    this.actionsList.splice(i, 1);
-                    break;
+                    this.containerElement.removeChild(action.image);
                 }
             }
-        };
-
-        ActionBarView.prototype.removeActions = function ()
-        {
-            for (var i = 0; i < arguments.length; ++i)
-                this.removeActionById(arguments[i]);
         };
 
         ActionBarView.prototype.removeAllActions = function ()
@@ -103,7 +82,7 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect'],
 
         ActionBarView.prototype.showActions = function ()
         {
-            this.element.style.display = 'block';
+            this.element.style.display = '';
             TransitionEffect.transitionFloat('actionBarViewOpacity', this.element.style, 'opacity', null, 1, 0.5);
         };
 

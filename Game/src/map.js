@@ -2,12 +2,6 @@ define(['./eventManager'], function (EventManager)
 {
     'use strict';
 
-    /**
-     * @param width The number of tiles on the horizontal axis of the renderableMap
-     * @param height The number of tiles on the vertical axis of the renderableMap
-     * @param initialHeight The height all tiles are initialized to. Default is 0.
-     * @constructor
-     */
     function Map()
     {
         this.tiles = [];

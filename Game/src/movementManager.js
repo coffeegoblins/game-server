@@ -53,7 +53,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             if (selectedTile.unit != null)
                 return; // Clicked on active unit
 
-            if (!Utility.containsElementWithProperty(this.availableMoveTiles, 'tile', selectedTile) && this.selectedPath != null)
+            if (!Utility.getElementByProperty(this.availableMoveTiles, 'tile', selectedTile) && this.selectedPath != null)
             {
                 this.selectedPath = null;
                 this.activeUnitView.previewAP(0);
@@ -133,7 +133,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
                     unit.ap = startAp + (endAp - startAp) * progressPercentage;
                     this.activeUnitView.setAP(unit.ap, unit.maxAP);
                 },
-                completedMethod: function (e)
+                completedMethod: function ()
                 {
                     unit.tileX = nextNode.x;
                     unit.tileY = nextNode.y;

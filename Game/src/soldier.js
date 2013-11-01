@@ -14,13 +14,12 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
         attackCost: 25,
         direction: 0,
         state: 'idle',
-        weapon: 'bow'
+        weapon: null
     };
 
     function Soldier(properties)
     {
         Utility.merge(this, defaults, properties);
-
     }
 
     Soldier.prototype.setDirection = function (x, y)
@@ -36,7 +35,7 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
                 this.direction -= Math.PI * 2;
         }
 
-        TransitionEffect.transitionFloat(null, this, 'direction', null, newDirection, 0.2);
+        TransitionEffect.transitionFloat(null, this, 'direction', null, newDirection, 0.1);
     };
 
     Soldier.prototype.setState = function (state)

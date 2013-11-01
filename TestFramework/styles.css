@@ -9,7 +9,7 @@ body {
 
 #passes {
     float: left;
-    width: 50%
+    width: 50%;
 }
 
 #failures {
@@ -23,7 +23,7 @@ h1 {
 }
 
 h2 {
-    margin: 0px 10px;
+    margin: 0 10px;
     font-size: 100%;
     padding-left: 16px;
 }
@@ -61,5 +61,5 @@ h3 {
 .exception {
     white-space: pre;
     padding-left: 64px;
-    margin: 0px 0px 16px 0px;
+    margin: 0 0 16px 0;
 }

@@ -22,7 +22,7 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
 
     function createSpriteSheet(type)
     {
-        var animationDefinition = soldierAnimations[type];
+        var animationDefinition = window.soldierAnimations[type];
         var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/' + animationDefinition.spriteSheet + '.png', {
             tileWidth: animationDefinition.tileWidth,
             tileHeight: animationDefinition.tileHeight
