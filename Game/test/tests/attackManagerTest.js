@@ -17,6 +17,12 @@ define(['Game/src/attackManager', 'Game/src/map', 'Renderer/src/ui/activeUnitVie
         this.attackManager.activeUnit = {tileX: 0, tileY: 0};
     };
 
+    AttackManagerTest.prototype.tearDown = function()
+    {
+        this.attackManager.actionBarSnapshot = [{}];
+        this.attackManager.onAttackActionCancelled();
+    };
+
     AttackManagerTest.prototype.testUnitTileIsSelectable = function ()
     {
         this.attackManager.onLongShotAction();

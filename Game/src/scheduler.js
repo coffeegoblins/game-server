@@ -140,7 +140,8 @@ define(function ()
             eventData.timeRemaining -= deltaTime;
             if (eventData.timeRemaining < 0)
             {
-                eventData.method.call(eventData.context, eventData, deltaTime);
+                if (eventData.method)
+                    eventData.method.call(eventData.context, eventData, deltaTime);
 
                 eventData.timeRemaining += eventData.interval;
                 if (eventData.timeRemaining < 0)
