@@ -39,37 +39,30 @@ define(['Game/src/inputHandler', 'Game/src/scheduler'], function (InputHandler, 
 
     InputHandlerTest.prototype.testDragEventsAreTrackedAndRemoved = function ()
     {
-        var moveEvent = { currentEvent: { pageX: 0, pageY: 0 }, state: this.inputState.DRAGGING, dragEvents: [
-            {id: '1', currentTime: 0},
-            {id: '2', currentTime: new Date().getTime()}
-        ] };
-        var currentEvent = { pageX: 10, pageY: 10 };
+        var removedEvent = {id: '1', currentTime: 0};
+        var keptEvent = {id: '2', currentTime: new Date().getTime()};
 
+        var moveEvent = { currentEvent: { pageX: 0, pageY: 0 }, state: this.inputState.DRAGGING, dragEvents: [
+            removedEvent, keptEvent
+        ]};
+
+        var currentEvent = { pageX: 10, pageY: 10 };
         this.inputHandler.handleMoveEvent(moveEvent, currentEvent);
 
-        var foundExpired = false;
-        var foundExpected = false;
-
-        for (var i = 0; i < moveEvent.dragEvents.length; ++i)
-        {
-            var dragEvent = moveEvent.dragEvents[i];
-
-            if (dragEvent.id === '1')
-                foundExpired = true;
-
-            if (dragEvent.id === '2')
-                foundExpected = true;
-        }
-
-        assertFalsy('The first event should have been deleted.', foundExpired);
-        assertTruthy('The second event should not have been deleted.', foundExpected);
+        assertTruthy('The first event should have been deleted.', moveEvent.dragEvents.indexOf(removedEvent) === -1);
+        assertTruthy('The second event should not have been deleted.', moveEvent.dragEvents.indexOf(keptEvent) !== -1);
+        assertTruthy('The second event should not have been deleted.', moveEvent.dragEvents.indexOf(currentEvent) !== -1);
     };
 
     InputHandlerTest.prototype.testReleaseWhileDraggingStartsFlick = function ()
     {
         var releaseEvent = {
             state: this.inputHandler.InputState.DRAGGING,
-            dragEvents: [{pageX: 0, pageY: 0}, {pageX: 1, pageY: 1}, {pageX: 2, pageY: 4}],
+            dragEvents: [
+                {pageX: 0, pageY: 0},
+                {pageX: 1, pageY: 1},
+                {pageX: 2, pageY: 4}
+            ],
             currentEvent: {pageX: 0, pageY: 0}
         };
 
@@ -85,7 +78,11 @@ define(['Game/src/inputHandler', 'Game/src/scheduler'], function (InputHandler, 
     {
         var releaseEvent = {
             state: this.inputHandler.InputState.DRAGGING,
-            dragEvents: [{pageX: 0, pageY: 0}, {pageX: 0, pageY: 0}, {pageX: 0, pageY: 0}],
+            dragEvents: [
+                {pageX: 0, pageY: 0},
+                {pageX: 0, pageY: 0},
+                {pageX: 0, pageY: 0}
+            ],
             currentEvent: {pageX: 0, pageY: 0}
         };
 
