@@ -55,6 +55,8 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             Renderer.clearRenderablePaths();
             this.revertActionBar();
 
+            this.selectedTile = null;
+            this.selectedNode = null;
             this.currentMap.off('tileClick', this, this.onTileSelected);
         };
 
@@ -116,14 +118,7 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             // Clicked on self or non-unit tile
             if (selectedTile.unit === this.activeUnit || !selectedTile.unit)
             {
-                if (this.selectedTile)
-                {
-                    this.selectedTile = null;
-                    this.selectedNode = null;
-                    this.activeUnitView.previewAP(0);
-                    this.revertActionBar();
-                }
-
+                this.onAttackActionCancelled();
                 return;
             }
 
@@ -132,12 +127,12 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
                 return;
 
             // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+            //this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
 
             ActionBarView.removeAllActions();
             ActionBarView.addActions([
                 {id: 'Attack', method: this.onAttackConfirmed, context: this},
-                {id: 'Cancel', method: this.onAttackCancelled, context: this}
+                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
             this.selectedTileCost = this.selectedNode.distance / 2;
@@ -170,12 +165,6 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
                 this.revertActionBar();
 
             this.currentMap.off('tileClick', this, this.onTileSelected);
-        };
-
-        AttackManager.prototype.onAttackCancelled = function ()
-        {
-            // TODO Clear selected unit highlight
-            this.revertActionBar();
         };
 
         AttackManager.prototype.revertActionBar = function ()
