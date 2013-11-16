@@ -1,5 +1,6 @@
 define(['Game/src/inputHandler',
         'Game/src/scheduler',
+        'Game/src/utility',
         'Renderer/src/renderableMap',
         'Renderer/src/renderableLadder',
         'Renderer/src/renderableObject',
@@ -8,7 +9,7 @@ define(['Game/src/inputHandler',
         'Renderer/src/renderablePath',
         'Renderer/src/effects/blinkEffect',
         'Renderer/src/ui/renderableTurnQueue'],
-    function (InputHandler, Scheduler, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
+    function (InputHandler, Scheduler, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
@@ -133,7 +134,23 @@ define(['Game/src/inputHandler',
 
         Renderer.prototype.addRenderableSoldier = function (soldier, previewImage)
         {
-            this.renderables.push(new RenderableSoldier(soldier, previewImage));
+            var renderableSolider = new RenderableSoldier(soldier, previewImage);
+            this.renderables.push(renderableSolider);
+
+            soldier.on('death', this, function ()
+            {
+                // Push dead units to the front of the draw list
+                Utility.removeElement(this.renderables, renderableSolider);
+                for (var i = 0; i < this.renderables.length; i++)
+                {
+                    var renderable = this.renderables[i];
+                    if (renderable instanceof RenderableSoldier && !renderable.unit.isAlive())
+                        continue;
+
+                    this.renderables.splice(i, 0, renderableSolider);
+                    break;
+                }
+            });
         };
 
         Renderer.prototype.initialize = function (canvas)

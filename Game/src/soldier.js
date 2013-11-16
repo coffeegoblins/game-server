@@ -22,6 +22,21 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
         Utility.merge(this, defaults, properties);
     }
 
+    Soldier.prototype.damage = function (amount)
+    {
+        this.hp -= amount;
+        if (this.hp <= 0)
+        {
+            this.setState('death');
+            this.trigger('death', this);
+        }
+    };
+
+    Soldier.prototype.isAlive = function ()
+    {
+        return this.hp > 0;
+    };
+
     Soldier.prototype.setDirection = function (x, y)
     {
         var newDirection = -Math.atan2(x, y);
@@ -35,7 +50,7 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
                 this.direction -= Math.PI * 2;
         }
 
-        TransitionEffect.transitionFloat(null, this, 'direction', null, newDirection, 0.1);
+        TransitionEffect.transitionFloat(this.name + ' turn', this, 'direction', null, newDirection, 0.1);
     };
 
     Soldier.prototype.setState = function (state)

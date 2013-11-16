@@ -24,10 +24,10 @@ define(['Game/src/turnManager', 'Game/src/soldier'], function (TurnManager, Sold
         this.soldierC.maxAP = 10;
         this.soldierD.maxAP = 10;
 
-        TurnManager.unitList.push(this.soldierA);
-        TurnManager.unitList.push(this.soldierB);
-        TurnManager.unitList.push(this.soldierC);
-        TurnManager.unitList.push(this.soldierD);
+        TurnManager.addUnit(this.soldierA);
+        TurnManager.addUnit(this.soldierB);
+        TurnManager.addUnit(this.soldierC);
+        TurnManager.addUnit(this.soldierD);
     };
 
     TurnManagerTest.prototype.tearDown = function ()

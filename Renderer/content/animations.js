@@ -2,7 +2,7 @@
 
 window.soldierAnimations = {
     "archer": {
-        "spriteSheet": "archerSheetLong",
+        "spriteSheet": "archerSheet",
         "tileHeight": 64,
         "tileWidth": 64,
 
@@ -38,20 +38,19 @@ window.soldierAnimations = {
     },
 
     "swordAndShield": {
-        "spriteSheet": "archerSheet",
+        "spriteSheet": "swordAndShieldSheet",
         "tileHeight": 64,
         "tileWidth": 64,
 
         "animations": {
             "idle": {
                 "start": 16,
-                "end": 31,
+                "end": 47,
                 "speed": 0.1,
                 "isLooping": true,
                 "frames": {
-                    "16": 5,
-                    "24": 1.5,
-                    "28": 2
+                    "16": 0,
+                    "33": 1.5
                 }
             },
             "run": {
@@ -61,17 +60,17 @@ window.soldierAnimations = {
                 "isLooping": true
             },
             "attack": {
-                "start": 32,
-                "end": 47,
+                "start": 48,
+                "end": 79,
                 "speed": 0.075
             },
             "death": {
-                "start": 48,
-                "end": 63,
+                "start": 80,
+                "end": 95,
                 "speed": 0.075
             }
         }
-    }  ,
+    },
 
     "twoHanded": {
         "spriteSheet": "archerSheet",
@@ -110,20 +109,19 @@ window.soldierAnimations = {
     },
 
     "dualWield": {
-        "spriteSheet": "archerSheet",
+        "spriteSheet": "dualWieldSheet",
         "tileHeight": 64,
         "tileWidth": 64,
 
         "animations": {
             "idle": {
                 "start": 16,
-                "end": 31,
-                "speed": 0.1,
+                "end": 47,
+                "speed": 0.05,
                 "isLooping": true,
                 "frames": {
                     "16": 5,
-                    "24": 1.5,
-                    "28": 2
+                    "43": 1.5
                 }
             },
             "run": {
@@ -133,13 +131,16 @@ window.soldierAnimations = {
                 "isLooping": true
             },
             "attack": {
-                "start": 32,
-                "end": 47,
-                "speed": 0.075
+                "start": 48,
+                "end": 79,
+                "speed": 0.03,
+                "frames": {
+                    "74": 0.5
+                }
             },
             "death": {
-                "start": 48,
-                "end": 63,
+                "start": 80,
+                "end": 111,
                 "speed": 0.075
             }
         }

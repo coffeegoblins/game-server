@@ -9,7 +9,10 @@ define(['Game/src/scheduler'],
         TransitionEffect.prototype.transitionFloat = function (id, source, styleName, suffix, targetValue, seconds, context, callback)
         {
             // Stop existing operation on that style's value
-            Scheduler.unscheduleById(id);
+            if (id)
+            {
+                Scheduler.unscheduleById(id);
+            }
 
             var currentValue = parseFloat(source[styleName]);
 
@@ -33,7 +36,7 @@ define(['Game/src/scheduler'],
             Scheduler.schedule(this.transitionEvent);
         };
 
-        TransitionEffect.prototype.onValueUpdate = function(eventData, deltaTime)
+        TransitionEffect.prototype.onValueUpdate = function (eventData, deltaTime)
         {
             eventData.currentValue += eventData.deltaValue * deltaTime / eventData.totalTime;
 
@@ -46,7 +49,7 @@ define(['Game/src/scheduler'],
             eventData.source[eventData.styleName] = value;
         };
 
-        TransitionEffect.prototype.onValueUpdateCompleted = function(eventData, deltaTime)
+        TransitionEffect.prototype.onValueUpdateCompleted = function (eventData, deltaTime)
         {
             var value = eventData.targetValue;
             if (eventData.suffix)

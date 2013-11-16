@@ -40,7 +40,7 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
                     case 'soldier':
                         var soldier = new Soldier(object.properties);
                         this.map.addUnit(soldier, object.x, object.y);
-                        TurnManager.unitList.push(soldier);
+                        TurnManager.addUnit(soldier);
                         RenderableTurnQueue.addUnit(soldier);
                         Renderer.addRenderableSoldier(soldier, object.previewImage);
                         break;

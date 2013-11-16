@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Game/src/utility'],
-    function (Renderer, PathManager, ActionBarView, Utility)
+define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBarView', './utility'],
+    function (Renderer, InputHandler, PathManager, ActionBarView, Utility)
     {
         'use strict';
 
@@ -126,9 +126,6 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
             if (!this.selectedNode)
                 return;
 
-            // Save the current action bar state
-            //this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
-
             ActionBarView.removeAllActions();
             ActionBarView.addActions([
                 {id: 'Attack', method: this.onAttackConfirmed, context: this},
@@ -143,28 +140,36 @@ define(['renderer', 'Game/src/pathManager', 'Renderer/src/ui/actionBarView', 'Ga
 
         AttackManager.prototype.onAttackConfirmed = function ()
         {
-            var unit = this.selectedTile.unit;
+            var deltaX = this.selectedTile.unit.tileX - this.activeUnit.tileX;
+            var deltaY = this.selectedTile.unit.tileY - this.activeUnit.tileY;
 
-            unit.hp -= this.activeUnit.attackPower;
-            if (unit.hp < 0)
-            {
-                // TODO Destroy unit
-            }
-
-            this.activeUnit.ap -= this.selectedTileCost;
-
-            this.activeUnitView.previewAP(0);
-            this.activeUnitView.setAP(this.activeUnit.ap, this.activeUnit.maxAP);
-
-            this.selectedNode = null;
-            this.selectedTile = null;
-
+            this.activeUnit.setDirection(deltaX, deltaY);
+            this.activeUnit.setState('attack');
             Renderer.clearRenderablePaths();
 
-            while (this.actionBarSnapshot.length > 0)
-                this.revertActionBar();
+            InputHandler.disableInput();
 
-            this.currentMap.off('tileClick', this, this.onTileSelected);
+            this.activeUnit.on('animationComplete', this, function onAttackFinished(animationName)
+            {
+                this.selectedTile.unit.damage(this.activeUnit.attackPower);
+
+                this.activeUnit.ap -= this.selectedTileCost;
+                this.activeUnit.setState('idle');
+
+                this.activeUnitView.previewAP(0);
+                this.activeUnitView.setAP(this.activeUnit.ap, this.activeUnit.maxAP);
+
+                this.selectedNode = null;
+                this.selectedTile = null;
+
+                while (this.actionBarSnapshot.length > 0)
+                    this.revertActionBar();
+
+                this.activeUnit.off('animationComplete', this, onAttackFinished);
+                this.currentMap.off('tileClick', this, this.onTileSelected);
+
+                InputHandler.enableInput();
+            });
         };
 
         AttackManager.prototype.revertActionBar = function ()

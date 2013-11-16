@@ -17,12 +17,6 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             document.body.appendChild(this.element);
         }
 
-        RenderableTurnQueue.prototype.handleResize = function (width, height)
-        {
-            this.isLandscapeMode = width > height;
-            this.imageSize = null;
-        };
-
         RenderableTurnQueue.prototype.addUnit = function (unit, position)
         {
             var image = document.createElement('img');
@@ -33,16 +27,11 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
                 position = 0;
 
             this.element.insertBefore(image, this.element.children[position]);
+            unit.on('death', this, this.removeUnit);
         };
 
-        RenderableTurnQueue.prototype.insertUnit = function (unit, position)
+        RenderableTurnQueue.prototype.getResizeStyleProperty = function (image)
         {
-            var image = document.createElement('img');
-            image.id = unit.name;
-            image.src = this.images[unit.type];
-
-            this.element.insertBefore(image, this.element.children[position]);
-
             var styleName = (Utility.isTouchEnabled() && this.isLandscapeMode) ? 'width' : 'height';
             if (!this.imageSize)
             {
@@ -50,6 +39,26 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
                 this.imageSize = parseFloat(style[styleName]);
             }
 
+            return styleName;
+        };
+
+        RenderableTurnQueue.prototype.handleResize = function (width, height)
+        {
+            this.isLandscapeMode = width > height;
+            this.imageSize = null;
+        };
+
+        RenderableTurnQueue.prototype.insertUnit = function (unit, position)
+        {
+            unit.on('death', this, this.removeUnit);
+
+            var image = document.createElement('img');
+            image.id = unit.name;
+            image.src = this.images[unit.type];
+
+            this.element.insertBefore(image, this.element.children[position]);
+
+            var styleName = this.getResizeStyleProperty(image);
             image.style[styleName] = 0;
             image.style.opacity = 0;
 
@@ -62,11 +71,6 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             });
         };
 
-        RenderableTurnQueue.prototype.onEndTurn = function (activeUnit, placementIndex)
-        {
-            this.insertUnit(activeUnit, placementIndex);
-        };
-
         RenderableTurnQueue.prototype.onBeginTurn = function (activeUnit)
         {
             var styleName = (Utility.isTouchEnabled() && this.isLandscapeMode) ? 'width' : 'height';
@@ -77,6 +81,22 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             TransitionEffect.transitionFloat("TurnManagerRemove", this.element.firstChild.style, styleName, "px", 0, 1, this, function ()
             {
                 this.element.removeChild(this.element.firstChild);
+            });
+        };
+
+        RenderableTurnQueue.prototype.onEndTurn = function (activeUnit, placementIndex)
+        {
+            this.insertUnit(activeUnit, placementIndex);
+        };
+
+        RenderableTurnQueue.prototype.removeUnit = function (unit)
+        {
+            var image = document.getElementById(unit.name);
+            var styleName = this.getResizeStyleProperty(image);
+
+            TransitionEffect.transitionFloat("TurnManagerInsertHeight", image.style, styleName, "px", 0, 1, this, function ()
+            {
+                this.element.removeChild(image);
             });
         };
 

@@ -1,4 +1,4 @@
-define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, SpriteSheet)
+define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffect'], function (ImageCache, SpriteSheet, TransitionEffect)
 {
     'use strict';
 
@@ -56,6 +56,10 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet'], function (ImageCache, Sp
     RenderableSoldier.prototype.onAnimationComplete = function (animation)
     {
         this.unit.trigger('animationComplete', animation.name);
+        if (animation.name === 'death')
+        {
+            TransitionEffect.transitionFloat(null, this.style, 'opacity', null, 0.6, 1);
+        }
     };
 
     RenderableSoldier.prototype.render = function (context, deltaTime, tileSize, viewportRect)

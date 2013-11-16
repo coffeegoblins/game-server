@@ -1,12 +1,9 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/effects/transitionEffect', 'Renderer/src/effects/blinkEffect',
-        'Renderer/src/ui/renderableTurnQueue'],
-    function (Renderer, LevelLoader, TurnManager, PathManager, TransitionEffect, BlinkEffect, RenderableTurnQueue)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/renderableTurnQueue'],
+    function (Renderer, LevelLoader, TurnManager, PathManager, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
-        function CommandManager()
-        {
-        }
+        function CommandManager() { }
 
         CommandManager.addUnitToQueue = function (unit, position)
         {
@@ -26,21 +23,6 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         CommandManager.getAvailableTiles = function ()
         {
             PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.activeUnit);
-        };
-
-        CommandManager.transitionEffect = function (control, styleName, suffix, targetValue, seconds)
-        {
-            TransitionEffect.transitionFloat(control, styleName, suffix, targetValue, seconds);
-        };
-
-        CommandManager.blinkEffect = function (control, seconds)
-        {
-            BlinkEffect.blink(control, seconds);
-        };
-
-        CommandManager.stopBlinkEffect = function (control)
-        {
-            BlinkEffect.stopBlink(control);
         };
 
         CommandManager.setActiveUnitAP = function (ap)

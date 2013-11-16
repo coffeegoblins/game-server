@@ -77,6 +77,7 @@ define(['./eventManager'], function (EventManager)
         unit.tileY = y;
 
         tile.unit = unit;
+        unit.on('death', this, this.removeUnit);
     };
 
     Map.prototype.canMoveToTile = function (unit, tileX, tileY)
@@ -132,6 +133,12 @@ define(['./eventManager'], function (EventManager)
                     tile.content = null;
             }
         }
+    };
+
+    Map.prototype.removeUnit = function (unit)
+    {
+        var tile = this.getTile(unit.tileX, unit.tileY);
+        tile.unit = null;
     };
 
     Map.prototype.maxHeight = 16;

@@ -1,4 +1,4 @@
-define(['./eventManager'], function (EventManager)
+define(['./eventManager', './utility'], function (EventManager, Utility)
 {
     'use strict';
 
@@ -9,6 +9,12 @@ define(['./eventManager'], function (EventManager)
         this.endTurnPercentageCost = 0.75;
     }
 
+    TurnManager.prototype.addUnit = function (unit)
+    {
+        this.unitList.push(unit);
+        unit.on('death', this, this.removeUnit);
+    };
+
     TurnManager.prototype.beginTurn = function ()
     {
         this.activeUnit = this.unitList[0];
@@ -17,6 +23,9 @@ define(['./eventManager'], function (EventManager)
 
     TurnManager.prototype.incrementAP = function ()
     {
+        if (!this.unitList.length)
+            return;
+
         var nextUnit = this.unitList[0];
         var apIncrement = nextUnit.maxAP - nextUnit.ap;
 
@@ -61,6 +70,11 @@ define(['./eventManager'], function (EventManager)
 
         this.activeUnit = null;
         this.trigger('endTurn', currentUnit, placementIndex + 1);
+    };
+
+    TurnManager.prototype.removeUnit = function (unit)
+    {
+        Utility.removeElement(this.unitList, unit);
     };
 
     EventManager.register(TurnManager.prototype);
