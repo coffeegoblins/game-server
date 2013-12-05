@@ -55,7 +55,6 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             Renderer.clearRenderablePaths();
             this.revertActionBar();
 
-            this.selectedTile = null;
             this.selectedNode = null;
             this.currentMap.off('tileClick', this, this.onTileSelected);
         };
@@ -74,6 +73,8 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
         AttackManager.prototype.onSweepAction = function ()
         {
             this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.diagonalMoveCost)});
+
+            this.crossNodes = true;
         };
 
         AttackManager.prototype.onShortShotAction = function ()
@@ -116,7 +117,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
         AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
             // Clicked on self or non-unit tile
-            if (selectedTile.unit === this.activeUnit || !selectedTile.unit)
+            if (selectedTile.unit === this.activeUnit)
             {
                 this.onAttackActionCancelled();
                 return;
@@ -126,22 +127,64 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             if (!this.selectedNode)
                 return;
 
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions([
-                {id: 'Attack', method: this.onAttackConfirmed, context: this},
-                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
-            ]);
+            Renderer.clearRenderablePathById('selectedAttackNodes');
 
-            this.selectedTileCost = this.selectedNode.distance / 2;
-            this.activeUnitView.previewAP(this.selectedTileCost);
+            this.selectedNodes = [];
+            this.selectedNodes.push(this.selectedNode);
 
-            this.selectedTile = selectedTile;
+            ActionBarView.removeActionById('Attack');
+
+            if (this.crossNodes)
+            {
+                var crossNodes = this.calculateCrossNodes(this.selectedNode, this.availableAttackTiles);
+                crossNodes.push(this.selectedNode);
+
+                this.selectedNodes = crossNodes;
+            }
+
+            Renderer.addRenderablePath('selectedAttackNodes', this.selectedNodes, true);
+
+            for (var i = 0; i < this.selectedNodes.length; ++i)
+            {
+                if (this.selectedNodes[i].tile.unit != null)
+                {
+                    ActionBarView.removeAllActions();
+                    ActionBarView.addActions([
+                        { id: 'Attack', method: this.onAttackConfirmed, context: this },
+                        { id: 'Cancel', method: this.onAttackActionCancelled, context: this }
+                    ]);
+
+                    this.selectedTileCost = this.selectedNode.distance / 2;
+                    this.activeUnitView.previewAP(this.selectedTileCost);
+
+                    break;
+                }
+            }
+        };
+
+        AttackManager.prototype.calculateCrossNodes = function(selectedNode, availableNodes)
+        {
+            var crossNodes = [];
+
+            for (var i = 0; i < availableNodes.length; ++i)
+            {
+                var node = availableNodes[i];
+
+                if ((node.x === selectedNode.x && (node.y === selectedNode.y - 1 || node.y === selectedNode.y + 1)) ||
+                    (node.y === selectedNode.y && (node.x === selectedNode.x - 1 || node.x === selectedNode.x + 1)))
+                {
+                    if (node.tile.unit !== this.activeUnit)
+                        crossNodes.push(node);
+                }
+            }
+
+            return crossNodes;
         };
 
         AttackManager.prototype.onAttackConfirmed = function ()
         {
-            var deltaX = this.selectedTile.unit.tileX - this.activeUnit.tileX;
-            var deltaY = this.selectedTile.unit.tileY - this.activeUnit.tileY;
+            var deltaX = this.selectedNode.x - this.activeUnit.tileX;
+            var deltaY = this.selectedNode.y - this.activeUnit.tileY;
 
             this.activeUnit.setDirection(deltaX, deltaY);
             this.activeUnit.setState('attack');
@@ -151,7 +194,13 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
 
             this.activeUnit.on('animationComplete', this, function onAttackFinished(animationName)
             {
-                this.selectedTile.unit.damage(this.activeUnit.attackPower);
+                for (var i = 0; i < this.selectedNodes.length; ++i)
+                {
+                    var node = this.selectedNodes[i];
+
+                    if (node.tile.unit)
+                        node.tile.unit.damage(this.activeUnit.attackPower);
+                }
 
                 this.activeUnit.ap -= this.selectedTileCost;
                 this.activeUnit.setState('idle');
@@ -160,7 +209,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                 this.activeUnitView.setAP(this.activeUnit.ap, this.activeUnit.maxAP);
 
                 this.selectedNode = null;
-                this.selectedTile = null;
+                this.selectedNodes = null;
 
                 while (this.actionBarSnapshot.length > 0)
                     this.revertActionBar();

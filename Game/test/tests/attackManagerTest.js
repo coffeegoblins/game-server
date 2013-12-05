@@ -1,4 +1,5 @@
-define(['Game/src/attackManager', 'Game/src/map', 'Renderer/src/ui/activeUnitView'], function (AttackManager, Map, ActiveUnitView)
+define(['Game/src/attackManager', 'Game/src/map', 'Renderer/src/ui/activeUnitView', 'Renderer/src/ui/actionBarView', 'Game/src/utility'],
+    function (AttackManager, Map, ActiveUnitView, ActionBarView, Utility)
 {
     'use strict';
 
@@ -32,37 +33,96 @@ define(['Game/src/attackManager', 'Game/src/map', 'Renderer/src/ui/activeUnitVie
 
         this.attackManager.onTileSelected(targetNode.tile, 0, 0);
 
-        assertTruthy("Tile was not selected.", this.attackManager.selectedTile);
+        assertTruthy("Tile was not selected.", this.attackManager.selectedNode);
     };
 
-    AttackManagerTest.prototype.testNonUnitTileIsNotSelectable = function ()
-    {
-        this.attackManager.onShortShotAction();
-
-        var targetNode = this.attackManager.availableAttackTiles[0];
-        targetNode.tile.unit = null;
-
-        this.attackManager.onTileSelected(targetNode.tile, 0, 0);
-
-        assertFalsy("Tile is still selected.", this.attackManager.selectedTile);
-    };
-
-    AttackManagerTest.prototype.testNonUnitTileClearsActionBar = function ()
+    AttackManagerTest.prototype.testNonUnitTileClearsAttackAction = function ()
     {
         this.attackManager.selectedTile = {};
+        ActionBarView.addActions([{id: 'Attack', method: null, context: this}]);
 
-        this.attackManager.onTileSelected({unit: null}, 0, 0);
+        var selectedTile = {unit: null};
+        this.attackManager.availableAttackTiles = [{tile: selectedTile}];
 
-        assertFalsy("Tile was not cleared.", this.attackManager.selectedTile);
+        this.attackManager.onTileSelected(selectedTile, 0, 0);
+
+        assertFalsy("Action was not cleared.", Utility.getElementByProperty(ActionBarView.actionsList, 'id', 'Attack'));
     };
 
-    AttackManagerTest.prototype.testActiveUnitTileClearsActionBar = function ()
+    AttackManagerTest.prototype.testCalculateCrossNodesReturnsCorrectResult = function ()
     {
-        this.attackManager.selectedTile = {};
+        var selectedTile = {
+            x: 1, y: 1
+        };
 
-        this.attackManager.onTileSelected({unit: this.attackManager.activeUnit}, 0, 0);
+        var availableNodes = [
+            { tile: { unit: {} }, x: 1, y: 0 },
+            { tile: { unit: {} }, x: 1, y: 2 },
+            { tile: { unit: {} }, x: 0, y: 1 },
+            { tile: { unit: {} }, x: 2, y: 1 },
+            { tile: { unit: null }, x: 0, y: 0 },
+            { tile: { unit: null }, x: 2, y: 0 },
+            { tile: { unit: null }, x: 0, y: 2 },
+            { tile: { unit: null }, x: 2, y: 2 }
+        ];
 
-        assertFalsy("Tile was not cleared.", this.attackManager.selectedTile);
+        var result = this.attackManager.calculateCrossNodes(selectedTile, availableNodes);
+
+        assertTruthy('No result was found.', result.length === 4);
+
+        for (var i = 0; i < result.length; ++i)
+            assertTruthy('Invalid tile was returned.', result[i].tile.unit);
+    };
+
+    AttackManagerTest.prototype.testCalculateCrossNodesExcludesActiveUnit = function ()
+    {
+        var activeUnit = {hp:100};
+
+        this.attackManager.activeUnit = activeUnit;
+
+        var selectedTile = {
+            x: 1, y: 1,
+            neighbors: []
+        };
+
+        var availableNodes = [
+            { tile: { unit: activeUnit }, x: 1, y: 0 },
+            { tile: { unit: {} }, x: 1, y: 2 },
+            { tile: { unit: {} }, x: 0, y: 1 },
+            { tile: { unit: {} }, x: 2, y: 1 },
+            { tile: { unit: null }, x: 0, y: 0 },
+            { tile: { unit: null }, x: 2, y: 0 },
+            { tile: { unit: null }, x: 0, y: 2 },
+            { tile: { unit: null }, x: 2, y: 2 }
+        ];
+
+        var result = this.attackManager.calculateCrossNodes(selectedTile, availableNodes);
+
+        assertTruthy('Incorrect result was found.', result.length === 3);
+
+        for (var i = 0; i < result.length; ++i)
+            assertTruthy('Invalid tile was returned.', result[i].tile.unit && result[i].tile.unit !== activeUnit);
+    };
+
+    AttackManagerTest.prototype.testCrossNodesNotAccessible = function ()
+    {
+        var selectedTile = {
+            x: 1, y: 1,
+            neighbors: []
+        };
+
+        var availableNodes = [
+            { tile: { unit: {} }, x: 1, y: 0 },
+            { tile: {unit: {} }, x: 1, y: 2 },
+            { tile: {unit: {} }, x: 0, y: 1 }
+        ];
+
+        var result = this.attackManager.calculateCrossNodes(selectedTile, availableNodes);
+
+        assertTruthy('No result was found.', result.length === 3);
+
+        for (var i = 0; i < result.length; ++i)
+            assertTruthy('Invalid tile was returned.', result[i].tile.unit);
     };
 
     return AttackManagerTest;
