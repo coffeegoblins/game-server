@@ -7,7 +7,7 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             this.images = {
                 'archer': 'Renderer/content/archer.png',
                 'swordAndShield': 'Renderer/content/soldier.png',
-                'twoHanded': 'Renderer/content/soldier.png',
+                'twoHanded': 'Renderer/content/archer.png',
                 'dualWield': 'Renderer/content/soldier.png'
             };
 
@@ -22,11 +22,12 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             var image = document.createElement('img');
             image.id = unit.name;
             image.src = this.images[unit.type];
+            image.style.backgroundColor = unit.player.color;
 
             if (position == null)
                 position = 0;
 
-            this.element.insertBefore(image, this.element.children[position]);
+            this.element.appendChild(image);
             unit.on('death', this, this.removeUnit);
         };
 
@@ -55,6 +56,7 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             var image = document.createElement('img');
             image.id = unit.name;
             image.src = this.images[unit.type];
+            image.style.backgroundColor = unit.player.color;
 
             this.element.insertBefore(image, this.element.children[position]);
 

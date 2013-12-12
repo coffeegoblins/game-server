@@ -9,9 +9,10 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.initialize = function ()
         {
-            LevelLoader.loadLevel("level1", function (map)
+            LevelLoader.loadLevel("level1", function (map, player)
             {
                 this.currentMap = map;
+                this.player = player;
                 this.currentMap.on('tileClick', this, this.onTileSelected);
 
                 this.activeUnitView = new ActiveUnitView();
@@ -25,7 +26,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
                 TurnManager.on('beginTurn', this, this.onBeginTurn);
                 TurnManager.on('endTurn', this, this.onEndTurn);
-
+                
                 TurnManager.beginTurn();
             }.bind(this));
         };
@@ -44,7 +45,11 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
             ]);
 
             ActionBarView.showActions();
-            InputHandler.enableInput();
+
+            if (activeUnit.player.name === this.player.name)
+            {
+                InputHandler.enableInput();
+            }
         };
 
         PlotManager.prototype.onEndTurn = function (activeUnit)

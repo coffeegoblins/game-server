@@ -31,6 +31,8 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
             this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
 
+            this.element.style.backgroundColor = activeUnit.player.color;
+
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()
             {
                 this.element.style.opacity = 1;

@@ -14,7 +14,8 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
         attackCost: 25,
         direction: 0,
         state: 'idle',
-        weapon: null
+        weapon: null,
+        player: null
     };
 
     function Soldier(properties)

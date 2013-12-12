@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager', 'Renderer/src/ui/renderableTurnQueue', 'loadLevelData'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue, loadLevelData)
+define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 'Game/src/ladder', 'Game/src/turnManager', 'Renderer/src/ui/renderableTurnQueue', 'loadLevelData', 'Game/src/player'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue, loadLevelData, Player)
     {
         'use strict';
 
@@ -50,8 +50,11 @@ define(['renderer', 'Game/src/map', 'Game/src/soldier', 'Game/src/worldObject', 
             TurnManager.on("beginTurn", RenderableTurnQueue, RenderableTurnQueue.onBeginTurn);
             TurnManager.on("endTurn", RenderableTurnQueue, RenderableTurnQueue.onEndTurn);
 
+            // TODO Determine local player properly
+            this.player = TurnManager.unitList[0].player;
+
             if (onComplete)
-                onComplete(this.map);
+                onComplete(this.map, this.player);
         };
 
         return new LevelLoader();
