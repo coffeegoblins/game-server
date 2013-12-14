@@ -80,13 +80,13 @@ window.soldierAnimations = {
         "animations": {
             "idle": {
                 "start": 16,
-                "end": 31,
-                "speed": 0.1,
+                "end": 47,
+                "speed": 0.075,
                 "isLooping": true,
                 "frames": {
                     "16": 5,
-                    "24": 1.5,
-                    "28": 2
+                    "33": 1.5,
+                    "42": 2
                 }
             },
             "run": {
@@ -96,14 +96,14 @@ window.soldierAnimations = {
                 "isLooping": true
             },
             "attack": {
-                "start": 32,
-                "end": 47,
-                "speed": 0.075
+                "start": 48,
+                "end": 79,
+                "speed": 0.05
             },
             "death": {
-                "start": 48,
-                "end": 63,
-                "speed": 0.075
+                "start": 80,
+                "end": 111,
+                "speed": 0.05
             }
         }
     },
