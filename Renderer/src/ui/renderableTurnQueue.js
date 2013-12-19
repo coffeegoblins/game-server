@@ -4,31 +4,29 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         'use strict';
         function RenderableTurnQueue()
         {
-            this.images = {
-                'archer': 'Renderer/content/archer.png',
-                'swordAndShield': 'Renderer/content/soldier.png',
-                'twoHanded': 'Renderer/content/archer.png',
-                'dualWield': 'Renderer/content/soldier.png'
-            };
-
             this.unitList = [];
             this.element = document.createElement('div');
             this.element.id = 'turnQueue';
             document.body.appendChild(this.element);
         }
 
-        RenderableTurnQueue.prototype.addUnit = function (unit, position)
+        RenderableTurnQueue.prototype.addUnit = function (unit)
         {
-            var image = document.createElement('img');
-            image.id = unit.name;
-            image.src = this.images[unit.type];
-            image.style.backgroundColor = unit.player.color;
-
-            if (position == null)
-                position = 0;
-
-            this.element.appendChild(image);
+            this.element.appendChild(this.createUnitElement(unit));
             unit.on('death', this, this.removeUnit);
+        };
+
+        RenderableTurnQueue.prototype.createUnitElement = function (unit)
+        {
+            var container = document.createElement('div');
+            container.id = unit.name;
+            container.className = 'turn-queue-preview team-' + unit.player.color;
+
+            var preview = document.createElement('div');
+            preview.className = 'unit-type-' + unit.type;
+            container.appendChild(preview);
+
+            return container;
         };
 
         RenderableTurnQueue.prototype.getResizeStyleProperty = function (image)
@@ -53,27 +51,23 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         {
             unit.on('death', this, this.removeUnit);
 
-            var image = document.createElement('img');
-            image.id = unit.name;
-            image.src = this.images[unit.type];
-            image.style.backgroundColor = unit.player.color;
+            var element = this.createUnitElement(unit);
+            this.element.insertBefore(element, this.element.children[position]);
 
-            this.element.insertBefore(image, this.element.children[position]);
+            var styleName = this.getResizeStyleProperty(element);
+            element.style[styleName] = 0;
+            element.style.opacity = 0;
 
-            var styleName = this.getResizeStyleProperty(image);
-            image.style[styleName] = 0;
-            image.style.opacity = 0;
-
-            TransitionEffect.transitionFloat("TurnManagerInsertHeight", image.style, styleName, "px", this.imageSize, 1, this, function ()
+            TransitionEffect.transitionFloat("TurnManagerInsertHeight", element.style, styleName, "px", this.imageSize, 1, this, function ()
             {
-                TransitionEffect.transitionFloat("TurnManagerInsertOpacity", image.style, "opacity", null, 1, 0.5, this, function ()
+                TransitionEffect.transitionFloat("TurnManagerInsertOpacity", element.style, "opacity", null, 1, 0.5, this, function ()
                 {
-                    image.style.opacity = 1;
+                    element.style.opacity = 1;
                 });
             });
         };
 
-        RenderableTurnQueue.prototype.onBeginTurn = function (activeUnit)
+        RenderableTurnQueue.prototype.onBeginTurn = function ()
         {
             var styleName = (Utility.isTouchEnabled() && this.isLandscapeMode) ? 'width' : 'height';
 

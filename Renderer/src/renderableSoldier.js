@@ -8,11 +8,6 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
         this.style = {};
         this.style.opacity = 1;
 
-        if (previewImage)
-        {
-            this.previewImage = 'Renderer/content/' + previewImage + '.png';
-        }
-
         this.spriteSheet = createSpriteSheet(this.unit.type);
         this.spriteSheet.playAnimation(this.unit.state);
         this.spriteSheet.on('animationComplete', this, this.onAnimationComplete);

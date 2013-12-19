@@ -1,0 +1,168 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: black;
+}
+
+canvas {
+    outline: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.panel {
+    position: absolute;
+    color: #f0f0f0;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid #cdcdcd;
+}
+
+.header {
+    position: relative;
+    padding: 0 8px;
+    border-bottom: 1px solid #cdcdcd;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #adadad;
+}
+
+.contents {
+    border-bottom: 1px solid #cdcdcd;
+    padding: 8px;
+}
+
+.main-panel {
+    top: 8px;
+    right: 8px;
+}
+
+.layer-item-panel {
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 60px;
+    max-height: 120px;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.layer {
+    position: relative;
+    padding: 4px 0;
+}
+
+.layer.selected {
+    background-color: rgba(255, 255, 255, 0.20);
+}
+
+.layer-title-container {
+    padding: 0 32px;
+}
+
+.layer input {
+    width: 100%;
+}
+
+.header-button-panel {
+    position: absolute;
+    right: 8px;
+    top: 0;
+    bottom: 0;
+}
+
+.divider {
+    height: 1px;
+    background-color: #cdcdcd;
+    margin: 4px;
+}
+
+.numeric-input {
+    width: 50px;
+}
+
+.icon {
+    display: inline-block;
+    height: 100%;
+    width: 16px;
+    opacity: 0.8;
+}
+
+.add-icon {
+    background: url('icons/addIcon.png') no-repeat center center;
+}
+
+.remove-icon {
+    background: url('icons/closeIcon.png') no-repeat center center;
+}
+
+.visibility-icon {
+    background: url('icons/visibilityIcon.png') no-repeat center center;
+    opacity: 0.4;
+}
+
+.picker-icon {
+    background: url('icons/pickerIcon.png') no-repeat center center;
+    height: 16px;
+}
+
+.up-icon {
+    background: url('icons/upIcon.png') no-repeat center center;
+}
+
+.down-icon {
+    background: url('icons/downIcon.png') no-repeat center center;
+}
+
+.visibility-icon.visible {
+    opacity: 1;
+}
+
+.layer .icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.layer .visibility-icon {
+    left: 8px;
+}
+
+.layer .remove-icon {
+    right: 8px;
+}
+
+.popup {
+    position: absolute;
+    overflow: auto;
+    background-color: black;
+    box-shadow: 0 0 20px 4px rgba(255, 255, 255, 0.4);
+}
+
+.popup-menu {
+    padding: 4px 0;
+    background-color: black;
+}
+
+.popup img {
+    vertical-align: middle;
+}
+
+.popup-item {
+    color: #f0f0f0;
+    padding: 4px 8px;
+}
+
+.popup-item:hover {
+    background-color: #3d3d3d;
+}
+
+.selection-marker {
+    display: none;
+    position: absolute;
+    border: 1px solid #d4ca40;
+}
+
+.tile-layer-panel select {
+    display: block;
+    width: 100%;
+}

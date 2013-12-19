@@ -27,26 +27,26 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             switch (this.activeUnit.type)
             {
                 case 'archer':
-                    actions.push({id: 'ShortShot', method: this.onShortShotAction, context: this});
-                    actions.push({id: 'LongShot', method: this.onLongShotAction, context: this});
+                    actions.push({id: 'shortShot', method: this.onShortShotAction, context: this});
+                    actions.push({id: 'longShot', method: this.onLongShotAction, context: this});
                     break;
 
                 case 'swordAndShield':
-                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
-                    actions.push({id: 'Shield Bash', method: this.onShieldBash, context: this});
+                    actions.push({id: 'strike', method: this.onStrikeAction, context: this});
+                    actions.push({id: 'shield', method: this.onShieldBash, context: this});
                     break;
 
                 case 'twoHanded':
-                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
-                    actions.push({id: 'Sweep', method: this.onSweepAction, context: this});
+                    actions.push({id: 'strike', method: this.onStrikeAction, context: this});
+                    actions.push({id: 'sweep', method: this.onSweepAction, context: this});
                     break;
 
                 case 'dualWield':
-                    actions.push({id: 'Strike', method: this.onStrikeAction, context: this});
+                    actions.push({id: 'strike', method: this.onStrikeAction, context: this});
                     break;
             }
 
-            actions.push({id: 'Cancel', method: this.onAttackActionCancelled, context: this});
+            actions.push({id: 'cancel', method: this.onAttackActionCancelled, context: this});
             ActionBarView.addActions(actions);
         };
 
@@ -96,7 +96,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
 
             ActionBarView.removeAllActions();
             ActionBarView.addActions([
-                {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
+                {id: 'cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
             // Configure the path manager for the attach range
@@ -150,13 +150,12 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                 {
                     ActionBarView.removeAllActions();
                     ActionBarView.addActions([
-                        { id: 'Attack', method: this.onAttackConfirmed, context: this },
-                        { id: 'Cancel', method: this.onAttackActionCancelled, context: this }
+                        { id: 'attack', method: this.onAttackConfirmed, context: this },
+                        { id: 'cancel', method: this.onAttackActionCancelled, context: this }
                     ]);
 
                     this.selectedTileCost = this.selectedNode.distance / 2;
                     this.activeUnitView.previewAP(this.selectedTileCost);
-
                     break;
                 }
             }

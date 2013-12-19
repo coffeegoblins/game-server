@@ -38,10 +38,11 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.onCameraMoved = function (activeUnit)
         {
+            var attackActionName = activeUnit.type === 'archer' ? 'rangeAttack' : 'attack';
             ActionBarView.addActions([
-                {id: 'Move', method: this.movementManager.onMoveAction, context: this.movementManager},
-                {id: 'Attack', method: this.attackManager.onAttackAction, context: this.attackManager},
-                {id: 'EndTurn', method: this.onEndTurnAction, context: this}
+                {id: 'move', method: this.movementManager.onMoveAction, context: this.movementManager},
+                {id: attackActionName, method: this.attackManager.onAttackAction, context: this.attackManager},
+                {id: 'endTurn', method: this.onEndTurnAction, context: this}
             ]);
 
             ActionBarView.showActions();

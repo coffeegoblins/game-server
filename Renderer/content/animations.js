@@ -21,7 +21,7 @@ window.soldierAnimations = {
             "run": {
                 "start": 0,
                 "end": 15,
-                "speed": 0.03,
+                "speed": 0.02,
                 "isLooping": true
             },
             "attack": {
@@ -56,7 +56,7 @@ window.soldierAnimations = {
             "run": {
                 "start": 0,
                 "end": 15,
-                "speed": 0.03,
+                "speed": 0.02,
                 "isLooping": true
             },
             "attack": {

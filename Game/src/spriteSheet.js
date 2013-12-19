@@ -11,8 +11,12 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
     {
         this.animations = {};
         this.currentTile = 0;
-        this.image = ImageCache.loadImage(id, path);
         Utility.merge(this, defaults, properties);
+
+        if (id && path)
+        {
+            this.image = ImageCache.loadImage(id, path);
+        }
     }
 
     SpriteSheet.prototype.defineAnimation = function (name, properties)
@@ -32,6 +36,12 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
         return this.currentTileBounds;
     };
 
+    SpriteSheet.prototype.getTile = function (x, y)
+    {
+        if (this.image.isLoaded)
+            return x + y * Math.floor(this.image.width / this.tileWidth);
+    };
+
     SpriteSheet.prototype.getTileBounds = function (tileIndex)
     {
         if (this.image.isLoaded)
@@ -49,6 +59,11 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
         }
     };
 
+    SpriteSheet.prototype.isLoaded = function ()
+    {
+        return this.image && this.image.isLoaded;
+    };
+
     SpriteSheet.prototype.playAnimation = function (name)
     {
         this.currentAnimation = this.animations[name];
@@ -64,6 +79,11 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
             this.currentTile = index;
             this.currentTileBounds = null;
         }
+    };
+
+    SpriteSheet.prototype.setImage = function (image)
+    {
+        this.image = image;
     };
 
     SpriteSheet.prototype.updateAnimation = function (deltaTime)
