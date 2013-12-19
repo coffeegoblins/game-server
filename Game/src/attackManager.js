@@ -24,7 +24,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             ActionBarView.removeAllActions();
 
             var actions = [];
-            switch (this.activeUnit.type)
+            switch (this.activeUnit.weapon.type)
             {
                 case 'archer':
                     actions.push({id: 'ShortShot', method: this.onShortShotAction, context: this});
@@ -62,29 +62,29 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
 
         AttackManager.prototype.onShieldBash = function ()
         {
-            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.defaultMoveCost)});
+            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost) });
         };
 
         AttackManager.prototype.onStrikeAction = function ()
         {
-            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.defaultMoveCost)});
+            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost) });
         };
 
         AttackManager.prototype.onSweepAction = function ()
         {
-            this.onActionSelected({maxDistance: Math.min(this.activeUnit.ap, PathManager.diagonalMoveCost)});
+            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.diagonalMoveCost) });
 
             this.crossNodes = true;
         };
 
         AttackManager.prototype.onShortShotAction = function ()
         {
-            this.onActionSelected({maxDistance: this.activeUnit.ap});
+            this.onActionSelected({ maxDistance: this.activeUnit.weapon.range / 2 });
         };
 
         AttackManager.prototype.onLongShotAction = function ()
         {
-            this.onActionSelected({maxDistance: this.activeUnit.ap * 2});
+            this.onActionSelected({ maxDistance: this.activeUnit.weapon.range });
         };
 
         AttackManager.prototype.onActionSelected = function (options)
@@ -99,7 +99,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                 {id: 'Cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
-            // Configure the path manager for the attach range
+            // Configure the path manager for the attack range
             var pathOptions = Utility.merge({
                 x: this.activeUnit.tileX,
                 y: this.activeUnit.tileY,
@@ -199,7 +199,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                     var node = this.selectedNodes[i];
 
                     if (node.tile.unit)
-                        node.tile.unit.damage(this.activeUnit.attackPower);
+                        node.tile.unit.damage(this.activeUnit.weapon.damage);
                 }
 
                 this.activeUnit.ap -= this.selectedTileCost;

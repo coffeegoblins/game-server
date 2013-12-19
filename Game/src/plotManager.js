@@ -7,9 +7,11 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         function PlotManager() { }
 
-        PlotManager.prototype.initialize = function ()
+        PlotManager.prototype.initialize = function (weaponData)
         {
-            LevelLoader.loadLevel("level1", function (map, player)
+            this.weaponData = weaponData;
+
+            LevelLoader.loadLevel("level1", weaponData, function (map, player)
             {
                 this.currentMap = map;
                 this.player = player;
@@ -44,12 +46,12 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 {id: 'EndTurn', method: this.onEndTurnAction, context: this}
             ]);
 
-            ActionBarView.showActions();
-
             if (activeUnit.player.name === this.player.name)
             {
-                InputHandler.enableInput();
+                ActionBarView.showActions();
             }
+
+            InputHandler.enableInput();
         };
 
         PlotManager.prototype.onEndTurn = function (activeUnit)

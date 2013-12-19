@@ -1,5 +1,6 @@
-define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar', 'Game/src/scheduler', 'Renderer/src/effects/transitionEffect', 'text!Renderer/content/activeUnitView.html'],
-    function (Renderer, Template, RenderableProgressBar, Scheduler, TransitionEffect)
+define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Game/src/ImageCache', 'Renderer/src/ui/renderableProgressBar',
+        'Game/src/scheduler', 'Renderer/src/effects/transitionEffect', 'text!Renderer/content/activeUnitView.html'],
+    function (Renderer, Template, ImageCache, RenderableProgressBar, Scheduler, TransitionEffect)
     {
         'use strict';
         function ActiveUnitView()
@@ -14,19 +15,16 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Renderer/src/u
             this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
 
             document.body.appendChild(this.element);
+
+            ImageCache.loadImage('archerPortrait', 'Renderer/content/archer.png');
+            ImageCache.loadImage('swordAndShieldPortrait', 'Renderer/content/soldier.png');
+            ImageCache.loadImage('dualWieldPortrait', 'Renderer/content/soldier.png');
+            ImageCache.loadImage('twoHandedPortrait', 'Renderer/content/soldier.png');
         }
 
         ActiveUnitView.prototype.onBeginTurn = function (activeUnit)
         {
-            // TODO Find a better way to get the active unit preview image
-            for (var i = 0; i < Renderer.renderables.length; ++i)
-            {
-                if (activeUnit === Renderer.renderables[i].unit)
-                {
-                    this.previewImage.src = Renderer.renderables[i].previewImage;
-                    break;
-                }
-            }
+            this.previewImage.src = ImageCache.getImage(activeUnit.weapon.type + "Portrait").data.src;
 
             this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
             this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);

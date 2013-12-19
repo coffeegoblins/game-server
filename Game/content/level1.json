@@ -172,10 +172,12 @@
         {"objectType": "ladder", "x": 2, "y": 19, "properties": {"direction": "down"}},
         {"objectType": "ladder", "x": 1, "y": 18, "properties": {"direction": "left"}},
         {"objectType": "ladder", "x": 3, "y": 18, "properties": {"direction": "right"}},
-        {"objectType": "soldier", "x": 4, "y": 0, "previewImage": "archer",  "properties": {"name": "soldier1", "type": "archer", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
-        {"objectType": "soldier", "x": 6, "y": 5, "previewImage": "soldier", "properties": {"name": "soldier2", "type": "swordAndShield", "hp":1, "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
-        {"objectType": "soldier", "x": 0, "y": 6, "previewImage": "soldier", "properties": {"name": "soldier3", "type": "dualWield", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
-        {"objectType": "soldier", "x": 10, "y": 1, "previewImage": "archer", "properties": {"name": "soldier4", "type": "twoHanded", "player": {"name" : "Player 2", "color" : "rgba(200, 0, 0, 0.5)"}}}
+        {"objectType": "soldier", "x": 4, "y": 0,  "properties": {"name": "soldier1", "weapon" : "Short Bow", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
+        {"objectType": "soldier", "x": 5, "y": 0,  "properties": {"name": "soldier1", "weapon" : "Long Bow", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
+        {"objectType": "soldier", "x": 6, "y": 5, "properties": {"name": "soldier2", "weapon" : "Bronze Sword and Shield", "hp":1, "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
+        {"objectType": "soldier", "x": 0, "y": 6, "properties": {"name": "soldier3", "weapon" : "Twin Bronze Swords", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
+        {"objectType": "soldier", "x": 10, "y": 1, "properties": {"name": "soldier4", "weapon" : "Great Iron Longsword", "player": {"name" : "Player 1", "color" : "rgba(0, 200, 0, 0.5)"}}},
+        {"objectType": "soldier", "x": 11, "y": 1, "properties": {"name": "soldier4", "weapon" : "Great Iron Longsword", "player": {"name" : "Player 2", "color" : "rgba(200, 0, 0, 0.5)"}}}
     ],
     "units": []
 }

@@ -106,6 +106,7 @@ html, body {
 .touch #turnQueue img {
     width: 32px;
     height: 32px;
+    border-radius: 8px;
 }
 
 #actionBarView {

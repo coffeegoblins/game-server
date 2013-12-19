@@ -21,7 +21,7 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
         {
             var image = document.createElement('img');
             image.id = unit.name;
-            image.src = this.images[unit.type];
+            image.src = this.images[unit.weapon.type];
             image.style.backgroundColor = unit.player.color;
 
             if (position == null)
@@ -55,7 +55,7 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
 
             var image = document.createElement('img');
             image.id = unit.name;
-            image.src = this.images[unit.type];
+            image.src = this.images[unit.weapon.type];
             image.style.backgroundColor = unit.player.color;
 
             this.element.insertBefore(image, this.element.children[position]);

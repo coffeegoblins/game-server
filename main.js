@@ -1,69 +1,75 @@
-require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/commandManager', 'TestFramework/testRunner', 'Game/test/testDefinitions', 'Renderer/test/testDefinitions'],
-    function (Scheduler, Renderer, PlotManager, CommandManager, TestFramework, GameTests, RendererTests)
+require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/commandManager',
+         //'TestFramework/testRunner', 'Game/test/testDefinitions', 'Renderer/test/testDefinitions',
+         'jsonLoader'],
+    function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
     {
         'use strict';
         function onDocumentReady()
         {
             // Run the unit test suites before beginning
-            var tests = GameTests.concat(RendererTests);
-            TestFramework.runTests(tests, onTestsComplete, true);
-        }
-
-        function onTestsComplete(results)
-        {
-            outputTestResults(results);
+            //var tests = GameTests.concat(RendererTests);
+            //TestFramework.runTests(tests, onTestsComplete, true);
 
             // Start the actual game
             Renderer.initialize(document.getElementById('canvas'));
             Scheduler.start();
-            PlotManager.initialize();
+
+            loadJSON('weapons', function (weaponData)
+            {
+                PlotManager.initialize(weaponData);
+            });
         }
 
-        function outputTestResults(results)
-        {
-            var testCount = 0;
-            var failCount = 0;
-            var warningCount = 0;
+        //function onTestsComplete(results)
+        //{
+        //    outputTestResults(results);
+        //}
 
-            for (var i = 0; i < results.length; i++)
-            {
-                var scenarioResult = results[i];
-                testCount += scenarioResult.testCount;
+        //function outputTestResults(results)
+        //{
+        //    var testCount = 0;
+        //    var failCount = 0;
+        //    var warningCount = 0;
 
-                if (scenarioResult.setupException)
-                    warningCount++;
+        //    for (var i = 0; i < results.length; i++)
+        //    {
+        //        var scenarioResult = results[i];
+        //        testCount += scenarioResult.testCount;
 
-                for (var j = 0; j < scenarioResult.tests.length; j++)
-                {
-                    var testResult = scenarioResult.tests[j];
-                    if (testResult.setupException)
-                        warningCount++;
+        //        if (scenarioResult.setupException)
+        //            warningCount++;
 
-                    if (testResult.exception)
-                        failCount++;
+        //        for (var j = 0; j < scenarioResult.tests.length; j++)
+        //        {
+        //            var testResult = scenarioResult.tests[j];
+        //            if (testResult.setupException)
+        //                warningCount++;
 
-                    if (testResult.tearDownException)
-                        warningCount++;
-                }
+        //            if (testResult.exception)
+        //                failCount++;
 
-                if (scenarioResult.tearDownException)
-                    warningCount++;
-            }
+        //            if (testResult.tearDownException)
+        //                warningCount++;
+        //        }
 
-            if (failCount || warningCount)
-            {
-                var resultElement = document.createElement('div');
-                resultElement.id = 'testResults';
-                resultElement.className = failCount ? 'error' : 'warning';
+        //        if (scenarioResult.tearDownException)
+        //            warningCount++;
+        //    }
 
-                var report = window.formatMessage('{0} out of {1} tests failed. {2} warnings occurred.', [failCount, testCount, warningCount]);
-                var resultMessage = document.createElement('span');
-                resultMessage.appendChild(document.createTextNode(report));
-                resultElement.appendChild(resultMessage);
+        //    if (failCount || warningCount)
+        //    {
+        //        var resultElement = document.createElement('div');
+        //        resultElement.id = 'testResults';
+        //        resultElement.className = failCount ? 'error' : 'warning';
 
-                document.body.appendChild(resultElement);
-            }
-        }
+        //        var report = window.formatMessage('{0} out of {1} tests failed. {2} warnings occurred.', [failCount, testCount, warningCount]);
+        //        var resultMessage = document.createElement('span');
+        //        resultMessage.appendChild(document.createTextNode(report));
+        //        resultElement.appendChild(resultMessage);
+
+        //        document.body.appendChild(resultElement);
+        //    }
+        //}
 
         if (document.readyState === 'complete')
             onDocumentReady();
