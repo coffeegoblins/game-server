@@ -3,6 +3,7 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Game/src/Image
     function (Renderer, Template, ImageCache, RenderableProgressBar, Scheduler, TransitionEffect)
     {
         'use strict';
+
         function ActiveUnitView()
         {
             this.element = document.createElement('div');
@@ -10,7 +11,7 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Game/src/Image
             this.element.innerHTML = Template;
             this.element.style.opacity = 0;
 
-            this.previewImage = this.element.querySelector('img');
+            this.previewImage = this.element.querySelector('.unit-preview');
             this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
             this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
 
@@ -28,8 +29,8 @@ define(['renderer', 'text!Renderer/content/activeUnitView.html', 'Game/src/Image
 
             this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
             this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
-
-            this.element.style.backgroundColor = activeUnit.player.color;
+            this.element.className = 'team-' + activeUnit.player.color;
+            this.previewImage.className = 'unit-preview unit-type-' + activeUnit.weapon.type;
 
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()
             {

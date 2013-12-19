@@ -18,7 +18,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
             ActionBarView.removeAllActions();
             ActionBarView.addActions([
-                {id: 'Cancel', method: this.onMoveActionCancelled, context: this}
+                {id: 'cancel', method: this.onMoveActionCancelled, context: this}
             ]);
 
             this.availableMoveTiles = PathManager.calculateAvailableTiles(this.currentMap, {
@@ -66,7 +66,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
             if (this.selectedPath)
             {
                 ActionBarView.addActions([
-                    {id: 'Move', method: this.onMoveConfirmed, context: this}
+                    {id: 'confirmMove', method: this.onMoveConfirmed, context: this}
                 ]);
 
                 this.selectedTileCost = this.selectedPath[this.selectedPath.length - 1].distance;

@@ -2,21 +2,16 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
     function (InputHandler, TransitionEffect, Utility)
     {
         'use strict';
+
         function ActionBarView()
         {
             this.actionsList = [];
-            this.imageList = {
-                'Attack': 'Renderer/content/attackIcon.png',
-                'Cancel': 'Renderer/content/cancelIcon.png',
-                'EndTurn': 'Renderer/content/endTurnIcon.png',
-                'Move': 'Renderer/content/moveIcon.png'
-            };
-
             this.element = document.createElement('div');
             this.element.id = 'actionBarView';
             this.element.style.display = 'none';
 
             this.containerElement = document.createElement('div');
+            this.containerElement.className = 'action-container';
             this.element.appendChild(this.containerElement);
 
             document.body.appendChild(this.element);
@@ -31,16 +26,16 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
                 if (!Utility.getElementByProperty(this.actionsList, 'id', action.id))
                 {
                     // If the action didn't already exist, create and register a visual for it
-                    var image = document.createElement('img');
-                    image.title = action.id;
-                    image.id = action.id;
-                    image.src = this.imageList[action.id];
+                    var actionElement = document.createElement('div');
+                    actionElement.title = action.id;
+                    actionElement.id = action.id;
+                    actionElement.className = 'action action-' + action.id;
 
-                    action.image = image;
+                    action.element = actionElement;
                     this.actionsList.push(action);
                     InputHandler.registerClickEvent(action.id, action.method, action.context);
 
-                    fragment.appendChild(image);
+                    fragment.appendChild(actionElement);
                 }
             }
 
@@ -53,9 +48,9 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
             if (action)
             {
                 InputHandler.unregisterClickEvent(id);
-                if (action.image)
+                if (action.element)
                 {
-                    this.containerElement.removeChild(action.image);
+                    this.containerElement.removeChild(action.element);
                 }
             }
         };
