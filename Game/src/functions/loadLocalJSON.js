@@ -5,9 +5,6 @@ function (Weapons, Level1)
 
     return function (fileName, onComplete)
     {
-        if (fileName === 'level1')
-            onComplete(JSON.parse(Level1));
-
         switch (fileName)
         {
             case "level1":
@@ -16,6 +13,7 @@ function (Weapons, Level1)
                 
             case "weapons":
                 onComplete(JSON.parse(Weapons));
+                break;
 
             default:
                 break;

@@ -154,8 +154,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                         { id: 'cancel', method: this.onAttackActionCancelled, context: this }
                     ]);
 
-                    this.selectedTileCost = this.selectedNode.distance / 2;
-                    this.activeUnitView.previewAP(this.selectedTileCost);
+                    this.activeUnitView.previewAP(this.activeUnit.weapon.cost);
                     break;
                 }
             }
@@ -201,7 +200,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                         node.tile.unit.damage(this.activeUnit.weapon.damage);
                 }
 
-                this.activeUnit.ap -= this.selectedTileCost;
+                this.activeUnit.ap -= this.activeUnit.weapon.cost;
                 this.activeUnit.setState('idle');
 
                 this.activeUnitView.previewAP(0);

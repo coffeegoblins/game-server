@@ -95,8 +95,6 @@ html, body {
 .touch #activeUnitView {
     left: 8px;
     top: 8px;
-    padding: 8px;
-    border-radius: 8px;
 }
 
 .touch #activeUnitView img {
@@ -106,7 +104,7 @@ html, body {
 
 .touch #turnQueue {
     left: 8px;
-    top: 150px;
+    top: 212px;
 }
 
 .touch .turn-queue-preview {
@@ -269,19 +267,4 @@ html, body {
     .touch .action {
         margin: 0 0 4px 0;
     }
-}
-
-#testResults {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 16px;
-}
-
-#testResults.warning {
-    background-color: #ffe303;
-}
-
-#testResults.error {
-    background-color: #c83232;
 }
