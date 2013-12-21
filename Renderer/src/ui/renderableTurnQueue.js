@@ -23,7 +23,7 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             container.className = 'turn-queue-preview team-' + unit.player.color;
 
             var preview = document.createElement('div');
-            preview.className = 'unit-type-' + unit.weapon.type;
+            preview.className = 'unit-preview unit-type-' + unit.weapon.type;
             container.appendChild(preview);
 
             return container;

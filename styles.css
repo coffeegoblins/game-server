@@ -38,7 +38,7 @@ html, body {
     border-radius: 8px;
 }
 
-.unit-preview {
+.active-unit-preview {
     height: 128px;
     width: 128px;
     background-size: 512px;
@@ -51,7 +51,7 @@ html, body {
     width: 64px;
     height: 64px;
     border-radius: 8px;
-    margin: 0 0 8px 0;
+    margin-bottom: 8px;
     overflow: hidden;
 }
 
@@ -92,27 +92,6 @@ html, body {
     background-color: orange;
 }
 
-.touch #activeUnitView {
-    left: 8px;
-    top: 8px;
-}
-
-.touch #activeUnitView img {
-    height: 64px;
-    width: 64px;
-}
-
-.touch #turnQueue {
-    left: 8px;
-    top: 212px;
-}
-
-.touch .turn-queue-preview {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-}
-
 #actionBarView {
     position: fixed;
     left: 50%;
@@ -123,6 +102,11 @@ html, body {
     display: inline-block;
     height: 64px;
     margin-left: -50%;
+    padding: 8px;
+    border: 4px solid rgba(113, 112, 116, 1);
+    border-style: outset;
+    background: -webkit-linear-gradient(top, #707070 0%, #383838 51%, #2d2d2d 100%);
+    background: linear-gradient(to bottom, #707070 0%, #383838 51%, #2d2d2d 100%);
 }
 
 .action {
@@ -130,7 +114,7 @@ html, body {
     width: 64px;
     margin: 0 8px 0 0;
     display: inline-block;
-    background-color: #000000;
+    background-color: #000;
 }
 
 .unit-type-archer {
@@ -152,15 +136,15 @@ html, body {
     background-position: -128px 0;
 }
 
-.unit-preview.unit-type-dualWield {
+.active-unit-preview.unit-type-dualWield {
     background-position: -384px 0;
 }
 
-.unit-preview.unit-type-swordAndShield {
+.active-unit-preview.unit-type-swordAndShield {
     background-position: -128px 0;
 }
 
-.unit-preview.unit-type-twoHanded {
+.active-unit-preview.unit-type-twoHanded {
     background-position: -256px 0;
 }
 
@@ -205,66 +189,12 @@ html, body {
 
 .team-green {
     background: #81f742;
-    background: -moz-linear-gradient(top, #81f742 0%, #417f1f 100%);
     background: -webkit-linear-gradient(top, #81f742 0%, #417f1f 100%);
-    background: -o-linear-gradient(top, #81f742 0%, #417f1f 100%);
-    background: -ms-linear-gradient(top, #81f742 0%, #417f1f 100%);
     background: linear-gradient(to bottom, #81f742 0%, #417f1f 100%);
 }
 
 .team-red {
     background: #ff8787;
-    background: -moz-linear-gradient(top, #ff8787 0%, #843535 100%);
     background: -webkit-linear-gradient(top, #ff8787 0%, #843535 100%);
-    background: -o-linear-gradient(top, #ff8787 0%, #843535 100%);
-    background: -ms-linear-gradient(top, #ff8787 0%, #843535 100%);
     background: linear-gradient(to bottom, #ff8787 0%, #843535 100%);
-}
-
-.touch #actionBarView {
-    bottom: 8px;
-}
-
-.touch .action-container {
-    height: 44px;
-    margin-left: -50%;
-    border-radius: 12px;
-    padding: 6px 6px 6px 12px;
-}
-
-.touch .action {
-    height: 44px;
-    width: 44px;
-    margin: 0 4px 0 0;
-}
-
-@media only screen and (orientation: landscape) {
-    .touch #turnQueue {
-        left: 100px;
-        top: 8px;
-    }
-
-    .touch .turn-queue-preview {
-        display: inline-block;
-    }
-
-    .touch #actionBarView {
-        left: auto;
-        bottom: auto;
-        right: 8px;
-        top: 50%;
-    }
-
-    .touch .action-container {
-        height: auto;
-        margin-left: auto;
-        width: 44px;
-        padding: 8px 4px 4px 4px;
-        transform: translate(0, -50%);
-        -webkit-transform: translate(0, -50%);
-    }
-
-    .touch .action {
-        margin: 0 0 4px 0;
-    }
 }
