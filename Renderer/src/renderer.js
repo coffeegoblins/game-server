@@ -1,5 +1,6 @@
 define(['Game/src/inputHandler',
         'Game/src/scheduler',
+        'Game/src/turnManager',
         'Game/src/utility',
         'Renderer/src/renderableMap',
         'Renderer/src/renderableLadder',
@@ -9,7 +10,7 @@ define(['Game/src/inputHandler',
         'Renderer/src/renderablePath',
         'Renderer/src/effects/blinkEffect',
         'Renderer/src/ui/renderableTurnQueue'],
-    function (InputHandler, Scheduler, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
+    function (InputHandler, Scheduler, TurnManager, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
@@ -25,6 +26,9 @@ define(['Game/src/inputHandler',
 
             InputHandler.on('click', this, onClick);
             InputHandler.on('drag', this, onDrag);
+
+            TurnManager.on('beginTurn', this, this.onBeginTurn)
+            TurnManager.on('endTurn', this, this.onEndTurn)
         }
 
         function handleResize()
@@ -134,23 +138,49 @@ define(['Game/src/inputHandler',
 
         Renderer.prototype.addRenderableSoldier = function (soldier)
         {
-            var renderableSolider = new RenderableSoldier(soldier);
-            this.renderables.push(renderableSolider);
+            var renderableSoldier = new RenderableSoldier(soldier);
+            this.renderables.push(renderableSoldier);
 
             soldier.on('death', this, function ()
             {
                 // Push dead units to the front of the draw list
-                Utility.removeElement(this.renderables, renderableSolider);
+                Utility.removeElement(this.renderables, renderableSoldier);
+
                 for (var i = 0; i < this.renderables.length; i++)
                 {
                     var renderable = this.renderables[i];
                     if (renderable instanceof RenderableSoldier && !renderable.unit.isAlive())
                         continue;
 
-                    this.renderables.splice(i, 0, renderableSolider);
+                    this.renderables.splice(i, 0, renderableSoldier);
                     break;
                 }
             });
+        };
+
+        Renderer.prototype.onEndTurn = function (activeUnit)
+        {
+            for (var i = 0; i < this.renderables.length; ++i)
+            {
+                var renderable = this.renderables[i];
+                if (renderable.unit === activeUnit)
+                {
+                    renderable.isSelected = false;
+                }
+            }
+        };
+
+        Renderer.prototype.onBeginTurn = function (activeUnit)
+        {
+            for (var i = 0; i < this.renderables.length; ++i)
+            {
+                var renderable = this.renderables[i];
+
+                if (!(renderable instanceof RenderableSoldier))
+                    continue;
+
+                renderable.isSelected = (renderable.unit === activeUnit);
+            }
         };
 
         Renderer.prototype.initialize = function (canvas)

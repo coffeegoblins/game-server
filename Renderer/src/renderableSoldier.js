@@ -7,6 +7,7 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
         this.unit = unit;
         this.style = {};
         this.style.opacity = 1;
+        this.isSelected = false;
 
         this.spriteSheet = createSpriteSheet(this.unit.weapon.type);
         this.spriteSheet.playAnimation(this.unit.state);
@@ -73,6 +74,20 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
 
             this.spriteSheet.updateAnimation(deltaTime);
             var tileRect = this.spriteSheet.getCurrentTileBounds();
+
+            if (this.isSelected)
+            {
+                context.beginPath();
+                context.arc(0, 0, 25, 0, 2 * Math.PI);
+                context.strokeStyle = this.unit.player.color;
+                context.fillStyle = this.unit.player.color;
+
+                context.stroke();
+
+                context.globalAlpha = 0.1;
+                context.fill();
+                context.globalAlpha = 1;
+            }
 
             context.globalAlpha = this.style.opacity;
             context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
