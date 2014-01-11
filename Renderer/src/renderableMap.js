@@ -52,8 +52,8 @@ define(['Game/src/spriteSheet'], function (SpriteSheet)
                     var tileRect = this.tileSheet.getTileBounds(tile.spriteIndex - 1);
                     if (tileRect)
                     {
-                        var xPosition = x * tileSize - viewportRect.x;
-                        var yPosition = y * tileSize - viewportRect.y;
+                        var xPosition = Math.floor(x * tileSize - viewportRect.x);
+                        var yPosition = Math.floor(y * tileSize - viewportRect.y);
 
                         context.drawImage(this.tileSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
                         continue;
