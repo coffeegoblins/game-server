@@ -1,10 +1,11 @@
-define('Plugins', ['./layers/objectLayer', './layers/tileLayer'], function (ObjectLayer, TileLayer)
+define('Plugins', ['./layers/objectLayer', './plugins/objectTypes', './layers/tileLayer'], function (ObjectLayer, ObjectTypes, TileLayer)
 {
     'use strict';
     return {
-        layers: [ObjectLayer, TileLayer],
-        plugins: [],
+        layerTypes: [ObjectLayer, TileLayer],
+        objectTypes: ObjectTypes,
         resources: [
+            'heights.png',
             'terrain.png'
         ]
     };

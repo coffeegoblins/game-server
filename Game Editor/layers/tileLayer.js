@@ -1,18 +1,15 @@
 define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'text!../templates/tileLayerPanel.html'], function (Editor, SpriteSheet, TileSelectionPopup, Template)
 {
     'use strict';
-
     var State = {
         None: 0,
         Painting: 1,
         Copying: 2
     };
 
-
     function TileLayer()
     {
-        this.name = TileLayer.type;
-        this.element = Utility.getElementFromTemplate(Template);
+        this.name = "Tile Layer";
         this.brush = {tiles: [0], width: 1, height: 1};
         this.state = State.None;
 
@@ -20,6 +17,12 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         this.tileMap = new Editor.TileMap(grid.rect.width, grid.rect.height, grid.tileSize);
         this.spriteSheet = new SpriteSheet({tileWidth: this.tileMap.tileSize, tileHeight: this.tileMap.tileSize});
 
+        this.elements = Utility.getElementFromTemplate(Template);
+        this.propertiesSection = new Editor.PropertiesSection();
+        this.propertiesSection.setConfig({tileSize: {isRequired: true, minValue: 1}});
+
+        this.properties = {rect: {x: 0, y: 0, width: this.tileMap.width, height: this.tileMap.height}, tileSize: grid.tileSize};
+        this.propertiesSection.setObject(this.properties);
         this.initialize();
     }
 
@@ -69,7 +72,7 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         var visibleTileRight = Math.min(left + width - 1, Math.ceil(viewport.rect.right / tileSize));
         var visibleTileBottom = Math.min(top + height - 1, Math.ceil(viewport.rect.bottom / tileSize));
 
-        var visibleTileSize = Math.ceil(tileSize * viewport.scale);
+        var visibleTileSize = tileSize * viewport.scale;
         for (var x = visibleTileLeft; x <= visibleTileRight; x++)
         {
             for (var y = visibleTileTop; y <= visibleTileBottom; y++)
@@ -82,8 +85,8 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
                 if (!tileRect)
                     continue;
 
-                var xPosition = Math.floor((x * tileSize - viewport.rect.left) * viewport.scale);
-                var yPosition = Math.floor((y * tileSize - viewport.rect.top) * viewport.scale);
+                var xPosition = (x * tileSize - viewport.rect.left) * viewport.scale;
+                var yPosition = (y * tileSize - viewport.rect.top) * viewport.scale;
 
                 viewport.context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, visibleTileSize, visibleTileSize);
             }
@@ -97,19 +100,16 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
 
     TileLayer.prototype.getPanel = function ()
     {
-        return this.element;
+        return this.elements;
     };
 
     TileLayer.prototype.initialize = function ()
     {
-        this.element.querySelector('[data-name="tileSize"]').value = this.tileMap.tileSize;
-        this.element.querySelector('[data-name="width"]').value = this.tileMap.width;
-        this.element.querySelector('[data-name="height"]').value = this.tileMap.height;
-
         var images = Editor.ImageCache.getAll();
         images.sort();
 
-        var select = this.element.querySelector('[data-name="spriteSheetSelect"]');
+        var contentElement = this.elements[1];
+        var select = contentElement.querySelector('[data-name="spriteSheetSelect"]');
         for (var i = 0; i < images.length; i++)
         {
             var option = document.createElement('option');
@@ -118,27 +118,36 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         }
 
         select.addEventListener('change', this.onSpriteSheetSelectChanged.bind(this), false);
-        this.element.querySelector('[data-name="spriteSheetInput"]').addEventListener('change', this.onSpriteSheetChanged.bind(this), false);
-        this.element.querySelector('[data-name="apply"]').addEventListener('click', this.onApplyChanges.bind(this), false);
+        //contentElement.querySelector('[data-name="spriteSheetInput"]').addEventListener('change', this.onSpriteSheetChanged.bind(this), false);
+
+        contentElement.insertBefore(this.propertiesSection.element, contentElement.firstChild);
+        this.propertiesSection.on('propertyChange', this, this.onPropertyChanged);
+        this.elements[0].querySelector('.add-icon').addEventListener('click', this.propertiesSection.addNewProperty.bind(this.propertiesSection), false);
     };
 
-
-    TileLayer.prototype.onApplyChanges = function ()
+    TileLayer.prototype.onPropertyChanged = function (property, propertyValue)
     {
-        var tileSizeInput = this.element.querySelector('[data-name="tileSize"]');
-        var widthInput = this.element.querySelector('[data-name="width"]');
-        var heightInput = this.element.querySelector('[data-name="height"]');
-
-        var tileSize = parseInt(tileSizeInput.value, 10) || this.tileMap.tileSize;
-        var width = parseInt(widthInput.value, 10) || this.tileMap.width;
-        var height = parseInt(heightInput.value, 10) || this.tileMap.height;
-
-        if (this.tileMap.width !== width || this.tileMap.height !== height)
+        if (property.key === 'rect')
         {
-            var minWidth = Math.min(this.tileMap.width, width);
-            var minHeight = Math.min(this.tileMap.height, height);
+            if (propertyValue.key !== 'width' && propertyValue.key !== 'height')
+                return;
 
-            var newMap = new TileMap(width, height, tileSize);
+            var widthValue, heightValue;
+            if (propertyValue.key === 'width')
+            {
+                widthValue = propertyValue.value;
+                heightValue = this.tileMap.height;
+            }
+            else
+            {
+                widthValue = this.tileMap.width;
+                heightValue = propertyValue.value;
+            }
+
+            var minWidth = Math.min(this.tileMap.width, widthValue);
+            var minHeight = Math.min(this.tileMap.height, heightValue);
+
+            var newMap = new Editor.TileMap(widthValue, heightValue, this.tileMap.tileSize);
             for (var x = 0; x < minWidth; x++)
             {
                 for (var y = 0; y < minHeight; y++)
@@ -151,31 +160,27 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
 
             this.tileMap = newMap;
         }
-        else if (tileSize !== this.tileMap.tileSize)
+        else if (property.key === 'tileSize')
         {
-            this.tileMap.tileSize = tileSize;
+            this.tileMap.tileSize = propertyValue.value;
+            this.spriteSheet.tileWidth = propertyValue.value;
+            this.spriteSheet.tileHeight = propertyValue.value;
         }
-
-        tileSizeInput.value = tileSize;
-        widthInput.value = width;
-        heightInput.value = height;
-
-        this.spriteSheet.tileWidth = this.tileMap.tileSize;
-        this.spriteSheet.tileHeight = this.tileMap.tileSize;
     };
 
     TileLayer.prototype.onSpriteSheetSelectChanged = function (e)
     {
+        this.spriteSheetName = e.target.value;
         this.spriteSheet.setImage(Editor.ImageCache.getImage(e.target.value));
     };
 
-    TileLayer.prototype.onSpriteSheetChanged = function (e)
-    {
-        Editor.FileHandler.loadImage(e.target.files[0], function (file, result)
-        {
-            this.spriteSheet.setImage(Editor.ImageCache.createImage(result));
-        }.bind(this));
-    };
+    //    TileLayer.prototype.onSpriteSheetChanged = function (e)
+    //    {
+    //        Editor.FileHandler.loadImage(e.target.files[0], function (file, result)
+    //        {
+    //            this.spriteSheet.setImage(Editor.ImageCache.createImage(result));
+    //        }.bind(this));
+    //    };
 
 
     TileLayer.prototype.onMouseDown = function (e, viewport)
@@ -294,32 +299,30 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
     };
 
 
+    TileLayer.prototype.deserialize = function (data)
+    {
+        this.properties = data.properties;
+        this.propertiesSection.setObject(this.properties);
+
+        this.tileMap = new Editor.TileMap(this.properties.rect.width, this.properties.rect.height, this.properties.tileSize);
+        for (var i = 0; i < data.tiles.length; i++)
+            this.tileMap.setTileAtIndex(i, data.tiles[i]);
+
+        this.spriteSheetName = data.spriteSheet;
+        this.elements[1].querySelector('[data-name="spriteSheetSelect"]').value = this.spriteSheetName;
+        this.spriteSheet.setImage(Editor.ImageCache.getImage(this.spriteSheetName));
+    };
+
     TileLayer.prototype.serialize = function ()
     {
         var tileData = [];
         for (var i = 0; i < this.tileMap.tiles.length; i++)
             tileData.push(this.tileMap.tiles[i]);
 
-        return {
-            height: this.tileMap.height,
-            width: this.tileMap.width,
-            tileSize: this.tileMap.tileSize,
-            tiles: tileData
-        };
-    };
-
-    TileLayer.prototype.deserialize = function (data)
-    {
-        this.tileMap = new TileMap(data.width, data.height, data.tileSize);
-        for (var i = 0; i < data.tiles.length; i++)
-            this.tileMap.setTileAtIndex(i, data.tiles[i]);
-
-        this.element.querySelector('[data-name="tileSize"]').value = this.tileMap.tileSize;
-        this.element.querySelector('[data-name="width"]').value = this.tileMap.width;
-        this.element.querySelector('[data-name="height"]').value = this.tileMap.height;
+        return {properties: this.properties, spriteSheet: this.spriteSheetName, tiles: tileData};
     };
 
 
-    TileLayer.type = 'Tile Layer';
+    TileLayer.type = 'TileLayer';
     return TileLayer;
 });
