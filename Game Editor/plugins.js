@@ -2,7 +2,10 @@ define('Plugins', ['./layers/objectLayer', './plugins/objectTypes', './layers/ti
 {
     'use strict';
     return {
-        layerTypes: [ObjectLayer, TileLayer],
+        layerTypes: {
+            'objectLayer': ObjectLayer,
+            'tileLayer': TileLayer
+        },
         objectTypes: ObjectTypes,
         resources: [
             'heights.png',

@@ -118,7 +118,6 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         }
 
         select.addEventListener('change', this.onSpriteSheetSelectChanged.bind(this), false);
-        //contentElement.querySelector('[data-name="spriteSheetInput"]').addEventListener('change', this.onSpriteSheetChanged.bind(this), false);
 
         contentElement.insertBefore(this.propertiesSection.element, contentElement.firstChild);
         this.propertiesSection.on('propertyChange', this, this.onPropertyChanged);
@@ -173,15 +172,6 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         this.spriteSheetName = e.target.value;
         this.spriteSheet.setImage(Editor.ImageCache.getImage(e.target.value));
     };
-
-    //    TileLayer.prototype.onSpriteSheetChanged = function (e)
-    //    {
-    //        Editor.FileHandler.loadImage(e.target.files[0], function (file, result)
-    //        {
-    //            this.spriteSheet.setImage(Editor.ImageCache.createImage(result));
-    //        }.bind(this));
-    //    };
-
 
     TileLayer.prototype.onMouseDown = function (e, viewport)
     {
@@ -322,7 +312,5 @@ define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'tex
         return {properties: this.properties, spriteSheet: this.spriteSheetName, tiles: tileData};
     };
 
-
-    TileLayer.type = 'TileLayer';
     return TileLayer;
 });

@@ -19,8 +19,7 @@ define(['Game/src/pathManager', 'Game/src/map'], function (PathManager, Map)
 
     PathManagerTest.prototype.setup = function ()
     {
-        this.map = new Map();
-        this.map.create(4, 4);
+        this.map = new Map(4, 4);
     };
 
     PathManagerTest.prototype.testMaxDistanceGreaterThanMapBoundary = function ()

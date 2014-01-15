@@ -21,7 +21,7 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
         {
             this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
             this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
-            this.element.className = 'team-' + activeUnit.player.color;
+            this.element.className = 'team-' + activeUnit.color;
             this.previewImage.className = 'active-unit-preview unit-type-' + activeUnit.weapon.type;
 
             TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()

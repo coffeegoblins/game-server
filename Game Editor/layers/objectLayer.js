@@ -10,27 +10,28 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
 
         this.elements = Utility.getElementFromTemplate(Template);
         this.propertiesSection = new Editor.PropertiesSection();
-        this.propertiesSection.setConfig({exclusions: {typeName: true}});
         this.propertiesSection.setObject(this.properties);
 
         this.initialize();
-
-        if (!Editor.Plugins.objectTypes)
-            Editor.Plugins.objectTypes = [];
-
-        var objectTypes = Editor.Plugins.objectTypes;
-        objectTypes.sort(function (obj1, obj2)
-        {
-            return (obj1.type < obj2.type) ? -1 : (obj1.type > obj2.type) ? 1 : 0;
-        });
     }
 
-    ObjectLayer.prototype.createObject = function (ObjectType, position)
+    ObjectLayer.prototype.createObject = function (key, ObjectType, position)
     {
         var obj = new ObjectType();
-        obj.rect = {x: Math.floor(position.x), y: Math.floor(position.y), width: obj.width || 64, height: obj.height || 64};
-        obj.typeName = ObjectType.type;
+        if (obj.initialize)
+            obj.initialize(position.x, position.y);
 
+        if (!obj.rect)
+        {
+            obj.rect = {
+                x: Math.floor(position.x),
+                y: Math.floor(position.y),
+                width: obj.width || 64,
+                height: obj.height || 64
+            };
+        }
+
+        obj.typeName = key;
         this.objects.push(obj);
     };
 
@@ -45,20 +46,18 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
 
         viewport.context.strokeStyle = '#99d2ff';
         for (i = 0; i < this.selectedItems.length; i++)
-            drawRectangle(viewport, this.selectedItems[i]);
+        {
+            var item = this.selectedItems[i];
+            var x = Math.floor((item.rect.x - viewport.rect.left) * viewport.scale);
+            var y = Math.floor((item.rect.y - viewport.rect.top) * viewport.scale);
+            var width = Math.floor(item.rect.width * viewport.scale);
+            var height = Math.floor(item.rect.height * viewport.scale);
+
+            viewport.context.beginPath();
+            viewport.context.rect(x, y, width, height);
+            viewport.context.stroke();
+        }
     };
-
-    function drawRectangle(viewport, obj)
-    {
-        var x = Math.floor((obj.rect.x - viewport.rect.left) * viewport.scale);
-        var y = Math.floor((obj.rect.y - viewport.rect.top) * viewport.scale);
-        var width = Math.floor(obj.rect.width * viewport.scale);
-        var height = Math.floor(obj.rect.height * viewport.scale);
-
-        viewport.context.beginPath();
-        viewport.context.rect(x, y, width, height);
-        viewport.context.stroke();
-    }
 
     ObjectLayer.prototype.getPanel = function ()
     {
@@ -94,12 +93,27 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
         }
         else if (e.which === 3)
         {
-            this.popup = new Editor.Popup(Editor.Plugins.objectTypes, 'type').show(e.pageX, e.pageY);
+            var objectTypes = Editor.Plugins.objectTypes;
+            if (!objectTypes || Utility.isObjectEmpty(objectTypes))
+                return;
+
+            this.popup = new Editor.Popup(objectTypes).show(e.pageX, e.pageY);
             this.popup.on('close', this, function () { this.popup = null; }.bind(this));
-            this.popup.on('itemClick', this, function (objectType)
+            this.popup.on('itemClick', this, function (key, objectType)
             {
-                this.createObject(objectType, position);
+                this.createObject(key, objectType, position);
             }.bind(this));
+        }
+    };
+
+    ObjectLayer.prototype.onKeyDown = function (e)
+    {
+        if (e.keyCode === 46)
+        {
+            for (var i = 0; i < this.selectedItems.length; i++)
+                Utility.remove(this.objects, this.selectedItems[i]);
+
+            this.selectItems();
         }
     };
 
@@ -117,9 +131,16 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
         }
 
         if (this.selectedItems.length === 1)
-            this.propertiesSection.setObject(this.selectedItems[0]);
+        {
+            var item = this.selectedItems[0];
+            this.propertiesSection.setConfig(item.getPropertyConfig && item.getPropertyConfig());
+            this.propertiesSection.setObject(item);
+        }
         else if (!this.selectedItems.length)
+        {
+            this.propertiesSection.setConfig();
             this.propertiesSection.setObject(this.properties);
+        }
     };
 
 
@@ -128,21 +149,21 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
         if (data.properties)
             this.properties = data.properties;
 
-        var objectTypes = {};
-        for (var i = 0; i < Editor.Plugins.objectTypes.length; i++)
+        var objectTypes = Editor.Plugins.objectTypes;
+        for (var i = 0; i < data.objects.length; i++)
         {
-            var objType = Editor.Plugins.objectTypes[i];
-            objectTypes[objType.type] = objType;
-        }
+            var objData = data.objects[i];
+            var ObjectType = objectTypes[objData.typeName] || objectTypes.object;
+            if (ObjectType)
+            {
+                var obj = new ObjectType();
+                this.objects.push(obj);
 
-        for (i = 0; i < data.objects.length; i++)
-        {
-            var obj = data.objects[i];
-            if (!obj.typeName)
-                obj.typeName = 'object';
-
-            var ObjectType = objectTypes[obj.typeName] || objectTypes.object;
-            this.objects.push(Utility.merge(new ObjectType(), obj));
+                if (obj.deserialize)
+                    obj.deserialize(objData);
+                else
+                    Utility.merge(obj, objData);
+            }
         }
 
         this.selectItems();
@@ -150,14 +171,21 @@ define(['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, 
 
     ObjectLayer.prototype.serialize = function ()
     {
-        var data = {objects: this.objects};
+        var data = {objects: []};
         if (!Utility.isObjectEmpty(this.properties))
             data.properties = this.properties;
+
+        for (var i = 0; i < this.objects.length; i++)
+        {
+            var obj = this.objects[i];
+            if (obj.serialize)
+                data.objects.push(obj.serialize());
+            else
+                data.objects.push(obj);
+        }
 
         return data;
     };
 
-
-    ObjectLayer.type = 'ObjectLayer';
     return ObjectLayer;
 });

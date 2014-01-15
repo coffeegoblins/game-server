@@ -61,7 +61,7 @@ define(['Game/src/eventManager'], function (Events)
     };
 
     TileSelectionPopup.prototype.setSelectionMarker = function ()
-    { // TODO: Is there a better way to do this?
+    {
         var rect = Rectangle.fromPoints(this.selectionRange.x1, this.selectionRange.y1, this.selectionRange.x2, this.selectionRange.y2);
 
         this.brush.x = Math.floor(rect.left / this.spriteSheet.tileWidth);

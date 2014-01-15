@@ -5,25 +5,13 @@ define(['Game/src/spriteSheet'], function (SpriteSheet)
     function RenderableMap(map)
     {
         this.map = map;
+        if (map.backgroundSpriteSheet)
+            this.backgroundSpriteSheet = new SpriteSheet('background', 'Renderer/content/' + map.backgroundSpriteSheet + '.png');
 
-        if (map.tileSheet)
-        {
-            this.tileSheet = new SpriteSheet('terrain', 'Renderer/content/' + map.tileSheet + '.png');
-        }
+        if (map.foregroundSpriteSheet)
+            this.foregroundSpriteSheet = new SpriteSheet('foreground', 'Renderer/content/' + map.foregroundSpriteSheet + '.png');
     }
 
-    function getColorForHeight(height, maxHeight)
-    {  // Convert the height to a color gradient. High is white. Low is black.
-        var numericColor = 64 + Math.floor(192 * (height / maxHeight));
-        var hexColor = numericColor.toString(16);
-        return '#' + hexColor + hexColor + hexColor;
-    }
-
-    /**
-     * @param x The x coordinate of the tile in game space
-     * @param y The y coordinate of the tile in game space
-     * @param scale The current scale of the renderer
-     */
     RenderableMap.prototype.getTileAtCoordinate = function (x, y, scale)
     {
         return this.map.getTile(Math.floor(x / scale), Math.floor(y / scale));
@@ -47,26 +35,26 @@ define(['Game/src/spriteSheet'], function (SpriteSheet)
             for (var y = this.visibleTileTop; y <= this.visibleTileBottom; y++)
             {
                 var tile = this.map.getTile(x, y);
-                if (tile.spriteIndex && this.tileSheet)
-                {
-                    var tileRect = this.tileSheet.getTileBounds(tile.spriteIndex - 1);
-                    if (tileRect)
-                    {
-                        var xPosition = Math.floor(x * tileSize - viewportRect.x);
-                        var yPosition = Math.floor(y * tileSize - viewportRect.y);
-
-                        context.drawImage(this.tileSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
-                        continue;
-                    }
-                }
-
-                context.beginPath();
-                context.fillStyle = getColorForHeight(tile.height, this.map.maxHeight);
-                context.rect(x * tileSize + 1 - viewportRect.x, y * tileSize + 1 - viewportRect.y, tileSize - 1, tileSize - 1);
-                context.fill();
+                drawTile(this.backgroundSpriteSheet, tile, 'backgroundTile', x, y, tileSize, context, viewportRect);
+                drawTile(this.foregroundSpriteSheet, tile, 'foregroundTile', x, y, tileSize, context, viewportRect);
             }
         }
     };
+
+    function drawTile(spriteSheet, tile, property, x, y, tileSize, context, viewportRect)
+    {
+        if (!spriteSheet || !tile[property])
+            return;
+
+        var tileRect = spriteSheet.getTileBounds(tile[property] - 1);
+        if (tileRect)
+        {
+            var xPosition = Math.floor(x * tileSize - viewportRect.x);
+            var yPosition = Math.floor(y * tileSize - viewportRect.y);
+
+            context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
+        }
+    }
 
     return RenderableMap;
 });

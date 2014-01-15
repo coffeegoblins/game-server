@@ -13,8 +13,7 @@ define(['Renderer/src/renderableMap', 'Game/src/map'], function (RenderableMap, 
 
     RenderableMapTest.prototype.setup = function ()
     {
-        this.map = new Map();
-        this.map.create(mapWidth, mapHeight);
+        this.map = new Map(mapWidth, mapHeight);
     };
 
     RenderableMapTest.prototype.getTileAtPosition = function ()

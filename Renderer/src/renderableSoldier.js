@@ -85,7 +85,7 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
                 context.beginPath();
                 context.arc(0, 0, 25, 0, 2 * Math.PI);
 
-                var teamColor = teamColors[this.unit.player.color];
+                var teamColor = teamColors[this.unit.color];
                 context.strokeStyle = teamColor;
                 context.fillStyle = teamColor;
 
