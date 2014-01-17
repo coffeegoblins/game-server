@@ -35,7 +35,10 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
 
     InputHandler.registerClickEvent = function (id, method, context)
     {
-        inputHandler.registeredClickEvents[id] = {context: context, method: method};
+        inputHandler.registeredClickEvents[id] = {
+            context: context,
+            method: method
+        };
     };
 
     InputHandler.unregisterClickEvent = function (id)
@@ -63,32 +66,32 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     {
         switch (moveEvent.state)
         {
-            case this.InputState.DOWN:
-                if (this.hasMovedEnough(moveEvent.initialEvent, currentEvent))
-                    moveEvent.state = this.InputState.DRAGGING;
-                break;
+        case this.InputState.DOWN:
+            if (this.hasMovedEnough(moveEvent.initialEvent, currentEvent))
+                moveEvent.state = this.InputState.DRAGGING;
+            break;
 
-            case this.InputState.DRAGGING:
-                var date = new Date();
-                currentEvent.currentTime = date.getTime();
+        case this.InputState.DRAGGING:
+            var date = new Date();
+            currentEvent.currentTime = date.getTime();
 
-                moveEvent.dragEvents.push(currentEvent);
+            moveEvent.dragEvents.push(currentEvent);
 
-                for (var i = 0; i < moveEvent.dragEvents.length; ++i)
-                {
-                    var deltaTime = currentEvent.currentTime - moveEvent.dragEvents[i].currentTime;
+            for (var i = 0; i < moveEvent.dragEvents.length; ++i)
+            {
+                var deltaTime = currentEvent.currentTime - moveEvent.dragEvents[i].currentTime;
 
-                    if (deltaTime < 100)
-                        break;
+                if (deltaTime < 100)
+                    break;
 
-                    moveEvent.dragEvents.splice(i, 1);
-                    --i;
-                }
+                moveEvent.dragEvents.splice(i, 1);
+                --i;
+            }
 
-                this.sendDrag(moveEvent, currentEvent.pageX, currentEvent.pageY, moveEvent.currentEvent.pageX, moveEvent.currentEvent.pageY);
+            this.sendDrag(moveEvent, currentEvent.pageX, currentEvent.pageY, moveEvent.currentEvent.pageX, moveEvent.currentEvent.pageY);
 
-                moveEvent.currentEvent = currentEvent;
-                break;
+            moveEvent.currentEvent = currentEvent;
+            break;
         }
     };
 
@@ -96,34 +99,39 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     {
         switch (releaseEvent.state)
         {
-            case this.InputState.DOWN:
-                this.sendClick(releaseEvent.currentEvent || releaseEvent.initialEvent);
-                break;
+        case this.InputState.DOWN:
+            this.sendClick(releaseEvent.currentEvent || releaseEvent.initialEvent);
+            break;
 
-            case this.InputState.DRAGGING:
-                releaseEvent.state = this.InputState.FLICKING;
+        case this.InputState.DRAGGING:
+            releaseEvent.state = this.InputState.FLICKING;
 
-                this.flickEvent = releaseEvent;
+            this.flickEvent = releaseEvent;
 
-                var totalVelocityX = 0;
-                var totalVelocityY = 0;
+            var totalVelocityX = 0;
+            var totalVelocityY = 0;
 
-                for (var i = 0; i < this.flickEvent.dragEvents.length - 1; ++i)
+            for (var i = 0; i < this.flickEvent.dragEvents.length - 1; ++i)
+            {
+                totalVelocityX += this.flickEvent.dragEvents[i].pageX - this.flickEvent.dragEvents[i + 1].pageX;
+                totalVelocityY += this.flickEvent.dragEvents[i].pageY - this.flickEvent.dragEvents[i + 1].pageY;
+            }
+
+            this.flickEvent.currentX = this.flickEvent.currentEvent.pageX;
+            this.flickEvent.currentY = this.flickEvent.currentEvent.pageY;
+            this.flickEvent.velocityX = totalVelocityX / (this.flickEvent.dragEvents.length - 1);
+            this.flickEvent.velocityY = totalVelocityY / (this.flickEvent.dragEvents.length - 1);
+
+            if (this.flickEvent.velocityX !== 0 && this.flickEvent.velocityY !== 0)
+            {
+                Scheduler.schedule(
                 {
-                    totalVelocityX += this.flickEvent.dragEvents[i].pageX - this.flickEvent.dragEvents[i + 1].pageX;
-                    totalVelocityY += this.flickEvent.dragEvents[i].pageY - this.flickEvent.dragEvents[i + 1].pageY;
-                }
-
-                this.flickEvent.currentX = this.flickEvent.currentEvent.pageX;
-                this.flickEvent.currentY = this.flickEvent.currentEvent.pageY;
-                this.flickEvent.velocityX = totalVelocityX / (this.flickEvent.dragEvents.length - 1);
-                this.flickEvent.velocityY = totalVelocityY / (this.flickEvent.dragEvents.length - 1);
-
-                if (this.flickEvent.velocityX !== 0 && this.flickEvent.velocityY !== 0)
-                {
-                    Scheduler.schedule({id: 'flick', method: this.flick, context: this});
-                    return;
-                }
+                    id: 'flick',
+                    method: this.flick,
+                    context: this
+                });
+                return;
+            }
         }
 
         releaseEvent.state = this.InputState.UP;
@@ -131,6 +139,12 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
 
     InputHandler.prototype.flick = function (eventData, deltaTime)
     {
+        if (!this.flickEvent)
+        {
+            Scheduler.unscheduleById('flick');
+            return;
+        }
+
         var dragX = this.flickEvent.currentX + this.flickEvent.velocityX;
         var dragY = this.flickEvent.currentY + this.flickEvent.velocityY;
 
@@ -265,7 +279,10 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     };
 
     // Block anything we don't want to happen
-    var preventDefault = function (e) {e.preventDefault();};
+    var preventDefault = function (e)
+    {
+        e.preventDefault();
+    };
     window.addEventListener('contextmenu', preventDefault, false);
     window.addEventListener('MSHoldVisual', preventDefault, false);
     window.addEventListener('selectstart', preventDefault, false);
