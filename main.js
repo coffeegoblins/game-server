@@ -2,8 +2,20 @@ require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/com
 function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
 {
     'use strict';
+
+    // Wait for device API libraries to load
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // device APIs are available
+    function onDeviceReady()
+    {
+        console.log("OnDeviceReady");
+    }
+
     function onDocumentReady()
     {
+        console.log("OnDocumentReady");
+
         Renderer.initialize(document.getElementById('canvas'));
         Scheduler.start();
 
