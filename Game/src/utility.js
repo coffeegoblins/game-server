@@ -110,5 +110,10 @@ define(function ()
         }
     };
 
+    Utility.validateNumber = function (number)
+    {
+        return (number && isFinite(number)) ? number : 0;
+    };
+
     return Utility;
 });

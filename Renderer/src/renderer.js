@@ -27,8 +27,8 @@ define(['Game/src/inputHandler',
             InputHandler.on('click', this, onClick);
             InputHandler.on('drag', this, onDrag);
 
-            TurnManager.on('beginTurn', this, this.onBeginTurn)
-            TurnManager.on('endTurn', this, this.onEndTurn)
+            TurnManager.on('beginTurn', this, this.onBeginTurn);
+            TurnManager.on('endTurn', this, this.onEndTurn);
         }
 
         function handleResize()

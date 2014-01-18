@@ -28,7 +28,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
                 TurnManager.on('beginTurn', this, this.onBeginTurn);
                 TurnManager.on('endTurn', this, this.onEndTurn);
-                
+
                 TurnManager.beginTurn();
             }.bind(this));
         };
@@ -65,7 +65,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
 
         PlotManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
         {
-            this.selectedTile = selectedTile;
             this.activeUnitView.previewAP(0);
             Renderer.clearRenderablePathById('selectedPath');
 

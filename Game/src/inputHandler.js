@@ -1,4 +1,4 @@
-define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
+define(['./eventManager', './scheduler', './utility'], function (EventManager, Scheduler, Utility)
 {
     'use strict';
 
@@ -11,8 +11,6 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
             FLICKING: 3
         };
 
-        this.mouseEvent = null;
-        this.flickEvent = null;
         this.activeTouches = {};
         this.handleInput = true;
         this.registeredClickEvents = {};
@@ -52,46 +50,41 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     {
         Scheduler.unscheduleById('flick');
 
-        var pressEvent = {
+        return {
             initialEvent: currentEvent,
             currentEvent: currentEvent,
             dragEvents: [],
             state: this.InputState.DOWN
         };
-
-        return pressEvent;
     };
 
     InputHandler.prototype.handleMoveEvent = function (moveEvent, currentEvent)
     {
         switch (moveEvent.state)
         {
-        case this.InputState.DOWN:
-            if (this.hasMovedEnough(moveEvent.initialEvent, currentEvent))
-                moveEvent.state = this.InputState.DRAGGING;
-            break;
+            case this.InputState.DOWN:
+                if (this.hasMovedEnough(moveEvent.initialEvent, currentEvent))
+                    moveEvent.state = this.InputState.DRAGGING;
+                break;
 
-        case this.InputState.DRAGGING:
-            var date = new Date();
-            currentEvent.currentTime = date.getTime();
+            case this.InputState.DRAGGING:
+                currentEvent.currentTime = new Date().getTime();
+                moveEvent.dragEvents.push(currentEvent);
 
-            moveEvent.dragEvents.push(currentEvent);
+                for (var i = 0; i < moveEvent.dragEvents.length; ++i)
+                {
+                    var deltaTime = currentEvent.currentTime - moveEvent.dragEvents[i].currentTime;
+                    if (deltaTime < 100)
+                        break;
 
-            for (var i = 0; i < moveEvent.dragEvents.length; ++i)
-            {
-                var deltaTime = currentEvent.currentTime - moveEvent.dragEvents[i].currentTime;
+                    moveEvent.dragEvents.splice(i, 1);
+                    --i;
+                }
 
-                if (deltaTime < 100)
-                    break;
+                this.sendDrag(moveEvent, currentEvent.pageX, currentEvent.pageY, moveEvent.currentEvent.pageX, moveEvent.currentEvent.pageY);
 
-                moveEvent.dragEvents.splice(i, 1);
-                --i;
-            }
-
-            this.sendDrag(moveEvent, currentEvent.pageX, currentEvent.pageY, moveEvent.currentEvent.pageX, moveEvent.currentEvent.pageY);
-
-            moveEvent.currentEvent = currentEvent;
-            break;
+                moveEvent.currentEvent = currentEvent;
+                break;
         }
     };
 
@@ -99,39 +92,39 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     {
         switch (releaseEvent.state)
         {
-        case this.InputState.DOWN:
-            this.sendClick(releaseEvent.currentEvent || releaseEvent.initialEvent);
-            break;
+            case this.InputState.DOWN:
+                this.sendClick(releaseEvent.currentEvent || releaseEvent.initialEvent);
+                break;
 
-        case this.InputState.DRAGGING:
-            releaseEvent.state = this.InputState.FLICKING;
+            case this.InputState.DRAGGING:
+                this.flickEvent = releaseEvent;
+                this.flickEvent.state = this.InputState.FLICKING;
 
-            this.flickEvent = releaseEvent;
+                var totalVelocityX = 0;
+                var totalVelocityY = 0;
 
-            var totalVelocityX = 0;
-            var totalVelocityY = 0;
-
-            for (var i = 0; i < this.flickEvent.dragEvents.length - 1; ++i)
-            {
-                totalVelocityX += this.flickEvent.dragEvents[i].pageX - this.flickEvent.dragEvents[i + 1].pageX;
-                totalVelocityY += this.flickEvent.dragEvents[i].pageY - this.flickEvent.dragEvents[i + 1].pageY;
-            }
-
-            this.flickEvent.currentX = this.flickEvent.currentEvent.pageX;
-            this.flickEvent.currentY = this.flickEvent.currentEvent.pageY;
-            this.flickEvent.velocityX = totalVelocityX / (this.flickEvent.dragEvents.length - 1);
-            this.flickEvent.velocityY = totalVelocityY / (this.flickEvent.dragEvents.length - 1);
-
-            if (this.flickEvent.velocityX !== 0 && this.flickEvent.velocityY !== 0)
-            {
-                Scheduler.schedule(
+                var eventCount = this.flickEvent.dragEvents.length - 1;
+                for (var i = 0; i < eventCount; ++i)
                 {
-                    id: 'flick',
-                    method: this.flick,
-                    context: this
-                });
-                return;
-            }
+                    totalVelocityX += this.flickEvent.dragEvents[i].pageX - this.flickEvent.dragEvents[i + 1].pageX;
+                    totalVelocityY += this.flickEvent.dragEvents[i].pageY - this.flickEvent.dragEvents[i + 1].pageY;
+                }
+
+                this.flickEvent.currentX = this.flickEvent.currentEvent.pageX;
+                this.flickEvent.currentY = this.flickEvent.currentEvent.pageY;
+                this.flickEvent.velocityX = Utility.validateNumber(totalVelocityX / eventCount);
+                this.flickEvent.velocityY = Utility.validateNumber(totalVelocityY / eventCount);
+
+                if (this.flickEvent.velocityX || this.flickEvent.velocityY)
+                {
+                    Scheduler.schedule(
+                        {
+                            id: 'flick',
+                            method: this.flick,
+                            context: this
+                        });
+                    return;
+                }
         }
 
         releaseEvent.state = this.InputState.UP;
@@ -147,6 +140,7 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
 
         var dragX = this.flickEvent.currentX + this.flickEvent.velocityX;
         var dragY = this.flickEvent.currentY + this.flickEvent.velocityY;
+        this.sendDrag(this.flickEvent, this.flickEvent.currentX, this.flickEvent.currentY, dragX, dragY);
 
         this.flickEvent.velocityX *= 0.9;
         this.flickEvent.velocityY *= 0.9;
@@ -157,8 +151,6 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
             this.flickEvent = null;
             return;
         }
-
-        this.sendDrag(this.flickEvent, this.flickEvent.currentX, this.flickEvent.currentY, dragX, dragY);
 
         this.flickEvent.currentX = dragX;
         this.flickEvent.currentY = dragY;
@@ -236,7 +228,6 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
                 if (activeTouch)
                 {
                     inputHandler.handleReleaseEvent(activeTouch);
-
                     delete inputHandler.activeTouches[touch.id];
                 }
             }
@@ -250,7 +241,7 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
             for (var i = 0; i < e.changedTouches.length; i++)
                 delete inputHandler.activeTouches[e.changedTouches.id];
         }
-    };
+    }
 
     function onWindowBlur()
     {
@@ -283,6 +274,7 @@ define(['./eventManager', './scheduler'], function (EventManager, Scheduler)
     {
         e.preventDefault();
     };
+
     window.addEventListener('contextmenu', preventDefault, false);
     window.addEventListener('MSHoldVisual', preventDefault, false);
     window.addEventListener('selectstart', preventDefault, false);

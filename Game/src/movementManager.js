@@ -74,8 +74,6 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/pathManager', 'Game/src/turn
 
                 Renderer.addRenderablePath('selectedPath', this.selectedPath, true);
             }
-
-            this.selectedTile = selectedTile;
         };
 
         MovementManager.prototype.onMoveConfirmed = function ()

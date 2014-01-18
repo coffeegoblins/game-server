@@ -98,8 +98,6 @@ define(['./eventManager'], function (EventManager)
         tile.unit = null;
     };
 
-    Map.prototype.maxHeight = 16;
-
     EventManager.register(Map.prototype);
     return Map;
 });

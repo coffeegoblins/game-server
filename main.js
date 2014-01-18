@@ -1,32 +1,36 @@
 require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/commandManager', 'jsonLoader'],
-function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
-{
-    'use strict';
-
-    // Wait for device API libraries to load
-    document.addEventListener("deviceready", onDeviceReady, false);
-
-    // device APIs are available
-    function onDeviceReady()
+    function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
     {
-        console.log("OnDeviceReady");
-    }
+        'use strict';
 
-    function onDocumentReady()
-    {
-        console.log("OnDocumentReady");
-
-        Renderer.initialize(document.getElementById('canvas'));
-        Scheduler.start();
-
-        loadJSON('weapons', function (weaponData)
+        window.addEventListener('error', function (e)
         {
-            PlotManager.initialize(weaponData);
+            if (e.error)
+            {
+                console.log(e.error.message);
+                console.log(e.error.stack);
+            }
         });
-    }
 
-    if (document.readyState === 'complete')
-        onDocumentReady();
-    else
-        window.addEventListener('load', onDocumentReady, false);
-});
+        // Wait for device API libraries to load
+        document.addEventListener("deviceready", function ()
+        {
+            // device APIs are available
+        }, false);
+
+        function onDocumentReady()
+        {
+            Renderer.initialize(document.getElementById('canvas'));
+            Scheduler.start();
+
+            loadJSON('weapons', function (weaponData)
+            {
+                PlotManager.initialize(weaponData);
+            });
+        }
+
+        if (document.readyState === 'complete')
+            onDocumentReady();
+        else
+            window.addEventListener('load', onDocumentReady, false);
+    });
