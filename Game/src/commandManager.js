@@ -1,5 +1,5 @@
-define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/renderableTurnQueue'],
-    function (Renderer, LevelLoader, TurnManager, PathManager, BlinkEffect, RenderableTurnQueue)
+define(['renderer', 'Game/src/levelLoader', 'Game/src/soundManager', 'Game/src/turnManager', 'Game/src/pathManager', 'Renderer/src/ui/renderableTurnQueue'],
+    function (Renderer, LevelLoader, SoundManager, TurnManager, PathManager, BlinkEffect, RenderableTurnQueue)
     {
         'use strict';
 
@@ -10,11 +10,6 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
             RenderableTurnQueue.addUnit(unit, position);
         };
 
-        CommandManager.moveViewport = function (x, y, milliseconds)
-        {
-            Renderer.camera.moveViewport(x, y, milliseconds);
-        };
-
         CommandManager.endTurn = function ()
         {
             TurnManager.endTurn();
@@ -23,6 +18,16 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/turnManager', 'Game/src/pa
         CommandManager.getAvailableTiles = function ()
         {
             PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.activeUnit);
+        };
+
+        CommandManager.moveViewport = function (x, y, milliseconds)
+        {
+            Renderer.camera.moveViewport(x, y, milliseconds);
+        };
+
+        CommandManager.playTrack = function (trackName)
+        {
+            SoundManager.getTrack(trackName).play();
         };
 
         CommandManager.setActiveUnitAP = function (ap)
