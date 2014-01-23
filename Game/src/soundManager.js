@@ -114,12 +114,11 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
         loadChannel(this);
     }
 
-    Sound.prototype.play = function (volume, loop, onComplete)
+    Sound.prototype.play = function (volume, onComplete)
     {
         if (this.isLoaded)
         {
             var audio = getInactiveChannel(this);
-            audio.loop = (loop === true);
             audio.volume = SoundManager.globalVolume * (volume || 1);
 
             if (onComplete)
@@ -137,7 +136,7 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
         {
             this.onLoaded = function ()
             {
-                this.play(volume, loop, onComplete);
+                this.play(volume, onComplete);
                 this.onLoaded = null;
             };
         }
@@ -198,7 +197,7 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
             var self = this;
             setTimeout(function ()
             {
-                soundConfig.sound.play(volume, loop, function ()
+                soundConfig.sound.play(volume, function ()
                 {
                     self.playSound(++index, volume, loop);
                 });
