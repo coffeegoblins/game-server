@@ -66,7 +66,7 @@ window.soldierAnimations = {
             },
             "death": {
                 "start": 80,
-                "end": 95,
+                "end": 111,
                 "speed": 0.075
             }
         }

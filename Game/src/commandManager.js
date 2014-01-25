@@ -27,7 +27,12 @@ define(['renderer', 'Game/src/levelLoader', 'Game/src/soundManager', 'Game/src/t
 
         CommandManager.playTrack = function (trackName)
         {
-            SoundManager.getTrack(trackName).play();
+            SoundManager.playTrack(trackName);
+        };
+
+        CommandManager.stopTrack = function (trackName)
+        {
+            SoundManager.stopTrack(trackName);
         };
 
         CommandManager.setActiveUnitAP = function (ap)

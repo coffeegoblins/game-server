@@ -2,64 +2,6 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
 {
     'use strict';
 
-    var SoundManager = {
-        globalVolume: 1,
-        isEnabled: true,
-        sounds: [],
-        tracks: [],
-        trackDefinitions: JSON.parse(TrackDefinitions),
-
-        getTrack: function (name, autoLoad)
-        {
-            var track = this.tracks[name];
-            if (!track && autoLoad !== false)
-                return this.loadTrack(name);
-
-            return track || this.emptyTrack;
-        },
-
-        isAudioSupported: function ()
-        {
-            if (this.format == null && window.Audio != null)
-            {
-                var audio = new Audio();
-                if (audio.canPlayType('audio/ogg; codecs=vorbis'))
-                    this.format = '.ogg';
-                else if (audio.canPlayType('audio/mp4; codecs="mp4a.40.5"'))
-                    this.format = '.aac';
-            }
-
-            return this.format != null;
-        },
-
-        loadTrack: function (name)
-        {
-            if (this.isEnabled && this.isAudioSupported())
-            {
-                var trackDefinition = this.trackDefinitions[name];
-                if (trackDefinition)
-                {
-                    var track = new Track(trackDefinition);
-                    this.tracks[name] = track;
-                    return track;
-                }
-            }
-
-            return this.emptyTrack;
-        },
-
-        unload: function ()
-        {
-            this.sounds.length = 0;
-            this.tracks.length = 0;
-        },
-
-        unloadTrack: function (name)
-        {
-            delete this.tracks[name];
-        }
-    };
-
     function getInactiveChannel(sound)
     {
         for (var i = 0; i < sound.channels.length; i++)
@@ -80,7 +22,7 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
 
     function loadChannel(sound)
     {
-        var audio = new Audio('Game/content/sounds/' + sound.name + SoundManager.format);
+        var audio = new Audio('Game/content/sounds/' + sound.name + sound.format);
         if (!sound.isLoaded)
         {
             audio.addEventListener('canplaythrough', function onAudioLoaded()
@@ -94,7 +36,8 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
 
             audio.addEventListener('error', function ()
             {
-                console.log('audio load error', arguments);
+                if (console.log)
+                    console.log('audio load error', arguments);
             }, false);
         }
 
@@ -106,9 +49,12 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
     }
 
 
-    function Sound(name)
+    function Sound(config, format)
     {
-        this.name = name;
+        this.name = config.name;
+        this.format = format;
+        this.volume = config.volume;
+
         this.channels = [];
         this.isLoaded = false;
         loadChannel(this);
@@ -119,7 +65,7 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
         if (this.isLoaded)
         {
             var audio = getInactiveChannel(this);
-            audio.volume = SoundManager.globalVolume * (volume || 1);
+            audio.volume = volume * this.volume;
 
             if (onComplete)
             {
@@ -144,34 +90,44 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
 
     Sound.prototype.stop = function ()
     {
-        if (this.isLoaded)
-        {
-            for (var i = 0; i < this.channels.length; i++)
-                this.channels[i].pause();
-        }
+        for (var i = 0; i < this.channels.length; i++)
+            this.channels[i].pause();
     };
 
 
-    function Track(trackData)
+    function Track(trackData, sounds, configVolume, format)
     {
         this.soundConfigs = [];
         if (trackData)
         {
-            for (var i = 0; i < trackData.length; i++)
+            // Get the data in the right format
+            if (Array.isArray(trackData) || typeof trackData !== 'object')
+                trackData = {sounds: trackData};
+
+            if (!Array.isArray(trackData.sounds))
+                trackData.sounds = [trackData.sounds];
+
+            // Set the track level data
+            this.loop = trackData.loop;
+            this.configVolume = configVolume;
+            this.volume = trackData.volume || 1;
+
+            // Set the sound level data
+            for (var i = 0; i < trackData.sounds.length; i++)
             {
-                var soundData = trackData[i];
-                var soundConfig = {delay: 0};
+                var soundData = trackData.sounds[i];
+                var soundConfig = {delay: 0, volume: 1};
 
                 if (typeof soundData === 'string')
                     soundConfig.name = soundData;
                 else
                     Utility.merge(soundConfig, soundData);
 
-                var sound = SoundManager.sounds[soundConfig.name];
+                var sound = sounds[soundConfig.name];
                 if (!sound)
                 {
-                    sound = new Sound(soundConfig.name);
-                    SoundManager.sounds[soundConfig.name] = sound;
+                    sound = new Sound(soundConfig, format);
+                    sounds[soundConfig.name] = sound;
                 }
 
                 soundConfig.sound = sound;
@@ -180,15 +136,14 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
         }
     }
 
-    Track.prototype.play = function (volume, loop)
+    Track.prototype.play = function (volume)
     {
-        this.stop();
-        this.playSound(0, volume || 1, loop);
+        this.playSound(0, volume);
     };
 
-    Track.prototype.playSound = function (index, volume, loop)
+    Track.prototype.playSound = function (index, volume)
     {
-        if (index >= this.soundConfigs.length && loop)
+        if (this.loop && index >= this.soundConfigs.length)
             index = 0;
 
         var soundConfig = this.soundConfigs[index];
@@ -197,9 +152,9 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
             var self = this;
             setTimeout(function ()
             {
-                soundConfig.sound.play(volume, function ()
+                soundConfig.sound.play(self.volume * volume, function ()
                 {
-                    self.playSound(++index, volume, loop);
+                    self.playSound(++index, volume);
                 });
             }, soundConfig.delay);
         }
@@ -211,7 +166,93 @@ define(['text!Game/content/tracks.json', './utility'], function (TrackDefinition
             this.soundConfigs[i].sound.stop();
     };
 
+    return {
+        trackDefinitions: JSON.parse(TrackDefinitions),
+        isEnabled: true,
+        sounds: [],
+        tracks: [],
+        globalVolume: 1,
+        musicVolume: 1,
+        soundEffectVolume: 1,
 
-    SoundManager.emptyTrack = new Track();
-    return SoundManager;
+        getTrack: function (name, autoLoad)
+        {
+            var track = this.tracks[name];
+            if (!track && autoLoad !== false)
+                return this.loadTrack(name);
+
+            return track || new Track();
+        },
+
+        isAudioSupported: function ()
+        {
+            if (this.format == null && window.Audio != null)
+            {
+                var audio = new Audio();
+                if (audio.canPlayType('audio/ogg; codecs=vorbis'))
+                    this.format = '.ogg';
+                else if (audio.canPlayType('audio/mp4; codecs="mp4a.40.5"'))
+                    this.format = '.mp4';
+            }
+
+            return this.format != null;
+        },
+
+        loadTrack: function (name)
+        {
+            if (this.isEnabled && this.isAudioSupported())
+            {
+                var configVolume;
+                var trackDefinition = this.trackDefinitions.effects[name];
+                if (trackDefinition)
+                {
+                    configVolume = this.soundEffectVolume;
+                }
+                else
+                {
+                    trackDefinition = this.trackDefinitions.music[name];
+                    if (trackDefinition)
+                        configVolume = this.musicVolume;
+                }
+
+                if (trackDefinition)
+                {
+                    var track = new Track(trackDefinition, this.sounds, configVolume, this.format);
+                    this.tracks[name] = track;
+                    return track;
+                }
+            }
+
+            return new Track();
+        },
+
+        playTrack: function (name, volume)
+        {
+            var track = this.getTrack(name);
+            if (track)
+            {
+                track.play(this.globalVolume * track.configVolume * (volume || 1));
+            }
+        },
+
+        stopTrack: function (name)
+        {
+            var track = this.getTrack(name);
+            if (track)
+            {
+                track.stop();
+            }
+        },
+
+        unload: function ()
+        {
+            this.sounds.length = 0;
+            this.tracks.length = 0;
+        },
+
+        unloadTrack: function (name)
+        {
+            delete this.tracks[name];
+        }
+    };
 });
