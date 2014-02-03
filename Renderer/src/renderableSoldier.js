@@ -3,8 +3,8 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
     'use strict';
 
     var teamColors = {
-        'green': '#81f742',
-        'red': '#ff8787'
+        'green': '#3ddb11',
+        'red': '#f93b34'
     };
 
     function RenderableSoldier(unit)
@@ -77,27 +77,35 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
             if (this.unit.direction)
                 context.rotate(this.unit.direction);
 
-            this.spriteSheet.updateAnimation(deltaTime);
-            var tileRect = this.spriteSheet.getCurrentTileBounds();
-
             if (this.isSelected)
             {
                 context.beginPath();
-                context.arc(0, 0, 25, 0, 2 * Math.PI);
+                context.arc(0, 0, 30, 0, 2 * Math.PI);
 
                 var teamColor = teamColors[this.unit.color];
                 context.strokeStyle = teamColor;
                 context.fillStyle = teamColor;
 
-                context.globalAlpha = 0.1;
+                context.globalAlpha = 0.3;
                 context.fill();
-                context.globalAlpha = 1;
+                context.globalAlpha = 0.75;
                 context.stroke();
             }
 
+            this.spriteSheet.updateAnimation(deltaTime);
             context.globalAlpha = this.style.opacity;
-            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
-            context.globalAlpha = 1;
+
+            var tileRect = this.spriteSheet.getCurrentShadowBounds();
+            if (tileRect)
+            {
+                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
+            }
+
+            tileRect = this.spriteSheet.getCurrentTileBounds();
+            if (tileRect)
+            {
+                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
+            }
 
             context.restore();
         }

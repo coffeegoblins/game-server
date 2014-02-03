@@ -56,35 +56,33 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             this.revertActionBar();
 
             this.selectedNode = null;
-            this.currentMap.off('tileClick', this, this.onTileSelected);
+            this.currentMap.off('tileClick', this);
         };
 
 
         AttackManager.prototype.onShieldBash = function ()
         {
-            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost) });
+            this.onActionSelected({actionName: 'shieldBash', maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost)});
         };
 
         AttackManager.prototype.onStrikeAction = function ()
         {
-            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost) });
+            this.onActionSelected({actionName: 'strike', maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.defaultMoveCost)});
         };
 
         AttackManager.prototype.onSweepAction = function ()
         {
-            this.onActionSelected({ maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.diagonalMoveCost) });
-
-            this.crossNodes = true;
+            this.onActionSelected({actionName: 'sweep', crossNodes: true, maxDistance: Math.min(this.activeUnit.weapon.range, PathManager.diagonalMoveCost)});
         };
 
         AttackManager.prototype.onShortShotAction = function ()
         {
-            this.onActionSelected({ maxDistance: this.activeUnit.weapon.range / 2 });
+            this.onActionSelected({actionName: 'shortShot', maxDistance: this.activeUnit.weapon.range / 2});
         };
 
         AttackManager.prototype.onLongShotAction = function ()
         {
-            this.onActionSelected({ maxDistance: this.activeUnit.weapon.range });
+            this.onActionSelected({actionName: 'longShot', maxDistance: this.activeUnit.weapon.range});
         };
 
         AttackManager.prototype.onActionSelected = function (options)
@@ -110,11 +108,11 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             this.availableAttackTiles = PathManager.calculateAvailableTiles(this.currentMap, pathOptions);
 
             Renderer.addRenderablePath('attack', this.availableAttackTiles, false);
-            this.currentMap.on('tileClick', this, this.onTileSelected);
+            this.currentMap.on('tileClick', this, this.onTileSelected.bind(this, options));
         };
 
 
-        AttackManager.prototype.onTileSelected = function (selectedTile, tileX, tileY)
+        AttackManager.prototype.onTileSelected = function (options, selectedTile)
         {
             // Clicked on self or non-unit tile
             if (selectedTile.unit === this.activeUnit)
@@ -134,12 +132,10 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
 
             ActionBarView.removeActionById('Attack');
 
-            if (this.crossNodes)
+            if (options.crossNodes)
             {
-                var crossNodes = this.calculateCrossNodes(this.selectedNode, this.availableAttackTiles);
-                crossNodes.push(this.selectedNode);
-
-                this.selectedNodes = crossNodes;
+                this.selectedNodes = this.calculateCrossNodes(this.selectedNode, this.availableAttackTiles);
+                this.selectedNodes.push(this.selectedNode);
             }
 
             Renderer.addRenderablePath('selectedAttackNodes', this.selectedNodes, true);
@@ -150,8 +146,8 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
                 {
                     ActionBarView.removeAllActions();
                     ActionBarView.addActions([
-                        { id: 'attack', method: this.onAttackConfirmed, context: this },
-                        { id: 'cancel', method: this.onAttackActionCancelled, context: this }
+                        {id: 'attack', method: this.onAttackConfirmed.bind(this, options), context: this},
+                        {id: 'cancel', method: this.onAttackActionCancelled, context: this}
                     ]);
 
                     this.activeUnitView.previewAP(this.activeUnit.weapon.cost);
@@ -160,7 +156,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             }
         };
 
-        AttackManager.prototype.calculateCrossNodes = function(selectedNode, availableNodes)
+        AttackManager.prototype.calculateCrossNodes = function (selectedNode, availableNodes)
         {
             var crossNodes = [];
 
@@ -179,23 +175,23 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             return crossNodes;
         };
 
-        AttackManager.prototype.onAttackConfirmed = function ()
+        AttackManager.prototype.onAttackConfirmed = function (options)
         {
             var deltaX = this.selectedNode.x - this.activeUnit.tileX;
             var deltaY = this.selectedNode.y - this.activeUnit.tileY;
 
             this.activeUnit.setDirection(deltaX, deltaY);
             this.activeUnit.setState('attack');
+            this.activeUnit.setAction(options.actionName);
             Renderer.clearRenderablePaths();
 
             InputHandler.disableInput();
 
-            this.activeUnit.on('animationComplete', this, function onAttackFinished(animationName)
+            this.activeUnit.on('animationComplete', this, function onAttackFinished()
             {
                 for (var i = 0; i < this.selectedNodes.length; ++i)
                 {
                     var node = this.selectedNodes[i];
-
                     if (node.tile.unit)
                         node.tile.unit.damage(this.activeUnit.weapon.damage);
                 }

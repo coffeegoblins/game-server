@@ -11,6 +11,10 @@
     },
 
     "effects": {
+        "strike": [{"name":"SwordHit2", "delay":1000}, "SwordHit2"],
+        "dualStrike": ["SwordHit2", "SwordHit"],
+        "twoHandedStrike": ["DoubleHandedSwordDraw", "DoubleHandedSwordHit"],
+
         "bow1": ["BowStrung", "BowFired", "BowHit"],
         "bow2": ["BowStrung2", "BowFired2", "BowHit2"],
         "sword1": ["SwordDraw", "SwordHit"],

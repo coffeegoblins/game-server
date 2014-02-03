@@ -32,11 +32,20 @@ define(['./utility'], function (Utility)
 
         var eventName = arguments[0];
         if (arguments.length >= 3)
+        {
             Utility.removeElementByProperties(this.events[eventName], {context: arguments[1], method: arguments[2]});
+        }
         else if (arguments.length === 2)
-            Utility.removeElementByProperty(this.events[eventName], 'method', arguments[1]);
+        {
+            if (typeof arguments[1] === 'function')
+                Utility.removeElementByProperty(this.events[eventName], 'method', arguments[1]);
+            else
+                Utility.removeElementByProperty(this.events[eventName], 'context', arguments[1]);
+        }
         else
+        {
             this.events[eventName] = undefined;
+        }
     }
 
     function trigger()

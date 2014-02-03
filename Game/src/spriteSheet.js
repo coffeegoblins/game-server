@@ -36,6 +36,14 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
         return this.currentTileBounds;
     };
 
+    SpriteSheet.prototype.getCurrentShadowBounds = function ()
+    {
+        if (!this.currentShadowBounds && this.currentShadowTile !== null)
+            this.currentShadowBounds = this.getTileBounds(this.currentShadowTile);
+
+        return this.currentShadowBounds;
+    };
+
     SpriteSheet.prototype.getTile = function (x, y)
     {
         if (this.image.isLoaded)
@@ -78,6 +86,13 @@ define(['Game/src/eventManager', './imageCache', './utility'], function (EventMa
         {
             this.currentTile = index;
             this.currentTileBounds = null;
+
+            if (this.currentAnimation && this.currentAnimation.shadows)
+            {
+                var offset = this.currentAnimation.shadows.start - this.currentAnimation.start;
+                this.currentShadowTile = index + offset;
+                this.currentShadowBounds = null;
+            }
         }
     };
 

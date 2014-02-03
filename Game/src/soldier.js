@@ -1,4 +1,4 @@
-define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'], function (Events, TransitionEffect, Utility)
+define(['./eventManager', './soundManager', 'Renderer/src/effects/transitionEffect', './utility'], function (Events, SoundManager, TransitionEffect, Utility)
 {
     'use strict';
 
@@ -10,9 +10,7 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
         maxMoveableHeight: 2,
         canClimbObjects: true,
         direction: 0,
-        state: 'idle',
-        weapon: null,
-        player: null
+        state: 'idle'
     };
 
     function Soldier(properties)
@@ -33,6 +31,40 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
     Soldier.prototype.isAlive = function ()
     {
         return this.hp > 0;
+    };
+
+    Soldier.prototype.setAction = function (actionName)
+    {
+        switch (actionName)
+        {
+            case 'shieldBash':
+                SoundManager.playTrack('shieldBash1');
+                break;
+            case 'strike':
+                switch (this.weapon.type)
+                {
+                    case'swordAndShield':
+                        SoundManager.playTrack('strike');
+                        break;
+                    case'dualWield':
+                        SoundManager.playTrack('dualStrike');
+                        break;
+                    case'twoHanded':
+                        SoundManager.playTrack('twoHandedStrike');
+                        break;
+                }
+
+                break;
+            case 'sweep':
+                SoundManager.playTrack('sweep');
+                break;
+            case 'shortShot':
+                SoundManager.playTrack('bow1');
+                break;
+            case 'longShot':
+                SoundManager.playTrack('bow1');
+                break;
+        }
     };
 
     Soldier.prototype.setDirection = function (x, y)

@@ -47,7 +47,7 @@ define(['renderer', 'Game/src/scheduler', 'Game/src/inputHandler', 'Game/src/lev
                 {id: 'endTurn', method: this.onEndTurnAction, context: this}
             ]);
 
-            if (activeUnit.player.name === this.player.name)
+            //if (activeUnit.player === this.player) TODO: Comment in to only be able to control your player
             {
                 ActionBarView.showActions();
             }

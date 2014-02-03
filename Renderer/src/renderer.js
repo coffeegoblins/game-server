@@ -52,7 +52,6 @@ define(['Game/src/inputHandler',
         function update(e, deltaTime)
         {
             this.context.clearRect(0, 0, this.camera.viewportRect.width, this.camera.viewportRect.height);
-
             if (!this.renderableMap)
                 return;
 
@@ -87,14 +86,7 @@ define(['Game/src/inputHandler',
 
         Renderer.prototype.clearRenderablePathById = function (id)
         {
-            for (var i = 0; i < this.renderablePaths.length; ++i)
-            {
-                if (this.renderablePaths[i].id === id)
-                {
-                    this.renderablePaths.splice(i, 1);
-                    return;
-                }
-            }
+            Utility.removeElementByProperty(this.renderablePaths, 'id', id);
         };
 
         Renderer.prototype.addRenderableLadder = function (ladder)
@@ -105,30 +97,6 @@ define(['Game/src/inputHandler',
         Renderer.prototype.addRenderableObject = function (object)
         {
             this.renderables.unshift(new RenderableObject(object));
-        };
-
-        Renderer.prototype.blinkUnit = function (unit, seconds)
-        {
-            for (var i = 0; i < this.renderables.length; ++i)
-            {
-                if (unit === this.renderables[i].unit)
-                {
-                    BlinkEffect.blink(this.renderables[i], seconds);
-                    break;
-                }
-            }
-        };
-
-        Renderer.prototype.stopBlinkUnit = function (unit)
-        {
-            for (var i = 0; i < this.renderables.length; ++i)
-            {
-                if (unit === this.renderables[i].unit)
-                {
-                    BlinkEffect.stopBlink(this.renderables[i]);
-                    break;
-                }
-            }
         };
 
         Renderer.prototype.addRenderablePath = function (id, nodes, isSelected)

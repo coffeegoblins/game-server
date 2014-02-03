@@ -44,15 +44,15 @@
 }
 
 .touch .active-unit-preview.unit-type-dualWield {
-    background-position: -192px 0;
+    background-position: -288px 0;
 }
 
 .touch .active-unit-preview.unit-type-swordAndShield {
-    background-position: -64px 0;
+    background-position: -96px 0;
 }
 
 .touch .active-unit-preview.unit-type-twoHanded {
-    background-position: -128px 0;
+    background-position: -192px 0;
 }
 
 .touch .action-container {
@@ -96,13 +96,12 @@
 
 @media only screen and (orientation: landscape) {
     .touch #turnQueue {
-        left: 112px;
+        left: 120px;
         top: 8px;
     }
 
     .touch .turn-queue-preview {
         display: inline-block;
-
         margin-right: 8px;
     }
 

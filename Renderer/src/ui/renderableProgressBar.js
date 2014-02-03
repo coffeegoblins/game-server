@@ -14,7 +14,7 @@ define(['Renderer/src/effects/blinkEffect', 'Renderer/src/effects/transitionEffe
     {
         this.previewElement.style.width = this.foregroundElement.style.width;
         this.foregroundElement.style.width = (this.progress - portion) / this.maxProgress * 100 + "%";
-        BlinkEffect.blink(this.previewElement, 1);
+        BlinkEffect.blink(this.previewElement, 1.5);
     };
 
     RenderableProgressBar.prototype.setProgress = function (id, progress, maxProgress)

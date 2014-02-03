@@ -9,7 +9,8 @@ define('Plugins', ['./layers/objectLayer', './plugins/objectTypes', './layers/ti
         objectTypes: ObjectTypes,
         resources: [
             'heights.png',
-            'terrain.png'
+            'terrain.png',
+            'walls.png'
         ]
     };
 });

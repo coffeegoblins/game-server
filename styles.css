@@ -3,7 +3,6 @@ html, body {
     padding: 0;
     height: 100%;
     overflow: hidden;
-    background-color: #000;
 
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -15,6 +14,7 @@ html, body {
     outline: 0;
     width: 100%;
     height: 100%;
+    background-color: #000;
 
     image-rendering: -moz-crisp-edges;
     image-rendering: -o-crisp-edges;
@@ -28,6 +28,7 @@ html, body {
     left: 16px;
     top: 16px;
     border-radius: 8px;
+    padding: 4px;
 }
 
 #turnQueue {
@@ -62,10 +63,10 @@ html, body {
 
 #activeUnitView .outerBar {
     position: relative;
-    border: 1px solid #606060;
-    background-color: #606060;
+    border: 1px solid #5F5F5F;
+    background-color: #505050;
     height: 12px;
-    margin: 0 8px 8px 8px;
+    margin: 0 4px 4px 4px;
     border-radius: 6px;
 }
 
@@ -77,19 +78,27 @@ html, body {
 }
 
 #activeUnitHP .innerBar {
-    background-color: green;
+    background: #13b22b;
+    background: -webkit-linear-gradient(top,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
+    background: linear-gradient(to bottom,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
 }
 
 #activeUnitHP .innerBarPreview {
-    background-color: blue;
+    background: #13b22b;
+    background: -webkit-linear-gradient(top,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
+    background: linear-gradient(to bottom,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
 }
 
 #activeUnitAP .innerBar {
-    background-color: orange;
+    background: #d6ca20;
+    background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
+    background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
 }
 
 #activeUnitAP .innerBarPreview {
-    background-color: orange;
+    background: #d6ca20;
+    background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
+    background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
 }
 
 #actionBarView {
@@ -188,13 +197,13 @@ html, body {
 }
 
 .team-green {
-    background: #81f742;
-    background: -webkit-linear-gradient(top, #81f742 0%, #417f1f 100%);
-    background: linear-gradient(to bottom, #81f742 0%, #417f1f 100%);
+    background: #3ddb11;
+    background: -webkit-linear-gradient(top,  #3ddb11 0%,#134705 100%);
+    background: linear-gradient(to bottom,  #3ddb11 0%,#134705 100%);
 }
 
 .team-red {
-    background: #ff8787;
-    background: -webkit-linear-gradient(top, #ff8787 0%, #843535 100%);
-    background: linear-gradient(to bottom, #ff8787 0%, #843535 100%);
+    background: #f93b34;
+    background: -webkit-linear-gradient(top,  #f93b34 0%,#590d0c 100%);
+    background: linear-gradient(to bottom,  #f93b34 0%,#590d0c 100%);
 }

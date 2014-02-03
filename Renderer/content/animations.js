@@ -57,7 +57,11 @@ window.soldierAnimations = {
                 "start": 0,
                 "end": 15,
                 "speed": 0.02,
-                "isLooping": true
+                "isLooping": true,
+                "shadows": {
+                    "start": 112,
+                    "end": 127
+                }
             },
             "attack": {
                 "start": 48,

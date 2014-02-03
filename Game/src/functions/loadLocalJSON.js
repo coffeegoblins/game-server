@@ -1,4 +1,4 @@
-define(['text!Game/content/weapons.json', 'text!Game/content/level1.json'],
+define(['text!Game/content/weapons.json', 'text!Game/content/level1.json', 'text!Game/content/level2.json'],
     function (Sounds, Weapons, Level1)
     {
         'use strict';
@@ -8,6 +8,10 @@ define(['text!Game/content/weapons.json', 'text!Game/content/level1.json'],
             {
                 case "level1":
                     onComplete(JSON.parse(Level1));
+                    break;
+
+                case "level2":
+                    onComplete(JSON.parse(Level2));
                     break;
 
                 case "weapons":
