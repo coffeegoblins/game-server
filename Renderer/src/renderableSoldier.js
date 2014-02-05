@@ -74,8 +74,6 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
             var yPosition = this.unit.tileY * tileSize - viewportRect.y + halfTileSize;
 
             context.translate(xPosition, yPosition);
-            if (this.unit.direction)
-                context.rotate(this.unit.direction);
 
             if (this.isSelected)
             {
@@ -92,14 +90,17 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
                 context.stroke();
             }
 
-            this.spriteSheet.updateAnimation(deltaTime);
-            context.globalAlpha = this.style.opacity;
-
             var tileRect = this.spriteSheet.getCurrentShadowBounds();
             if (tileRect)
             {
                 context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
             }
+
+            if (this.unit.direction)
+                context.rotate(this.unit.direction);
+
+            this.spriteSheet.updateAnimation(deltaTime);
+            context.globalAlpha = this.style.opacity;
 
             tileRect = this.spriteSheet.getCurrentTileBounds();
             if (tileRect)
