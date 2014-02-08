@@ -311,7 +311,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         //}
 
         document.body.style.msTouchAction = 'none';
-        document.body.className += ' touch';
     }
 
     var inputHandler = new InputHandler();

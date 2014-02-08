@@ -59,7 +59,11 @@ define(['Game/src/imageCache', 'Game/src/spriteSheet', './effects/transitionEffe
         this.unit.trigger('animationComplete', animation.name);
         if (animation.name === 'death')
         {
-            TransitionEffect.transitionFloat(null, this.style, 'opacity', null, 0.6, 1);
+            TransitionEffect.transitionFloat({
+                source: this.style,
+                property: 'opacity',
+                targetValue: 0.6
+            });
         }
     };
 

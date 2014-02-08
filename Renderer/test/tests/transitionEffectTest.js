@@ -26,9 +26,14 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/scheduler'], function
         var property = [];
         property.value = 0;
 
-        TransitionEffect.transitionFloat('id', property, 'value', null, expectedValue, 1, this, function ()
-        {
-            wasExecuted=true;
+        TransitionEffect.transitionFloat({
+            property: property,
+            duration: 'value',
+            targetValue: expectedValue,
+            completedMethod: function ()
+            {
+                wasExecuted = true;
+            }
         });
 
         async(function ()
@@ -48,18 +53,24 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/scheduler'], function
         var expectedValue = 1;
 
         var property = [];
-        property.value = "0px";
+        property.value = '0px';
 
-        TransitionEffect.transitionFloat('id', property, 'value', "px", expectedValue, 1, this, function ()
-        {
-            wasExecuted = true;
+        TransitionEffect.transitionFloat({
+            property: property,
+            duration: 'value',
+            suffix: 'px',
+            targetValue: expectedValue,
+            completedMethod: function ()
+            {
+                wasExecuted = true;
+            }
         });
 
         async(function ()
         {
             if (wasExecuted)
             {
-                assertEquals('Suffix was not used', expectedValue + "px", property.value);
+                assertEquals('Suffix was not used', expectedValue + 'px', property.value);
             }
 
             return wasExecuted;

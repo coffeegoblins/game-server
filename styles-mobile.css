@@ -1,118 +1,109 @@
-.touch #activeUnitView {
+#activeUnitView {
     left: 8px;
     top: 8px;
 }
 
-.touch .active-unit-preview {
+#turnQueue {
+    left: 8px;
+    top: 164px;
+}
+
+.active-unit-preview {
     height: 96px;
     width: 96px;
     background-size: 384px;
 }
 
-.touch #turnQueue {
-    left: 8px;
-    top: 164px;
-}
-
-.touch .turn-queue-preview {
+.turn-queue-preview {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
 }
 
-.touch .unit-preview {
+.unit-preview {
     background-size: 128px;
 }
 
-.touch #actionBarView {
-    bottom: 8px;
-}
-
-.touch .unit-type-dualWield {
+.unit-type-dualWield {
     background-image: url('Renderer/content/icons.png');
     background-position: -96px 0;
 }
 
-.touch .unit-type-swordAndShield {
+.unit-type-swordAndShield {
     background-image: url('Renderer/content/icons.png');
     background-position: -32px 0;
 }
 
-.touch .unit-type-twoHanded {
+.unit-type-twoHanded {
     background-image: url('Renderer/content/icons.png');
     background-position: -64px 0;
 }
 
-.touch .active-unit-preview.unit-type-dualWield {
+.active-unit-preview.unit-type-dualWield {
     background-position: -288px 0;
 }
 
-.touch .active-unit-preview.unit-type-swordAndShield {
+.active-unit-preview.unit-type-swordAndShield {
     background-position: -96px 0;
 }
 
-.touch .active-unit-preview.unit-type-twoHanded {
+.active-unit-preview.unit-type-twoHanded {
     background-position: -192px 0;
 }
 
-.touch .action-container {
+.action-container {
     height: 44px;
     margin-left: -50%;
 }
 
-.touch .action {
+.action {
     height: 44px;
     width: 44px;
     background-size: 176px;
 }
 
-.touch .action-attack {
+.action-attack {
     background-position: -132px -44px;
 }
 
-.touch .action-endTurn {
+.action-endTurn {
     background-position: -88px -44px;
 }
 
-.touch .action-move {
+.action-move {
     background-position: 0 -44px;
 }
 
-.touch .action-rangeAttack {
-    background-image: url('Renderer/content/rangeAttackIcon.png');
-}
-
-.touch .action-shield {
+.action-shield {
     background-position: -44px -44px;
 }
 
-.touch .action-cancel {
+.action-cancel {
     background-size: 44px;
 }
 
-.touch .action-confirmMove {
+.action-confirmMove {
     background-size: 44px;
 }
 
 @media only screen and (orientation: landscape) {
-    .touch #turnQueue {
+    #turnQueue {
         left: 120px;
         top: 8px;
     }
 
-    .touch .turn-queue-preview {
+    .turn-queue-preview {
         display: inline-block;
         margin-right: 8px;
     }
 
-    .touch #actionBarView {
+    #actionBarView {
         left: auto;
         bottom: auto;
         right: 8px;
         top: 50%;
     }
 
-    .touch .action-container {
+    .action-container {
         height: auto;
         margin-left: auto;
         width: 44px;
@@ -120,7 +111,7 @@
         -webkit-transform: translate(0, -50%);
     }
 
-    .touch .action {
+    .action {
         margin: 0 0 8px 0;
     }
 }

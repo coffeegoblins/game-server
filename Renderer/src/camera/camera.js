@@ -16,8 +16,8 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         this.viewportRect.width = width;
         this.viewportRect.height = height;
 
-        this.viewportRect.x = currentCenterX - width / 2;
-        this.viewportRect.y = currentCenterY - height / 2;
+        this.viewportRect.x = Math.floor(currentCenterX - width / 2);
+        this.viewportRect.y = Math.floor(currentCenterY - height / 2);
 
         if (this.targetUnit)
             this.moveToUnit(this.targetUnit, this.callbackContext, this.callback);
@@ -25,8 +25,8 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
 
     Camera.prototype.moveViewport = function (deltaX, deltaY)
     {
-        this.viewportRect.x += deltaX;
-        this.viewportRect.y += deltaY;
+        this.viewportRect.x = Math.floor(this.viewportRect.x + deltaX);
+        this.viewportRect.y = Math.floor(this.viewportRect.y + deltaY);
     };
 
     Camera.prototype.moveToUnit = function (unit, context, callback)
@@ -34,14 +34,29 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         var offset = this.scale / 2;
 
         this.targetUnit = unit;
-        this.targetX = unit.tileX * this.scale + offset - this.viewportRect.width / 2;
-        this.targetY = unit.tileY * this.scale + offset - this.viewportRect.height / 2;
+        this.targetX = Math.floor(unit.tileX * this.scale + offset - this.viewportRect.width / 2);
+        this.targetY = Math.floor(unit.tileY * this.scale + offset - this.viewportRect.height / 2);
 
         this.callbackContext = context;
         this.callback = callback;
 
-        TransitionEffect.transitionFloat("moveToUnitX", this.viewportRect, 'x', null, this.targetX, 1, this, this.onMovedToUnit);
-        TransitionEffect.transitionFloat("moveToUnitY", this.viewportRect, 'y', null, this.targetY, 1, this, this.onMovedToUnit);
+        var transition = {
+            id: 'moveToUnitX',
+            source: this.viewportRect,
+            property: 'x',
+            targetValue: this.targetX,
+            context: this,
+            completedMethod: this.onMovedToUnit,
+            truncateValue: true
+        };
+
+        TransitionEffect.transitionFloat(transition);
+
+        transition.id = 'moveToUnitY';
+        transition.property = 'y';
+        transition.targetValue = this.targetY;
+
+        TransitionEffect.transitionFloat(transition);
     };
 
     Camera.prototype.onMovedToUnit = function ()

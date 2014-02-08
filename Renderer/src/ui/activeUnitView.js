@@ -24,9 +24,17 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
             this.element.className = 'team-' + activeUnit.color;
             this.previewImage.className = 'active-unit-preview unit-type-' + activeUnit.weapon.type;
 
-            TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 1, 0.5, this, function ()
-            {
-                this.element.style.opacity = 1;
+            TransitionEffect.transitionFloat({
+                id: 'activeUnitViewOpacity',
+                source: this.element.style,
+                property: 'opacity',
+                targetValue: 1,
+                duration: 0.5,
+                context: this,
+                completedMethod: function ()
+                {
+                    this.element.style.opacity = 1;
+                }
             });
         };
 
@@ -34,9 +42,17 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
         {
             this.apBar.stopBlink();
 
-            TransitionEffect.transitionFloat('activeUnitViewOpacity', this.element.style, 'opacity', null, 0, 0.5, this, function ()
-            {
-                this.element.style.opacity = 0;
+            TransitionEffect.transitionFloat({
+                id: 'activeUnitViewOpacity',
+                source: this.element.style,
+                property: 'opacity',
+                targetValue: 0,
+                duration: 0.5,
+                context: this,
+                completedMethod: function ()
+                {
+                    this.element.style.opacity = 0;
+                }
             });
         };
 

@@ -29,6 +29,8 @@ define(['Game/src/inputHandler',
 
             TurnManager.on('beginTurn', this, this.onBeginTurn);
             TurnManager.on('endTurn', this, this.onEndTurn);
+
+            window.camera = this.camera;
         }
 
         function handleResize()

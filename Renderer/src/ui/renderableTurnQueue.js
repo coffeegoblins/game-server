@@ -58,13 +58,29 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             element.style[styleName] = 0;
             element.style.opacity = 0;
 
-            TransitionEffect.transitionFloat("TurnManagerInsertHeight", element.style, styleName, "px", this.imageSize, 1, this, function ()
-            {
-                TransitionEffect.transitionFloat("TurnManagerInsertOpacity", element.style, "opacity", null, 1, 0.5, this, function ()
-                {
-                    element.style.opacity = 1;
-                });
-            });
+            TransitionEffect.transitionFloat({
+                    id: "TurnManagerInsertHeight",
+                    source: element.style,
+                    property: styleName,
+                    suffix: "px",
+                    targetValue: this.imageSize,
+                    context: this,
+                    completedMethod: function ()
+                    {
+                        TransitionEffect.transitionFloat({
+                            id: "TurnManagerInsertOpacity",
+                            source: element.style,
+                            property: "opacity",
+                            targetValue: 1,
+                            duration: 0.5,
+                            completedMethod: function ()
+                            {
+                                element.style.opacity = 1;
+                            }
+                        });
+                    }
+                }
+            );
         };
 
         RenderableTurnQueue.prototype.onBeginTurn = function ()
@@ -74,9 +90,17 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             this.element.firstChild.style.width = this.element.firstChild.width + "px";
             this.element.firstChild.style.height = this.element.firstChild.height + "px";
 
-            TransitionEffect.transitionFloat("TurnManagerRemove", this.element.firstChild.style, styleName, "px", 0, 1, this, function ()
-            {
-                this.element.removeChild(this.element.firstChild);
+            TransitionEffect.transitionFloat({
+                id: "TurnManagerRemove",
+                source: this.element.firstChild.style,
+                property: styleName,
+                suffix: "px",
+                targetValue: 0,
+                context: this,
+                completedMethod: function ()
+                {
+                    this.element.removeChild(this.element.firstChild);
+                }
             });
         };
 
@@ -90,9 +114,17 @@ define(['Renderer/src/effects/transitionEffect', 'Game/src/utility'],
             var image = document.getElementById(unit.name);
             var styleName = this.getResizeStyleProperty(image);
 
-            TransitionEffect.transitionFloat("TurnManagerInsertHeight", image.style, styleName, "px", 0, 1, this, function ()
-            {
-                this.element.removeChild(image);
+            TransitionEffect.transitionFloat({
+                id: "TurnManagerInsertHeight",
+                source: image.style,
+                property: styleName,
+                suffix: "px",
+                targetValue: 0,
+                context: this,
+                completedMethod: function ()
+                {
+                    this.element.removeChild(image);
+                }
             });
         };
 

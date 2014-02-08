@@ -80,7 +80,13 @@ define(['./eventManager', './soundManager', 'Renderer/src/effects/transitionEffe
                 this.direction -= Math.PI * 2;
         }
 
-        TransitionEffect.transitionFloat(this.name + ' turn', this, 'direction', null, newDirection, 0.1);
+        TransitionEffect.transitionFloat({
+            id: this.name + ' turn',
+            source: this,
+            property: 'direction',
+            targetValue: newDirection,
+            duration: 0.1
+        });
     };
 
     Soldier.prototype.setState = function (state)

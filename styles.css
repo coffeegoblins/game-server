@@ -25,8 +25,6 @@ html, body {
 #activeUnitView {
     position: fixed;
     opacity: 1;
-    left: 16px;
-    top: 16px;
     border-radius: 8px;
     padding: 4px;
 }
@@ -34,23 +32,16 @@ html, body {
 #turnQueue {
     position: fixed;
     opacity: 1;
-    left: 16px;
-    top: 204px;
     border-radius: 8px;
 }
 
 .active-unit-preview {
-    height: 128px;
-    width: 128px;
-    background-size: 512px;
     margin-bottom: 8px;
 }
 
 .turn-queue-preview {
     position: relative;
     display: block;
-    width: 64px;
-    height: 64px;
     border-radius: 8px;
     margin-bottom: 8px;
     overflow: hidden;
@@ -63,7 +54,7 @@ html, body {
 
 #activeUnitView .outerBar {
     position: relative;
-    border: 1px solid #5F5F5F;
+    border: 1px solid #5f5f5f;
     background-color: #505050;
     height: 12px;
     margin: 0 4px 4px 4px;
@@ -77,25 +68,13 @@ html, body {
     left: 0;
 }
 
-#activeUnitHP .innerBar {
+#activeUnitHP .innerBar, #activeUnitHP .innerBarPreview {
     background: #13b22b;
-    background: -webkit-linear-gradient(top,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
-    background: linear-gradient(to bottom,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
+    background: -webkit-linear-gradient(top, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
+    background: linear-gradient(to bottom, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
 }
 
-#activeUnitHP .innerBarPreview {
-    background: #13b22b;
-    background: -webkit-linear-gradient(top,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
-    background: linear-gradient(to bottom,  #13b22b 0%,#13b11e 50%,#0ea81b 52%,#31e037 100%);
-}
-
-#activeUnitAP .innerBar {
-    background: #d6ca20;
-    background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
-    background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
-}
-
-#activeUnitAP .innerBarPreview {
+#activeUnitAP .innerBar, #activeUnitAP .innerBarPreview {
     background: #d6ca20;
     background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
     background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
@@ -130,37 +109,9 @@ html, body {
     background-image: url('Renderer/content/icons.png');
 }
 
-.unit-type-dualWield {
-    background-image: url('Renderer/content/icons.png');
-    background-position: -192px 0;
-}
-
-.unit-type-swordAndShield {
-    background-image: url('Renderer/content/icons.png');
-    background-position: -64px 0;
-}
-
-.unit-type-twoHanded {
-    background-image: url('Renderer/content/icons.png');
-    background-position: -128px 0;
-}
-
-.active-unit-preview.unit-type-dualWield {
-    background-position: -384px 0;
-}
-
-.active-unit-preview.unit-type-swordAndShield {
-    background-position: -128px 0;
-}
-
-.active-unit-preview.unit-type-twoHanded {
-    background-position: -256px 0;
-}
-
 .action-attack {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
-    background-position: -192px -64px;
 }
 
 .action-cancel {
@@ -176,13 +127,11 @@ html, body {
 .action-endTurn {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
-    background-position: -128px -64px;
 }
 
 .action-move {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
-    background-position: 0 -64px;
 }
 
 .action-rangeAttack {
@@ -193,17 +142,16 @@ html, body {
 .action-shield {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
-    background-position: -64px -64px;
 }
 
 .team-green {
     background: #3ddb11;
-    background: -webkit-linear-gradient(top,  #3ddb11 0%,#134705 100%);
-    background: linear-gradient(to bottom,  #3ddb11 0%,#134705 100%);
+    background: -webkit-linear-gradient(top, #3ddb11 0%, #134705 100%);
+    background: linear-gradient(to bottom, #3ddb11 0%, #134705 100%);
 }
 
 .team-red {
     background: #f93b34;
-    background: -webkit-linear-gradient(top,  #f93b34 0%,#590d0c 100%);
-    background: linear-gradient(to bottom,  #f93b34 0%,#590d0c 100%);
+    background: -webkit-linear-gradient(top, #f93b34 0%, #590d0c 100%);
+    background: linear-gradient(to bottom, #f93b34 0%, #590d0c 100%);
 }
