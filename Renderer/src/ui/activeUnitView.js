@@ -1,5 +1,5 @@
-define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar', 'Renderer/src/effects/transitionEffect'],
-    function (Template, RenderableProgressBar, TransitionEffect)
+define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar'],
+    function (Template, RenderableProgressBar)
     {
         'use strict';
 
@@ -23,37 +23,13 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
             this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
             this.element.className = 'team-' + activeUnit.color;
             this.previewImage.className = 'active-unit-preview unit-type-' + activeUnit.weapon.type;
-
-            TransitionEffect.transitionFloat({
-                id: 'activeUnitViewOpacity',
-                source: this.element.style,
-                property: 'opacity',
-                targetValue: 1,
-                duration: 0.5,
-                context: this,
-                completedMethod: function ()
-                {
-                    this.element.style.opacity = 1;
-                }
-            });
+            this.element.style.opacity = 1;
         };
 
         ActiveUnitView.prototype.onEndTurn = function ()
         {
             this.apBar.stopBlink();
-
-            TransitionEffect.transitionFloat({
-                id: 'activeUnitViewOpacity',
-                source: this.element.style,
-                property: 'opacity',
-                targetValue: 0,
-                duration: 0.5,
-                context: this,
-                completedMethod: function ()
-                {
-                    this.element.style.opacity = 0;
-                }
-            });
+            this.element.style.opacity = 0;
         };
 
         ActiveUnitView.prototype.previewAP = function (ap)

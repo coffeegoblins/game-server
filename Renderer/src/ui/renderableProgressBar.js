@@ -51,7 +51,7 @@ define(['Renderer/src/effects/blinkEffect', 'Renderer/src/effects/transitionEffe
     RenderableProgressBar.prototype.stopBlink = function ()
     {
         this.foregroundElement.style.width = this.progress / this.maxProgress * 100 + '%';
-        this.previewElement.style.width = 0 + '%';
+        this.previewElement.style.width = '0%';
         BlinkEffect.stopBlink(this.previewElement);
     };
 

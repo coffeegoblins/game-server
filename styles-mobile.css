@@ -52,7 +52,6 @@
 
 .action-container {
     height: 44px;
-    margin-left: -50%;
 }
 
 .action {
@@ -111,7 +110,12 @@
         -webkit-transform: translate(0, -50%);
     }
 
-    .action {
+    .action-container div {
         margin: 0 0 8px 0;
+    }
+
+    .action-container .divider {
+        height: 1px;
+        width: 100%;
     }
 }

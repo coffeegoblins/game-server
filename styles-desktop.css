@@ -46,6 +46,15 @@
     background-position: -256px 0;
 }
 
+.action-container {
+    height: 64px;
+}
+
+.action {
+    height: 64px;
+    width: 64px;
+}
+
 .action-attack {
     background-position: -192px -64px;
 }

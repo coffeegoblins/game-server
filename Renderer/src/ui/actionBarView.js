@@ -1,5 +1,5 @@
-define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/src/utility'],
-    function (InputHandler, TransitionEffect, Utility)
+define(['Game/src/inputHandler', 'Game/src/utility'],
+    function (InputHandler, Utility)
     {
         'use strict';
 
@@ -8,7 +8,6 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
             this.actionsList = [];
             this.element = document.createElement('div');
             this.element.id = 'actionBarView';
-            this.element.style.display = 'none';
 
             this.containerElement = document.createElement('div');
             this.containerElement.className = 'action-container';
@@ -36,6 +35,13 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
                     InputHandler.registerClickEvent(action.id, action.method, action.context);
 
                     fragment.appendChild(actionElement);
+
+                    if (i < actions.length - 1)
+                    {
+                        var divider = document.createElement('div');
+                        divider.className = 'divider';
+                        fragment.appendChild(divider);
+                    }
                 }
             }
 
@@ -61,37 +67,24 @@ define(['Game/src/inputHandler', 'Renderer/src/effects/transitionEffect', 'Game/
             this.actionsList.length = 0;
             while (this.containerElement.firstChild)
             {
-                InputHandler.unregisterClickEvent(this.containerElement.firstChild.id);
-                this.containerElement.removeChild(this.containerElement.firstChild);
+                var childElement = this.containerElement.firstChild;
+                if (childElement.id)
+                {
+                    InputHandler.unregisterClickEvent(childElement.id);
+                }
+
+                this.containerElement.removeChild(childElement);
             }
         };
 
         ActionBarView.prototype.hideActions = function ()
         {
-            var element = this.element;
-            TransitionEffect.transitionFloat({
-                id: 'actionBarViewOpacity',
-                source: this.element.style,
-                property: 'opacity',
-                targetValue: 0,
-                duration: 0.5,
-                completedMethod: function ()
-                {
-                    element.style.display = 'none';
-                }
-            });
+            this.element.style.opacity = 0;
         };
 
         ActionBarView.prototype.showActions = function ()
         {
-            this.element.style.display = '';
-            TransitionEffect.transitionFloat({
-                id: 'actionBarViewOpacity',
-                source: this.element.style,
-                property: 'opacity',
-                targetValue: 1,
-                duration: 0.5
-            });
+            this.element.style.opacity = 1;
         };
 
         return new ActionBarView();
