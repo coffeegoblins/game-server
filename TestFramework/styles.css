@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+}
+
+#verticalSplit {
+    width: 100%;
+    overflow: auto;
+}
+
+#passes {
+    float: left;
+    width: 50%;
+}
+
+#failures {
+    float: right;
+    width: 50%;
+}
+
+h1 {
+    margin-left: 10px;
+    font-size: 140%;
+}
+
+h2 {
+    margin: 0 10px;
+    font-size: 100%;
+    padding-left: 16px;
+}
+
+h3 {
+    margin: 10px;
+    font-size: 120%;
+    padding-left: 32px;
+}
+
+.resultBanner {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    border-bottom: 1px solid #cdcdcd;
+    background-color: green;
+}
+
+.resultBannerWarning {
+    background-color: #ffe303;
+}
+
+.resultBannerError {
+    background-color: #c83232;
+}
+
+.warning {
+    color: #ffe303;
+}
+
+.error {
+    color: #c83232;
+}
+
+.exception {
+    white-space: pre;
+    padding-left: 64px;
+    margin: 0 0 16px 0;
+}
