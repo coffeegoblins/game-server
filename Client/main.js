@@ -1,4 +1,4 @@
-require(['Core/src/scheduler', 'renderer', 'Core/src/plotManager', 'Core/src/commandManager', 'jsonLoader'],
+require(['Game/src/scheduler', 'renderer', 'Game/src/plotManager', 'Game/src/commandManager', 'jsonLoader'],
     function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
     {
         'use strict';
