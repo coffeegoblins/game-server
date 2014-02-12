@@ -1,4 +1,4 @@
-define(['Game/src/eventManager'], function (Events)
+define(['Core/src/eventManager'], function (Events)
 {
     'use strict';
 

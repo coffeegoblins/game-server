@@ -1,4 +1,4 @@
-define(['Editor', 'Game/src/spriteSheet', '../controls/tileSelectionPopup', 'text!../templates/tileLayerPanel.html'], function (Editor, SpriteSheet, TileSelectionPopup, Template)
+define(['Editor', 'Core/src/spriteSheet', '../controls/tileSelectionPopup', 'text!../templates/tileLayerPanel.html'], function (Editor, SpriteSheet, TileSelectionPopup, Template)
 {
     'use strict';
     var State = {

@@ -1,0 +1,121 @@
+#activeUnitView {
+    left: 8px;
+    top: 8px;
+}
+
+#turnQueue {
+    left: 8px;
+    top: 164px;
+}
+
+.active-unit-preview {
+    height: 96px;
+    width: 96px;
+    background-size: 384px;
+}
+
+.turn-queue-preview {
+    width: 32px;
+    height: 32px;
+}
+
+.unit-preview {
+    background-size: 128px;
+}
+
+.unit-type-dualWield {
+    background-image: url('Renderer/content/icons.png');
+    background-position: -96px 0;
+}
+
+.unit-type-swordAndShield {
+    background-image: url('Renderer/content/icons.png');
+    background-position: -32px 0;
+}
+
+.unit-type-twoHanded {
+    background-image: url('Renderer/content/icons.png');
+    background-position: -64px 0;
+}
+
+.active-unit-preview.unit-type-dualWield {
+    background-position: -288px 0;
+}
+
+.active-unit-preview.unit-type-swordAndShield {
+    background-position: -96px 0;
+}
+
+.active-unit-preview.unit-type-twoHanded {
+    background-position: -192px 0;
+}
+
+.action-container {
+    height: 44px;
+}
+
+.action {
+    height: 44px;
+    width: 44px;
+    background-size: 176px;
+}
+
+.action-attack {
+    background-position: -132px -44px;
+}
+
+.action-endTurn {
+    background-position: -88px -44px;
+}
+
+.action-move {
+    background-position: 0 -44px;
+}
+
+.action-shield {
+    background-position: -44px -44px;
+}
+
+.action-cancel {
+    background-size: 44px;
+}
+
+.action-confirmMove {
+    background-size: 44px;
+}
+
+@media only screen and (orientation: landscape) {
+    #turnQueue {
+        left: 120px;
+        top: 8px;
+    }
+
+    .turn-queue-preview {
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    #actionBarView {
+        left: auto;
+        bottom: auto;
+        right: 8px;
+        top: 50%;
+    }
+
+    .action-container {
+        height: auto;
+        margin-left: auto;
+        width: 44px;
+        transform: translate(0, -50%);
+        -webkit-transform: translate(0, -50%);
+    }
+
+    .action-container div {
+        margin: 0 0 8px 0;
+    }
+
+    .action-container .divider {
+        height: 1px;
+        width: 100%;
+    }
+}

@@ -7,7 +7,7 @@
         i18n: 'lib/i18n',
         text: 'lib/text',
         renderer: 'Renderer/src/renderer',
-        jsonLoader: 'Game/src/functions/loadRemoteJSON'
+        jsonLoader: 'Core/src/functions/loadRemoteJSON'
     },
     optimize: 'uglify2',
     optimizeCss: "standard",
