@@ -34,10 +34,10 @@ define(['text!Core/content/tracks.json', './utility'], function (TrackDefinition
                 audio.removeEventListener('canplaythrough', onAudioLoaded, false);
             }, false);
 
-            audio.addEventListener('error', function ()
+            audio.addEventListener('error', function (e)
             {
                 if (console.log)
-                    console.log('audio load error', arguments);
+                    console.log('audio load error', e);
             }, false);
         }
 

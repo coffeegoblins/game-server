@@ -18,6 +18,9 @@ define(['Core/src/inputHandler', 'Core/src/utility'],
 
         ActionBarView.prototype.addActions = function (actions)
         {
+            if (!actions || !actions.length)
+                return;
+
             var fragment = document.createDocumentFragment();
             for (var i = 0; i < actions.length; i++)
             {
