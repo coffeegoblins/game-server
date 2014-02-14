@@ -1,6 +1,6 @@
 ({
     appDir: "../",
-    baseUrl: "./",
+    baseUrl: "./Client",
     dir: "../build output",
     paths: {
         require: 'lib/require',
