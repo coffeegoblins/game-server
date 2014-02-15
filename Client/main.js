@@ -1,5 +1,5 @@
-require(['Core/src/scheduler', 'renderer', 'Core/src/plotManager', 'Core/src/commandManager', 'jsonLoader'],
-    function (Scheduler, Renderer, PlotManager, CommandManager, loadJSON)
+require(['Core/src/scheduler', 'Core/src/commandManager', 'Renderer/src/menus/mainMenu'],
+    function (Scheduler, CommandManager, MainMenu)
     {
         'use strict';
 
@@ -32,13 +32,9 @@ require(['Core/src/scheduler', 'renderer', 'Core/src/plotManager', 'Core/src/com
 
         function onDocumentReady()
         {
-            Renderer.initialize(document.getElementById('canvas'));
             Scheduler.start();
 
-            loadJSON('weapons', function (weaponData)
-            {
-                PlotManager.initialize(weaponData);
-            });
+            MainMenu.display();
         }
 
         if (document.readyState === 'complete')

@@ -43,7 +43,8 @@ define(['Core/src/inputHandler',
 
         function onClick(e)
         {
-            this.renderableMap.onClick(e, e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y, this.camera.scale);
+            if (this.renderableMap)
+                this.renderableMap.onClick(e, e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y, this.camera.scale);
         }
 
         function onDrag(e, deltaX, deltaY)
