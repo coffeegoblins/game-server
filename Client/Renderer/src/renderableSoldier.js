@@ -1,7 +1,8 @@
-define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffect'], function (ImageCache, SpriteSheet, TransitionEffect)
+define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffect', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, TransitionEffect, AnimationDefinitions)
 {
     'use strict';
 
+    var animations = JSON.parse(AnimationDefinitions);
     var teamColors = {
         'green': '#3ddb11',
         'red': '#f93b34'
@@ -23,7 +24,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
     function createSpriteSheet(type)
     {
-        var animationDefinition = window.soldierAnimations[type];
+        var animationDefinition = animations[type];
         var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/' + animationDefinition.spriteSheet + '.png', {
             tileWidth: animationDefinition.tileWidth,
             tileHeight: animationDefinition.tileHeight
@@ -94,19 +95,13 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                 context.stroke();
             }
 
-            var tileRect = this.spriteSheet.getCurrentShadowBounds();
-            if (tileRect)
-            {
-                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
-            }
-
             if (this.unit.direction)
                 context.rotate(this.unit.direction);
 
             this.spriteSheet.updateAnimation(deltaTime);
             context.globalAlpha = this.style.opacity;
 
-            tileRect = this.spriteSheet.getCurrentTileBounds();
+            var tileRect = this.spriteSheet.getCurrentTileBounds();
             if (tileRect)
             {
                 context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);

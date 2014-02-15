@@ -1,6 +1,4 @@
-'use strict';
-
-window.soldierAnimations = {
+{
     "archer": {
         "spriteSheet": "archerSheet",
         "tileHeight": 64,
@@ -57,11 +55,7 @@ window.soldierAnimations = {
                 "start": 0,
                 "end": 15,
                 "speed": 0.02,
-                "isLooping": true,
-                "shadows": {
-                    "start": 112,
-                    "end": 127
-                }
+                "isLooping": true
             },
             "attack": {
                 "start": 48,
@@ -149,4 +143,4 @@ window.soldierAnimations = {
             }
         }
     }
-};
+}
