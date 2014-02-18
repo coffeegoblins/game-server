@@ -34,7 +34,7 @@ require(['Core/src/scheduler', 'Core/src/commandManager', 'Renderer/src/menus/ma
         {
             Scheduler.start();
 
-            MainMenu.display();
+            MainMenu.show();
         }
 
         if (document.readyState === 'complete')

@@ -1,12 +1,12 @@
-define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager'],
-    function (Template, InputHandler, Renderer, loadJSON, PlotManager)
+define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', 'Renderer/src/menus/loginPopup'],
+    function (Template, InputHandler, Renderer, loadJSON, PlotManager, LoginPopup)
     {
         function MainMenu()
         {
 
         }
 
-        MainMenu.prototype.display = function ()
+        MainMenu.prototype.show = function ()
         {
             document.body.innerHTML = Template;
             document.body.style.backgroundImage = 'url("Renderer/content/promo.png")';
@@ -43,8 +43,9 @@ define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'rendere
             });
         };
 
-        MainMenu.prototype.onMultiPlayerButtonClicked = function (e) {
-
+        MainMenu.prototype.onMultiPlayerButtonClicked = function (e)
+        {
+            LoginPopup.show();
         };
 
         MainMenu.prototype.onOptionsButtonClicked = function (e) {
