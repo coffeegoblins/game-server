@@ -23,12 +23,11 @@ define(['Renderer/src/effects/transitionEffect', 'Core/src/scheduler'], function
         var wasExecuted = false;
         var expectedValue = 1.01235412341;
 
-        var property = [];
-        property.value = 0;
+        var obj = {value: 0};
 
         TransitionEffect.transitionFloat({
-            property: property,
-            duration: 'value',
+            source: obj,
+            property: 'value',
             targetValue: expectedValue,
             completedMethod: function ()
             {
@@ -40,7 +39,7 @@ define(['Renderer/src/effects/transitionEffect', 'Core/src/scheduler'], function
         {
             if (wasExecuted)
             {
-                assertEquals('Value was not exact', expectedValue, property.value);
+                assertEquals('Value was not exact', expectedValue, obj.value);
             }
 
             return wasExecuted;
@@ -52,12 +51,11 @@ define(['Renderer/src/effects/transitionEffect', 'Core/src/scheduler'], function
         var wasExecuted = false;
         var expectedValue = 1;
 
-        var property = [];
-        property.value = '0px';
+        var obj = {value: '0px'};
 
         TransitionEffect.transitionFloat({
-            property: property,
-            duration: 'value',
+            source: obj,
+            property: 'value',
             suffix: 'px',
             targetValue: expectedValue,
             completedMethod: function ()
@@ -70,7 +68,7 @@ define(['Renderer/src/effects/transitionEffect', 'Core/src/scheduler'], function
         {
             if (wasExecuted)
             {
-                assertEquals('Suffix was not used', expectedValue + 'px', property.value);
+                assertEquals('Suffix was not used', expectedValue + 'px', obj.value);
             }
 
             return wasExecuted;

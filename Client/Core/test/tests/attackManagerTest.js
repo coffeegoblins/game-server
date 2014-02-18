@@ -11,7 +11,11 @@ define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitVie
         AttackManagerTest.prototype.setup = function ()
         {
             var map = new Map(4, 4);
-            this.attackManager = new AttackManager(map, new ActiveUnitView());
+
+            var actionBarElement = document.createElement('div');
+            actionBarElement.innerHTML = '<div class="action-container"></div>';
+
+            this.attackManager = new AttackManager(map, new ActionBarView(actionBarElement), new ActiveUnitView(document.createElement('div')));
             this.attackManager.actionBarSnapshot = [
                 {}
             ];
@@ -33,7 +37,7 @@ define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitVie
             var targetNode = this.attackManager.availableAttackTiles[0];
             targetNode.tile.unit = {tileX: 0, tileY: 0};
 
-            this.attackManager.onTileSelected(targetNode.tile, 0, 0);
+            this.attackManager.onTileSelected({}, targetNode.tile, 0, 0);
 
             assertTruthy("Tile was not selected.", this.attackManager.selectedNode);
         };
@@ -41,7 +45,7 @@ define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitVie
         AttackManagerTest.prototype.testNonUnitTileClearsAttackAction = function ()
         {
             this.attackManager.selectedTile = {};
-            ActionBarView.addActions([
+            this.attackManager.actionBarView.addActions([
                 {id: 'Attack', method: null, context: this}
             ]);
 
@@ -50,9 +54,9 @@ define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitVie
                 {tile: selectedTile}
             ];
 
-            this.attackManager.onTileSelected(selectedTile, 0, 0);
+            this.attackManager.onTileSelected({}, selectedTile, 0, 0);
 
-            assertFalsy("Action was not cleared.", Utility.getElementByProperty(ActionBarView.actionsList, 'id', 'Attack'));
+            assertFalsy("Action was not cleared.", Utility.getElementByProperty(this.attackManager.actionBarView.actionsList, 'id', 'Attack'));
         };
 
         AttackManagerTest.prototype.testCalculateCrossNodesReturnsCorrectResult = function ()

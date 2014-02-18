@@ -1,14 +1,15 @@
-define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBarView', './utility'],
-    function (Renderer, InputHandler, PathManager, ActionBarView, Utility)
+define(['renderer', './inputHandler', './pathManager', './utility'],
+    function (Renderer, InputHandler, PathManager, Utility)
     {
         'use strict';
 
-        function AttackManager(currentMap, activeUnitView)
+        function AttackManager(currentMap, actionBarView, activeUnitView)
         {
             this.actionBarSnapshot = [];
             this.availableAttackTiles = [];
 
             this.currentMap = currentMap;
+            this.actionBarView = actionBarView;
             this.activeUnitView = activeUnitView;
         }
 
@@ -20,8 +21,8 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
         AttackManager.prototype.onAttackAction = function ()
         {
             // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
-            ActionBarView.removeAllActions();
+            this.actionBarSnapshot.push(this.actionBarView.actionsList.slice(0));
+            this.actionBarView.removeAllActions();
 
             var actions = [];
             switch (this.activeUnit.weapon.type)
@@ -47,7 +48,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             }
 
             actions.push({id: 'cancel', method: this.onAttackActionCancelled, context: this});
-            ActionBarView.addActions(actions);
+            this.actionBarView.addActions(actions);
         };
 
         AttackManager.prototype.onAttackActionCancelled = function ()
@@ -90,10 +91,10 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             Renderer.clearRenderablePaths();
 
             // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+            this.actionBarSnapshot.push(this.actionBarView.actionsList.slice(0));
 
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions([
+            this.actionBarView.removeAllActions();
+            this.actionBarView.addActions([
                 {id: 'cancel', method: this.onAttackActionCancelled, context: this}
             ]);
 
@@ -130,7 +131,7 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             this.selectedNodes = [];
             this.selectedNodes.push(this.selectedNode);
 
-            ActionBarView.removeActionById('Attack');
+            this.actionBarView.removeActionById('Attack');
 
             if (options.crossNodes)
             {
@@ -144,8 +145,8 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
             {
                 if (this.selectedNodes[i].tile.unit != null)
                 {
-                    ActionBarView.removeAllActions();
-                    ActionBarView.addActions([
+                    this.actionBarView.removeAllActions();
+                    this.actionBarView.addActions([
                         {id: 'attack', method: this.onAttackConfirmed.bind(this, options), context: this},
                         {id: 'cancel', method: this.onAttackActionCancelled, context: this}
                     ]);
@@ -217,8 +218,8 @@ define(['renderer', './inputHandler', './pathManager', 'Renderer/src/ui/actionBa
 
         AttackManager.prototype.revertActionBar = function ()
         {
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions(this.actionBarSnapshot.pop());
+            this.actionBarView.removeAllActions();
+            this.actionBarView.addActions(this.actionBarSnapshot.pop());
         };
 
         return AttackManager;

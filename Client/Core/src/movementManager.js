@@ -1,23 +1,24 @@
-define(['renderer', 'Core/src/scheduler', 'Core/src/pathManager', 'Core/src/turnManager', 'Renderer/src/ui/actionBarView', 'Renderer/src/ui/activeUnitView', 'Core/src/inputHandler', 'Core/src/utility'],
-    function (Renderer, Scheduler, PathManager, TurnManager, ActionBarView, ActiveUnitView, InputHandler, Utility)
+define(['renderer', 'Core/src/scheduler', 'Core/src/pathManager', 'Core/src/turnManager', 'Core/src/inputHandler', 'Core/src/utility'],
+    function (Renderer, Scheduler, PathManager, TurnManager, InputHandler, Utility)
     {
         'use strict';
 
-        function MovementManager(currentMap, activeUnitView)
+        function MovementManager(currentMap, actionBarView, activeUnitView)
         {
             this.actionBarSnapshot = [];
 
             this.currentMap = currentMap;
+            this.actionBarView = actionBarView;
             this.activeUnitView = activeUnitView;
         }
 
         MovementManager.prototype.onMoveAction = function ()
         {
             // Save the current action bar state
-            this.actionBarSnapshot.push(ActionBarView.actionsList.slice(0));
+            this.actionBarSnapshot.push(this.actionBarView.actionsList.slice(0));
 
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions([
+            this.actionBarView.removeAllActions();
+            this.actionBarView.addActions([
                 {id: 'cancel', method: this.onMoveActionCancelled, context: this}
             ]);
 
@@ -58,14 +59,14 @@ define(['renderer', 'Core/src/scheduler', 'Core/src/pathManager', 'Core/src/turn
                 this.selectedPath = null;
                 this.activeUnitView.previewAP(0);
 
-                ActionBarView.removeActionById('Move');
+                this.actionBarView.removeActionById('Move');
                 return;
             }
 
             this.selectedPath = PathManager.calculatePathFromNodes(this.availableMoveTiles, TurnManager.activeUnit.tileX, TurnManager.activeUnit.tileY, tileX, tileY);
             if (this.selectedPath)
             {
-                ActionBarView.addActions([
+                this.actionBarView.addActions([
                     {id: 'confirmMove', method: this.onMoveConfirmed, context: this}
                 ]);
 
@@ -159,8 +160,8 @@ define(['renderer', 'Core/src/scheduler', 'Core/src/pathManager', 'Core/src/turn
 
         MovementManager.prototype.revertActionBar = function ()
         {
-            ActionBarView.removeAllActions();
-            ActionBarView.addActions(this.actionBarSnapshot.pop());
+            this.actionBarView.removeAllActions();
+            this.actionBarView.addActions(this.actionBarSnapshot.pop());
         };
 
         return MovementManager;

@@ -3,17 +3,11 @@ define(['Core/src/inputHandler', 'Core/src/utility'],
     {
         'use strict';
 
-        function ActionBarView()
+        function ActionBarView(element)
         {
             this.actionsList = [];
-            this.element = document.createElement('div');
-            this.element.id = 'actionBarView';
-
-            this.containerElement = document.createElement('div');
-            this.containerElement.className = 'action-container';
-            this.element.appendChild(this.containerElement);
-
-            document.body.appendChild(this.element);
+            this.element = element;
+            this.containerElement = this.element.querySelector('.action-container');
         }
 
         ActionBarView.prototype.addActions = function (actions)
@@ -90,5 +84,5 @@ define(['Core/src/inputHandler', 'Core/src/utility'],
             this.element.style.opacity = 1;
         };
 
-        return new ActionBarView();
+        return ActionBarView;
     });

@@ -1,5 +1,5 @@
-define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 'Core/src/ladder', 'Core/src/turnManager', 'Renderer/src/ui/renderableTurnQueue', 'jsonLoader'],
-    function (Renderer, Map, Soldier, WorldObject, Ladder, TurnManager, RenderableTurnQueue, loadJSON)
+define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 'Core/src/ladder', 'jsonLoader'],
+    function (Renderer, Map, Soldier, WorldObject, Ladder, loadJSON)
     {
         'use strict';
 
@@ -7,15 +7,13 @@ define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 
             loadLevel: function (fileName, weaponData, onComplete)
             {
                 var self = this;
-                this.weaponData = weaponData;
-
                 loadJSON(fileName, function (levelData)
                 {
-                    self.onLevelLoaded(levelData, onComplete);
+                    self.onLevelLoaded(levelData, weaponData, onComplete);
                 });
             },
 
-            onLevelLoaded: function (levelData, onComplete)
+            onLevelLoaded: function (levelData, weaponData, onComplete)
             {
                 var width = 0;
                 var height = 0;
@@ -32,48 +30,42 @@ define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 
                     }
                 }
 
-                this.map = new Map(width, height);
+                var soldiers = [];
+                var map = new Map(width, height);
+
                 for (i = 0; i < levelData.layers.length; i++)
                 {
                     layer = levelData.layers[i];
                     if (layer.type === 'objectLayer')
                     {
-                        this.loadObjects(layer);
+                        soldiers.push.apply(soldiers, this.loadObjects(layer, map, weaponData));
                     }
                     else
                     {
                         switch (layer.name)
                         {
                             case 'Foreground':
-                                this.map.foregroundSpriteSheet = layer.spriteSheet;
-                                this.loadTiles(layer, 'foregroundTile');
+                                map.foregroundSpriteSheet = layer.spriteSheet;
+                                this.loadTiles(layer, map, 'foregroundTile');
                                 break;
                             case 'Background':
-                                this.map.backgroundSpriteSheet = layer.spriteSheet;
-                                this.loadTiles(layer, 'backgroundTile');
+                                map.backgroundSpriteSheet = layer.spriteSheet;
+                                this.loadTiles(layer, map, 'backgroundTile');
                                 break;
                             case 'Heights':
-                                this.loadTiles(layer, 'height');
+                                this.loadTiles(layer, map, 'height');
                                 break;
                         }
                     }
                 }
 
-                Renderer.addRenderableMap(this.map);
-                TurnManager.on("beginTurn", RenderableTurnQueue, RenderableTurnQueue.onBeginTurn);
-                TurnManager.on("endTurn", RenderableTurnQueue, RenderableTurnQueue.onEndTurn);
-
-                // TODO Determine local player properly
-                this.player = TurnManager.unitList[0].player;
-
-                if (onComplete)
-                {
-                    onComplete(this.map, this.player);
-                }
+                Renderer.addRenderableMap(map);
+                onComplete(map, soldiers);
             },
 
-            loadObjects: function (layer)
+            loadObjects: function (layer, map, weaponData)
             {
+                var soldiers = [];
                 for (var i = 0; i < layer.objects.length; i++)
                 {
                     var object = layer.objects[i];
@@ -81,13 +73,13 @@ define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 
                     {
                         case 'ladder':
                             var ladder = new Ladder(object);
-                            this.map.addObject(ladder, object.x, object.y);
+                            map.addObject(ladder, object.x, object.y);
                             Renderer.addRenderableLadder(ladder);
                             break;
 
                         case 'object':
                             var worldObject = new WorldObject(object);
-                            this.map.addObject(worldObject, object.x, object.y);
+                            map.addObject(worldObject, object.x, object.y);
                             Renderer.addRenderableObject(worldObject);
                             break;
 
@@ -96,19 +88,20 @@ define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 
 
                             // Convert weapon from just a name to an object
                             var weaponName = soldier.weapon;
-                            soldier.weapon = this.weaponData[soldier.weapon];
+                            soldier.weapon = weaponData[soldier.weapon];
                             soldier.weapon.name = weaponName;
 
-                            this.map.addUnit(soldier, object.x, object.y);
-                            TurnManager.addUnit(soldier);
-                            RenderableTurnQueue.addUnit(soldier);
+                            map.addUnit(soldier, object.x, object.y);
                             Renderer.addRenderableSoldier(soldier);
+                            soldiers.push(soldier);
                             break;
                     }
                 }
+
+                return soldiers;
             },
 
-            loadTiles: function (layer, property)
+            loadTiles: function (layer, map, property)
             {
                 for (var i = 0; i < layer.tiles.length; i++)
                 {
@@ -116,7 +109,7 @@ define(['renderer', 'Core/src/map', 'Core/src/soldier', 'Core/src/worldObject', 
                     var x = rect.x + (i % rect.width);
                     var y = rect.y + Math.floor(i / rect.width);
 
-                    var tile = this.map.getTile(x, y);
+                    var tile = map.getTile(x, y);
                     if (tile)
                     {
                         tile[property] = layer.tiles[i];

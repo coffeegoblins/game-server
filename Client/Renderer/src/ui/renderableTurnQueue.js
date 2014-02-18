@@ -1,13 +1,12 @@
-define(['Renderer/src/effects/transitionEffect', 'Core/src/utility'],
-    function (TransitionEffect, Utility)
+define(['renderer', 'Renderer/src/effects/transitionEffect', 'Core/src/utility'],
+    function (Renderer, TransitionEffect, Utility)
     {
         'use strict';
-        function RenderableTurnQueue()
+        function RenderableTurnQueue(element)
         {
             this.unitList = [];
-            this.element = document.createElement('div');
-            this.element.id = 'turnQueue';
-            document.body.appendChild(this.element);
+            this.element = element;
+            Renderer.on('resize', this, this.handleResize);
         }
 
         RenderableTurnQueue.prototype.addUnit = function (unit)
@@ -128,5 +127,5 @@ define(['Renderer/src/effects/transitionEffect', 'Core/src/utility'],
             });
         };
 
-        return new RenderableTurnQueue();
+        return RenderableTurnQueue;
     });

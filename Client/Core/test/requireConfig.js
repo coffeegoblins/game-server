@@ -6,7 +6,7 @@ require.config({
         Renderer: '../../Renderer',
         renderer: '../../Renderer/src/renderer',
         text: '../../lib/text',
-        TestFramework: '../../TestFramework',
+        TestFramework: '../../../TestFramework',
         loadLevelData: 'Core/src/loadLocalLevelData'
     }
 });

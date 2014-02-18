@@ -1,4 +1,6 @@
-define(['Core/src/inputHandler',
+define([
+        'Core/src/eventManager',
+        'Core/src/inputHandler',
         'Core/src/scheduler',
         'Core/src/turnManager',
         'Core/src/utility',
@@ -7,20 +9,15 @@ define(['Core/src/inputHandler',
         'Renderer/src/renderableObject',
         'Renderer/src/renderableSoldier',
         'Renderer/src/camera/camera',
-        'Renderer/src/renderablePath',
-        'Renderer/src/effects/blinkEffect',
-        'Renderer/src/ui/renderableTurnQueue'],
-    function (InputHandler, Scheduler, TurnManager, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath, BlinkEffect, RenderableTurnQueue)
+        'Renderer/src/renderablePath'
+    ],
+    function (Events, InputHandler, Scheduler, TurnManager, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {
         'use strict';
 
         function Renderer()
         {
-            this.canvas = null;
-            this.context = null;
-
             this.camera = new Camera();
-            this.renderableMap = null;
             this.renderables = [];
             this.renderablePaths = [];
 
@@ -30,7 +27,7 @@ define(['Core/src/inputHandler',
             TurnManager.on('beginTurn', this, this.onBeginTurn);
             TurnManager.on('endTurn', this, this.onEndTurn);
 
-            window.camera = this.camera;
+            Events.register(this);
         }
 
         function handleResize()
@@ -38,7 +35,7 @@ define(['Core/src/inputHandler',
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
             this.camera.handleResize(this.canvas.width, this.canvas.height);
-            RenderableTurnQueue.handleResize(this.canvas.width, this.canvas.height);
+            this.trigger('resize', this.canvas.width, this.canvas.height);
         }
 
         function onClick(e)
@@ -146,11 +143,10 @@ define(['Core/src/inputHandler',
             for (var i = 0; i < this.renderables.length; ++i)
             {
                 var renderable = this.renderables[i];
-
-                if (!(renderable instanceof RenderableSoldier))
-                    continue;
-
-                renderable.isSelected = (renderable.unit === activeUnit);
+                if (renderable instanceof RenderableSoldier)
+                {
+                    renderable.isSelected = (renderable.unit === activeUnit);
+                }
             }
         };
 

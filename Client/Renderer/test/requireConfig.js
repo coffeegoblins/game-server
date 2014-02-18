@@ -4,6 +4,6 @@ require.config({
     paths: {
         Core: '../../Core',
         Renderer: '../',
-        TestFramework: '../../TestFramework'
+        TestFramework: '../../../TestFramework'
     }
 });

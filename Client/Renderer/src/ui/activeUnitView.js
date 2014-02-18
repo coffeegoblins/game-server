@@ -3,9 +3,9 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
     {
         'use strict';
 
-        function ActiveUnitView()
+        function ActiveUnitView(element)
         {
-            this.element = document.createElement('div');
+            this.element = element;
             this.element.id = "activeUnitView";
             this.element.innerHTML = Template;
             this.element.style.opacity = 0;
@@ -13,8 +13,6 @@ define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderable
             this.previewImage = this.element.querySelector('.active-unit-preview');
             this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
             this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
-
-            document.body.appendChild(this.element);
         }
 
         ActiveUnitView.prototype.onBeginTurn = function (activeUnit)

@@ -1,14 +1,9 @@
-define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/turnManager', 'Core/src/pathManager', 'Renderer/src/ui/renderableTurnQueue'],
-    function (Renderer, LevelLoader, SoundManager, TurnManager, PathManager, BlinkEffect, RenderableTurnQueue)
+define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/turnManager', 'Core/src/pathManager'],
+    function (Renderer, LevelLoader, SoundManager, TurnManager, PathManager)
     {
         'use strict';
 
         function CommandManager() { }
-
-        CommandManager.addUnitToQueue = function (unit, position)
-        {
-            RenderableTurnQueue.addUnit(unit, position);
-        };
 
         CommandManager.endTurn = function ()
         {

@@ -1,5 +1,5 @@
-define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', 'Renderer/src/menus/loginPopup'],
-    function (Template, InputHandler, Renderer, loadJSON, PlotManager, LoginPopup)
+define(['text!Renderer/content/mainMenu.html', 'text!Renderer/content/game.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', './loginPopup'],
+    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, loadJSON, PlotManager, LoginPopup)
     {
         function MainMenu()
         {
@@ -8,7 +8,7 @@ define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'rendere
 
         MainMenu.prototype.show = function ()
         {
-            document.body.innerHTML = Template;
+            document.body.innerHTML = MainMenuTemplate;
             document.body.style.backgroundImage = 'url("Renderer/content/promo.png")';
             document.body.style.backgroundSize = '100%';
 
@@ -33,8 +33,7 @@ define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'rendere
         {
             this.hide();
 
-            document.body.innerHTML = "<canvas id='canvas' tabindex='0'></canvas>";
-
+            document.body.innerHTML = GameTemplate;
             Renderer.initialize(document.getElementById('canvas'));
 
             loadJSON('weapons', function (weaponData)
@@ -48,11 +47,13 @@ define(['text!Renderer/content/mainMenu.html', 'Core/src/inputHandler', 'rendere
             LoginPopup.show();
         };
 
-        MainMenu.prototype.onOptionsButtonClicked = function (e) {
+        MainMenu.prototype.onOptionsButtonClicked = function (e)
+        {
 
         };
 
-        MainMenu.prototype.onExitButtonClicked = function (e) {
+        MainMenu.prototype.onExitButtonClicked = function (e)
+        {
 
         };
 
