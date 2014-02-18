@@ -1,3 +1,13 @@
+body.main-menu {
+    background-position: center bottom;
+}
+
+#mainMenu {
+    right: 100px;
+    bottom: 100px;
+    width: 300px;
+}
+
 #activeUnitView {
     left: 16px;
     top: 16px;

@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -9,18 +8,24 @@ body {
     -ms-user-select: none;
     user-select: none;
 }
+
+body {
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+body.main-menu {
+    background-image: url("Renderer/content/promo.png");
+}
+
 #mainMenu {
     position: absolute;
-    right: 100px;
-    bottom: 100px;
-    width: 300px;
 }
+
 .menuItem {
-    background-image: -webkit-gradient(linear, left, right, color-stop(0, rgba(0, 0, 0, 0)), color-stop(0.20, rgb(200, 200, 200)), color-stop(0.80, rgb(200, 200, 200)), color-stop(1, rgba(0, 0, 0, 0)));
-    background-image: -o-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
-    background-image: -moz-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
     background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
-    background-image: -ms-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
     margin: 10px;
     padding: 10px;
@@ -30,6 +35,7 @@ body {
     color: #000;
     opacity: 0.8;
 }
+
 #canvas {
     outline: 0;
     width: 100%;
@@ -40,6 +46,7 @@ body {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
+
 #activeUnitView {
     position: fixed;
     opacity: 1;
@@ -48,14 +55,17 @@ body {
     -webkit-transition: 0.5s opacity;
     transition: 0.5s opacity;
 }
+
 #turnQueue {
     position: fixed;
     opacity: 1;
     border-radius: 8px;
 }
+
 .active-unit-preview {
     margin-bottom: 8px;
 }
+
 .turn-queue-preview {
     position: relative;
     display: block;
@@ -63,10 +73,12 @@ body {
     margin-bottom: 8px;
     overflow: hidden;
 }
+
 .turn-queue-preview div {
     width: 100%;
     height: 100%;
 }
+
 #activeUnitView .outerBar {
     position: relative;
     border: 1px solid #5f5f5f;
@@ -75,25 +87,26 @@ body {
     margin: 0 4px 4px 4px;
     border-radius: 6px;
 }
-#activeUnitView .innerBar,
-#activeUnitView .innerBarPreview {
+
+#activeUnitView .innerBar, #activeUnitView .innerBarPreview {
     position: absolute;
     border-radius: 5px;
     height: 100%;
     left: 0;
 }
-#activeUnitHP .innerBar,
-#activeUnitHP .innerBarPreview {
+
+#activeUnitHP .innerBar, #activeUnitHP .innerBarPreview {
     background: #13b22b;
     background: -webkit-linear-gradient(top, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
     background: linear-gradient(to bottom, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
 }
-#activeUnitAP .innerBar,
-#activeUnitAP .innerBarPreview {
+
+#activeUnitAP .innerBar, #activeUnitAP .innerBarPreview {
     background: #d6ca20;
     background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
     background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
 }
+
 #actionBarView {
     position: fixed;
     left: 50%;
@@ -102,6 +115,7 @@ body {
     -webkit-transition: 0.5s opacity;
     transition: 0.5s opacity;
 }
+
 .action-container {
     display: inline-block;
     margin-left: -50%;
@@ -111,54 +125,67 @@ body {
     background: -webkit-linear-gradient(top, #707070 0%, #383838 51%, #2d2d2d 100%);
     background: linear-gradient(to bottom, #707070 0%, #383838 51%, #2d2d2d 100%);
 }
+
 .action-container div {
     display: inline-block;
     margin-right: 8px;
 }
+
 .action-container div:last-child {
     margin: 0;
 }
+
 .action-container .divider {
     width: 1px;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.15);
 }
+
 .unit-type-archer {
     background-image: url('Renderer/content/icons.png');
 }
+
 .action-attack {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
 }
+
 .action-cancel {
     background-color: transparent;
     background-image: url('Renderer/content/cancelIcon.png');
 }
+
 .action-confirmMove {
     background-color: transparent;
     background-image: url('Renderer/content/confirmMoveIcon.png');
 }
+
 .action-endTurn {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
 }
+
 .action-move {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
 }
+
 .action-rangeAttack {
     background-color: transparent;
     background-image: url('Renderer/content/rangeAttackIcon.png');
 }
+
 .action-shield {
     background-color: transparent;
     background-image: url('Renderer/content/icons.png');
 }
+
 .team-green {
     background: #3ddb11;
     background: -webkit-linear-gradient(top, #3ddb11 0%, #134705 100%);
     background: linear-gradient(to bottom, #3ddb11 0%, #134705 100%);
 }
+
 .team-red {
     background: #f93b34;
     background: -webkit-linear-gradient(top, #f93b34 0%, #580d0c 100%);

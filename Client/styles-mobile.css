@@ -1,3 +1,15 @@
+body.main-menu {
+    background-position: 0 center;
+    background-size: cover;
+}
+
+#mainMenu {
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    margin: auto;
+}
+
 #activeUnitView {
     left: 8px;
     top: 8px;
@@ -85,6 +97,19 @@
 }
 
 @media only screen and (orientation: landscape) {
+    body.main-menu {
+        background-position: 0 center;
+        background-size: contain;
+    }
+
+    #mainMenu {
+        top: auto;
+        left: auto;
+        right: 8px;
+        bottom: 8px;
+        width: 300px;
+    }
+
     #turnQueue {
         left: 120px;
         top: 8px;

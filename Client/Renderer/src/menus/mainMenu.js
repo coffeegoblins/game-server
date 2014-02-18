@@ -3,14 +3,12 @@ define(['text!Renderer/content/mainMenu.html', 'text!Renderer/content/game.html'
     {
         function MainMenu()
         {
-
         }
 
         MainMenu.prototype.show = function ()
         {
             document.body.innerHTML = MainMenuTemplate;
-            document.body.style.backgroundImage = 'url("Renderer/content/promo.png")';
-            document.body.style.backgroundSize = '100%';
+            document.body.className = 'main-menu';
 
             InputHandler.registerClickEvent('singlePlayer', this.onSinglePlayerButtonClicked, this);
             InputHandler.registerClickEvent('multiPlayer', this.onMultiPlayerButtonClicked, this);
@@ -21,8 +19,6 @@ define(['text!Renderer/content/mainMenu.html', 'text!Renderer/content/game.html'
         MainMenu.prototype.hide = function ()
         {
             document.body.innerHTML = "";
-            document.body.style.backgroundImage = '';
-
             InputHandler.unregisterClickEvent('singlePlayer');
             InputHandler.unregisterClickEvent('multiPlayer');
             InputHandler.unregisterClickEvent('options');
@@ -33,6 +29,7 @@ define(['text!Renderer/content/mainMenu.html', 'text!Renderer/content/game.html'
         {
             this.hide();
 
+            document.body.className = 'game';
             document.body.innerHTML = GameTemplate;
             Renderer.initialize(document.getElementById('canvas'));
 
