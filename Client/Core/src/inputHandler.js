@@ -162,8 +162,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         {
             inputHandler.mouseEvent = inputHandler.handlePressEvent(e);
         }
-
-        e.preventDefault();
     }
 
     function onMouseMove(e)

@@ -3,7 +3,6 @@ define(['text!Renderer/content/loginPopup.html', 'Core/src/inputHandler', 'lib/s
     {
         function LoginPopup()
         {
-
         }
 
         LoginPopup.prototype.show = function ()
@@ -16,16 +15,17 @@ define(['text!Renderer/content/loginPopup.html', 'Core/src/inputHandler', 'lib/s
             InputHandler.registerClickEvent('cancelButton', this.onCancelButtonClicked, this);
             InputHandler.registerClickEvent('registerButton', this.onRegisterButtonClicked, this);
             InputHandler.registerClickEvent('loginButton', this.onLoginButtonClicked, this);
-            InputHandler.registerClickEvent('usernameInput', this.onInputElementFocused, this);
-            InputHandler.registerClickEvent('passwordInput', this.onInputElementFocused, this);
-            InputHandler.registerClickEvent('confirmPasswordInput', this.onInputElementFocused, this);
 
             this.socket = io.connect('http://127.0.0.1:1988');
         };
 
         LoginPopup.prototype.hide = function ()
         {
-            document.getElementById('loginPopup').remove();
+            var popup = document.getElementById('loginPopup');
+            if (popup)
+            {
+                popup.parentNode.removeChild(popup);
+            }
 
             InputHandler.unregisterClickEvent('cancelButton');
             InputHandler.unregisterClickEvent('registerButton');
@@ -53,7 +53,8 @@ define(['text!Renderer/content/loginPopup.html', 'Core/src/inputHandler', 'lib/s
             this.socket.on('registration_succeeded', function ()
             {
                 console.log('Registration Succeeded');
-            });
+                this.hide();
+            }.bind(this));
 
             this.socket.on('registration_failed', function (error)
             {
@@ -76,12 +77,8 @@ define(['text!Renderer/content/loginPopup.html', 'Core/src/inputHandler', 'lib/s
             this.socket.on('login_succeeded', function ()
             {
                 console.log();
-            });
-        };
-
-        LoginPopup.prototype.onInputElementFocused = function (e)
-        {
-            e.srcElement.focus();
+                this.hide();
+            }.bind(this));
         };
 
         return new LoginPopup();
