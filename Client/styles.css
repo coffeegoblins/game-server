@@ -12,12 +12,12 @@ html, body {
 body {
     background-color: #000;
     background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
+    background-size: cover;
 }
 
 body.main-menu {
     background-image: url("Renderer/content/promo.png");
+    background-position: left bottom;
 }
 
 #mainMenu {

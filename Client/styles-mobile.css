@@ -1,8 +1,3 @@
-body.main-menu {
-    background-position: 0 center;
-    background-size: cover;
-}
-
 #mainMenu {
     top: 16px;
     left: 16px;
@@ -97,11 +92,6 @@ body.main-menu {
 }
 
 @media only screen and (orientation: landscape) {
-    body.main-menu {
-        background-position: 0 center;
-        background-size: contain;
-    }
-
     #mainMenu {
         top: auto;
         left: auto;
