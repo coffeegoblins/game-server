@@ -6,10 +6,10 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
     {
         this.map = map;
         if (map.backgroundSpriteSheet)
-            this.backgroundSpriteSheet = new SpriteSheet('background', 'Renderer/content/' + map.backgroundSpriteSheet + '.png');
+            this.backgroundSpriteSheet = new SpriteSheet('background', 'Renderer/content/images/' + map.backgroundSpriteSheet + '.png');
 
         if (map.foregroundSpriteSheet)
-            this.foregroundSpriteSheet = new SpriteSheet('foreground', 'Renderer/content/' + map.foregroundSpriteSheet + '.png');
+            this.foregroundSpriteSheet = new SpriteSheet('foreground', 'Renderer/content/images/' + map.foregroundSpriteSheet + '.png');
     }
 
     RenderableMap.prototype.getTileAtCoordinate = function (x, y, scale)

@@ -16,7 +16,7 @@ body {
 }
 
 body.main-menu {
-    background-image: url("Renderer/content/promo.png");
+    background-image: url("Renderer/content/images/promo.png");
     background-position: left bottom;
 }
 
@@ -142,42 +142,42 @@ body.main-menu {
 }
 
 .unit-type-archer {
-    background-image: url('Renderer/content/icons.png');
+    background-image: url('Renderer/content/images/icons.png');
 }
 
 .action-attack {
     background-color: transparent;
-    background-image: url('Renderer/content/icons.png');
+    background-image: url('Renderer/content/images/icons.png');
 }
 
 .action-cancel {
     background-color: transparent;
-    background-image: url('Renderer/content/cancelIcon.png');
+    background-image: url('Renderer/content/images/cancelIcon.png');
 }
 
 .action-confirmMove {
     background-color: transparent;
-    background-image: url('Renderer/content/confirmMoveIcon.png');
+    background-image: url('Renderer/content/images/confirmMoveIcon.png');
 }
 
 .action-endTurn {
     background-color: transparent;
-    background-image: url('Renderer/content/icons.png');
+    background-image: url('Renderer/content/images/icons.png');
 }
 
 .action-move {
     background-color: transparent;
-    background-image: url('Renderer/content/icons.png');
+    background-image: url('Renderer/content/images/icons.png');
 }
 
 .action-rangeAttack {
     background-color: transparent;
-    background-image: url('Renderer/content/rangeAttackIcon.png');
+    background-image: url('Renderer/content/images/rangeAttackIcon.png');
 }
 
 .action-shield {
     background-color: transparent;
-    background-image: url('Renderer/content/icons.png');
+    background-image: url('Renderer/content/images/icons.png');
 }
 
 .team-green {

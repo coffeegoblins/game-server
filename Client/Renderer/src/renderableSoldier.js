@@ -25,7 +25,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
     function createSpriteSheet(type)
     {
         var animationDefinition = animations[type];
-        var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/' + animationDefinition.spriteSheet + '.png', {
+        var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/images/' + animationDefinition.spriteSheet + '.png', {
             tileWidth: animationDefinition.tileWidth,
             tileHeight: animationDefinition.tileHeight
         });

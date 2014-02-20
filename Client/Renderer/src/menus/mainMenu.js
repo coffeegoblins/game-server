@@ -1,4 +1,4 @@
-define(['text!Renderer/content/mainMenu.html', 'text!Renderer/content/game.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', './loginPopup'],
+define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', './loginPopup'],
     function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, loadJSON, PlotManager, LoginPopup)
     {
         function MainMenu()

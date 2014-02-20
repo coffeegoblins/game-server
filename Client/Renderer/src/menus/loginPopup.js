@@ -1,4 +1,4 @@
-define(['text!Renderer/content/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io'],
+define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io'],
     function (Template, InputHandler, io)
     {
         function LoginPopup()

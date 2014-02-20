@@ -1,4 +1,4 @@
-define(['text!Renderer/content/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar'],
+define(['text!Renderer/content/templates/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar'],
     function (Template, RenderableProgressBar)
     {
         'use strict';

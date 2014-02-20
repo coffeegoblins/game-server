@@ -4,7 +4,7 @@ define(['Core/src/imageCache', 'Renderer/src/renderableObject'], function (Image
     function RenderableLadder(ladder)
     {
         RenderableObject.call(this, ladder);
-        this.image = ImageCache.loadImage('ladder', 'Renderer/content/ladder.png');
+        this.image = ImageCache.loadImage('ladder', 'Renderer/content/images/ladder.png');
     }
 
     RenderableLadder.prototype = Object.create(RenderableObject.prototype);
