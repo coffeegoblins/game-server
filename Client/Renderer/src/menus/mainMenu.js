@@ -14,8 +14,6 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
             InputHandler.registerClickEvent('multiPlayer', this.onMultiPlayerButtonClicked, this);
             InputHandler.registerClickEvent('options', this.onOptionsButtonClicked, this);
             InputHandler.registerClickEvent('exit', this.onExitButtonClicked, this);
-
-            this.onSinglePlayerButtonClicked();
         };
 
         MainMenu.prototype.hide = function ()
