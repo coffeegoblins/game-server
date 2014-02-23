@@ -17,39 +17,15 @@
 .active-unit-preview {
     height: 128px;
     width: 128px;
-    background-size: 512px;
 }
 
-.turn-queue-preview {
+.turn-queue-preview{
+    height: 72px;
+}
+
+.unit-preview {
     width: 64px;
     height: 64px;
-}
-
-.unit-type-dualWield {
-    background-image: url('Renderer/content/images/icons.png');
-    background-position: -192px 0;
-}
-
-.unit-type-swordAndShield {
-    background-image: url('Renderer/content/images/icons.png');
-    background-position: -64px 0;
-}
-
-.unit-type-twoHanded {
-    background-image: url('Renderer/content/images/icons.png');
-    background-position: -128px 0;
-}
-
-.active-unit-preview.unit-type-dualWield {
-    background-position: -384px 0;
-}
-
-.active-unit-preview.unit-type-swordAndShield {
-    background-position: -128px 0;
-}
-
-.active-unit-preview.unit-type-twoHanded {
-    background-position: -256px 0;
 }
 
 .action-container {
@@ -59,20 +35,4 @@
 .action {
     height: 64px;
     width: 64px;
-}
-
-.action-attack {
-    background-position: -192px -64px;
-}
-
-.action-endTurn {
-    background-position: -128px -64px;
-}
-
-.action-move {
-    background-position: 0 -64px;
-}
-
-.action-shield {
-    background-position: -64px -64px;
 }

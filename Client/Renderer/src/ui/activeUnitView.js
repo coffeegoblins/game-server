@@ -1,51 +1,65 @@
-define(['text!Renderer/content/templates/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar'],
-    function (Template, RenderableProgressBar)
+define(['text!Renderer/content/templates/activeUnitView.html', 'Renderer/src/ui/renderableProgressBar'], function (Template, RenderableProgressBar)
+{
+    'use strict';
+
+    function ActiveUnitView(element)
     {
-        'use strict';
+        this.element = element;
+        this.element.id = "activeUnitView";
+        this.element.innerHTML = Template;
+        this.element.style.opacity = 0;
 
-        function ActiveUnitView(element)
+        //this.previewImage = this.element.querySelector('.active-unit-preview');
+        this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
+        this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
+    }
+
+    ActiveUnitView.prototype.show = function (unit)
+    {
+        this.hpBar.setProgress(unit.hp, unit.maxHP);
+        this.apBar.setProgress(unit.ap, unit.maxAP);
+
+        var previousImage = this.previewImage;
+        if (previousImage)
         {
-            this.element = element;
-            this.element.id = "activeUnitView";
-            this.element.innerHTML = Template;
-            this.element.style.opacity = 0;
-
-            this.previewImage = this.element.querySelector('.active-unit-preview');
-            this.hpBar = new RenderableProgressBar(this.element.querySelector('#activeUnitHP'));
-            this.apBar = new RenderableProgressBar(this.element.querySelector('#activeUnitAP'));
+            previousImage.style.position = 'absolute';
+            previousImage.addEventListener('transitionend', function ()
+            {
+                this.element.removeChild(previousImage);
+            }.bind(this));
         }
 
-        ActiveUnitView.prototype.onBeginTurn = function (activeUnit)
-        {
-            this.hpBar.transitionProgress('hpBar', activeUnit.hp, activeUnit.maxHP, 1);
-            this.apBar.transitionProgress('apBar', activeUnit.ap, activeUnit.maxAP, 1);
-            this.element.className = 'team-' + activeUnit.color;
-            this.previewImage.className = 'active-unit-preview unit-type-' + activeUnit.weapon.type;
-            this.element.style.opacity = 1;
-        };
+        var newImage = document.createElement('div');
+        newImage.className = 'active-unit-preview unit-type-' + unit.weapon.type;
+        this.element.insertBefore(newImage, this.hpBar.element);
+        this.previewImage = newImage;
 
-        ActiveUnitView.prototype.onEndTurn = function ()
-        {
-            this.apBar.stopBlink();
-            this.element.style.opacity = 0;
-        };
+        this.element.style.opacity = 1;
+        this.element.className = (unit.player.isLocal) ? 'player-team' : 'enemy-team';
 
-        ActiveUnitView.prototype.previewAP = function (ap)
+        setTimeout(function ()
         {
-            if (ap === 0)
-            {
-                this.apBar.stopBlink();
-            }
-            else
-            {
-                this.apBar.blinkPortion(ap);
-            }
-        };
+            newImage.style.opacity = 1;
+            if (previousImage)
+                previousImage.style.opacity = 0;
+        }, 0);
+    };
 
-        ActiveUnitView.prototype.setAP = function (ap, maxAP)
-        {
-            this.apBar.setProgress('apBar', ap, maxAP);
-        };
+    ActiveUnitView.prototype.hide = function ()
+    {
+        this.apBar.setBlink();
+        this.element.style.opacity = 0;
+    };
 
-        return ActiveUnitView;
-    });
+    ActiveUnitView.prototype.previewAP = function (ap)
+    {
+        this.apBar.setBlink(ap);
+    };
+
+    ActiveUnitView.prototype.setAP = function (ap, maxAP)
+    {
+        this.apBar.setProgress(ap, maxAP);
+    };
+
+    return ActiveUnitView;
+});

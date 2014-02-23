@@ -3,10 +3,8 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
     'use strict';
 
     var animations = JSON.parse(AnimationDefinitions);
-    var teamColors = {
-        'green': '#3ddb11',
-        'red': '#f93b34'
-    };
+    var playerColor = '#3ddb11';
+    var enemyColor = '#f93b34';
 
     function RenderableSoldier(unit)
     {
@@ -85,9 +83,16 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                 context.beginPath();
                 context.arc(0, 0, 30, 0, 2 * Math.PI);
 
-                var teamColor = teamColors[this.unit.color];
-                context.strokeStyle = teamColor;
-                context.fillStyle = teamColor;
+                if (this.unit.player.isLocal)
+                {
+                    context.strokeStyle = playerColor;
+                    context.fillStyle = playerColor;
+                }
+                else
+                {
+                    context.strokeStyle = enemyColor;
+                    context.fillStyle = enemyColor;
+                }
 
                 context.globalAlpha = 0.3;
                 context.fill();

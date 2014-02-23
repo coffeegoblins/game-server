@@ -48,11 +48,6 @@ define(function ()
         }
     };
 
-    Utility.isTouchEnabled = function ()
-    {
-        return ('ontouchstart' in window) || ('onmsgesturechange' in window);
-    };
-
     Utility.merge = function ()
     {
         var baseObject = arguments[0];

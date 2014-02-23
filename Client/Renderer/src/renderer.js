@@ -21,7 +21,7 @@ define([
             this.renderables = [];
             this.renderablePaths = [];
 
-            InputHandler.on('click', this, onClick);
+            InputHandler.registerClickEvent('canvas', onClick, this);
             InputHandler.on('drag', this, onDrag);
 
             TurnManager.on('beginTurn', this, this.onBeginTurn);
