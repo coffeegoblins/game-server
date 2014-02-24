@@ -1,24 +1,31 @@
-<div id="loginPopup" style="width:15%;position:absolute;top:50%;left:50%;margin:-7.5%">
-    <div style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);padding:10px;text-align:center;font-weight:700;">Login</div>
-    <div style="width:85%;margin:auto">
-        <div style="font-weight:700;padding:10px 10px 0px 10px;color:#FFF">Username</div>
-        <div style="text-align:center;">
-            <input type="text" id="usernameInput">
-        </div>
-        <div style="font-weight:700;padding:10px 10px 0px 10px;color:#FFF">Password</div>
-        <div style="text-align:center">
-            <input type="password" id="passwordInput">
-        </div>
-        <div id="confirmPasswordBox">
-            <div style="font-weight:700;padding:10px 10px 0px 10px;color:#FFF">Confirm Password</div>
-            <div style="text-align:center">
-                <input type="password" id="confirmPasswordInput">
+<div id="overlay">
+    <div id="loginPopup">
+            <div class="table">
+                <span id="loginTab" class="tab">Login</span>
+                <span id="registerTab" class="unselectedTab">Register</span>
             </div>
-        </div>
-    </div>
-    <div style="margin:20px 0px 0px 0px;text-align:center;background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);">
-        <div id="cancelButton" style="float:left;margin-left:35px;padding:10px;border-right: 1px solid #999;font-weight:700;">Cancel</div>
-        <div id="loginButton" style="float:right;margin-right:35px;padding:10px;border-left:1px solid #999;font-weight:700;">Login</div>
-        <div id="registerButton" style="padding:10px;font-weight:700;">Register</div>
+            <div id="loginPopupContents">
+                <div class="inputLabel">Username</div>
+                <div class="input">
+                    <input type="text" id="usernameInput">
+                </div>
+                <div class="inputLabel">Password</div>
+                <div class="input">
+                    <input type="password" id="passwordInput">
+                </div>
+                <div id="confirmPasswordBox">
+                    <div class="inputLabel">Confirm Password</div>
+                    <div class="input">
+                        <input type="password" id="confirmPasswordInput">
+                    </div>
+                </div>
+            </div>
+            <div class="table">
+                <span id="cancelButton" class="button">Cancel</span>
+                <span id="loginButton" class="button">Login</span>
+                <span id="registerButton" class="button">Register</span>
+            </div>
     </div>
 </div>
+
+
