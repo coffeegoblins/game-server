@@ -1,115 +1,136 @@
 define([
         'renderer',
-        'Core/src/scheduler',
-        'Core/src/inputHandler',
-        'Core/src/levelLoader',
-        'Core/src/turnManager',
-        'Renderer/src/ui/actionBarView',
+        'text!../content/weapons.json',
+        './scheduler',
+        './inputHandler',
+        './levelLoader',
+        './turnManager',
+        './soldier',
+        './players/automatedPlayer',
+        './players/localPlayer',
+        './players/remotePlayer',
         'Renderer/src/ui/activeUnitView',
-        'Renderer/src/ui/renderableTurnQueue',
-        'Core/src/attackManager',
-        'Core/src/movementManager'
+        'Renderer/src/ui/renderableTurnQueue'
     ],
-    function (Renderer, Scheduler, InputHandler, LevelLoader, TurnManager, ActionBarView, ActiveUnitView, RenderableTurnQueue, AttackManager, MovementManager)
+    function (Renderer, WeaponData, Scheduler, InputHandler, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, ActiveUnitView, RenderableTurnQueue)
     {
         'use strict';
+        var weaponData = JSON.parse(WeaponData);
 
-        function PlotManager() { }
-
-        PlotManager.prototype.initialize = function (weaponData)
+        function createSoldiers(positions)
         {
-            this.weaponData = weaponData;
-
-            LevelLoader.loadLevel('level1', weaponData, function (map, soldiers)
+            var soldiers = [];
+            for (var i = 0; i < positions.length; i++)
             {
-                this.currentMap = map;
-                this.currentMap.on('tileClick', this, this.onTileSelected);
-
-                this.actionBarView = new ActionBarView(document.getElementById('actionBarView'));
-                this.activeUnitView = new ActiveUnitView(document.getElementById('activeUnitView'));
-                this.renderableTurnQueue = new RenderableTurnQueue(document.getElementById('turnQueue'));
-
-                for (var i = 0; i < soldiers.length; i++)
+                var position = positions[i];
+                var weaponName;
+                switch (i % 4)
                 {
-                    var soldier = soldiers[i];
-                    TurnManager.addUnit(soldier);
-                    this.renderableTurnQueue.addUnit(soldier);
+                    case 0:
+                        weaponName = 'Bronze Sword and Shield';
+                        break;
+
+                    case 1:
+                        weaponName = 'Short Bow';
+                        break;
+
+                    case 2:
+                        weaponName = 'Twin Bronze Swords';
+                        break;
+
+                    case 3:
+                        weaponName = 'Iron Longsword';
+                        break;
                 }
 
-                // TODO Determine local player properly
-                this.player = TurnManager.unitList[0].player;
+                var soldier = new Soldier({name: 'unit' + (i + 1), tileX: position.x, tileY: position.y, weapon: weaponData[weaponName]});
+                soldier.weapon.name = weaponName;
+                soldiers.push(soldier);
+            }
 
-                this.attackManager = new AttackManager(this.currentMap, this.actionBarView, this.activeUnitView);
-                this.movementManager = new MovementManager(this.currentMap, this.actionBarView, this.activeUnitView);
+            return soldiers;
+        }
 
-                TurnManager.on('beginTurn', this.activeUnitView, this.activeUnitView.onBeginTurn);
-                TurnManager.on('endTurn', this.activeUnitView, this.activeUnitView.onEndTurn);
+        return {
+            loadLevel: function (levelName)
+            {
+                LevelLoader.loadLevel(levelName, function (map, startPoints)
+                {
+                    this.currentMap = map;
+                    this.activeUnitView = new ActiveUnitView(document.getElementById('activeUnitView'));
+                    this.renderableTurnQueue = new RenderableTurnQueue(document.getElementById('turnQueue'));
 
-                TurnManager.on('beginTurn', this.attackManager, this.attackManager.onBeginTurn);
+                    var player1Positions = [];
+                    var player2Positions = [];
 
-                TurnManager.on('beginTurn', this, this.onBeginTurn);
-                TurnManager.on('endTurn', this, this.onEndTurn);
+                    for (var i = 0; i < startPoints.length; i++)
+                    {
+                        var soldierPosition = startPoints[i];
+                        if (soldierPosition.player === 'Player1')
+                            player1Positions.push(soldierPosition);
+                        else
+                            player2Positions.push(soldierPosition);
+                    }
 
-                TurnManager.on('beginTurn', this.renderableTurnQueue, this.renderableTurnQueue.onBeginTurn);
-                TurnManager.on('endTurn', this.renderableTurnQueue, this.renderableTurnQueue.onEndTurn);
+                    this.players = [
+                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions), this.activeUnitView),
+                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions), this.activeUnitView)
+                    ];
+
+                    for (i = 0; i < this.players.length; i++)
+                    {
+                        var player = this.players[i];
+                        player.on('defeat', this, this.onPlayerDefeat);
+                        player.on('endTurn', this, this.onEndTurnAction);
+
+                        for (var j = 0; j < player.units.length; j++)
+                        {
+                            var unit = player.units[j];
+                            TurnManager.addUnit(unit);
+                            Renderer.addRenderableSoldier(unit);
+                            this.renderableTurnQueue.addUnit(unit);
+                            this.currentMap.addUnit(unit, unit.tileX, unit.tileY);
+                        }
+                    }
+
+                    TurnManager.on('beginTurn', this, this.onBeginTurn);
+                    TurnManager.on('endTurn', this, this.onEndTurn);
+                    TurnManager.beginTurn();
+                }.bind(this));
+            },
+
+            onBeginTurn: function (unit)
+            {
+                this.activeUnitView.show(unit);
+                this.renderableTurnQueue.onBeginTurn(unit);
+                Renderer.camera.moveToUnit(unit, this, this.onCameraMoved);
+            },
+
+            onCameraMoved: function (unit)
+            {
+                unit.player.performTurn(unit);
+                InputHandler.enableInput();
+            },
+
+            onEndTurn: function (unit, index)
+            {
+                InputHandler.disableInput();
+
+                this.activeUnitView.hide();
+                this.renderableTurnQueue.onEndTurn(unit, index);
+                Renderer.clearRenderablePaths();
 
                 TurnManager.beginTurn();
-            }.bind(this));
-        };
+            },
 
-        PlotManager.prototype.onBeginTurn = function (activeUnit)
-        {
-            Renderer.camera.moveToUnit(activeUnit, this, this.onCameraMoved);
-        };
-
-        PlotManager.prototype.onCameraMoved = function (activeUnit)
-        {
-            var attackActionName = activeUnit.type === 'archer' ? 'rangeAttack' : 'attack';
-            this.actionBarView.addActions([
-                {id: 'move', method: this.movementManager.onMoveAction, context: this.movementManager},
-                {id: attackActionName, method: this.attackManager.onAttackAction, context: this.attackManager},
-                {id: 'endTurn', method: this.onEndTurnAction, context: this}
-            ]);
-
-            //if (activeUnit.player === this.player) TODO: Comment in to only be able to control your player
+            onEndTurnAction: function ()
             {
-                this.actionBarView.showActions();
-            }
+                TurnManager.endTurn();
+            },
 
-            InputHandler.enableInput();
-        };
-
-        PlotManager.prototype.onEndTurn = function ()
-        {
-            InputHandler.disableInput();
-            this.actionBarView.hideActions();
-            Renderer.clearRenderablePaths();
-            TurnManager.beginTurn();
-        };
-
-        PlotManager.prototype.onTileSelected = function (tile)
-        {
-            this.activeUnitView.previewAP(0);
-            Renderer.clearRenderablePathById('selectedPath');
-
-            if (tile.content)
+            onPlayerDefeat: function (player)
             {
-                if (!tile.content.isClimbable || !TurnManager.activeUnit.canClimbObjects)
-                {
-                    // TODO Content logic, Show action
-                }
-            }
-
-            if (tile.unit)
-            {
-
+                console.log('player defeated');
             }
         };
-
-        PlotManager.prototype.onEndTurnAction = function ()
-        {
-            TurnManager.endTurn();
-        };
-
-        return new PlotManager();
     });

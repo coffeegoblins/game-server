@@ -1,7 +1,6 @@
 define(function ()
 {
     'use strict';
-
     return function (fileName, onComplete)
     {
         var request = new XMLHttpRequest();
@@ -13,7 +12,6 @@ define(function ()
             if (request.readyState === 4 && request.status === 200)
                 onComplete(JSON.parse(request.responseText));
         };
-
 
         request.send();
     };

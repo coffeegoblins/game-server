@@ -93,8 +93,6 @@ define(['Core/src/inputHandler', 'Core/src/scheduler'], function (InputHandler, 
 
     InputHandlerTest.prototype.testFlickIsFinite = function ()
     {
-        var flickCompleted = false;
-
         this.inputHandler.flickEvent = {currentX: 0, currentY: 0, velocityX: 1, velocityY: 1};
 
         this.inputHandler.flick(null, null);

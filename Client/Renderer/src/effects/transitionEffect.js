@@ -30,9 +30,7 @@ define(['Core/src/scheduler', 'Core/src/utility'], function (Scheduler, Utility)
         {
             // Stop existing operation on that style's value
             if (options.id)
-            {
                 Scheduler.unscheduleById(options.id);
-            }
 
             var transitionEvent = Utility.merge({duration: 1, method: onValueUpdate}, options);
             transitionEvent.currentValue = parseFloat(transitionEvent.source[transitionEvent.property]);
@@ -40,9 +38,9 @@ define(['Core/src/scheduler', 'Core/src/utility'], function (Scheduler, Utility)
             transitionEvent.endTime = transitionEvent.duration;
 
             var completedMethod = transitionEvent.completedMethod;
-            transitionEvent.completedMethod = function (e, deltaTime)
+            transitionEvent.completedMethod = function (e)
             {
-                onValueUpdateCompleted(e, deltaTime);
+                onValueUpdateCompleted(e);
                 if (completedMethod)
                     completedMethod.call(options.context);
             };

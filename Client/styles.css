@@ -110,15 +110,6 @@ body.main-menu {
     image-rendering: crisp-edges;
 }
 
-#activeUnitView {
-    position: fixed;
-    opacity: 1;
-    border-radius: 8px;
-    padding: 4px;
-    -webkit-transition: 0.5s opacity;
-    transition: 0.5s opacity;
-}
-
 #turnQueue {
     position: fixed;
     opacity: 1;
@@ -126,20 +117,41 @@ body.main-menu {
 }
 
 .active-unit-preview {
+    opacity: 0;
     margin-bottom: 8px;
+    background-size: 100%;
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
 }
 
 .turn-queue-preview {
     position: relative;
     display: block;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    overflow: hidden;
+    -webkit-transition-property: height;
+    -webkit-transition-duration: 1s;
+    transition-property: height;
+    transition-duration: 1s;
 }
 
-.turn-queue-preview div {
-    width: 100%;
-    height: 100%;
+.turn-queue-preview .container {
+    overflow: hidden;
+    border-radius: 8px;
+    height: calc(100% - 8px);
+}
+
+.unit-preview {
+    background-size: 100%;
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
+}
+
+#activeUnitView {
+    position: fixed;
+    opacity: 1;
+    border-radius: 8px;
+    padding: 4px;
+    -webkit-transition: 0.5s opacity;
+    transition: 0.5s opacity;
 }
 
 #activeUnitView .outerBar {
@@ -156,6 +168,16 @@ body.main-menu {
     border-radius: 5px;
     height: 100%;
     left: 0;
+}
+
+#activeUnitView .innerBar {
+    -webkit-transition: width 1s;
+    transition: width 1s;
+}
+
+#activeUnitView .innerBarPreview {
+    animation: blink 1s ease-in-out infinite alternate;
+    -webkit-animation: blink 1s ease-in-out infinite alternate;
 }
 
 #activeUnitHP .innerBar, #activeUnitHP .innerBarPreview {
@@ -205,52 +227,99 @@ body.main-menu {
 }
 
 .unit-type-archer {
-    background-image: url('Renderer/content/images/icons.png');
+    background-image: url('Renderer/content/images/archerIcon.png');
 }
 
-.action-attack {
-    background-color: transparent;
-    background-image: url('Renderer/content/images/icons.png');
+.unit-type-dualWield {
+    background-image: url('Renderer/content/images/dualWieldIcon.png');
 }
 
-.action-cancel {
-    background-color: transparent;
+.unit-type-swordAndShield {
+    background-image: url('Renderer/content/images/swordAndShieldIcon.png');
+}
+
+.unit-type-twoHanded {
+    background-image: url('Renderer/content/images/twoHandedIcon.png');
+}
+
+.action {
+    background-size: 100%;
+}
+
+.action.disabled {
+    opacity: 0.3;
+}
+
+.action.attack {
+    background-image: url('Renderer/content/images/attackIcon.png');
+}
+
+.action.cancel {
     background-image: url('Renderer/content/images/cancelIcon.png');
 }
 
-.action-confirmMove {
-    background-color: transparent;
+.action.confirmMove {
     background-image: url('Renderer/content/images/confirmMoveIcon.png');
 }
 
-.action-endTurn {
-    background-color: transparent;
-    background-image: url('Renderer/content/images/icons.png');
+.action.endTurn {
+    background-image: url('Renderer/content/images/endTurnIcon.png');
 }
 
-.action-move {
-    background-color: transparent;
-    background-image: url('Renderer/content/images/icons.png');
-}
-
-.action-rangeAttack {
-    background-color: transparent;
+.action.longShot {
     background-image: url('Renderer/content/images/rangeAttackIcon.png');
 }
 
-.action-shield {
-    background-color: transparent;
-    background-image: url('Renderer/content/images/icons.png');
+.action.move {
+    background-image: url('Renderer/content/images/moveIcon.png');
 }
 
-.team-green {
+.action.rangeAttack {
+    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+}
+
+.action.shield {
+    background-image: url('Renderer/content/images/shieldIcon.png');
+}
+
+.action.shortShot {
+    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+}
+
+.action.strike {
+    background-image: url('Renderer/content/images/attackIcon.png');
+}
+
+.action.sweep {
+    background-image: url('Renderer/content/images/attackIcon.png');
+}
+
+.player-team {
     background: #3ddb11;
     background: -webkit-linear-gradient(top, #3ddb11 0%, #134705 100%);
     background: linear-gradient(to bottom, #3ddb11 0%, #134705 100%);
 }
 
-.team-red {
+.enemy-team {
     background: #f93b34;
     background: -webkit-linear-gradient(top, #f93b34 0%, #580d0c 100%);
     background: linear-gradient(to bottom, #f93b34 0%, #580d0c 100%);
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

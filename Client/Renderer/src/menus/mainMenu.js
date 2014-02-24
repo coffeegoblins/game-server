@@ -1,5 +1,5 @@
-define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'jsonLoader', 'Core/src/plotManager', './loginPopup'],
-    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, loadJSON, PlotManager, LoginPopup)
+define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'Core/src/plotManager', './loginPopup'],
+    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, PlotManager, LoginPopup)
     {
         function MainMenu()
         {
@@ -25,31 +25,27 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
             InputHandler.unregisterClickEvent('exit');
         };
 
-        MainMenu.prototype.onSinglePlayerButtonClicked = function (e)
+        MainMenu.prototype.onSinglePlayerButtonClicked = function ()
         {
             this.hide();
 
             document.body.className = 'game';
             document.body.innerHTML = GameTemplate;
             Renderer.initialize(document.getElementById('canvas'));
-
-            loadJSON('weapons', function (weaponData)
-            {
-                PlotManager.initialize(weaponData);
-            });
+            PlotManager.loadLevel('level1');
         };
 
-        MainMenu.prototype.onMultiPlayerButtonClicked = function (e)
+        MainMenu.prototype.onMultiPlayerButtonClicked = function ()
         {
             LoginPopup.show();
         };
 
-        MainMenu.prototype.onOptionsButtonClicked = function (e)
+        MainMenu.prototype.onOptionsButtonClicked = function ()
         {
 
         };
 
-        MainMenu.prototype.onExitButtonClicked = function (e)
+        MainMenu.prototype.onExitButtonClicked = function ()
         {
 
         };

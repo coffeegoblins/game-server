@@ -16,6 +16,25 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         this.registeredClickEvents = {};
     }
 
+    InputHandler.addClickListener = function (element, method)
+    {
+        element.addEventListener('click', function (e)
+        {
+            method(e);
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+
+        element.addEventListener('touchstart', function (e)
+        {
+            if (e.targetTouches && e.targetTouches.length)
+                method.call(element, e.targetTouches[0]);
+
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    };
+
     InputHandler.getInstance = function ()
     {
         return inputHandler;

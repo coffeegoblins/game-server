@@ -1,4 +1,4 @@
-define(['Core/src/pathManager', 'Core/src/map'], function (PathManager, Map)
+define(['Core/src/pathManager', 'Core/src/map', 'Core/src/utility'], function (PathManager, Map, Utility)
 {
     'use strict';
 
@@ -32,7 +32,7 @@ define(['Core/src/pathManager', 'Core/src/map'], function (PathManager, Map)
             ignoreUnits: true
         });
 
-        assertEquals('Invalid number of tiles calculated', this.map.tiles.length, completedNodes.length);
+        assertEquals('Invalid number of tiles calculated', this.map.tiles.length - 1, completedNodes.length);
     };
 
     PathManagerTest.prototype.testHeightIsUsed = function ()
@@ -118,7 +118,8 @@ define(['Core/src/pathManager', 'Core/src/map'], function (PathManager, Map)
             ignoreUnits: true
         });
 
-        var pathNodes = PathManager.calculatePathFromNodes(nodes, 1, 0, 2, 1);
+        var currentNode = Utility.getElementByProperties(nodes, {x: 2, y: 1});
+        var pathNodes = PathManager.calculatePathFromNodes(currentNode, 1, 0);
 
         assertEquals('Path was not the correct length', 2, pathNodes.length);
         assertTruthy('First path node was incorrect', pathNodes[0].x === 2 && pathNodes[0].y === 0);
@@ -174,7 +175,8 @@ define(['Core/src/pathManager', 'Core/src/map'], function (PathManager, Map)
             canClimbObjects: true
         });
 
-        var targetPath = PathManager.calculatePathFromNodes(pathNodes, 1, 0, 2, 1);
+        var currentNode = Utility.getElementByProperties(pathNodes, {x: 2, y: 1});
+        var targetPath = PathManager.calculatePathFromNodes(currentNode, 1, 0);
 
         assertEquals('Path was not the correct length', 1, targetPath.length);
         assertTruthy('Path node was incorrect', targetPath[0].x === 2 && targetPath[0].y === 1);

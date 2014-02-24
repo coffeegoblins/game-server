@@ -1,0 +1,53 @@
+{
+    "archer": {
+        "shortShot": {
+            "cost": 20,
+            "damage": 1,
+            "displayName": "Short Shot",
+            "track": "bow1"
+        },
+        "longShot": {
+            "cost": 35,
+            "damage": 1,
+            "displayName": "Long Shot",
+            "track": "bow1"
+        }
+    },
+    "swordAndShield": {
+        "strike": {
+            "cost": 30,
+            "damage": 1,
+            "displayName": "Strike",
+            "track": "strike"
+        },
+        "shield": {
+            "cost": 30,
+            "damage": 0.8,
+            "displayName": "Shield Bash",
+            "track": "shieldBash1"
+        }
+    },
+    "twoHanded": {
+        "strike": {
+            "cost": 30,
+            "damage": 1,
+            "displayName": "Strike",
+            "track": "twoHandedStrike"
+        },
+        "sweep": {
+            "cost": 40,
+            "damage": 0.75,
+            "displayName": "Sweep",
+            "track": "sweep",
+            "useCrossNodes": true
+        }
+    },
+    "dualWield": {
+        "strike": {
+            "cost": 30,
+            "damage": 1,
+            "displayName": "Strike",
+            "track": "dualStrike"
+        }
+    }
+}

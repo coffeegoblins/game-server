@@ -65,14 +65,12 @@ define(['./utility'], function (Utility)
         }
     }
 
-    function EventManager() { }
-
-    EventManager.register = function (object)
-    {
-        object.on = on;
-        object.off = off;
-        object.trigger = trigger;
+    return {
+        register: function (object)
+        {
+            object.on = on;
+            object.off = off;
+            object.trigger = trigger;
+        }
     };
-
-    return EventManager;
 });

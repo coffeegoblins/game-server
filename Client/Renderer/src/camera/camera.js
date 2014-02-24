@@ -31,11 +31,10 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
 
     Camera.prototype.moveToUnit = function (unit, context, callback)
     {
-        var offset = this.scale / 2;
-
         this.targetUnit = unit;
-        this.targetX = Math.floor(unit.tileX * this.scale + offset - this.viewportRect.width / 2);
-        this.targetY = Math.floor(unit.tileY * this.scale + offset - this.viewportRect.height / 2);
+        var offset = this.scale / 2;
+        var xPosition = Math.floor(unit.tileX * this.scale + offset - this.viewportRect.width / 2);
+        var yPosition = Math.floor(unit.tileY * this.scale + offset - this.viewportRect.height / 2);
 
         this.callbackContext = context;
         this.callback = callback;
@@ -44,9 +43,7 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
             id: 'moveToUnitX',
             source: this.viewportRect,
             property: 'x',
-            targetValue: this.targetX,
-            context: this,
-            completedMethod: this.onMovedToUnit,
+            targetValue: xPosition,
             truncateValue: true
         };
 
@@ -54,21 +51,18 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
 
         transition.id = 'moveToUnitY';
         transition.property = 'y';
-        transition.targetValue = this.targetY;
+        transition.targetValue = yPosition;
+        transition.context = this;
+        transition.completedMethod = this.onMovedToUnit;
 
         TransitionEffect.transitionFloat(transition);
     };
 
     Camera.prototype.onMovedToUnit = function ()
     {
-        if (this.viewportRect.x === this.targetX && this.viewportRect.y === this.targetY)
-        {
-            this.callback.call(this.callbackContext, this.targetUnit);
-
-            this.targetUnit = null;
-            this.targetX = null;
-            this.targetY = null;
-        }
+        var unit = this.targetUnit;
+        this.targetUnit = null;
+        this.callback.call(this.callbackContext, unit);
     };
 
     return Camera;
