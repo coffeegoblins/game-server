@@ -39,22 +39,30 @@ UserManager.prototype.register = function (username, password, callback)
 
     console.log('Registering user: ' + username);
 
-    var options = {
-        safe: true
-    };
-
-    this.usersCollection.insert(user, options, function (error, user)
+    this.usersCollection.findOne({'username': username}, function (error, existingUser)
     {
-        if (error)
+        if (existingUser)
         {
-            console.log('Error registering ' + username + '.' + error);
-            callback(error, null);
+            console.log(username + ' already exists as a user!');
+            callback('That username is already taken. Enter another username.', null);
             return;
         }
 
-        console.log(username + ' has been registered.');
-        callback(null, user._id);
-    });
+        console.log(username + ' does not exist. Creating...');
+
+        this.usersCollection.insert(user, function (error, user)
+        {
+            if (error)
+            {
+                console.log('Error registering ' + username + '.' + error);
+                callback(error, null);
+                return;
+            }
+
+            console.log(username + ' has been registered.');
+            callback(null, user._id);
+        });
+    }.bind(this));
 };
 
 module.exports = function (usersCollection)

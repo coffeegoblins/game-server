@@ -15,6 +15,13 @@
     top: 164px;
 }
 
+#loginPopup {
+    position:relative;
+    width:250px;
+    top:20px;
+    margin:auto;
+}
+
 .active-unit-preview {
     height: 96px;
     width: 96px;

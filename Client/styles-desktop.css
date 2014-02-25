@@ -9,6 +9,13 @@
     top: 16px;
 }
 
+#loginPopup {
+    position:relative;
+    width:250px;
+    top:200px;
+    margin:auto;
+}
+
 #turnQueue {
     left: 16px;
     top: 204px;

@@ -20,9 +20,12 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             this.loginButton = document.getElementById('loginButton');
             this.registerTab = document.getElementById('registerTab');
             this.registerButton = document.getElementById('registerButton');
+            this.loginError = document.getElementById('loginError');
+            this.errorMessage = document.getElementById('errorMessage');
             
+            this.loginError.style.display = 'none';
             this.confirmPasswordBox.style.display = 'none';
-            this.registerButton.style.display = "none";
+            this.registerButton.style.display = 'none';
             
             this.socket = io.connect('http://127.0.0.1:1988');
         };
@@ -54,6 +57,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
                 this.confirmPasswordBox.style.display = 'block';
                 this.registerButton.style.display = null;
                 this.loginButton.style.display = 'none';
+                this.loginError.style.display = 'none';
                 
                 this.registerTab.className = 'tab';
                 this.loginTab.className = 'unselectedTab';
@@ -69,6 +73,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
                 this.confirmPasswordBox.style.display = 'none';
                 this.registerButton.style.display = 'none';
                 this.loginButton.style.display = null;
+                this.loginError.style.display = 'none';
                 
                 this.registerTab.className = 'unselectedTab';
                 this.loginTab.className = 'tab';
@@ -83,6 +88,13 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             var password = document.getElementById('passwordInput').value;
             var confirmPassword = document.getElementById('confirmPasswordInput').value;
 
+            if (password !== confirmPassword)
+            {
+                this.loginError.style.display = null;
+                this.errorMessage.innerHTML = 'Passwords did not match!';
+                return;
+            }
+
             this.socket.emit('register', username, btoa(password));
 
             this.socket.on('registration_succeeded', function ()
@@ -93,8 +105,12 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
             this.socket.on('registration_failed', function (error)
             {
-                console.log('Registration Failed.');
-            });
+                if (error)
+                {
+                    this.loginError.style.display = null;
+                    this.errorMessage.innerHTML = error;
+                }
+            }.bind(this));
         };
 
         LoginPopup.prototype.onLoginButtonClicked = function (e)
@@ -106,8 +122,12 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
             this.socket.on('login_failed', function (error)
             {
-                console.log(error);
-            });
+                if (error)
+                {
+                    this.loginError.style.display = null;
+                    this.errorMessage.innerHTML = error;
+                }
+            }.bind(this));
 
             this.socket.on('login_succeeded', function ()
             {
