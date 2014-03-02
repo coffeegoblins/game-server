@@ -1,5 +1,5 @@
-define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitView', 'Renderer/src/ui/actionBarView', 'Core/src/utility'],
-    function (AttackManager, Map, ActiveUnitView, ActionBarView, Utility)
+define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/unitView', 'Renderer/src/ui/actionBarView', 'Core/src/utility'],
+    function (AttackManager, Map, UnitView, ActionBarView, Utility)
     {
         'use strict';
 
@@ -15,7 +15,7 @@ define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/activeUnitVie
             var actionBarElement = document.createElement('div');
             actionBarElement.innerHTML = '<div class="action-container"></div>';
 
-            this.attackManager = new AttackManager(map, new ActionBarView(actionBarElement), new ActiveUnitView(document.createElement('div')));
+            this.attackManager = new AttackManager(map, new ActionBarView(actionBarElement), new UnitView(document.createElement('div')));
             this.attackManager.actionBarSnapshot = [
                 {}
             ];

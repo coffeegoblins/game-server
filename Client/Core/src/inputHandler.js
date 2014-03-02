@@ -16,28 +16,33 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         this.registeredClickEvents = {};
     }
 
+    var inputHandler = new InputHandler();
+
     InputHandler.addClickListener = function (element, method)
     {
+        if (!inputHandler.handleInput)
+            return;
+
         element.addEventListener('click', function (e)
         {
-            method(e);
-            e.preventDefault();
-            e.stopPropagation();
+            if (inputHandler.handleInput)
+            {
+                method(e);
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }, false);
 
         element.addEventListener('touchstart', function (e)
         {
-            if (e.targetTouches && e.targetTouches.length)
-                method.call(element, e.targetTouches[0]);
-
-            e.preventDefault();
-            e.stopPropagation();
+            if (inputHandler.handleInput)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.targetTouches && e.targetTouches.length)
+                    method.call(element, e.targetTouches[0]);
+            }
         }, false);
-    };
-
-    InputHandler.getInstance = function ()
-    {
-        return inputHandler;
     };
 
     InputHandler.disableInput = function ()
@@ -48,6 +53,11 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
     InputHandler.enableInput = function ()
     {
         inputHandler.handleInput = true;
+    };
+
+    InputHandler.getInstance = function ()
+    {
+        return inputHandler;
     };
 
     InputHandler.registerClickEvent = function (id, method, context)
@@ -63,7 +73,32 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         inputHandler.registeredClickEvents[id] = undefined;
     };
 
-    EventManager.register(InputHandler);
+
+    InputHandler.prototype.flick = function (eventData, deltaTime)
+    {
+        if (!this.flickEvent)
+        {
+            Scheduler.unscheduleById('flick');
+            return;
+        }
+
+        var dragX = this.flickEvent.currentX + this.flickEvent.velocityX;
+        var dragY = this.flickEvent.currentY + this.flickEvent.velocityY;
+        this.sendDrag(this.flickEvent, this.flickEvent.currentX, this.flickEvent.currentY, dragX, dragY);
+
+        this.flickEvent.velocityX *= 0.9;
+        this.flickEvent.velocityY *= 0.9;
+
+        if (Math.floor(Math.abs(this.flickEvent.velocityX)) === 0 && Math.floor(Math.abs(this.flickEvent.velocityY)) === 0)
+        {
+            Scheduler.unscheduleById('flick');
+            this.flickEvent = null;
+            return;
+        }
+
+        this.flickEvent.currentX = dragX;
+        this.flickEvent.currentY = dragY;
+    };
 
     InputHandler.prototype.handlePressEvent = function (currentEvent)
     {
@@ -149,31 +184,32 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         releaseEvent.state = this.InputState.UP;
     };
 
-    InputHandler.prototype.flick = function (eventData, deltaTime)
+    InputHandler.prototype.hasMovedEnough = function (event1, event2)
     {
-        if (!this.flickEvent)
-        {
-            Scheduler.unscheduleById('flick');
-            return;
-        }
-
-        var dragX = this.flickEvent.currentX + this.flickEvent.velocityX;
-        var dragY = this.flickEvent.currentY + this.flickEvent.velocityY;
-        this.sendDrag(this.flickEvent, this.flickEvent.currentX, this.flickEvent.currentY, dragX, dragY);
-
-        this.flickEvent.velocityX *= 0.9;
-        this.flickEvent.velocityY *= 0.9;
-
-        if (Math.floor(Math.abs(this.flickEvent.velocityX)) === 0 && Math.floor(Math.abs(this.flickEvent.velocityY)) === 0)
-        {
-            Scheduler.unscheduleById('flick');
-            this.flickEvent = null;
-            return;
-        }
-
-        this.flickEvent.currentX = dragX;
-        this.flickEvent.currentY = dragY;
+        return Math.abs(event1.pageX - event2.pageX) + Math.abs(event1.pageY - event2.pageY) > 10;
     };
+
+    InputHandler.prototype.sendClick = function (e)
+    {
+        var registeredEvent = this.registeredClickEvents[e.target.id];
+        if (registeredEvent)
+        {
+            var context = registeredEvent.context || e.target;
+            registeredEvent.method.call(context, e);
+        }
+        else
+        {
+            InputHandler.trigger('click', e);
+        }
+    };
+
+    InputHandler.prototype.sendDrag = function (event, previousX, previousY, targetX, targetY)
+    {
+        var deltaX = targetX - previousX;
+        var deltaY = targetY - previousY;
+        InputHandler.trigger('drag', event, deltaX, deltaY);
+    };
+
 
     function onMouseDown(e)
     {
@@ -188,11 +224,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         if (inputHandler.handleInput && inputHandler.mouseEvent)
             inputHandler.handleMoveEvent(inputHandler.mouseEvent, e);
     }
-
-    InputHandler.prototype.hasMovedEnough = function (event1, event2)
-    {
-        return Math.abs(event1.pageX - event2.pageX) + Math.abs(event1.pageY - event2.pageY) > 10;
-    };
 
     function onMouseUp()
     {
@@ -265,26 +296,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         inputHandler.activeTouches = {};
     }
 
-    InputHandler.prototype.sendClick = function (e)
-    {
-        var registeredEvent = this.registeredClickEvents[e.target.id];
-        if (registeredEvent)
-        {
-            var context = registeredEvent.context || e.target;
-            registeredEvent.method.call(context, e);
-        }
-        else
-        {
-            InputHandler.trigger('click', e);
-        }
-    };
-
-    InputHandler.prototype.sendDrag = function (event, previousX, previousY, targetX, targetY)
-    {
-        var deltaX = targetX - previousX;
-        var deltaY = targetY - previousY;
-        InputHandler.trigger('drag', event, deltaX, deltaY);
-    };
 
     // Block anything we don't want to happen
     var preventDefault = function (e)
@@ -304,33 +315,13 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
 
     if (('ontouchstart' in window) || ('onmsgesturechange' in window))
     {
-        // TODO: I have no idea what's going on with the Microsoft events. Maybe they'll come
-        // though the mouse API and just work, or maybe we need to figure these methods out
-        // because I'm pretty sure they don't expose the same variables as other touch methods.
-
-        //if (window.navigator.msPointerEnabled)
-        //{
-        //    window.addEventListener('pointerdown', onTouchMove, false);
-        //    window.addEventListener('MSPointerDown', onTouchMove, false);
-        //    window.addEventListener('pointermove', onTouchMove, false);
-        //    window.addEventListener('MSPointerMove', onTouchMove, false);
-        //    window.addEventListener('pointerup', onTouchEnd, false);
-        //    window.addEventListener('MSPointerUp', onTouchEnd, false);
-        //    window.addEventListener('pointercancel', onTouchCancel, false);
-        //    window.addEventListener('MSPointerCancel', onTouchCancel, false);
-        //}
-        //else
-        //{
         window.addEventListener('touchstart', onTouchStart, false);
         window.addEventListener('touchmove', onTouchMove, false);
         window.addEventListener('touchend', onTouchEnd, false);
         window.addEventListener('touchcancel', onTouchCancel, false);
-        //}
-
         document.body.style.msTouchAction = 'none';
     }
 
-    var inputHandler = new InputHandler();
-
+    EventManager.register(InputHandler);
     return InputHandler;
 });

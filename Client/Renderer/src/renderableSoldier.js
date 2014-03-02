@@ -3,15 +3,11 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
     'use strict';
 
     var animations = JSON.parse(AnimationDefinitions);
-    var playerColor = '#3ddb11';
-    var enemyColor = '#f93b34';
 
     function RenderableSoldier(unit)
     {
         this.unit = unit;
-        this.style = {};
-        this.style.opacity = 1;
-        this.isSelected = false;
+        this.style = {opacity: 1};
 
         this.spriteSheet = createSpriteSheet(this.unit.weapon.type);
         this.spriteSheet.playAnimation(this.unit.state);
@@ -39,6 +35,20 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
         return spriteSheet;
     }
+
+    RenderableSoldier.prototype.getSelectionColor = function ()
+    {
+        if (this.unit.isSelected)
+        {
+            if (this.unit.player.isLocal)
+                return '#3ddb11';
+
+            return '#f93b34';
+        }
+
+        if (this.unit.isTargeted)
+            return '#a0a0a0';
+    };
 
     RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)
     {
@@ -78,20 +88,21 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
             context.translate(xPosition, yPosition);
 
-            if (this.isSelected)
+            var color = this.getSelectionColor();
+            if (color)
             {
                 context.beginPath();
                 context.arc(0, 0, 30, 0, 2 * Math.PI);
 
                 if (this.unit.player.isLocal)
                 {
-                    context.strokeStyle = playerColor;
-                    context.fillStyle = playerColor;
+                    context.strokeStyle = color;
+                    context.fillStyle = color;
                 }
                 else
                 {
-                    context.strokeStyle = enemyColor;
-                    context.fillStyle = enemyColor;
+                    context.strokeStyle = color;
+                    context.fillStyle = color;
                 }
 
                 context.globalAlpha = 0.3;

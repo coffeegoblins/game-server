@@ -1,13 +1,14 @@
-define(['text!../../content/attacks.json', '../eventManager', '../pathManager', '../scheduler', '../soundManager', '../utility'],
-    function (AttackData, EventManager, PathManager, Scheduler, SoundManager, Utility)
+define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 'renderer', '../scheduler', '../soundManager', '../utility'],
+    function (AttackData, EventManager, PathManager, Renderer, Scheduler, SoundManager, Utility)
     {
         'use strict';
         var attackData = JSON.parse(AttackData);
 
-        function Player(map, units, activeUnitView)
+        function Player(map, units, activeUnitView, renderableTurnQueue)
         {
             this.map = map;
             this.activeUnitView = activeUnitView;
+            this.renderableTurnQueue = renderableTurnQueue;
 
             this.units = units || [];
             for (var i = 0; i < this.units.length; i++)
@@ -17,32 +18,6 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
                 soldier.on('death', this.onSoldierDeath.bind(this));
             }
         }
-
-        Player.prototype.attackUnit = function (targetTile, affectedTiles, attack)
-        {
-            var deltaX = targetTile.x - this.unit.tileX;
-            var deltaY = targetTile.y - this.unit.tileY;
-
-            this.unit.ap -= attack.cost;
-            this.unit.setDirection(deltaX, deltaY);
-            this.unit.setState('attack');
-
-            SoundManager.playTrack(attack.track);
-
-            this.unit.on('animationComplete', this, function onAttackFinished()
-            {
-                for (var i = 0; i < affectedTiles.length; ++i)
-                {
-                    var node = affectedTiles[i];
-                    if (node.tile.unit)
-                        node.tile.unit.damage(attack.totalDamage);
-                }
-
-                this.unit.setState('idle');
-                this.unit.off('animationComplete', this, onAttackFinished);
-                this.onAttackComplete();
-            });
-        };
 
         Player.prototype.endTurn = function ()
         {
@@ -106,6 +81,8 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
         Player.prototype.moveUnit = function (tiles, cost)
         {
             this.unit.setState('run');
+            Renderer.camera.trackUnit(this.unit);
+            this.activeUnitView.apBar.disableTransitions();
 
             var startTile = this.map.getTile(this.unit.tileX, this.unit.tileY);
             startTile.unit = null;
@@ -154,7 +131,7 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
                     this.unit.tileY = currentNode.y + (deltaY * nodeProgressPercentage);
 
                     this.unit.ap = startAp + (endAp - startAp) * progressPercentage;
-                    this.activeUnitView.setAP(this.unit.ap, this.unit.maxAP);
+                    this.activeUnitView.updateValues();
                 },
                 completedMethod: function ()
                 {
@@ -164,7 +141,10 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
 
                     this.unit.ap = endAp;
                     this.unit.setState('idle');
-                    this.activeUnitView.setAP(this.unit.ap, this.unit.maxAP);
+                    this.activeUnitView.apBar.enableTransitions();
+                    this.activeUnitView.updateValues();
+
+                    Renderer.camera.trackUnit();
                     this.onMoveComplete();
                 }
             });
@@ -175,6 +155,32 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
             Utility.removeElement(this.units, soldier);
             if (!this.units.length)
                 this.trigger('defeat', this);
+        };
+
+        Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
+        {
+            var deltaX = targetTile.x - this.unit.tileX;
+            var deltaY = targetTile.y - this.unit.tileY;
+
+            this.unit.ap -= attack.cost;
+            this.unit.setDirection(deltaX, deltaY);
+            this.unit.setState('attack');
+
+            SoundManager.playTrack(attack.track);
+
+            this.unit.on('animationComplete', this, function onAttackFinished()
+            {
+                for (var i = 0; i < affectedTiles.length; ++i)
+                {
+                    var node = affectedTiles[i];
+                    if (node.tile.unit)
+                        node.tile.unit.damage(attack.totalDamage);
+                }
+
+                this.unit.setState('idle');
+                this.unit.off('animationComplete', this, onAttackFinished);
+                this.onAttackComplete();
+            });
         };
 
         Player.prototype.performTurn = function (unit)

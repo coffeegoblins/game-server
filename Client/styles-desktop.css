@@ -4,21 +4,32 @@
     width: 300px;
 }
 
-#activeUnitView {
-    left: 16px;
-    top: 16px;
-}
-
 #loginPopup {
-    position:relative;
-    width:250px;
-    top:200px;
-    margin:auto;
+    position: relative;
+    width: 250px;
+    top: 200px;
+    margin: auto;
 }
 
 #turnQueue {
-    left: 16px;
-    top: 204px;
+    left: 8px;
+    top: 203px;
+}
+
+.unit-view.primary {
+    left: 0;
+    top: 0;
+    border-radius: 0 0 8px 0;
+}
+
+.unit-view.secondary {
+    right: 0;
+    top: 0;
+    border-radius: 0 0 0 8px;
+}
+
+.outerBar {
+    margin-top: 4px;
 }
 
 .active-unit-preview {
@@ -26,7 +37,7 @@
     width: 128px;
 }
 
-.turn-queue-preview{
+.turn-queue-preview {
     height: 72px;
 }
 

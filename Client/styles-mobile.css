@@ -5,26 +5,54 @@
     margin: auto;
 }
 
-#activeUnitView {
-    left: 8px;
-    top: 8px;
+.unit-view {
+    top: 0;
+    padding: 4px;
+}
+
+.unit-view.primary {
+    left: 0;
+    border-radius: 0 0 8px 0;
+}
+
+.unit-view.secondary {
+    top: 78px;
+    border-radius: 0 8px 8px 0;
+}
+
+.unit-view > div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.unit-view .unit-name {
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.outerBar {
+    width: 100px;
+}
+
+.outerBar.hp-bar {
+    margin-bottom: 4px;
 }
 
 #turnQueue {
-    left: 8px;
-    top: 164px;
+    right: 8px;
+    top: 8px;
 }
 
 #loginPopup {
-    position:relative;
-    width:250px;
-    top:20px;
-    margin:auto;
+    position: relative;
+    width: 250px;
+    top: 20px;
+    margin: auto;
 }
 
 .active-unit-preview {
-    height: 96px;
-    width: 96px;
+    height: 64px;
+    width: 64px;
 }
 
 .turn-queue-preview {
@@ -55,7 +83,7 @@
     }
 
     #turnQueue {
-        left: 120px;
+        left: 186px;
         top: 8px;
     }
 
@@ -74,7 +102,7 @@
     #actionBarView {
         left: auto;
         bottom: auto;
-        right: 8px;
+        right: 0;
         top: 50%;
     }
 
@@ -93,5 +121,17 @@
     .action-container .divider {
         height: 1px;
         width: 100%;
+    }
+
+    .unit-view.primary {
+        border-radius: 0 0 8px 0;
+    }
+
+    .unit-view.secondary {
+        top: auto;
+        right: auto;
+        left: 0;
+        bottom: 0;
+        border-radius: 0 8px 0 0;
     }
 }

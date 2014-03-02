@@ -1,4 +1,4 @@
-define(function ()
+define(['Core/src/utility'], function (Utility)
 {
     'use strict';
     function RenderableProgressBar(element)
@@ -9,19 +9,30 @@ define(function ()
         this.foregroundElement.style.width = '100%';
     }
 
-    RenderableProgressBar.prototype.setBlink = function (portion)
+    RenderableProgressBar.prototype.disableTransitions = function ()
+    {
+        this.previewElement.classList.add('no-transition');
+        this.foregroundElement.classList.add('no-transition');
+    };
+
+    RenderableProgressBar.prototype.enableTransitions = function ()
+    {
+        this.previewElement.classList.remove('no-transition');
+        this.foregroundElement.classList.remove('no-transition');
+    };
+
+    RenderableProgressBar.prototype.previewProgress = function (portion)
     {
         if (portion)
         {
-            this.previewElement.style.width = this.foregroundElement.style.width;
+            this.previewElement.classList.add('blink');
+            this.previewElement.style.width = this.progress / this.maxProgress * 100 + '%';
             this.foregroundElement.style.width = (this.progress - portion) / this.maxProgress * 100 + '%';
-            this.previewElement.className += ' blink';
         }
-        else
+        else if (this.previewElement.classList.contains('blink'))
         {
-            this.previewElement.style.width = '0%';
+            this.previewElement.classList.remove('blink');
             this.foregroundElement.style.width = this.progress / this.maxProgress * 100 + '%';
-            this.previewElement.className = this.previewElement.className.replace('blink', '');
         }
     };
 

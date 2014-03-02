@@ -27,8 +27,6 @@ define(['Core/src/scheduler', 'Renderer/src/camera/camera'], function (Scheduler
         var actualUnit = null;
 
         this.camera.targetUnit = {tileX: 1, tileY: 1};
-        this.camera.callbackContext = this;
-
         this.camera.handleResize(100, 100);
 
         this.camera.callback = function (targetUnit)

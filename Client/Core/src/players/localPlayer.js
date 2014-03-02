@@ -1,4 +1,4 @@
-define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', './player', 'renderer', '../utility'], function (ActionBarView, InputHandler, PathManager, Player, Renderer, Utility)
+define(['Renderer/src/ui/actionBarView', 'Renderer/src/ui/unitView', '../inputHandler', '../pathManager', './player', 'renderer', '../utility'], function (ActionBarView, UnitView, InputHandler, PathManager, Player, Renderer, Utility)
 {
     'use strict';
     function LocalPlayer()
@@ -7,6 +7,13 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
 
         this.isLocal = true;
         this.actionBarView = new ActionBarView(document.getElementById('actionBarView'));
+
+        this.targetUnitView = new UnitView(document.createElement('div'));
+        this.targetUnitView.element.className = 'unit-view secondary';
+        document.body.appendChild(this.targetUnitView.element);
+
+        this.renderableTurnQueue.on('selectUnit', this, this.onUnitSelected);
+        this.renderableTurnQueue.on('deselectUnit', this, this.onUnitDeselected);
     }
 
     LocalPlayer.prototype = Object.create(Player.prototype);
@@ -25,13 +32,30 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
         ]);
 
         this.actionBarView.show();
+        this.map.on('tileClick', this, this.onTileClick);
+        InputHandler.enableInput();
     };
 
     LocalPlayer.prototype.endTurn = function ()
     {
         Player.prototype.endTurn.call(this);
 
+        InputHandler.disableInput();
         this.actionBarView.hide();
+        this.renderableTurnQueue.select();
+        this.map.off('tileClick', this);
+    };
+
+    LocalPlayer.prototype.onTileClick = function (tile, x, y)
+    {
+        if (tile.unit && tile.unit !== this.unit)
+        {
+            this.renderableTurnQueue.select(tile.unit);
+        }
+        else
+        {
+            this.renderableTurnQueue.select();
+        }
     };
 
 
@@ -81,8 +105,9 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
             excludePlayer: this
         }, attack));
 
+
         Renderer.addRenderablePath('attack', this.availableTiles, false);
-        this.map.on('tileClick', this, this.onAttackTileSelected.bind(this));
+        this.map.on('tileClick', this, this.onAttackTileSelected);
     };
 
     LocalPlayer.prototype.onAttackTileSelected = function (tile)
@@ -118,8 +143,8 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
         }
         else
         {
-            this.actionBarView.disableAction(this.getAttackAction().name);
             this.activeUnitView.previewAP();
+            this.actionBarView.disableAction(this.getAttackAction().name);
         }
     };
 
@@ -129,14 +154,15 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
         Renderer.clearRenderablePaths();
         this.actionBarView.goToState(0);
 
-        this.attackUnit(this.selectedTile, this.selectedTiles, this.currentAttack);
-        this.activeUnitView.setAP(this.unit.ap, this.unit.maxAP);
+        this.performAttack(this.selectedTile, this.selectedTiles, this.currentAttack);
+        this.activeUnitView.updateValues();
     };
 
     LocalPlayer.prototype.onAttackComplete = function ()
     {
-        InputHandler.enableInput();
+        this.targetUnitView.updateValues();
         this.resetActionState();
+        InputHandler.enableInput();
     };
 
     LocalPlayer.prototype.onMoveAction = function ()
@@ -174,6 +200,7 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
         }
         else
         {
+            this.activeUnitView.previewAP();
             this.actionBarView.disableAction('confirmMove');
         }
     };
@@ -183,14 +210,24 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
         InputHandler.disableInput();
         Renderer.clearRenderablePaths();
         this.actionBarView.goToState(0);
-
+        this.activeUnitView.previewAP();
         this.moveUnit(this.selectedTiles, this.selectedTile.distance);
     };
 
     LocalPlayer.prototype.onMoveComplete = function ()
     {
-        InputHandler.enableInput();
         this.resetActionState();
+        InputHandler.enableInput();
+    };
+
+    LocalPlayer.prototype.onUnitDeselected = function ()
+    {
+        this.targetUnitView.hide();
+    };
+
+    LocalPlayer.prototype.onUnitSelected = function (unit)
+    {
+        this.targetUnitView.show(unit);
     };
 
     LocalPlayer.prototype.resetActionState = function (actionState)
@@ -201,7 +238,8 @@ define(['Renderer/src/ui/actionBarView', '../inputHandler', '../pathManager', '.
 
         Renderer.clearRenderablePaths();
         this.activeUnitView.previewAP();
-        this.map.off('tileClick', this);
+        this.map.off('tileClick', this, this.onAttackTileSelected);
+        this.map.off('tileClick', this, this.onMoveTileSelected);
         this.actionBarView.goToState(actionState || 0);
     };
 

@@ -57,7 +57,10 @@ define(function ()
             if (argument)
             {
                 for (var property in argument)
-                    baseObject[property] = argument[property];
+                {
+                    if (argument[property] !== undefined)
+                        baseObject[property] = argument[property];
+                }
             }
         }
 

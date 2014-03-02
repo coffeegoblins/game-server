@@ -1,6 +1,7 @@
 define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Utility)
 {
     'use strict';
+    var maxOpacity = 0.8;
 
     function ActionBarView(element)
     {
@@ -29,7 +30,7 @@ define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Ut
                 actionElement.className = 'action ' + action.name;
 
                 if (action.isDisabled)
-                    actionElement.className += ' disabled';
+                    actionElement.classList.add('disabled');
 
                 action.element = actionElement;
                 this.actionList.push(action);
@@ -59,7 +60,7 @@ define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Ut
         if (action && !action.isDisabled)
         {
             action.isDisabled = true;
-            action.element.className += ' disabled';
+            action.element.classList.add('disabled');
         }
     };
 
@@ -69,17 +70,16 @@ define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Ut
         if (action && action.isDisabled)
         {
             action.isDisabled = false;
-            action.element.className = action.element.className.replace('disabled', '');
+            action.element.classList.remove('disabled');
         }
     };
 
     ActionBarView.prototype.handleClick = function (e)
     {
-        if (this.element.style.opacity != 1)
+        if (this.element.style.opacity != maxOpacity)
             return;
 
-        var className = e.target.className;
-        if (className.indexOf('action') >= 0 && className.indexOf('disabled') === -1)
+        if (e.target.classList.contains('action') && !e.target.classList.contains('disabled'))
         {
             var action = Utility.getElementByProperty(this.actionList, 'element', e.target);
             if (action)
@@ -130,7 +130,7 @@ define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Ut
 
     ActionBarView.prototype.show = function ()
     {
-        this.element.style.opacity = 1;
+        this.element.style.opacity = maxOpacity;
     };
 
     return ActionBarView;

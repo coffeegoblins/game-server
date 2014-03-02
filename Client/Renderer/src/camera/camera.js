@@ -20,7 +20,7 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         this.viewportRect.y = Math.floor(currentCenterY - height / 2);
 
         if (this.targetUnit)
-            this.moveToUnit(this.targetUnit, this.callbackContext, this.callback);
+            this.moveToUnit(this.targetUnit, this.callback);
     };
 
     Camera.prototype.moveViewport = function (deltaX, deltaY)
@@ -29,20 +29,23 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         this.viewportRect.y = Math.floor(this.viewportRect.y + deltaY);
     };
 
-    Camera.prototype.moveToUnit = function (unit, context, callback)
+    Camera.prototype.moveToUnit = function (unit, callback, duration)
     {
-        this.targetUnit = unit;
         var offset = this.scale / 2;
         var xPosition = Math.floor(unit.tileX * this.scale + offset - this.viewportRect.width / 2);
         var yPosition = Math.floor(unit.tileY * this.scale + offset - this.viewportRect.height / 2);
 
-        this.callbackContext = context;
+        if (Math.abs(this.viewportRect.x - xPosition) < 10 && Math.abs(this.viewportRect.y - yPosition) < 10)
+            return;
+
+        this.targetUnit = unit;
         this.callback = callback;
 
         var transition = {
             id: 'moveToUnitX',
             source: this.viewportRect,
             property: 'x',
+            duration: duration || 1,
             targetValue: xPosition,
             truncateValue: true
         };
@@ -62,7 +65,23 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
     {
         var unit = this.targetUnit;
         this.targetUnit = null;
-        this.callback.call(this.callbackContext, unit);
+
+        if (this.callback)
+        {
+            this.callback(unit);
+            this.callback = null;
+        }
+    };
+
+    Camera.prototype.trackUnit = function (unit)
+    {
+        this.trackedUnit = unit;
+    };
+
+    Camera.prototype.update = function ()
+    {
+        if (this.trackedUnit)
+            this.moveToUnit(this.trackedUnit, null, 0.5);
     };
 
     return Camera;

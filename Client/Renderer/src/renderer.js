@@ -2,7 +2,6 @@ define([
         'Core/src/eventManager',
         'Core/src/inputHandler',
         'Core/src/scheduler',
-        'Core/src/turnManager',
         'Core/src/utility',
         'Renderer/src/renderableMap',
         'Renderer/src/renderableLadder',
@@ -11,7 +10,7 @@ define([
         'Renderer/src/camera/camera',
         'Renderer/src/renderablePath'
     ],
-    function (Events, InputHandler, Scheduler, TurnManager, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath)
+    function (Events, InputHandler, Scheduler, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {
         'use strict';
 
@@ -23,10 +22,6 @@ define([
 
             InputHandler.registerClickEvent('canvas', onClick, this);
             InputHandler.on('drag', this, onDrag);
-
-            TurnManager.on('beginTurn', this, this.onBeginTurn);
-            TurnManager.on('endTurn', this, this.onEndTurn);
-
             Events.register(this);
         }
 
@@ -54,6 +49,8 @@ define([
             this.context.clearRect(0, 0, this.camera.viewportRect.width, this.camera.viewportRect.height);
             if (!this.renderableMap)
                 return;
+
+            this.camera.update(deltaTime);
 
             var map = this.renderableMap;
             map.render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
@@ -124,30 +121,6 @@ define([
                     break;
                 }
             });
-        };
-
-        Renderer.prototype.onEndTurn = function (activeUnit)
-        {
-            for (var i = 0; i < this.renderables.length; ++i)
-            {
-                var renderable = this.renderables[i];
-                if (renderable.unit === activeUnit)
-                {
-                    renderable.isSelected = false;
-                }
-            }
-        };
-
-        Renderer.prototype.onBeginTurn = function (activeUnit)
-        {
-            for (var i = 0; i < this.renderables.length; ++i)
-            {
-                var renderable = this.renderables[i];
-                if (renderable instanceof RenderableSoldier)
-                {
-                    renderable.isSelected = (renderable.unit === activeUnit);
-                }
-            }
         };
 
         Renderer.prototype.initialize = function (canvas)
