@@ -1,20 +1,21 @@
-define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io'],
-    function (Template, InputHandler, io)
+define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io', 'Renderer/src/menus/lobbyMenu'],
+    function (Template, InputHandler, io, LobbyMenu)
     {
         function LoginPopup()
         {
+
         }
 
         LoginPopup.prototype.show = function ()
         {
             document.body.innerHTML += Template;
-            
+
             InputHandler.registerClickEvent('cancelButton', this.onCancelButtonClicked, this);
             InputHandler.registerClickEvent('registerTab', this.onRegisterTabClicked, this);
             InputHandler.registerClickEvent('loginTab', this.onLoginTabClicked, this);
             InputHandler.registerClickEvent('loginButton', this.onLoginButtonClicked, this);
             InputHandler.registerClickEvent('registerButton', this.onRegisterButtonClicked, this);
-            
+
             this.confirmPasswordBox = document.getElementById('confirmPasswordBox');
             this.loginTab = document.getElementById('loginTab');
             this.loginButton = document.getElementById('loginButton');
@@ -22,11 +23,11 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             this.registerButton = document.getElementById('registerButton');
             this.loginError = document.getElementById('loginError');
             this.errorMessage = document.getElementById('errorMessage');
-            
+
             this.loginError.style.display = 'none';
             this.confirmPasswordBox.style.display = 'none';
             this.registerButton.style.display = 'none';
-            
+
             this.socket = io.connect('http://127.0.0.1:1988');
         };
 
@@ -58,10 +59,10 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
                 this.registerButton.style.display = null;
                 this.loginButton.style.display = 'none';
                 this.loginError.style.display = 'none';
-                
+
                 this.registerTab.className = 'tab';
                 this.loginTab.className = 'unselectedTab';
-                
+
                 return;
             }
         };
@@ -74,14 +75,14 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
                 this.registerButton.style.display = 'none';
                 this.loginButton.style.display = null;
                 this.loginError.style.display = 'none';
-                
+
                 this.registerTab.className = 'unselectedTab';
                 this.loginTab.className = 'tab';
-                
+
                 return;
             }
         };
-        
+
         LoginPopup.prototype.onRegisterButtonClicked = function (e)
         {
             var username = document.getElementById('usernameInput').value;
@@ -100,7 +101,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             this.socket.on('registration_succeeded', function ()
             {
                 console.log('Registration Succeeded');
-                this.hide();
+                this.loadLobby();
             }.bind(this));
 
             this.socket.on('registration_failed', function (error)
@@ -131,8 +132,14 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
             this.socket.on('login_succeeded', function ()
             {
-                this.hide();
+                this.loadLobby();
             }.bind(this));
+        };
+
+        LoginPopup.prototype.loadLobby = function ()
+        {
+            this.hide();
+            LobbyMenu.show();
         };
 
         return new LoginPopup();
