@@ -15,6 +15,11 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'Core/src/inputHandler
 
             InputHandler.registerClickEvent('navBar', this.onNavButtonClicked, this);
             InputHandler.registerClickEvent('navButton', this.onNavButtonClicked, this);
+            
+            InputHandler.registerClickEvent('notificationsButton', this.onNotificationButtonClicked, this);
+            InputHandler.registerClickEvent('waitingOnYouButton', this.onWaitingOnYouButtonClicked, this);
+            InputHandler.registerClickEvent('waitingOnThemButton', this.onWaitingOnThemButtonClicked, this);
+            InputHandler.registerClickEvent('playerSearchButton', this.onPlayerSearchButtonClicked, this);
         };
 
         LobbyMenu.prototype.hide = function ()

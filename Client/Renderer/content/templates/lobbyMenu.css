@@ -1,82 +1,39 @@
-.active {} #menuBar {
-    background: #333;
-    float: left;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 350px;
-    -webkit-transition: all 200ms ease-in-out;
-    -moz-transition: all 200ms ease-in-out;
-    -ms-transition: all 200ms ease-in-out;
-    -o-transition: all 200ms ease-in-out;
-    transition: all 200ms ease-in-out;
-}
-#menuBar.inactive {
-    left: -318px;
-}
 #navBar {
     background: #333;
     box-shadow: 0px 2px 10px #000;
     height: 32px;
-    -webkit-transition: all 200ms ease-in-out;
-    -moz-transition: all 200ms ease-in-out;
-    -ms-transition: all 200ms ease-in-out;
-    -o-transition: all 200ms ease-in-out;
-    transition: all 200ms ease-in-out;
-}
-#navBar.inactive {
-    width: 32px;
-}
-#menuBar.active {
-    left: 0;
 }
 #menuBar ul {
     padding: 0;
+    margin: 10px;
 }
 #menuBar li {
-    display: block;
+    /* display: block; */
     font-weight: 700;
     font-size: 24px;
-    padding: 10px;
+    padding: 5px;
     color: #CCC;
     text-shadow: 2px 2px 5px #000;
 }
-#menuBar img {
-    margin-left: auto;
-    margin-right: 0;
-    display: block;
+nav {
+    background: #333;
+    position: absolute;
+    /* height: auto; */
+    /* padding: 10px; */
+    z-index: -1;
+    box-shadow: 0px 2px 10px #000;
+    
+    -webkit-transition: top 200ms ease-in-out;
+    -moz-transition: top 200ms ease-in-out;
+    -ms-transition: top 200ms ease-in-out;
+    -o-transition: top 200ms ease-in-out;
+    transition: top 200ms ease-in-out;
 }
-@media (max-width: 350px) {
-    nav {
-        background: #333;
-        position: absolute;
-        height: auto;
-        padding: 10px;
-        z-index: -1;
-
-        -webkit-transition: top 200ms ease-in-out;
-        -moz-transition: top 200ms ease-in-out;
-        -ms-transition: top 200ms ease-in-out;
-        -o-transition: top 200ms ease-in-out;
-        transition: top 200ms ease-in-out;
-    }
-    .inactive nav {
-        top: -250px;
-    }
-    .active nav {
-        top: 32px;
-    }
-    #menuBar.inactive {
-        left: 0;
-        height: 32px;
-    }
-    #menuBar {
-        width: 100%;
-        position: relative;
-        float: none;
-        height: auto;
-    }
+.inactive nav {
+    top: -250px;
+}
+.active nav {
+    top: 32px;
 }
 #leftColumn {
     width: 100%;
