@@ -1,5 +1,5 @@
-define(['text!Renderer/content/templates/lobbyMenu.html', 'Core/src/inputHandler', 'lib/socket.io'],
-    function (Template, InputHandler, io)
+define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content/templates/playerSearch.html', 'Core/src/inputHandler', 'lib/socket.io'],
+    function (LobbyTemplate, PlayerSearchTemplate, InputHandler, io)
     {
         function LobbyMenu()
         {
@@ -9,12 +9,13 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'Core/src/inputHandler
         LobbyMenu.prototype.show = function ()
         {
             document.body.backgroundColor = "#FFF";
-            document.body.innerHTML = Template;
+            document.body.innerHTML = LobbyTemplate;
 
-            this.menuBar = document.getElementById('menuBar');
+            this.navigationMenu = document.getElementById('navigationMenu');
+            this.content = document.getElementById('content');
 
-            InputHandler.registerClickEvent('navBar', this.onNavButtonClicked, this);
-            InputHandler.registerClickEvent('navButton', this.onNavButtonClicked, this);
+            InputHandler.registerClickEvent('navigationBar', this.toggleNavigationMenu, this);
+            InputHandler.registerClickEvent('navigationButton', this.toggleNavigationMenu, this);
             
             InputHandler.registerClickEvent('notificationsButton', this.onNotificationButtonClicked, this);
             InputHandler.registerClickEvent('waitingOnYouButton', this.onWaitingOnYouButtonClicked, this);
@@ -26,16 +27,22 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'Core/src/inputHandler
         {
             document.body.innerHTML = '';
         };
-
-        LobbyMenu.prototype.onNavButtonClicked = function (e)
+        
+        LobbyMenu.prototype.toggleNavigationMenu = function ()
         {
-            if (this.menuBar.className === 'active')
+            if (this.navigationMenu.className === 'active')
             {
-                this.menuBar.className = 'inactive';
+                this.navigationMenu.className = 'inactive';
                 return;
             }
 
-            this.menuBar.className = 'active';
+            this.navigationMenu.className = 'active';
+        };
+        
+        LobbyMenu.prototype.onPlayerSearchButtonClicked = function (e)
+        {
+            this.toggleNavigationMenu();
+            this.content.innerHTML += PlayerSearchTemplate;
         };
 
         return new LobbyMenu();
