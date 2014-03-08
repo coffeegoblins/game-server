@@ -1,34 +1,34 @@
 <div id="overlay">
     <div id="loginPopup">
-            <div class="table">
-                <span id="loginTab" class="tab">Login</span>
-                <span id="registerTab" class="unselectedTab">Register</span>
+        <div class="table">
+            <span id="loginTab" class="tab">Login</span>
+            <span id="registerTab" class="unselectedTab">Register</span>
+        </div>
+        <div id="loginPopupContents">
+            <div id="loginError">
+                <img class="warningIcon" src="Renderer/content/images/cancelIcon.png" />
+                <div id="errorMessage"></div>
             </div>
-            <div id="loginPopupContents">
-                <div id="loginError">
-                    <img class="warningIcon" src="Renderer/content/images/cancelIcon.png" />
-                    <div id="errorMessage"></div>
-                </div>
-                <div class="inputLabel">Username</div>
+            <div class="inputLabel">Username</div>
+            <div class="input">
+                <input type="text" id="usernameInput">
+            </div>
+            <div class="inputLabel">Password</div>
+            <div class="input">
+                <input type="password" id="passwordInput">
+            </div>
+            <div id="confirmPasswordBox">
+                <div class="inputLabel">Confirm Password</div>
                 <div class="input">
-                    <input type="text" id="usernameInput">
-                </div>
-                <div class="inputLabel">Password</div>
-                <div class="input">
-                    <input type="password" id="passwordInput">
-                </div>
-                <div id="confirmPasswordBox">
-                    <div class="inputLabel">Confirm Password</div>
-                    <div class="input">
-                        <input type="password" id="confirmPasswordInput">
-                    </div>
+                    <input type="password" id="confirmPasswordInput">
                 </div>
             </div>
-            <div class="table">
-                <span id="cancelButton" class="button">Cancel</span>
-                <span id="loginButton" class="button">Login</span>
-                <span id="registerButton" class="button">Register</span>
-            </div>
+        </div>
+        <div class="table">
+            <span id="cancelButton" class="button">Cancel</span>
+            <span id="loginButton" class="button">Login</span>
+            <span id="registerButton" class="button">Register</span>
+        </div>
     </div>
 </div>
 

@@ -1,0 +1,184 @@
+.active {} #menuBar {
+    background: #333;
+    float: left;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 350px;
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -ms-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
+#menuBar.inactive {
+    left: -318px;
+}
+#navBar {
+    background: #333;
+    box-shadow: 0px 2px 10px #000;
+    height: 32px;
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -ms-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
+#navBar.inactive {
+    width: 32px;
+}
+#menuBar.active {
+    left: 0;
+}
+#menuBar ul {
+    padding: 0;
+}
+#menuBar li {
+    display: block;
+    font-weight: 700;
+    font-size: 24px;
+    padding: 10px;
+    color: #CCC;
+    text-shadow: 2px 2px 5px #000;
+}
+#menuBar img {
+    margin-left: auto;
+    margin-right: 0;
+    display: block;
+}
+@media (max-width: 350px) {
+    nav {
+        background: #333;
+        position: absolute;
+        height: auto;
+        padding: 10px;
+        z-index: -1;
+
+        -webkit-transition: top 200ms ease-in-out;
+        -moz-transition: top 200ms ease-in-out;
+        -ms-transition: top 200ms ease-in-out;
+        -o-transition: top 200ms ease-in-out;
+        transition: top 200ms ease-in-out;
+    }
+    .inactive nav {
+        top: -250px;
+    }
+    .active nav {
+        top: 32px;
+    }
+    #menuBar.inactive {
+        left: 0;
+        height: 32px;
+    }
+    #menuBar {
+        width: 100%;
+        position: relative;
+        float: none;
+        height: auto;
+    }
+}
+#leftColumn {
+    width: 100%;
+    max-width: 350px;
+    float: left;
+}
+#leftColumn table {
+    width: 100%;
+}
+#leftColumn .buttonWidth {
+    width: 50px;
+}
+#rightColumn {
+    float: left;
+}
+#rightColumn ul {
+    display: inline;
+}
+#rightColumn li {
+    float: left;
+    padding: 0px 10px;
+}
+#rightColumn li:nth-child(odd) {
+    background: #999;
+    border-radius: 10px;
+    padding: 0px 10px;
+    color: #FFF;
+}
+#searchBox {
+    padding: 10px 0px;
+}
+.section {
+    background-color: rgba(255, 255, 255, 1);
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+.playerName {
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+}
+.playerRecord {
+    padding: 10px 0px 0px 0px;
+}
+.playerRanking {
+    float: left;
+    font-size: 24px;
+    font-family: Arial;
+    font-weight: 900;
+    color: #417C00;
+    text-shadow: 1px 1px 0 #000;
+    padding: 0px 10px;
+}
+.result {
+    padding: 10px;
+}
+.result input {
+    height: 100%;
+}
+.resultsTable {
+    width: 100%;
+    border-collapse: collapse;
+    color: #FFF;
+    left: 0px;
+    top: 0px;
+}
+.resultsTable table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+.resultsTable tr:nth-child(odd) {
+    background-color: #DDD;
+}
+.resultsTable tr:nth-child(even) {
+    background-color: #CCC;
+}
+.resultsTable td {
+    vertical-align: middle;
+    padding: 10px;
+    font-size: 14px;
+    font-family: Arial;
+    /* display: inline; */
+    /* float: left; */
+}
+.resultsTable td:last-child {
+    width: 100px;
+}
+.resultsTable td:last-child input {
+    width: 100px;
+}
+.resultsTable th {
+    display: block;
+    background-color: #999;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+    font-family: Arial;
+    font-weight: 700;
+    color: #ffffff;
+    display: table-cell;
+}
