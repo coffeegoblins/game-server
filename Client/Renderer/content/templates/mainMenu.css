@@ -1,0 +1,27 @@
+#mainMenu {
+    position: absolute;
+}
+#mainMenu {
+    right: 5%;
+    bottom: 5%;
+    width: 300px;
+    font-size: 24px;
+}
+.menuItem {
+    background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(200, 200, 200) 20%, rgb(200, 200, 200) 80%, rgba(0, 0, 0, 0) 100%);
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    color: #000;
+    opacity: 0.8;
+}
+@media only screen and (max-width: 400px) {
+    #mainMenu {
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        margin: auto;
+        width: auto;
+    }
+}

@@ -34,15 +34,11 @@
 #navigationMenu.active {
     top: 32px;
 }
-
-
-
-    .section {
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #FFF;
-    }
+.section {
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 10px;
+    padding: 10px;
+}
 
 
 
@@ -75,12 +71,6 @@
 }
 #searchBox {
     padding: 10px 0px;
-}
-.section {
-    background-color: rgba(255, 255, 255, 1);
-    margin: 10px;
-    padding: 10px;
-    border-radius: 10px;
 }
 .playerName {
     font-family: Arial;
@@ -130,8 +120,6 @@
     padding: 10px;
     font-size: 14px;
     font-family: Arial;
-    /* display: inline; */
-    /* float: left; */
 }
 .resultsTable td:last-child {
     width: 100px;
