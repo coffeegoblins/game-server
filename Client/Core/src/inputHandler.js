@@ -200,6 +200,11 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         else
         {
             InputHandler.trigger('click', e);
+            
+            if (e.target.id)
+            {
+                document.getElementById(e.target.id).focus();
+            }
         }
     };
 
@@ -240,7 +245,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
             for (var i = 0; i < e.changedTouches.length; i++)
             {
                 var touch = e.changedTouches[i];
-                inputHandler.activeTouches[touch.id] = inputHandler.handlePressEvent(touch);
+                inputHandler.activeTouches[touch.identifier] = inputHandler.handlePressEvent(touch);
             }
         }
 
@@ -254,7 +259,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
             for (var i = 0; i < e.changedTouches.length; i++)
             {
                 var touch = e.changedTouches[i];
-                var activeTouch = inputHandler.activeTouches[touch.id];
+                var activeTouch = inputHandler.activeTouches[touch.identifier];
                 if (activeTouch)
                 {
                     inputHandler.handleMoveEvent(activeTouch, touch);
@@ -272,11 +277,11 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
             for (var i = 0; i < e.changedTouches.length; i++)
             {
                 var touch = e.changedTouches[i];
-                var activeTouch = inputHandler.activeTouches[touch.id];
+                var activeTouch = inputHandler.activeTouches[touch.identifier];
                 if (activeTouch)
                 {
                     inputHandler.handleReleaseEvent(activeTouch);
-                    delete inputHandler.activeTouches[touch.id];
+                    delete inputHandler.activeTouches[touch.identifier];
                 }
             }
         }
@@ -287,7 +292,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         if (inputHandler.handleInput && e.changedTouches)
         {
             for (var i = 0; i < e.changedTouches.length; i++)
-                delete inputHandler.activeTouches[e.changedTouches.id];
+                delete inputHandler.activeTouches[e.changedTouches.identifier];
         }
     }
 
