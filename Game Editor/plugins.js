@@ -1,11 +1,8 @@
-define('Plugins', ['./layers/objectLayer', './plugins/objectTypes', './layers/tileLayer'], function (ObjectLayer, ObjectTypes, TileLayer)
+define('Plugins', [ './plugins/objectTypes'], function (ObjectTypes)
 {
     'use strict';
     return {
-        layerTypes: {
-            'objectLayer': ObjectLayer,
-            'tileLayer': TileLayer
-        },
+        isIsometric: true,
         objectTypes: ObjectTypes,
         resources: [
             'heights.png',

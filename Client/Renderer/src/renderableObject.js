@@ -1,38 +1,38 @@
-define(function ()
+define(['Core/src/spriteSheet'], function (SpriteSheet)
 {
     'use strict';
 
     function RenderableObject(object)
     {
         this.object = object;
+
+        var size;
+        if (this.object.type === 'tree')
+            size = {tileWidth: 64, tileHeight: 64};
+
+        var path = 'Renderer/content/images/' + this.object.type + '.png';
+        this.spriteSheet = new SpriteSheet(this.object.type, path, size);
+        this.spriteSheet.setCurrentTile(object.style);
     }
 
-    RenderableObject.prototype.isVisible = function (left, right, top, bottom)
+    RenderableObject.prototype.render = function (context, deltaTime, camera)
     {
-        return  this.object.tileX <= right &&
-                this.object.tileY <= bottom &&
-                this.object.tileX + this.object.sizeX >= left &&
-                this.object.tileY + this.object.sizeY >= top;
-    };
+        if (!this.spriteSheet.image.isLoaded)
+            return;
 
-    RenderableObject.prototype.render = function (context, deltaTime, tileSize, viewportRect)
-    {
-        var scaledWidth = tileSize * this.object.sizeX;
-        var scaledHeight = tileSize * this.object.sizeY;
+        var tileRect = this.spriteSheet.getCurrentTileBounds();
+        if (tileRect)
+        {
+            var position = camera.tileToScreen(this.object.tileX, this.object.tileY);
+            position.x += 16 - camera.viewportRect.x;
+            position.y += -16 - camera.viewportRect.y;
 
-        var width = Math.floor(scaledWidth * 0.75);
-        var height = Math.floor(scaledHeight * 0.75);
+            var imageWidth = this.spriteSheet.tileWidth * camera.scale;
+            var imageHeight = this.spriteSheet.tileHeight * camera.scale;
 
-        var horizontalOffset = 1 + ((scaledWidth - width) / 2);
-        var verticalOffset = 1 + ((scaledHeight - height) / 2);
-
-        var xPosition = this.object.tileX * tileSize + horizontalOffset - viewportRect.x;
-        var yPosition = this.object.tileY * tileSize + verticalOffset - viewportRect.y;
-
-        context.beginPath();
-        context.fillStyle = '#000';
-        context.rect(xPosition, yPosition, width, height);
-        context.fill();
+            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
+                position.x, position.y, imageWidth, imageHeight);
+        }
     };
 
     return RenderableObject;

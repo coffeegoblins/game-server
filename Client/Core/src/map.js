@@ -59,15 +59,12 @@ define(['./eventManager'], function (EventManager)
         return true;
     };
 
-    Map.prototype.onClick = function (e, x, y, scale)
+    Map.prototype.onClick = function (e, x, y)
     {
-        var tileX = Math.floor(x / scale);
-        var tileY = Math.floor(y / scale);
-
-        var tile = this.getTile(tileX, tileY);
+        var tile = this.getTile(x, y);
         if (tile)
         {
-            this.trigger('tileClick', tile, tileX, tileY);
+            this.trigger('tileClick', tile, x, y);
         }
     };
 

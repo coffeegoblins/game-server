@@ -39,22 +39,14 @@ define(['renderer', './map', './worldObject', './ladder', 'jsonLoader'], functio
                 {
                     soldiers.push.apply(soldiers, this.loadObjects(layer, map));
                 }
-                else
+                else if (layer.name === 'Background')
                 {
-                    switch (layer.name)
-                    {
-                        case 'Foreground':
-                            map.foregroundSpriteSheet = layer.spriteSheet;
-                            this.loadTiles(layer, map, 'foregroundTile');
-                            break;
-                        case 'Background':
-                            map.backgroundSpriteSheet = layer.spriteSheet;
-                            this.loadTiles(layer, map, 'backgroundTile');
-                            break;
-                        case 'Heights':
-                            this.loadTiles(layer, map, 'height');
-                            break;
-                    }
+                    map.spriteSheet = layer.spriteSheet;
+                    this.loadTiles(layer, map, 'spriteIndex');
+                }
+                else if (layer.name === 'Heights')
+                {
+                    this.loadTiles(layer, map, 'height');
                 }
             }
 
@@ -76,14 +68,14 @@ define(['renderer', './map', './worldObject', './ladder', 'jsonLoader'], functio
                         Renderer.addRenderableLadder(ladder);
                         break;
 
-                    case 'object':
+                    case 'soldier':
+                        soldierStartPoints.push(object);
+                        break;
+
+                    default:
                         var worldObject = new WorldObject(object);
                         map.addObject(worldObject, object.x, object.y);
                         Renderer.addRenderableObject(worldObject);
-                        break;
-
-                    case 'soldier':
-                        soldierStartPoints.push(object);
                         break;
                 }
             }

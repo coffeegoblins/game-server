@@ -5,7 +5,12 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
     function Camera()
     {
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
-        this.scale = 64; // TODO: It may be better to scale the canvas instead of the drawing in some cases
+
+        this.scale = 1;
+        this.tileWidth = 96;
+        this.tileHeight = this.tileWidth / 2;
+        this.halfTileWidth = this.tileWidth / 2;
+        this.halfTileHeight = this.tileHeight / 2;
     }
 
     Camera.prototype.handleResize = function (width, height)
@@ -31,9 +36,9 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
 
     Camera.prototype.moveToUnit = function (unit, callback, duration)
     {
-        var offset = this.scale / 2;
-        var xPosition = Math.floor(unit.tileX * this.scale + offset - this.viewportRect.width / 2);
-        var yPosition = Math.floor(unit.tileY * this.scale + offset - this.viewportRect.height / 2);
+        var position = this.tileToScreen(unit.tileX, unit.tileY);
+        var xPosition = Math.floor(position.x - this.viewportRect.width / 2);
+        var yPosition = Math.floor(position.y - this.viewportRect.height / 2);
 
         if (Math.abs(this.viewportRect.x - xPosition) < 10 && Math.abs(this.viewportRect.y - yPosition) < 10)
             return;
@@ -66,11 +71,28 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         var unit = this.targetUnit;
         this.targetUnit = null;
 
-        if (this.callback)
+        var callback = this.callback;
+        if (callback)
         {
-            this.callback(unit);
             this.callback = null;
+            callback(unit);
         }
+    };
+
+    Camera.prototype.screenToTile = function (x, y)
+    {
+        return {
+            x: Math.floor((x / this.halfTileWidth + y / this.halfTileHeight) / 2),
+            y: Math.floor((y / this.halfTileHeight - x / this.halfTileWidth) / 2)
+        };
+    };
+
+    Camera.prototype.tileToScreen = function (x, y)
+    {
+        return {
+            x: (x - y) * this.halfTileWidth - this.halfTileWidth,
+            y: (x + y) * this.halfTileHeight
+        };
     };
 
     Camera.prototype.trackUnit = function (unit)

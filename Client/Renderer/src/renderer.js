@@ -36,7 +36,10 @@ define([
         function onClick(e)
         {
             if (this.renderableMap)
-                this.renderableMap.onClick(e, e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y, this.camera.scale);
+            {
+                var position = this.camera.screenToTile(e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y);
+                this.renderableMap.onClick(e, position.x, position.y);
+            }
         }
 
         function onDrag(e, deltaX, deltaY)
@@ -53,20 +56,18 @@ define([
             this.camera.update(deltaTime);
 
             var map = this.renderableMap;
-            map.render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
+            map.render(this.context, this.camera);
 
             // Pathing needs to be drawn after the map and before the objects
             for (var i = 0; i < this.renderablePaths.length; i++)
-            {
-                this.renderablePaths[i].render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
-            }
+                this.renderablePaths[i].render(this.context, this.camera);
 
             for (i = 0; i < this.renderables.length; i++)
             {
                 var renderable = this.renderables[i];
-                if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
+                //if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
                 {
-                    renderable.render(this.context, deltaTime, this.camera.scale, this.camera.viewportRect);
+                    renderable.render(this.context, deltaTime, this.camera);
                 }
             }
         }

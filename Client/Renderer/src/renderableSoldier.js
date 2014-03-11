@@ -50,14 +50,6 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             return '#a0a0a0';
     };
 
-    RenderableSoldier.prototype.isVisible = function (left, right, top, bottom)
-    {
-        return this.unit.tileX <= right &&
-               this.unit.tileY <= bottom &&
-               this.unit.tileX >= left &&
-               this.unit.tileY >= top;
-    };
-
     RenderableSoldier.prototype.onStateChange = function ()
     {
         this.spriteSheet.playAnimation(this.unit.state);
@@ -76,56 +68,67 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         }
     };
 
-    RenderableSoldier.prototype.render = function (context, deltaTime, tileSize, viewportRect)
+    RenderableSoldier.prototype.render = function (context, deltaTime, camera)
     {
-        if (this.spriteSheet.image.isLoaded)
+        if (!this.spriteSheet.image.isLoaded)
+            return;
+
+        context.save();
+
+        var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);
+        context.translate(position.x + camera.halfTileWidth - camera.viewportRect.x, position.y+camera.halfTileHeight - camera.viewportRect.y);
+
+        var color = this.getSelectionColor();
+        if (color)
         {
-            context.save();
+            var width = camera.tileWidth * 2 / 3;
+            var height = camera.tileHeight * 2 / 3;
+            drawEllipse(context, -width / 2, -height / 2, width, height);
 
-            var halfTileSize = tileSize / 2;
-            var xPosition = this.unit.tileX * tileSize - viewportRect.x + halfTileSize;
-            var yPosition = this.unit.tileY * tileSize - viewportRect.y + halfTileSize;
+            context.strokeStyle = color;
+            context.fillStyle = color;
 
-            context.translate(xPosition, yPosition);
-
-            var color = this.getSelectionColor();
-            if (color)
-            {
-                context.beginPath();
-                context.arc(0, 0, 30, 0, 2 * Math.PI);
-
-                if (this.unit.player.isLocal)
-                {
-                    context.strokeStyle = color;
-                    context.fillStyle = color;
-                }
-                else
-                {
-                    context.strokeStyle = color;
-                    context.fillStyle = color;
-                }
-
-                context.globalAlpha = 0.3;
-                context.fill();
-                context.globalAlpha = 0.75;
-                context.stroke();
-            }
-
-            if (this.unit.direction)
-                context.rotate(this.unit.direction);
-
-            this.spriteSheet.updateAnimation(deltaTime);
-            context.globalAlpha = this.style.opacity;
-
-            var tileRect = this.spriteSheet.getCurrentTileBounds();
-            if (tileRect)
-            {
-                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, -halfTileSize, -halfTileSize, tileSize, tileSize);
-            }
-
-            context.restore();
+            context.globalAlpha = 0.3;
+            context.fill();
+            context.globalAlpha = 0.75;
+            context.stroke();
         }
+
+        if (this.unit.direction)
+            context.rotate(this.unit.direction);
+
+        this.spriteSheet.updateAnimation(deltaTime);
+        var tileRect = this.spriteSheet.getCurrentTileBounds();
+        if (tileRect)
+        {
+            var imageWidth = this.spriteSheet.tileWidth * camera.scale;
+            var imageHeight = this.spriteSheet.tileHeight * camera.scale;
+
+            context.globalAlpha = this.style.opacity;
+            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
+                    -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
+        }
+
+        context.restore();
     };
+
+    function drawEllipse(context, left, top, width, height)
+    {
+        var horizontalOffset = (width / 2) * 0.5522848;
+        var verticalOffset = (height / 2) * 0.5522848;
+        var right = left + width;
+        var bottom = top + height;
+        var xCenter = left + width / 2;
+        var yCenter = top + height / 2;
+
+        context.beginPath();
+        context.moveTo(left, yCenter);
+        context.bezierCurveTo(left, yCenter - verticalOffset, xCenter - horizontalOffset, top, xCenter, top);
+        context.bezierCurveTo(xCenter + horizontalOffset, top, right, yCenter - verticalOffset, right, yCenter);
+        context.bezierCurveTo(right, yCenter + verticalOffset, xCenter + horizontalOffset, bottom, xCenter, bottom);
+        context.bezierCurveTo(xCenter - horizontalOffset, bottom, left, yCenter + verticalOffset, left, yCenter);
+        context.closePath();
+    }
 
     return RenderableSoldier;
 });

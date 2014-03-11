@@ -5,11 +5,14 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
     function RenderableMap(map)
     {
         this.map = map;
-        if (map.backgroundSpriteSheet)
-            this.backgroundSpriteSheet = new SpriteSheet('background', 'Renderer/content/images/' + map.backgroundSpriteSheet + '.png');
-
-        if (map.foregroundSpriteSheet)
-            this.foregroundSpriteSheet = new SpriteSheet('foreground', 'Renderer/content/images/' + map.foregroundSpriteSheet + '.png');
+        if (map.spriteSheet)
+        {
+            var filePath = 'Renderer/content/images/' + map.spriteSheet + '.png';
+            this.tileSheet = new SpriteSheet('background', filePath, {
+                tileHeight: 32,
+                tileWidth: 64
+            });
+        }
     }
 
     RenderableMap.prototype.getTileAtCoordinate = function (x, y, scale)
@@ -17,44 +20,37 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         return this.map.getTile(Math.floor(x / scale), Math.floor(y / scale));
     };
 
-    RenderableMap.prototype.onClick = function (e, x, y, scale)
+    RenderableMap.prototype.onClick = function (e, x, y)
     {
-        this.map.onClick(e, x, y, scale);
+        this.map.onClick(e, x, y);
     };
 
-    RenderableMap.prototype.render = function (context, deltaTime, tileSize, viewportRect)
+    RenderableMap.prototype.render = function (context, camera)
     {
-        this.visibleTileLeft = Math.max(0, Math.floor(viewportRect.x / tileSize));
-        this.visibleTileTop = Math.max(0, Math.floor(viewportRect.y / tileSize));
+        if (!this.tileSheet.isLoaded)
+            return;
 
-        this.visibleTileRight = Math.min(this.map.width - 1, Math.ceil((viewportRect.x + viewportRect.width) / tileSize));
-        this.visibleTileBottom = Math.min(this.map.height - 1, Math.ceil((viewportRect.y + viewportRect.height) / tileSize));
+        var viewportLeft = camera.viewportRect.x;
+        var viewportTop = camera.viewportRect.y;
 
-        for (var x = this.visibleTileLeft; x <= this.visibleTileRight; x++)
+        for (var x = 0; x < this.map.width; x++)
         {
-            for (var y = this.visibleTileTop; y <= this.visibleTileBottom; y++)
+            for (var y = 0; y < this.map.height; y++)
             {
                 var tile = this.map.getTile(x, y);
-                drawTile(this.backgroundSpriteSheet, tile, 'backgroundTile', x, y, tileSize, context, viewportRect);
-                drawTile(this.foregroundSpriteSheet, tile, 'foregroundTile', x, y, tileSize, context, viewportRect);
+                if (!tile.spriteIndex)
+                    continue;
+
+                var tileRect = this.tileSheet.getTileBounds(tile.spriteIndex - 1);
+                if (tileRect)
+                {
+                    var position = camera.tileToScreen(x, y);
+                    context.drawImage(this.tileSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
+                            position.x - viewportLeft, position.y - viewportTop, camera.tileWidth, camera.tileHeight);
+                }
             }
         }
     };
-
-    function drawTile(spriteSheet, tile, property, x, y, tileSize, context, viewportRect)
-    {
-        if (!spriteSheet || !tile[property])
-            return;
-
-        var tileRect = spriteSheet.getTileBounds(tile[property] - 1);
-        if (tileRect)
-        {
-            var xPosition = x * tileSize - viewportRect.x;
-            var yPosition = y * tileSize - viewportRect.y;
-
-            context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height, xPosition, yPosition, tileSize, tileSize);
-        }
-    }
 
     return RenderableMap;
 });
