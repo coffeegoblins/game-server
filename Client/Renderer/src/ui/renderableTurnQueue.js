@@ -67,6 +67,8 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
             if (unitData)
                 this.handleUnitSelection(unitData);
         }
+
+        return false;
     };
 
     RenderableTurnQueue.prototype.handleResize = function (width, height)

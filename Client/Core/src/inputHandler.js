@@ -27,20 +27,23 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         {
             if (inputHandler.handleInput)
             {
-                method(e);
-                e.preventDefault();
-                e.stopPropagation();
+                if (method(e) === false)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             }
         }, false);
 
         element.addEventListener('touchstart', function (e)
         {
-            if (inputHandler.handleInput)
+            if (inputHandler.handleInput && e.targetTouches && e.targetTouches.length === 1)
             {
-                e.preventDefault();
-                e.stopPropagation();
-                if (e.targetTouches && e.targetTouches.length)
-                    method.call(element, e.targetTouches[0]);
+                if (method.call(element, e.targetTouches[0]) === false)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             }
         }, false);
     };
@@ -200,7 +203,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         else
         {
             InputHandler.trigger('click', e);
-            
+
             if (e.target.id)
             {
                 document.getElementById(e.target.id).focus();

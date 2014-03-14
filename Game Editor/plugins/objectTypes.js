@@ -7,18 +7,12 @@ define(function ()
     DefaultObject.prototype.initialize = function (x, y)
     {
         this.position = {x: Math.floor(x / 64), y: Math.floor(y / 64)};
-        this.rect = {x: this.position.x * 64, y: this.position.y * 64, width: 64, height: 64};
+        this.rect = new Rectangle(this.position.x * 64, this.position.y * 64, 64, 64);
     };
 
     DefaultObject.prototype.draw = function (viewport)
     {
-        viewport.renderer.drawRectangle(viewport, {
-            left: this.rect.x,
-            top: this.rect.y,
-            right: this.rect.x + this.rect.width,
-            bottom: this.rect.y + this.rect.height
-        });
-
+        viewport.renderer.drawRectangle(viewport, this.rect);
         viewport.context.strokeStyle = '#cdcdcd';
         viewport.context.stroke();
     };
@@ -32,10 +26,17 @@ define(function ()
     {
         if (property.key === 'position')
         {
-            this.rect.x = this.position.x * 64;
-            this.rect.y = this.position.y * 64;
+            this.rect.setPosition(this.position.x * 64, this.position.y * 64);
         }
     };
+
+    DefaultObject.prototype.setPosition = function (x, y)
+    {
+        this.position.x = Math.floor(x / 64);
+        this.position.y = Math.floor(y / 64);
+        this.rect.setPosition(this.position.x * 64, this.position.y * 64);
+    };
+
 
     DefaultObject.prototype.deserialize = function (data)
     {

@@ -87,6 +87,8 @@ define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Ut
                 action.method();
             }
         }
+
+        return false;
     };
 
     ActionBarView.prototype.hide = function ()

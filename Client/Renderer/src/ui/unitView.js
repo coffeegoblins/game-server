@@ -27,7 +27,10 @@ define([
         UnitView.prototype.handleClick = function ()
         {
             if (this.element.style.opacity == maxOpacity)
+            {
                 Renderer.camera.moveToUnit(this.unit, null, 0.5);
+                return false;
+            }
         };
 
         UnitView.prototype.hide = function ()
