@@ -3,6 +3,7 @@ define([
         'text!../content/weapons.json',
         './scheduler',
         './inputHandler',
+        './browserNavigation',
         './levelLoader',
         './turnManager',
         './soldier',
@@ -12,7 +13,7 @@ define([
         'Renderer/src/ui/unitView',
         'Renderer/src/ui/renderableTurnQueue'
     ],
-    function (Renderer, WeaponData, Scheduler, InputHandler, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, UnitView, RenderableTurnQueue)
+    function (Renderer, WeaponData, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, UnitView, RenderableTurnQueue)
     {
         'use strict';
         var weaponData = JSON.parse(WeaponData);
@@ -54,6 +55,10 @@ define([
         return {
             loadLevel: function (levelName)
             {
+                Renderer.initialize();
+                TurnManager.unitList.length = 0;
+                BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
+
                 LevelLoader.loadLevel(levelName, function (map, startPoints)
                 {
                     this.currentMap = map;
@@ -132,6 +137,13 @@ define([
             onPlayerDefeat: function (player)
             {
                 console.log('player defeated');
+            },
+
+            uninitialize: function ()
+            {
+                Renderer.uninitialize();
+                BrowserNavigation.off('leaving:singlePlayer', this);
+                InputHandler.enableInput();
             }
         };
     });

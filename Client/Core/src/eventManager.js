@@ -31,16 +31,20 @@ define(['./utility'], function (Utility)
             return;
 
         var eventName = arguments[0];
+        var handlers = this.events[eventName];
+        if (!handlers || !handlers.length)
+            return;
+
         if (arguments.length >= 3)
         {
-            Utility.removeElementByProperties(this.events[eventName], {context: arguments[1], method: arguments[2]});
+            Utility.removeElementByProperties(handlers, {context: arguments[1], method: arguments[2]});
         }
         else if (arguments.length === 2)
         {
             if (typeof arguments[1] === 'function')
-                Utility.removeElementByProperty(this.events[eventName], 'method', arguments[1]);
+                Utility.removeElementByProperty(handlers, 'method', arguments[1]);
             else
-                Utility.removeElementByProperty(this.events[eventName], 'context', arguments[1]);
+                Utility.removeElementByProperty(handlers, 'context', arguments[1]);
         }
         else
         {

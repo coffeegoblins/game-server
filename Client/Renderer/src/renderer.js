@@ -20,12 +20,11 @@ define([
             this.renderables = [];
             this.renderablePaths = [];
 
-            InputHandler.registerClickEvent('canvas', onClick, this);
-            InputHandler.on('drag', this, onDrag);
             Events.register(this);
+            this.onResize = onResize.bind(this);
         }
 
-        function handleResize()
+        function onResize()
         {
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
@@ -33,21 +32,21 @@ define([
             this.trigger('resize', this.canvas.width, this.canvas.height);
         }
 
-        function onClick(e)
+        Renderer.prototype.onClick = function (e)
         {
             if (this.renderableMap)
             {
                 var position = this.camera.screenToTile(e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y);
                 this.renderableMap.onClick(e, position.x, position.y);
             }
-        }
+        };
 
-        function onDrag(e, deltaX, deltaY)
+        Renderer.prototype.onDrag = function (e, deltaX, deltaY)
         {
             this.camera.moveViewport(deltaX, deltaY);
-        }
+        };
 
-        function update(e, deltaTime)
+        Renderer.prototype.update = function (e, deltaTime)
         {
             this.context.clearRect(0, 0, this.camera.viewportRect.width, this.camera.viewportRect.height);
             if (!this.renderableMap)
@@ -70,21 +69,11 @@ define([
                     renderable.render(this.context, deltaTime, this.camera);
                 }
             }
-        }
+        };
 
         Renderer.prototype.addRenderableMap = function (renderableMap)
         {
             this.renderableMap = new RenderableMap(renderableMap);
-        };
-
-        Renderer.prototype.clearRenderablePaths = function ()
-        {
-            this.renderablePaths = [];
-        };
-
-        Renderer.prototype.clearRenderablePathById = function (id)
-        {
-            Utility.removeElementByProperty(this.renderablePaths, 'id', id);
         };
 
         Renderer.prototype.addRenderableLadder = function (ladder)
@@ -124,14 +113,37 @@ define([
             });
         };
 
-        Renderer.prototype.initialize = function (canvas)
+        Renderer.prototype.clearRenderablePaths = function ()
         {
-            this.canvas = canvas;
-            this.context = canvas.getContext('2d'); // TODO: If this doesn't work, tell the user their browser sucks and exit gracefully
+            this.renderablePaths = [];
+        };
 
-            handleResize.call(this);
-            window.addEventListener('resize', handleResize.bind(this));
-            Scheduler.schedule({context: this, method: update, priority: Scheduler.priority.render});
+        Renderer.prototype.clearRenderablePathById = function (id)
+        {
+            Utility.removeElementByProperty(this.renderablePaths, 'id', id);
+        };
+
+        Renderer.prototype.initialize = function ()
+        {
+            this.canvas = document.getElementById('canvas');
+            this.context = this.canvas.getContext('2d');
+
+            this.renderables.length = 0;
+            this.renderablePaths.length = 0;
+
+            InputHandler.on('drag', this, this.onDrag);
+            InputHandler.registerClickEvent('canvas', this.onClick, this);
+            window.addEventListener('resize', this.onResize, false);
+
+            this.onResize();
+            Scheduler.schedule({context: this, method: this.update, priority: Scheduler.priority.render});
+        };
+
+        Renderer.prototype.uninitialize = function ()
+        {
+            InputHandler.off('drag', this);
+            InputHandler.unregisterClickEvent('canvas');
+            window.removeEventListener('resize', this.onResize, false);
         };
 
         return new Renderer();

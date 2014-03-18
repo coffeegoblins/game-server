@@ -5,7 +5,6 @@ define(['./eventManager', './utility'], function (EventManager, Utility)
     function TurnManager()
     {
         this.unitList = [];
-        this.activeUnit = null;
         this.endTurnPercentageCost = 0.75;
     }
 

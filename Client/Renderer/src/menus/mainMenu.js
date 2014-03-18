@@ -1,8 +1,11 @@
-define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'Core/src/plotManager', './loginPopup'],
-    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, PlotManager, LoginPopup)
+define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
+    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, PlotManager, LoginPopup, BrowserNavigation)
     {
+        'use strict';
         function MainMenu()
         {
+            BrowserNavigation.on('root', this.show.bind(this));
+            BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
         }
 
         MainMenu.prototype.show = function ()
@@ -27,12 +30,8 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
 
         MainMenu.prototype.onSinglePlayerButtonClicked = function ()
         {
-            this.hide();
-
-            document.body.className = 'game';
-            document.body.innerHTML = GameTemplate;
-            Renderer.initialize(document.getElementById('canvas'));
-            PlotManager.loadLevel('level1');
+            BrowserNavigation.addState('singlePlayer');
+            this.loadSinglePlayer();
         };
 
         MainMenu.prototype.onMultiPlayerButtonClicked = function ()
@@ -48,6 +47,15 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
         MainMenu.prototype.onExitButtonClicked = function ()
         {
 
+        };
+
+
+        MainMenu.prototype.loadSinglePlayer = function ()
+        {
+            this.hide();
+            document.body.className = 'game';
+            document.body.innerHTML = GameTemplate;
+            PlotManager.loadLevel('level1');
         };
 
         return new MainMenu();
