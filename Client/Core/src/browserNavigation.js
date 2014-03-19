@@ -59,7 +59,6 @@ define(['./eventManager'], function (Events)
         }
     };
 
-    window.navigation = BrowserNavigation;
     Events.register(BrowserNavigation);
     return BrowserNavigation;
 });

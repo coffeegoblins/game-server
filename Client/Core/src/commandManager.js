@@ -39,6 +39,7 @@ define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/t
         {
             TurnManager.activeUnit.setState(state);
         };
+
         CommandManager.setDirection = function (x, y)
         {
             TurnManager.activeUnit.setDirection(x, y);

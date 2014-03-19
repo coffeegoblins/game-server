@@ -61,6 +61,18 @@ define([
             for (var i = 0; i < this.renderablePaths.length; i++)
                 this.renderablePaths[i].render(this.context, this.camera);
 
+            // Make sure the objects are drawn in the right order
+            this.renderables.sort(function (obj1, obj2)
+            {
+                if (obj1.getTileX() !== obj2.getTileX())
+                    return obj1.getTileX() - obj2.getTileX();
+
+                if (obj1.getTileY() !== obj2.getTileY())
+                    return obj1.getTileY() - obj2.getTileY();
+
+                return 0;
+            });
+
             for (i = 0; i < this.renderables.length; i++)
             {
                 var renderable = this.renderables[i];

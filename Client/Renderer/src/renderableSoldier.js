@@ -9,32 +9,50 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         this.unit = unit;
         this.style = {opacity: 1};
 
-        this.spriteSheet = createSpriteSheet(this.unit.weapon.type);
-        this.spriteSheet.playAnimation(this.unit.state);
-        this.spriteSheet.on('animationComplete', this, this.onAnimationComplete);
-
-        this.unit.on('stateChange', this.onStateChange.bind(this));
+        this.createSpriteSheets(this.unit.weapon.type);
+        this.unit.on('directionChange', this.onDirectionChange.bind(this));
+        this.unit.on('stateChange', this.onDirectionChange.bind(this));
+        this.onDirectionChange();
     }
 
-    function createSpriteSheet(type)
+    RenderableSoldier.prototype.createSpriteSheets = function (type)
     {
-        var animationDefinition = animations[type];
-        var spriteSheet = new SpriteSheet(animationDefinition.spriteSheet, 'Renderer/content/images/' + animationDefinition.spriteSheet + '.png', {
-            tileWidth: animationDefinition.tileWidth,
-            tileHeight: animationDefinition.tileHeight
-        });
-
-        for (var property in animationDefinition.animations)
+        this.spriteSheets = {};
+        var animationDefinitions = animations[type];
+        for (var animationName in animationDefinitions)
         {
-            var anim = animationDefinition.animations[property];
-            if (anim)
-            {
-                spriteSheet.defineAnimation(property, anim);
-            }
-        }
+            var animationDefinition = animationDefinitions[animationName];
+            var spriteSheet = new SpriteSheet(type + animationName, 'Renderer/content/images/' + animationDefinition.spriteSheet + '.png', {
+                tileWidth: animationDefinition.tileWidth,
+                tileHeight: animationDefinition.tileHeight
+            });
 
-        return spriteSheet;
-    }
+            for (var i = 0; i < 8; i++)
+            {
+                var frames;
+                if (animationDefinition.frames)
+                {
+                    frames = {};
+                    for (var frame in animationDefinition.frames)
+                    {
+                        var frameIndex = parseInt(frame, 10) * i;
+                        frames[frameIndex] = animationDefinition.frames[frame];
+                    }
+                }
+
+                spriteSheet.defineAnimation(i, {
+                    start: i * animationDefinition.frameCount,
+                    end: (i + 1) * animationDefinition.frameCount - 1,
+                    isLooping: animationDefinition.isLooping,
+                    speed: animationDefinition.speed,
+                    frames: frames
+                });
+            }
+
+            spriteSheet.on('animationComplete', this, this.onAnimationComplete);
+            this.spriteSheets[animationName] = spriteSheet;
+        }
+    };
 
     RenderableSoldier.prototype.getSelectionColor = function ()
     {
@@ -50,9 +68,19 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             return '#a0a0a0';
     };
 
-    RenderableSoldier.prototype.onStateChange = function ()
+    RenderableSoldier.prototype.getTileX = function ()
     {
-        this.spriteSheet.playAnimation(this.unit.state);
+        return this.unit.tileX;
+    };
+
+    RenderableSoldier.prototype.getTileY = function ()
+    {
+        return this.unit.tileY;
+    };
+
+    RenderableSoldier.prototype.onDirectionChange = function ()
+    {
+        this.spriteSheets[this.unit.state].playAnimation(this.unit.direction);
     };
 
     RenderableSoldier.prototype.onAnimationComplete = function (animation)
@@ -70,20 +98,22 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
     RenderableSoldier.prototype.render = function (context, deltaTime, camera)
     {
-        if (!this.spriteSheet.image.isLoaded)
+        var spriteSheet = this.spriteSheets[this.unit.state];
+        if (!spriteSheet.image.isLoaded)
             return;
 
-        context.save();
-
+        var left, top, width, height;
         var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);
-        context.translate(position.x + camera.halfTileWidth - camera.viewportRect.x, position.y+camera.halfTileHeight - camera.viewportRect.y);
-
         var color = this.getSelectionColor();
         if (color)
         {
-            var width = camera.tileWidth * 2 / 3;
-            var height = camera.tileHeight * 2 / 3;
-            drawEllipse(context, -width / 2, -height / 2, width, height);
+            width = camera.tileWidth * 2 / 3;
+            height = camera.tileHeight * 2 / 3;
+
+            left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
+            top = position.y - camera.viewportRect.y + camera.halfTileHeight - height / 2;
+
+            drawEllipse(context, left, top, width, height);
 
             context.strokeStyle = color;
             context.fillStyle = color;
@@ -94,22 +124,23 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             context.stroke();
         }
 
-        if (this.unit.direction)
-            context.rotate(this.unit.direction);
-
-        this.spriteSheet.updateAnimation(deltaTime);
-        var tileRect = this.spriteSheet.getCurrentTileBounds();
+        spriteSheet.updateAnimation(deltaTime);
+        var tileRect = spriteSheet.getCurrentTileBounds();
         if (tileRect)
         {
-            var imageWidth = this.spriteSheet.tileWidth * camera.scale;
-            var imageHeight = this.spriteSheet.tileHeight * camera.scale;
+            width = spriteSheet.tileWidth * camera.scale;
+            height = spriteSheet.tileHeight * camera.scale;
+
+            left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
+            top = position.y - camera.viewportRect.y - height / 2;
 
             context.globalAlpha = this.style.opacity;
-            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
-                    -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
+            context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
+                left, top, width, height);
         }
 
-        context.restore();
+
+        context.globalAlpha = 1;
     };
 
     function drawEllipse(context, left, top, width, height)

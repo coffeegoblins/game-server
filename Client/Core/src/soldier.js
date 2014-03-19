@@ -1,4 +1,4 @@
-define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'], function (Events, TransitionEffect, Utility)
+define(['./eventManager', './utility'], function (Events, Utility)
 {
     'use strict';
 
@@ -9,9 +9,15 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
         maxAP: 42,
         maxMoveableHeight: 2,
         canClimbObjects: true,
-        direction: 0,
+        direction: 1,
         state: 'idle'
     };
+
+    var directions = [
+        [6, 7, 0],
+        [5, 0, 1],
+        [4, 3, 2]
+    ];
 
     function Soldier(properties)
     {
@@ -35,24 +41,8 @@ define(['./eventManager', 'Renderer/src/effects/transitionEffect', './utility'],
 
     Soldier.prototype.setDirection = function (x, y)
     {
-        var newDirection = -Math.atan2(x, y);
-        var directionDelta = newDirection - this.direction;
-
-        if (Math.abs(directionDelta) > Math.PI)
-        {
-            if (this.direction < 0)
-                this.direction += Math.PI * 2;
-            else
-                this.direction -= Math.PI * 2;
-        }
-
-        TransitionEffect.transitionFloat({
-            id: this.name + ' turn',
-            source: this,
-            property: 'direction',
-            targetValue: newDirection,
-            duration: 0.1
-        });
+        this.direction = directions[y + 1][x + 1];
+        this.trigger('directionChange');
     };
 
     Soldier.prototype.setState = function (state)

@@ -9,8 +9,8 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         {
             var filePath = 'Renderer/content/images/' + map.spriteSheet + '.png';
             this.tileSheet = new SpriteSheet('background', filePath, {
-                tileHeight: 32,
-                tileWidth: 64
+                tileHeight: 48,
+                tileWidth: 96
             });
         }
     }
