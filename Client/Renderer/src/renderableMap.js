@@ -37,6 +37,13 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         {
             for (var y = 0; y < this.map.height; y++)
             {
+                var position = camera.tileToScreen(x, y);
+                position.x -= viewportLeft;
+                position.y -= viewportTop;
+
+                if (!camera.isInView(position.x, position.y, camera.tileWidth, camera.tileHeight))
+                    continue;
+
                 var tile = this.map.getTile(x, y);
                 if (!tile.spriteIndex)
                     continue;
@@ -44,9 +51,8 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
                 var tileRect = this.tileSheet.getTileBounds(tile.spriteIndex - 1);
                 if (tileRect)
                 {
-                    var position = camera.tileToScreen(x, y);
                     context.drawImage(this.tileSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
-                            position.x - viewportLeft, position.y - viewportTop, camera.tileWidth, camera.tileHeight);
+                        position.x, position.y, camera.tileWidth, camera.tileHeight);
                 }
             }
         }

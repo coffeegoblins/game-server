@@ -35,7 +35,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                     frames = {};
                     for (var frame in animationDefinition.frames)
                     {
-                        var frameIndex = parseInt(frame, 10) * i;
+                        var frameIndex = parseInt(frame, 10) + i * animationDefinition.frameCount;
                         frames[frameIndex] = animationDefinition.frames[frame];
                     }
                 }
@@ -52,6 +52,11 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             spriteSheet.on('animationComplete', this, this.onAnimationComplete);
             this.spriteSheets[animationName] = spriteSheet;
         }
+    };
+
+    RenderableSoldier.prototype.getImageIndex = function ()
+    {
+        return this.spriteSheets[this.unit.state].image.globalIndex;
     };
 
     RenderableSoldier.prototype.getSelectionColor = function ()
@@ -102,18 +107,25 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         if (!spriteSheet.image.isLoaded)
             return;
 
-        var left, top, width, height;
         var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);
+        var width = spriteSheet.tileWidth * camera.scale;
+        var height = spriteSheet.tileHeight * camera.scale;
+        var left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
+        var top = position.y - camera.viewportRect.y - height / 2;
+
+        if (!camera.isInView(left, top, width, height))
+            return;
+
         var color = this.getSelectionColor();
         if (color)
         {
-            width = camera.tileWidth * 2 / 3;
-            height = camera.tileHeight * 2 / 3;
+            var tileWidth = camera.tileWidth * 2 / 3;
+            var tileHeight = camera.tileHeight * 2 / 3;
 
-            left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
-            top = position.y - camera.viewportRect.y + camera.halfTileHeight - height / 2;
+            var tileLeft = position.x - camera.viewportRect.x + camera.halfTileWidth - tileWidth / 2;
+            var tileTop = position.y - camera.viewportRect.y + camera.halfTileHeight - tileHeight / 2;
 
-            drawEllipse(context, left, top, width, height);
+            drawEllipse(context, tileLeft, tileTop, tileWidth, tileHeight);
 
             context.strokeStyle = color;
             context.fillStyle = color;
@@ -128,17 +140,10 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         var tileRect = spriteSheet.getCurrentTileBounds();
         if (tileRect)
         {
-            width = spriteSheet.tileWidth * camera.scale;
-            height = spriteSheet.tileHeight * camera.scale;
-
-            left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
-            top = position.y - camera.viewportRect.y - height / 2;
-
             context.globalAlpha = this.style.opacity;
             context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
                 left, top, width, height);
         }
-
 
         context.globalAlpha = 1;
     };

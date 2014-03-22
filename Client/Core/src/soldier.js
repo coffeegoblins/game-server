@@ -30,6 +30,7 @@ define(['./eventManager', './utility'], function (Events, Utility)
         if (this.hp <= 0)
         {
             this.setState('death');
+            this.isTargeted = false;
             this.trigger('death', this);
         }
     };
@@ -41,14 +42,20 @@ define(['./eventManager', './utility'], function (Events, Utility)
 
     Soldier.prototype.setDirection = function (x, y)
     {
+        var previousDirection = this.direction;
         this.direction = directions[y + 1][x + 1];
-        this.trigger('directionChange');
+
+        if (this.direction !== previousDirection)
+            this.trigger('directionChange');
     };
 
     Soldier.prototype.setState = function (state)
     {
-        this.state = state;
-        this.trigger('stateChange');
+        if (this.state !== state)
+        {
+            this.state = state;
+            this.trigger('stateChange');
+        }
     };
 
     Events.register(Soldier.prototype);

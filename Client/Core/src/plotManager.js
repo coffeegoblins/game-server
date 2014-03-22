@@ -25,26 +25,34 @@ define([
             {
                 var position = positions[i];
                 var weaponName;
-                switch (i % 4)
-                {
-                    case 0:
-                        weaponName = 'Bronze Sword and Shield';
-                        break;
+                //                switch (i % 4)
+                //                {
+                //                    case 0:
+                weaponName = 'Bronze Sword and Shield';
+                //                        break;
+                //
+                //                    case 1:
+                //                        weaponName = 'Short Bow';
+                //                        break;
+                //
+                //                    case 2:
+                //                        weaponName = 'Twin Bronze Swords';
+                //                        break;
+                //
+                //                    case 3:
+                //                        weaponName = 'Iron Longsword';
+                //                        break;
+                //                }
 
-                    case 1:
-                        weaponName = 'Short Bow';
-                        break;
+                var soldier = new Soldier({
+                    name: 'Unit ' + (i + 1),
+                    tileX: position.x,
+                    tileY: position.y,
+                    weapon: weaponData[weaponName],
+                    direction: position.direction
 
-                    case 2:
-                        weaponName = 'Twin Bronze Swords';
-                        break;
+                });
 
-                    case 3:
-                        weaponName = 'Iron Longsword';
-                        break;
-                }
-
-                var soldier = new Soldier({name: 'Unit ' + (i + 1), tileX: position.x, tileY: position.y, weapon: weaponData[weaponName]});
                 soldier.weapon.name = weaponName;
                 soldiers.push(soldier);
             }
@@ -55,9 +63,13 @@ define([
         return {
             loadLevel: function (levelName)
             {
+                Scheduler.clear();
                 Renderer.initialize();
-                TurnManager.unitList.length = 0;
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
+
+                this.turnManager = new TurnManager();
+                this.turnManager.on('beginTurn', this, this.onBeginTurn);
+                this.turnManager.on('endTurn', this, this.onEndTurn);
 
                 LevelLoader.loadLevel(levelName, function (map, startPoints)
                 {
@@ -91,18 +103,15 @@ define([
                         for (var j = 0; j < player.units.length; j++)
                         {
                             var unit = player.units[j];
-                            TurnManager.addUnit(unit);
+                            this.turnManager.addUnit(unit);
                             Renderer.addRenderableSoldier(unit);
                             this.renderableTurnQueue.addUnit(unit);
                             this.currentMap.addUnit(unit, unit.tileX, unit.tileY);
                         }
                     }
 
-                    TurnManager.on('beginTurn', this, this.onBeginTurn);
-                    TurnManager.on('endTurn', this, this.onEndTurn);
-
                     InputHandler.disableInput();
-                    TurnManager.beginTurn();
+                    this.turnManager.beginTurn();
                 }.bind(this));
             },
 
@@ -126,12 +135,12 @@ define([
                 this.renderableTurnQueue.onEndTurn(unit, index);
                 Renderer.clearRenderablePaths();
 
-                TurnManager.beginTurn();
+                this.turnManager.beginTurn();
             },
 
             onEndTurnAction: function ()
             {
-                TurnManager.endTurn();
+                this.turnManager.endTurn();
             },
 
             onPlayerDefeat: function (player)
@@ -143,6 +152,7 @@ define([
             {
                 Renderer.uninitialize();
                 BrowserNavigation.off('leaving:singlePlayer', this);
+                Scheduler.clear();
                 InputHandler.enableInput();
             }
         };

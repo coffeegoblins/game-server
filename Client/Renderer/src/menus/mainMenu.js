@@ -1,5 +1,5 @@
-define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'renderer', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
-    function (MainMenuTemplate, GameTemplate, InputHandler, Renderer, PlotManager, LoginPopup, BrowserNavigation)
+define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
+    function (MainMenuTemplate, GameTemplate, InputHandler, PlotManager, LoginPopup, BrowserNavigation)
     {
         'use strict';
         function MainMenu()

@@ -24,15 +24,11 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
         this.soldierC.maxAP = 10;
         this.soldierD.maxAP = 10;
 
-        TurnManager.addUnit(this.soldierA);
-        TurnManager.addUnit(this.soldierB);
-        TurnManager.addUnit(this.soldierC);
-        TurnManager.addUnit(this.soldierD);
-    };
-
-    TurnManagerTest.prototype.tearDown = function ()
-    {
-        TurnManager.unitList.length = 0;
+        this.turnManager = new TurnManager();
+        this.turnManager.addUnit(this.soldierA);
+        this.turnManager.addUnit(this.soldierB);
+        this.turnManager.addUnit(this.soldierC);
+        this.turnManager.addUnit(this.soldierD);
     };
 
     TurnManagerTest.prototype.testEndTurnWithOtherMovedUnits = function ()
@@ -42,9 +38,8 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
         this.soldierC.ap = 10;
         this.soldierD.ap = 5;
 
-        TurnManager.endTurn();
-
-        var expectedUnit = TurnManager.unitList[2];
+        this.turnManager.endTurn();
+        var expectedUnit = this.turnManager.unitList[2];
 
         assertEquals("Soldier A expected at position 2, but it was: " + expectedUnit.name + "\n", this.soldierA, expectedUnit);
     };
@@ -56,9 +51,8 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
         this.soldierC.ap = 10;
         this.soldierD.ap = 10;
 
-        TurnManager.endTurn();
-
-        var lastUnitInQueue = TurnManager.unitList[TurnManager.unitList.length - 1];
+        this.turnManager.endTurn();
+        var lastUnitInQueue = this.turnManager.unitList[this.turnManager.unitList.length - 1];
 
         assertEquals("Soldier A expected at the end of the queue, but it was: " + lastUnitInQueue.name + "\n", this.soldierA, lastUnitInQueue);
     };
@@ -69,7 +63,7 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
         this.soldierC.ap = 6;
         this.soldierD.ap = 5;
 
-        TurnManager.endTurn();
+        this.turnManager.endTurn();
 
         assertEquals(10, this.soldierB.ap);
         assertEquals(6, this.soldierC.ap);
@@ -83,7 +77,7 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
         this.soldierC.ap = 1;
         this.soldierD.ap = 8;
 
-        TurnManager.incrementAP();
+        this.turnManager.incrementAP();
 
         assertEquals(10, this.soldierA.ap);
         assertEquals(7, this.soldierB.ap);
@@ -95,9 +89,8 @@ define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Sold
     {
         this.soldierA.ap = 1;
 
-        var expectedCost = this.soldierA.ap * TurnManager.endTurnPercentageCost;
-
-        TurnManager.endTurn();
+        var expectedCost = this.soldierA.ap * this.turnManager.endTurnPercentageCost;
+        this.turnManager.endTurn();
 
         // Soldier B through D are incremented by 5
         assertEquals(expectedCost, this.soldierA.ap);

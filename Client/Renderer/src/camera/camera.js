@@ -28,6 +28,11 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
             this.moveToUnit(this.targetUnit, this.callback);
     };
 
+    Camera.prototype.isInView = function (x, y, width, height)
+    {
+        return x < this.viewportRect.width && x + width > 0 && y < this.viewportRect.height && y + height > 0;
+    };
+
     Camera.prototype.moveViewport = function (deltaX, deltaY)
     {
         this.viewportRect.x = Math.floor(this.viewportRect.x + deltaX);
@@ -104,6 +109,9 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
     {
         if (this.trackedUnit)
             this.moveToUnit(this.trackedUnit, null, 0.5);
+
+        this.viewportRect.right = this.viewportRect.x + this.viewportRect.width;
+        this.viewportRect.bottom = this.viewportRect.y + this.viewportRect.height;
     };
 
     return Camera;

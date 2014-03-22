@@ -1,5 +1,5 @@
-define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/turnManager', 'Core/src/pathManager'],
-    function (Renderer, LevelLoader, SoundManager, TurnManager, PathManager)
+define(['renderer', 'Core/src/plotManager', 'Core/src/soundManager', 'Core/src/pathManager'],
+    function (Renderer, PlotManager, SoundManager, PathManager)
     {
         'use strict';
 
@@ -7,12 +7,12 @@ define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/t
 
         CommandManager.endTurn = function ()
         {
-            TurnManager.endTurn();
+            PlotManager.turnManager.endTurn();
         };
 
         CommandManager.getAvailableTiles = function ()
         {
-            PathManager.calculateAvailableTiles(LevelLoader.map, TurnManager.activeUnit);
+            return PathManager.calculateAvailableTiles(PlotManager.currentMap, PlotManager.turnManager.activeUnit);
         };
 
         CommandManager.moveViewport = function (x, y, milliseconds)
@@ -32,20 +32,19 @@ define(['renderer', 'Core/src/levelLoader', 'Core/src/soundManager', 'Core/src/t
 
         CommandManager.setActiveUnitAP = function (ap)
         {
-            TurnManager.activeUnit.ap = ap;
+            PlotManager.turnManager.activeUnit.ap = ap;
         };
 
         CommandManager.setAnimation = function (state)
         {
-            TurnManager.activeUnit.setState(state);
+            PlotManager.turnManager.activeUnit.setState(state);
         };
 
         CommandManager.setDirection = function (x, y)
         {
-            TurnManager.activeUnit.setDirection(x, y);
+            PlotManager.turnManager.activeUnit.setDirection(x, y);
         };
 
         window.CommandManager = CommandManager;
-
         return CommandManager;
     });

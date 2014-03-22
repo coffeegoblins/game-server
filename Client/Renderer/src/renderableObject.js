@@ -15,6 +15,11 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         this.spriteSheet.setCurrentTile(object.style);
     }
 
+    RenderableObject.prototype.getImageIndex = function ()
+    {
+        return this.spriteSheet.image.globalIndex;
+    };
+
     RenderableObject.prototype.getTileX = function ()
     {
         return this.object.tileX;
@@ -40,8 +45,11 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
             var left = position.x - camera.viewportRect.x + camera.halfTileWidth - imageWidth / 2;
             var top = position.y - camera.viewportRect.y + camera.tileHeight - imageHeight;
 
-            context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
-                left, top, imageWidth, imageHeight);
+            if (camera.isInView(left, top, imageWidth, imageHeight))
+            {
+                context.drawImage(this.spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
+                    left, top, imageWidth, imageHeight);
+            }
         }
     };
 

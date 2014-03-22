@@ -77,5 +77,5 @@ define(['./eventManager', './utility'], function (EventManager, Utility)
     };
 
     EventManager.register(TurnManager.prototype);
-    return new TurnManager();
+    return TurnManager;
 });

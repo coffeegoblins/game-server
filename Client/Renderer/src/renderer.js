@@ -74,13 +74,7 @@ define([
             });
 
             for (i = 0; i < this.renderables.length; i++)
-            {
-                var renderable = this.renderables[i];
-                //if (renderable.isVisible(map.visibleTileLeft, map.visibleTileRight, map.visibleTileTop, map.visibleTileBottom))
-                {
-                    renderable.render(this.context, deltaTime, this.camera);
-                }
-            }
+                this.renderables[i].render(this.context, deltaTime, this.camera);
         };
 
         Renderer.prototype.addRenderableMap = function (renderableMap)
@@ -148,7 +142,7 @@ define([
             window.addEventListener('resize', this.onResize, false);
 
             this.onResize();
-            Scheduler.schedule({context: this, method: this.update, priority: Scheduler.priority.render});
+            Scheduler.schedule({id: 'renderer', context: this, method: this.update, priority: Scheduler.priority.render});
         };
 
         Renderer.prototype.uninitialize = function ()

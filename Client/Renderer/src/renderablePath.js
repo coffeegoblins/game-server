@@ -38,6 +38,10 @@ define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
 
             var left = position.x - camera.viewportRect.x + 1;
             var top = position.y - camera.viewportRect.y + 1;
+
+            if (!camera.isInView(left, top, camera.tileWidth, camera.tileHeight))
+                continue;
+
             var right = left + camera.tileWidth - 2;
             var bottom = top + camera.tileHeight - 2;
             var xCenter = (left + right) / 2;

@@ -1,15 +1,16 @@
 {
     "archer": {
         "idle": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "archer - idle",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
             "speed": 0.075,
             "isLooping": true
         },
+
         "run": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "archer - run",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -18,15 +19,16 @@
         },
 
         "attack": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "archer - attack",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
             "speed": 0.075,
             "isLooping": true
         },
+
         "death": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "archer - death)",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -37,7 +39,7 @@
 
     "dualWield": {
         "idle": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "dualWield - idle",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -45,7 +47,7 @@
             "isLooping": true
         },
         "run": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "dualWield - run",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -54,15 +56,16 @@
         },
 
         "attack": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "dualWield - attack",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
             "speed": 0.075,
             "isLooping": true
         },
+
         "death": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "dualWield - death",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -74,50 +77,54 @@
     "swordAndShield": {
         "idle": {
             "spriteSheet": "swordAndShield - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 64,
+            "tileWidth": 64,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.1,
+            "isLooping": true,
+            "frames": {
+                "31": 5
+            }
         },
+
         "run": {
-            "spriteSheet": "swordAndShield - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
-            "frameCount": 32,
-            "speed": 0.075,
+            "spriteSheet": "swordAndShield - run",
+            "tileHeight": 64,
+            "tileWidth": 64,
+            "frameCount": 16,
+            "speed": 0.04,
             "isLooping": true
         },
 
         "attack": {
-            "spriteSheet": "swordAndShield - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "spriteSheet": "swordAndShield - attack",
+            "tileHeight": 112,
+            "tileWidth": 112,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.075
         },
+
         "death": {
-            "spriteSheet": "swordAndShield - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "spriteSheet": "swordAndShield - death",
+            "tileHeight": 96,
+            "tileWidth": 96,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.075
         }
     },
 
     "twoHanded": {
         "idle": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "twoHanded - idle",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
             "speed": 0.075,
             "isLooping": true
         },
+
         "run": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "twoHanded - run",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
@@ -126,15 +133,16 @@
         },
 
         "attack": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "twoHanded - attack)",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
             "speed": 0.075,
             "isLooping": true
         },
+
         "death": {
-            "spriteSheet": "swordAndShield - idle",
+            "spriteSheet": "twoHanded - death",
             "tileHeight": 128,
             "tileWidth": 128,
             "frameCount": 32,
