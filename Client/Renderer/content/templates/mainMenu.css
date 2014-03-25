@@ -14,6 +14,27 @@
     color: #000;
     opacity: 0.8;
 }
+#mainMenuWood {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    font-size: 24px;
+    height: 25px;
+    background-image: url('../images/icons.png');
+}
+#mainMenuChains {
+    width: 300px;
+    position: absolute;
+    z-index: 0;
+    animation: bounce 2s linear;
+    -webkit-animation: bounce 2s linear;
+}
+.chainItem {
+    background-image: url('../images/menuChain.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    height: 100px;
+}
 @media only screen and (max-width: 400px) {
     #mainMenu {
         top: 16px;
@@ -21,5 +42,39 @@
         right: 16px;
         margin: auto;
         width: auto;
+    }
+}
+@-webkit-keyframes bounce {
+    0% {
+        transform: translateY(-200%);
+        -webkit-transform: translateY(-200%);
+    }
+    70% {
+        transform: translateY(0);
+        -webkit-transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-5%);
+        -webkit-transform: translateY(-5%);
+    }
+    80% {
+        transform: translateY(0);
+        -webkit-transform: translateY(0);
+    }
+    85% {
+        transform: translateY(-3%);
+        -webkit-transform: translateY(-3%);
+    }
+    90% {
+        transform: translateY(0);
+        -webkit-transform: translateY(0);
+    }
+    95% {
+        transform: translateY(-1%);
+        -webkit-transform: translateY(-1%);
+    }
+    100% {
+        transform: translateY(0);
+        -webkit-transform: translateY(0);
     }
 }

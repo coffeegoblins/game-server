@@ -27,8 +27,6 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             this.loginError.style.display = 'none';
             this.confirmPasswordBox.style.display = 'none';
             this.registerButton.style.display = 'none';
-
-            this.socket = io.connect('http://127.0.0.1:1988');
         };
 
         LoginPopup.prototype.hide = function ()
@@ -95,6 +93,11 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
                 this.errorMessage.innerHTML = 'Passwords did not match!';
                 return;
             }
+            
+            if (!this.connect())
+            {
+                return;
+            }
 
             this.socket.emit('register', username, btoa(password));
 
@@ -118,6 +121,11 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
         {
             var username = document.getElementById('usernameInput').value;
             var password = document.getElementById('passwordInput').value;
+            
+            if (!this.connect())
+            {
+                return;
+            }
 
             this.socket.emit('login', username, btoa(password));
 
@@ -140,6 +148,20 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
         {
             this.hide();
             LobbyMenu.show();
+        };
+        
+        LoginPopup.prototype.connect = function ()
+        {
+            this.socket = io.connect('http://127.0.0.1:1988');  
+            
+            if (!this.socket.connected)
+            {
+                this.loginError.style.display = null;
+                this.errorMessage.innerHTML = 'Unable to connect to the serverUnable to connect to the serverUnable to connect to the serverUnable to connect to the serverUnable to connect to the server.';
+                return false;
+            }
+            
+            return true;
         };
 
         return new LoginPopup();

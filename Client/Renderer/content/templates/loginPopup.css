@@ -10,7 +10,7 @@
 #loginPopup {
     position: relative;
     width: 250px;
-    top: 200px;
+    top: 10%;
     margin: auto;
 }
 
@@ -32,6 +32,18 @@
     text-align: center;
     display: table;
     width: 100%;
+}
+
+.warningIcon {
+    width: 18px;
+    height: 18px;
+    margin: 0px 5px;
+    float: left;
+    vertical-align: middle;
+}
+
+#errorMessage {
+    padding: 0px 5px;
 }
 
 .tab {
