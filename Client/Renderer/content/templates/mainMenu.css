@@ -34,6 +34,7 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     height: 100px;
+    position: relative;
 }
 @media only screen and (max-width: 400px) {
     #mainMenu {
@@ -46,8 +47,8 @@
 }
 @-webkit-keyframes bounce {
     0% {
-        transform: translateY(-200%);
-        -webkit-transform: translateY(-200%);
+        transform: translateY(-300%);
+        -webkit-transform: translateY(-300%);
     }
     70% {
         transform: translateY(0);
