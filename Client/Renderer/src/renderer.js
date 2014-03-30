@@ -64,6 +64,9 @@ define([
             // Make sure the objects are drawn in the right order
             this.renderables.sort(function (obj1, obj2)
             {
+                if (obj1.isDead !== obj2.isDead)
+                    return obj1.isDead ? -1 : 1;
+
                 if (obj1.getTileX() !== obj2.getTileX())
                     return obj1.getTileX() - obj2.getTileX();
 

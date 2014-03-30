@@ -15,11 +15,6 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         this.spriteSheet.setCurrentTile(object.style);
     }
 
-    RenderableObject.prototype.getImageIndex = function ()
-    {
-        return this.spriteSheet.image.globalIndex;
-    };
-
     RenderableObject.prototype.getTileX = function ()
     {
         return this.object.tileX;

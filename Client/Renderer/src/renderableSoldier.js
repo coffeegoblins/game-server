@@ -41,6 +41,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                 }
 
                 spriteSheet.defineAnimation(i, {
+                    id: animationName,
                     start: i * animationDefinition.frameCount,
                     end: (i + 1) * animationDefinition.frameCount - 1,
                     isLooping: animationDefinition.isLooping,
@@ -52,11 +53,6 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             spriteSheet.on('animationComplete', this, this.onAnimationComplete);
             this.spriteSheets[animationName] = spriteSheet;
         }
-    };
-
-    RenderableSoldier.prototype.getImageIndex = function ()
-    {
-        return this.spriteSheets[this.unit.state].image.globalIndex;
     };
 
     RenderableSoldier.prototype.getSelectionColor = function ()
@@ -91,8 +87,9 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
     RenderableSoldier.prototype.onAnimationComplete = function (animation)
     {
         this.unit.trigger('animationComplete', animation.name);
-        if (animation.name === 'death')
+        if (animation.id === 'death')
         {
+            this.isDead = true;
             TransitionEffect.transitionFloat({
                 source: this.style,
                 property: 'opacity',
