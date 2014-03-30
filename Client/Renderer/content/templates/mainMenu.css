@@ -19,11 +19,11 @@
     z-index: 1;
     width: 100%;
     font-size: 24px;
-    height: 25px;
-    background-image: url('../images/icons.png');
+    height: 40px;
+    background-image: url('../images/wood.png');
 }
 #mainMenuChains {
-    width: 300px;
+    width: 400px;
     position: absolute;
     z-index: 0;
     animation: bounce 2s linear;
