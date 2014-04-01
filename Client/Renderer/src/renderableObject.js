@@ -8,7 +8,7 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
 
         var size;
         if (this.object.type === 'tree')
-            size = {tileWidth: 96, tileHeight: 96};
+            size = {tileWidth: 128, tileHeight: 128};
 
         var path = 'Renderer/content/images/' + this.object.type + '.png';
         this.spriteSheet = new SpriteSheet(this.object.type, path, size);

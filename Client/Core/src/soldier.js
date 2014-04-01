@@ -5,8 +5,8 @@ define(['./eventManager', './utility'], function (Events, Utility)
     var defaults = {
         hp: 100,
         maxHP: 100,
-        ap: 42,
-        maxAP: 42,
+        ap: 100,
+        maxAP: 100,
         maxMoveableHeight: 2,
         canClimbObjects: true,
         direction: 1,
@@ -42,6 +42,14 @@ define(['./eventManager', './utility'], function (Events, Utility)
 
     Soldier.prototype.setDirection = function (x, y)
     {
+        if (Math.abs(x) > 1 || Math.abs(y) > 1)
+        {
+            // Normalize the direction
+            var length = Math.sqrt(x * x + y * y);
+            x = Math.round(x / length);
+            y = Math.round(y / length);
+        }
+
         var previousDirection = this.direction;
         this.direction = directions[y + 1][x + 1];
 

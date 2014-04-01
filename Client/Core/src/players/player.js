@@ -1,8 +1,8 @@
-define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 'renderer', '../scheduler', '../soundManager', '../utility'],
-    function (AttackData, EventManager, PathManager, Renderer, Scheduler, SoundManager, Utility)
+define(['text!../../content/soldierData.json', '../eventManager', '../pathManager', 'renderer', '../scheduler', '../soundManager', '../utility'],
+    function (SoldierData, EventManager, PathManager, Renderer, Scheduler, SoundManager, Utility)
     {
         'use strict';
-        var attackData = JSON.parse(AttackData);
+        var soldierData = JSON.parse(SoldierData);
 
         function Player(map, units, activeUnitView, renderableTurnQueue)
         {
@@ -47,7 +47,7 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
         {
             var attacks = [];
             var weapon = this.unit.weapon;
-            var attackType = attackData[weapon.type];
+            var attackType = soldierData[weapon.type];
 
             for (var attackName in attackType)
             {
@@ -71,7 +71,7 @@ define(['text!../../content/attacks.json', '../eventManager', '../pathManager', 
                     return Math.min(this.unit.weapon.range, PathManager.diagonalMoveCost);
 
                 case 'shortShot':
-                    return  this.unit.weapon.range / 2;
+                    return this.unit.weapon.range / 2;
 
                 case 'longShot':
                     return this.unit.weapon.range;

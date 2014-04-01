@@ -46,16 +46,9 @@ define(['Renderer/src/ui/actionBarView', 'Renderer/src/ui/unitView', '../inputHa
         this.map.off('tileClick', this);
     };
 
-    LocalPlayer.prototype.onTileClick = function (tile, x, y)
+    LocalPlayer.prototype.onTileClick = function (tile, x, y, soldier)
     {
-        if (tile.unit && tile.unit !== this.unit)
-        {
-            this.renderableTurnQueue.select(tile.unit);
-        }
-        else
-        {
-            this.renderableTurnQueue.select();
-        }
+        this.renderableTurnQueue.select(soldier);
     };
 
 

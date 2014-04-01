@@ -2,6 +2,7 @@ define(['./eventManager'], function (EventManager)
 {
     'use strict';
 
+
     function Map(width, height)
     {
         this.tiles = [];
@@ -59,19 +60,28 @@ define(['./eventManager'], function (EventManager)
         return true;
     };
 
-    Map.prototype.onClick = function (e, x, y)
+    Map.prototype.onClick = function (e, x, y, soldier)
     {
-        var tile = this.getTile(x, y);
+        var tile;
+        if (soldier)
+        {
+            tile = this.getTile(soldier.tileX, soldier.tileY);
+        }
+        else
+        {
+            tile = this.getTile(x, y);
+        }
+
         if (tile)
         {
-            this.trigger('tileClick', tile, x, y);
+            this.trigger('tileClick', tile, x, y, soldier);
         }
     };
 
     Map.prototype.getTile = function (x, y)
     {
         if (x < 0 || y < 0 || x > this.width - 1 || y > this.height - 1)
-            return null;
+            return;
 
         return this.tiles[x + y * this.width];
     };

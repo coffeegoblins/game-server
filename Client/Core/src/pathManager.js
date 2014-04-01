@@ -113,6 +113,10 @@ define(['./utility'], function (Utility)
         if (!destinationTile)
             return false;
 
+        // TODO: Make this more robust
+        if (destinationTile.spriteIndex > 16 && destinationTile.spriteIndex <= 32)
+            return false;
+
         if (destinationTile.unit)
         {
             if (!options.ignoreUnits)

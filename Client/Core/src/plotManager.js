@@ -25,24 +25,24 @@ define([
             {
                 var position = positions[i];
                 var weaponName;
-                //                switch (i % 4)
-                //                {
-                //                    case 0:
-                weaponName = 'Bronze Sword and Shield';
-                //                        break;
-                //
-                //                    case 1:
-                //                        weaponName = 'Short Bow';
-                //                        break;
-                //
-                //                    case 2:
-                //                        weaponName = 'Twin Bronze Swords';
-                //                        break;
-                //
-                //                    case 3:
-                //                        weaponName = 'Iron Longsword';
-                //                        break;
-                //                }
+                switch (i % 4)
+                {
+                    case 0:
+                        weaponName = 'Bronze Sword and Shield';
+                        break;
+
+                    case 1:
+                        weaponName = 'Short Bow';
+                        break;
+
+                    case 2:
+                        weaponName = 'Twin Bronze Swords';
+                        break;
+
+                    case 3:
+                        weaponName = 'Iron Longsword';
+                        break;
+                }
 
                 var soldier = new Soldier({
                     name: 'Unit ' + (i + 1),

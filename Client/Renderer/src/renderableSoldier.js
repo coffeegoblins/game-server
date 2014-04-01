@@ -79,6 +79,19 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         return this.unit.tileY;
     };
 
+    RenderableSoldier.prototype.isPointInside = function (camera, x, y)
+    {
+        var spriteSheet = this.spriteSheets[this.unit.state];
+        var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);
+
+        var width = spriteSheet.tileWidth * camera.scale;
+        var height = spriteSheet.tileHeight * camera.scale;
+        var left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
+        var top = position.y - camera.viewportRect.y - height / 2;
+
+        return x >= left && x <= left + width && y >= top && y <= top + height;
+    };
+
     RenderableSoldier.prototype.onDirectionChange = function ()
     {
         this.spriteSheets[this.unit.state].playAnimation(this.unit.direction);

@@ -36,8 +36,19 @@ define([
         {
             if (this.renderableMap)
             {
+                var soldier;
+                for (var i = 0; i < this.renderables.length; i++)
+                {
+                    var obj = this.renderables[i];
+                    if (obj instanceof RenderableSoldier && obj.isPointInside(this.camera, e.pageX, e.pageY))
+                    {
+                        soldier = obj.unit;
+                        break;
+                    }
+                }
+
                 var position = this.camera.screenToTile(e.pageX + this.camera.viewportRect.x, e.pageY + this.camera.viewportRect.y);
-                this.renderableMap.onClick(e, position.x, position.y);
+                this.renderableMap.onClick(e, position, soldier);
             }
         };
 
