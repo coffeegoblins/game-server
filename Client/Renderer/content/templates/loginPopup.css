@@ -8,10 +8,9 @@
 }
 
 #loginPopup {
-    position: relative;
+    display: block;
     width: 250px;
-    top: 10%;
-    margin: auto;
+    margin: 75px auto;
 }
 
 #loginPopupContents {

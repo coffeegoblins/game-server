@@ -19,8 +19,8 @@ body {
 }
 
 body.main-menu {
-    background-image: url("Renderer/content/images/promo.png");
-    background-position: left bottom;
+    background-image: url("Renderer/content/images/mainMenu.jpg");
+    background-position: left top;
 }
 
 .button {

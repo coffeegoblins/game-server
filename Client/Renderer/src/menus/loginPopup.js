@@ -1,9 +1,9 @@
 define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io', 'Renderer/src/menus/lobbyMenu'],
     function (Template, InputHandler, io, LobbyMenu)
     {
-        function LoginPopup()
+        function LoginPopup(mainMenu)
         {
-
+            this.mainMenu = mainMenu;
         }
 
         LoginPopup.prototype.show = function ()
@@ -154,15 +154,15 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
         {
             this.socket = io.connect('http://127.0.0.1:1988');  
             
-            if (!this.socket.connected)
+            if (!this.socket.socket.connected)
             {
                 this.loginError.style.display = null;
-                this.errorMessage.innerHTML = 'Unable to connect to the serverUnable to connect to the serverUnable to connect to the serverUnable to connect to the serverUnable to connect to the server.';
+                this.errorMessage.innerHTML = 'Unable to connect to the server.';
                 return false;
             }
             
             return true;
         };
 
-        return new LoginPopup();
+        return LoginPopup;
     });
