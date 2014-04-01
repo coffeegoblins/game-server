@@ -6,17 +6,23 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
         {
             BrowserNavigation.on('root', this.show.bind(this));
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
+            
+            this.loginPopup = new LoginPopup(this);
         }
 
         MainMenu.prototype.show = function ()
         {
             document.body.innerHTML = MainMenuTemplate;
             document.body.className = 'main-menu';
+            
+            this.mainMenuChains = document.getElementById('mainMenuChains');
 
             InputHandler.registerClickEvent('singlePlayer', this.onSinglePlayerButtonClicked, this);
             InputHandler.registerClickEvent('multiPlayer', this.onMultiPlayerButtonClicked, this);
             InputHandler.registerClickEvent('options', this.onOptionsButtonClicked, this);
             InputHandler.registerClickEvent('exit', this.onExitButtonClicked, this);
+            
+            this.lowerMenu();
         };
 
         MainMenu.prototype.hide = function ()
@@ -36,7 +42,8 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
 
         MainMenu.prototype.onMultiPlayerButtonClicked = function ()
         {
-            LoginPopup.show();
+            this.raiseMenu();
+            this.loginPopup.show();
         };
 
         MainMenu.prototype.onOptionsButtonClicked = function ()
@@ -56,6 +63,16 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
             document.body.className = 'game';
             document.body.innerHTML = GameTemplate;
             PlotManager.loadLevel('level1');
+        };
+        
+        MainMenu.prototype.lowerMenu = function()
+        {
+            this.mainMenuChains.className = 'lowerChains';
+        };
+        
+        MainMenu.prototype.raiseMenu = function()
+        {
+            this.mainMenuChains.className = 'raiseChains';  
         };
 
         return new MainMenu();

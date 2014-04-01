@@ -21,6 +21,9 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
             InputHandler.registerClickEvent('waitingOnYouButton', this.onWaitingOnYouButtonClicked, this);
             InputHandler.registerClickEvent('waitingOnThemButton', this.onWaitingOnThemButtonClicked, this);
             InputHandler.registerClickEvent('playerSearchButton', this.onPlayerSearchButtonClicked, this);
+            
+            this.mainMenuChains = document.getElementById('mainMenuChains');
+            this.mainMenuChains.className = 'lowerChains';
         };
 
         LobbyMenu.prototype.hide = function ()
@@ -28,20 +31,9 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
             document.body.innerHTML = '';
         };
         
-        LobbyMenu.prototype.toggleNavigationMenu = function ()
-        {
-            if (this.navigationMenu.className === 'active')
-            {
-                this.navigationMenu.className = 'inactive';
-                return;
-            }
-
-            this.navigationMenu.className = 'active';
-        };
-        
         LobbyMenu.prototype.onPlayerSearchButtonClicked = function (e)
         {
-            this.toggleNavigationMenu();
+            this.mainMenuChains.className = 'raiseChains';
             this.content.innerHTML += PlayerSearchTemplate;
         };
 
