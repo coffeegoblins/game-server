@@ -8,8 +8,8 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
         LoginPopup.prototype.show = function ()
         {
-            document.body.innerHTML += Template;
-
+            document.getElementById('content').innerHTML += Template;
+            
             InputHandler.registerClickEvent('cancelButton', this.onCancelButtonClicked, this);
             InputHandler.registerClickEvent('registerTab', this.onRegisterTabClicked, this);
             InputHandler.registerClickEvent('loginTab', this.onLoginTabClicked, this);
@@ -47,6 +47,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
         LoginPopup.prototype.onCancelButtonClicked = function (e)
         {
             this.hide();
+            this.mainMenu.mainMenuChains.className = 'lowerChains';
         };
 
         LoginPopup.prototype.onRegisterTabClicked = function (e)
@@ -83,7 +84,6 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
         LoginPopup.prototype.onRegisterButtonClicked = function (e)
         {
-            var username = document.getElementById('usernameInput').value;
             var password = document.getElementById('passwordInput').value;
             var confirmPassword = document.getElementById('confirmPasswordInput').value;
 
@@ -119,13 +119,24 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
         LoginPopup.prototype.onLoginButtonClicked = function (e)
         {
-            var username = document.getElementById('usernameInput').value;
-            var password = document.getElementById('passwordInput').value;
-            
             if (!this.connect())
             {
                 return;
             }
+        };
+
+        LoginPopup.prototype.loadLobby = function ()
+        {
+            this.hide();
+            LobbyMenu.show();
+        };
+        
+        LoginPopup.prototype.connect = function ()
+        {
+            var username = document.getElementById('usernameInput').value;
+            var password = document.getElementById('passwordInput').value;
+            
+            this.socket = io.connect('http://127.0.0.1:1988');  
 
             this.socket.emit('login', username, btoa(password));
 
@@ -142,17 +153,6 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             {
                 this.loadLobby();
             }.bind(this));
-        };
-
-        LoginPopup.prototype.loadLobby = function ()
-        {
-            this.hide();
-            LobbyMenu.show();
-        };
-        
-        LoginPopup.prototype.connect = function ()
-        {
-            this.socket = io.connect('http://127.0.0.1:1988');  
             
             if (!this.socket.socket.connected)
             {

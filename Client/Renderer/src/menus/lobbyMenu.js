@@ -8,7 +8,6 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
 
         LobbyMenu.prototype.show = function ()
         {
-            document.body.backgroundColor = "#FFF";
             document.body.innerHTML = LobbyTemplate;
 
             this.navigationMenu = document.getElementById('navigationMenu');

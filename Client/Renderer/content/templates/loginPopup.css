@@ -10,7 +10,10 @@
 #loginPopup {
     display: block;
     width: 250px;
-    margin: 75px auto;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    margin-left: -125px;
 }
 
 #loginPopupContents {

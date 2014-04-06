@@ -2,8 +2,7 @@
     position: relative;
     z-index: 2;
     width: 100%;
-    font-size: 24px;
-    height: 40px;
+    height: 5%;
     background-image: url('../images/wood.png');
 }
 #mainMenuChains {
@@ -11,6 +10,10 @@
     width: 300px;
     margin-left: 10px;
     z-index: 1;
+}
+#content {
+    position: relative;
+    height: 95%;
 }
 .lowerChains {
     animation: bounce 2s linear;
@@ -22,26 +25,35 @@
     transform: translateY(-300%);
     -webkit-transform:  translateY(-300%);
 }
-.chainItem {
+.menuChain {
     background-image: url('../images/menuChain.png');
     background-size: 100% 100%;
+    position: relative;
+    text-align: center;
+    height: 20px;
+}
+.menuItem {
+    background-image: url('../images/menuItem.png');
+    background-size: 100% 100%;
     background-repeat: no-repeat;
-    height: 100px;
     position: relative;
     text-align: center;
 }
-.chainItem p {
-    font-size: 24px;
+.menuItem p {
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: -1px 1px #333, 1px -1px #333, 1px 1px #333, -1px -1px #333;
     margin: 0;
     color: #EEE;
-    padding: 50px 0px 0px 1px;
-    height: 50%;
+    padding: 10px;
 }
 @media only screen and (max-width: 400px) {
     #mainMenuChains {
-        max-width: 100%;
-        margin: auto;
-    }
+        left: 50%;
+        margin-left: -125px;
+    
+        width: 250px;
+}
 }
 @keyframes bounce {
     0% {

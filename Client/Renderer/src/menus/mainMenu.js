@@ -42,8 +42,9 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
 
         MainMenu.prototype.onMultiPlayerButtonClicked = function ()
         {
-            this.raiseMenu();
-            this.loginPopup.show();
+            this.mainMenuChains.className = 'raiseChains';  
+            
+            setTimeout(function() { this.loginPopup.show() }.bind(this), 0);
         };
 
         MainMenu.prototype.onOptionsButtonClicked = function ()
@@ -68,11 +69,6 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
         MainMenu.prototype.lowerMenu = function()
         {
             this.mainMenuChains.className = 'lowerChains';
-        };
-        
-        MainMenu.prototype.raiseMenu = function()
-        {
-            this.mainMenuChains.className = 'raiseChains';  
         };
 
         return new MainMenu();
