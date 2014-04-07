@@ -16,13 +16,37 @@ define([
 
         function Renderer()
         {
-            this.camera = new Camera();
             this.renderables = [];
             this.renderablePaths = [];
 
             Events.register(this);
             this.onResize = onResize.bind(this);
         }
+
+        Renderer.prototype.initialize = function ()
+        {
+            this.canvas = document.getElementById('canvas');
+            this.context = this.canvas.getContext('2d');
+
+            this.camera = new Camera();
+            this.renderables.length = 0;
+            this.renderablePaths.length = 0;
+
+            InputHandler.on('drag', this, this.onDrag);
+            InputHandler.registerClickEvent('canvas', this.onClick, this);
+            window.addEventListener('resize', this.onResize, false);
+
+            this.onResize();
+            Scheduler.schedule({id: 'renderer', context: this, method: this.update, priority: Scheduler.priority.render});
+        };
+
+        Renderer.prototype.uninitialize = function ()
+        {
+            this.clearEvents();
+            InputHandler.off('drag', this);
+            InputHandler.unregisterClickEvent('canvas');
+            window.removeEventListener('resize', this.onResize, false);
+        };
 
         function onResize()
         {
@@ -64,9 +88,7 @@ define([
                 return;
 
             this.camera.update(deltaTime);
-
-            var map = this.renderableMap;
-            map.render(this.context, this.camera);
+            this.renderableMap.render(this.context, this.camera);
 
             // Pathing needs to be drawn after the map and before the objects
             for (var i = 0; i < this.renderablePaths.length; i++)
@@ -141,29 +163,6 @@ define([
         Renderer.prototype.clearRenderablePathById = function (id)
         {
             Utility.removeElementByProperty(this.renderablePaths, 'id', id);
-        };
-
-        Renderer.prototype.initialize = function ()
-        {
-            this.canvas = document.getElementById('canvas');
-            this.context = this.canvas.getContext('2d');
-
-            this.renderables.length = 0;
-            this.renderablePaths.length = 0;
-
-            InputHandler.on('drag', this, this.onDrag);
-            InputHandler.registerClickEvent('canvas', this.onClick, this);
-            window.addEventListener('resize', this.onResize, false);
-
-            this.onResize();
-            Scheduler.schedule({id: 'renderer', context: this, method: this.update, priority: Scheduler.priority.render});
-        };
-
-        Renderer.prototype.uninitialize = function ()
-        {
-            InputHandler.off('drag', this);
-            InputHandler.unregisterClickEvent('canvas');
-            window.removeEventListener('resize', this.onResize, false);
         };
 
         return new Renderer();

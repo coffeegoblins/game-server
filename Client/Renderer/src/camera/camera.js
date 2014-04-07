@@ -45,11 +45,15 @@ define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
         var xPosition = Math.floor(position.x - this.viewportRect.width / 2);
         var yPosition = Math.floor(position.y - this.viewportRect.height / 2);
 
-        if (Math.abs(this.viewportRect.x - xPosition) < 10 && Math.abs(this.viewportRect.y - yPosition) < 10)
-            return;
-
         this.targetUnit = unit;
         this.callback = callback;
+
+        // Don't move if we're already close enough
+        if (Math.abs(this.viewportRect.x - xPosition) < 10 && Math.abs(this.viewportRect.y - yPosition) < 10)
+        {
+            this.onMovedToUnit();
+            return;
+        }
 
         var transition = {
             id: 'moveToUnitX',
