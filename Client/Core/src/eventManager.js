@@ -69,11 +69,17 @@ define(['./utility'], function (Utility)
         }
     }
 
+    function clearEvents()
+    {
+        this.events = null;
+    }
+
     return {
         register: function (object)
         {
             object.on = on;
             object.off = off;
+            object.clearEvents = clearEvents;
             object.trigger = trigger;
         }
     };
