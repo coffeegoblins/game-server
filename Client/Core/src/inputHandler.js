@@ -197,17 +197,13 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         var registeredEvent = this.registeredClickEvents[e.target.id];
         if (registeredEvent)
         {
-            var context = registeredEvent.context || e.target;
-            registeredEvent.method.call(context, e);
+            registeredEvent.method.call(registeredEvent.context || e.target, e);
         }
         else
         {
             InputHandler.trigger('click', e);
-
             if (e.target.id)
-            {
-                document.getElementById(e.target.id).focus();
-            }
+                e.target.focus();
         }
     };
 
@@ -314,6 +310,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
     window.addEventListener('contextmenu', preventDefault, false);
     window.addEventListener('MSHoldVisual', preventDefault, false);
     window.addEventListener('selectstart', preventDefault, false);
+    window.addEventListener('wheel', preventDefault, false);
 
     // Hook into input events
     window.addEventListener('mousedown', onMouseDown, false);

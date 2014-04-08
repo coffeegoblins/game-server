@@ -62,6 +62,8 @@ define(['Renderer/src/ui/actionBarView', 'Renderer/src/ui/unitView', '../inputHa
 
     LocalPlayer.prototype.onAttackAction = function ()
     {
+        Renderer.camera.moveToUnit(this.unit);
+
         var actions = [];
         var attacks = this.getAttacks();
         for (var i = 0; i < attacks.length; i++)
@@ -160,6 +162,8 @@ define(['Renderer/src/ui/actionBarView', 'Renderer/src/ui/unitView', '../inputHa
 
     LocalPlayer.prototype.onMoveAction = function ()
     {
+        Renderer.camera.moveToUnit(this.unit);
+
         this.actionBarView.pushState([
             {name: 'confirmMove', displayName: 'Move', method: this.onMoveConfirmed.bind(this), isDisabled: true},
             {name: 'cancel', displayName: 'Cancel', method: this.resetActionState.bind(this)}
@@ -220,7 +224,8 @@ define(['Renderer/src/ui/actionBarView', 'Renderer/src/ui/unitView', '../inputHa
 
     LocalPlayer.prototype.onUnitSelected = function (unit)
     {
-        this.targetUnitView.show(unit);
+        if (unit !== this.unit)
+            this.targetUnitView.show(unit);
     };
 
     LocalPlayer.prototype.resetActionState = function (actionState)
