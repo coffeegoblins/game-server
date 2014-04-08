@@ -38,7 +38,7 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
             var imageHeight = this.spriteSheet.tileHeight * camera.scale;
 
             var left = position.x - camera.viewportRect.x + camera.halfTileWidth - imageWidth / 2;
-            var top = position.y - camera.viewportRect.y + camera.tileHeight - imageHeight;
+            var top = position.y - camera.viewportRect.y - imageHeight / 2;
 
             if (camera.isInView(left, top, imageWidth, imageHeight))
             {
