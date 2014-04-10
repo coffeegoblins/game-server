@@ -1,117 +1,134 @@
 define(function ()
 {
     'use strict';
-    function Utility() {}
+    return {
 
-    Utility.containsElement = function (array, element)
-    {
-        for (var i = 0; i < array.length; i++)
+        containsElement: function (array, element)
         {
-            if (array[i] === element)
+            for (var i = 0; i < array.length; i++)
             {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    Utility.getElementByProperty = function (array, property, value)
-    {
-        for (var i = 0; i < array.length; i++)
-        {
-            if (array[i][property] === value)
-            {
-                return array[i];
-            }
-        }
-    };
-
-    Utility.getElementByProperties = function (array, properties)
-    {
-        for (var i = 0; i < array.length; i++)
-        {
-            var isMatching = true;
-            for (var property in properties)
-            {
-                if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                if (array[i] === element)
                 {
-                    isMatching = false;
-                    break;
+                    return true;
                 }
             }
 
-            if (isMatching)
-            {
-                return array[i];
-            }
-        }
-    };
+            return false;
+        },
 
-    Utility.merge = function ()
-    {
-        var baseObject = arguments[0];
-        for (var i = 1; i < arguments.length; i++)
+        getElementByProperty: function (array, property, value)
         {
-            var argument = arguments[i];
-            if (argument)
+            for (var i = 0; i < array.length; i++)
             {
-                for (var property in argument)
+                if (array[i][property] === value)
                 {
-                    if (argument[property] !== undefined)
-                        baseObject[property] = argument[property];
+                    return array[i];
                 }
             }
-        }
+        },
 
-        return baseObject;
-    };
-
-    Utility.removeElement = function (array, element)
-    {
-        var index = array.indexOf(element);
-        if (index >= 0)
+        getElementByProperties: function (array, properties)
         {
-            array.splice(index, 1);
-        }
-    };
-
-    Utility.removeElementByProperty = function (array, property, value)
-    {
-        for (var i = 0; i < array.length; i++)
-        {
-            var object = array[i];
-            if (object[property] === value)
+            for (var i = 0; i < array.length; i++)
             {
-                array.splice(i, 1);
-                return object;
-            }
-        }
-    };
-
-    Utility.removeElementByProperties = function (array, properties)
-    {
-        for (var i = 0; i < array.length; i++)
-        {
-            var isMatching = true;
-            for (var property in properties)
-            {
-                if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                var isMatching = true;
+                for (var property in properties)
                 {
-                    isMatching = false;
-                    break;
+                    if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                    {
+                        isMatching = false;
+                        break;
+                    }
+                }
+
+                if (isMatching)
+                {
+                    return array[i];
+                }
+            }
+        },
+
+        insertTemplate: function (element, template)
+        {
+            element.insertAdjacentHTML('beforeend', template);
+            this.removeWhitespace(element);
+        },
+
+        merge: function ()
+        {
+            var baseObject = arguments[0];
+            for (var i = 1; i < arguments.length; i++)
+            {
+                var argument = arguments[i];
+                if (argument)
+                {
+                    for (var property in argument)
+                    {
+                        if (argument[property] !== undefined)
+                            baseObject[property] = argument[property];
+                    }
                 }
             }
 
-            if (isMatching)
-                return array.splice(i, 1)[0];
+            return baseObject;
+        },
+
+        removeElement: function (array, element)
+        {
+            var index = array.indexOf(element);
+            if (index >= 0)
+            {
+                array.splice(index, 1);
+            }
+        },
+
+        removeElementByProperty: function (array, property, value)
+        {
+            for (var i = 0; i < array.length; i++)
+            {
+                var object = array[i];
+                if (object[property] === value)
+                {
+                    array.splice(i, 1);
+                    return object;
+                }
+            }
+        },
+
+        removeElementByProperties: function (array, properties)
+        {
+            for (var i = 0; i < array.length; i++)
+            {
+                var isMatching = true;
+                for (var property in properties)
+                {
+                    if (properties.hasOwnProperty(property) && array[i][property] !== properties[property])
+                    {
+                        isMatching = false;
+                        break;
+                    }
+                }
+
+                if (isMatching)
+                    return array.splice(i, 1)[0];
+            }
+        },
+
+        removeWhitespace: function (element)
+        {
+            for (var i = element.childNodes.length - 1; i >= 0; i--)
+            {
+                var childNode = element.childNodes[i];
+                if (childNode.nodeType === 3 && !/\S/.test(childNode.nodeValue))
+                    element.removeChild(childNode);
+                else if (childNode.nodeType === 1)
+                    this.removeWhitespace(childNode);
+            }
+        },
+
+        validateNumber: function (number)
+        {
+            return (number && isFinite(number)) ? number : 0;
         }
     };
-
-    Utility.validateNumber = function (number)
-    {
-        return (number && isFinite(number)) ? number : 0;
-    };
-
-    return Utility;
 });

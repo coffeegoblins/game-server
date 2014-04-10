@@ -1,37 +1,26 @@
-<link rel="stylesheet" type="text/css" href="Renderer/content/templates/loginPopup.css" />
+<link rel="stylesheet" type="text/css" href="Renderer/content/templates/loginPopup.css"/>
 
 <div id="overlay">
-    <div id="loginPopup">
-        <div class="table">
+    <div id="loginPopup" class="login">
+        <header class="element-container two-element-container">
             <span id="loginTab" class="tab">Login</span>
-            <span id="registerTab" class="unselectedTab">Register</span>
-        </div>
+            <span id="registerTab" class="tab">Register</span>
+        </header>
         <div id="loginPopupContents">
-            <div id="loginError">
-                <img class="warningIcon" src="Renderer/content/images/cancelIcon.png" />
-                <div id="errorMessage"></div>
-            </div>
-            <div class="inputLabel">Username</div>
-            <div class="input">
-                <input type="text" id="usernameInput">
-            </div>
-            <div class="inputLabel">Password</div>
-            <div class="input">
-                <input type="password" id="passwordInput">
-            </div>
-            <div id="confirmPasswordBox">
-                <div class="inputLabel">Confirm Password</div>
-                <div class="input">
-                    <input type="password" id="confirmPasswordInput">
-                </div>
+            <div id="errorMessage"></div>
+            <label>Username</label>
+            <input type="text" id="usernameInput">
+            <label>Password</label>
+            <input type="password" id="passwordInput">
+            <div class="register-item">
+                <label>Confirm Password</label>
+                <input type="password" id="confirmPasswordInput">
             </div>
         </div>
-        <div class="table">
+        <footer class="element-container two-element-container">
             <span id="cancelButton" class="button">Cancel</span>
-            <span id="loginButton" class="button">Login</span>
-            <span id="registerButton" class="button">Register</span>
-        </div>
+            <span id="loginButton" class="button login-item">Login</span>
+            <span id="registerButton" class="button register-item">Register</span>
+        </footer>
     </div>
 </div>
-
-

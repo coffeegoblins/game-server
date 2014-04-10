@@ -12,7 +12,7 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         };
 
         this.activeTouches = {};
-        this.handleInput = true;
+        this.handleInput = false;
         this.registeredClickEvents = {};
     }
 
@@ -20,9 +20,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
 
     InputHandler.addClickListener = function (element, method)
     {
-        if (!inputHandler.handleInput)
-            return;
-
         element.addEventListener('click', function (e)
         {
             if (inputHandler.handleInput)
@@ -202,8 +199,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         else
         {
             InputHandler.trigger('click', e);
-            if (e.target.id)
-                e.target.focus();
         }
     };
 
@@ -246,9 +241,9 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
                 var touch = e.changedTouches[i];
                 inputHandler.activeTouches[touch.identifier] = inputHandler.handlePressEvent(touch);
             }
-        }
 
-        e.preventDefault();
+            e.preventDefault();
+        }
     }
 
     function onTouchMove(e)
@@ -264,9 +259,9 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
                     inputHandler.handleMoveEvent(activeTouch, touch);
                 }
             }
-        }
 
-        e.preventDefault();
+            e.preventDefault();
+        }
     }
 
     function onTouchEnd(e)

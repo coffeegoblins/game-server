@@ -150,10 +150,10 @@ define([
 
             uninitialize: function ()
             {
-                Renderer.uninitialize();
-                BrowserNavigation.off('leaving:singlePlayer', this);
                 Scheduler.clear();
-                InputHandler.enableInput();
+                Renderer.uninitialize();
+                InputHandler.disableInput();
+                BrowserNavigation.off('leaving:singlePlayer', this);
             }
         };
     });

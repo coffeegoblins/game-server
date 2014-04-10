@@ -21,56 +21,84 @@
     padding: 10px 0 20px 0;
 }
 
-.inputLabel {
-    font-weight: 700;
-    padding: 10px 0 0 20px
+.login #registerTab {
+    background-color: #999;
 }
 
-.input {
-    padding: 0 10px 0 40px;
+.login .register-item {
+    display: none;
 }
 
-.table {
+.register #loginTab {
+    background-color: #999;
+}
+
+.register .login-item {
+    display: none;
+}
+
+#loginError {
+    display: none;
+}
+
+#loginPopup label {
+    font-weight: bold;
+    padding: 10px 0 0 20px;
+}
+
+#loginPopup input {
+    display: block;
+    margin: 0 10px 0 40px;
+}
+
+#loginPopup footer {
+    border-top: 1px solid #999;
+}
+
+.element-container > * {
     text-align: center;
-    display: table;
-    width: 100%;
+    display: inline-block;
+    border-left: 1px solid #999;
 }
 
-.warningIcon {
-    width: 18px;
-    height: 18px;
-    margin: 0px 5px;
-    float: left;
-    vertical-align: middle;
+.element-container > *:first-child {
+    border-left: none;
+}
+
+.two-element-container > * {
+    width: 50%;
 }
 
 #errorMessage {
-    padding: 0px 5px;
+    padding: 0 5px;
+    color: red;
+    text-align: center;
+}
+
+#errorMessage:before {
+    display: inline-block;
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    vertical-align: sub;
+    margin-right: 8px;
+    background-image: url("../images/cancelIcon.png");
+}
+
+#errorMessage:empty {
+    display: none;
 }
 
 .tab {
-    display: table-cell;
-    width: 50%;
     padding: 10px 0;
-    font-weight: 700;
+    font-weight: bold;
     border-radius: 10px 10px 0 0;
     background-color: #ccc;
 }
 
-.unselectedTab {
-    display: table-cell;
-    width: 50%;
-    padding: 10px 0;
-    font-weight: 700;
-    border-radius: 10px 10px 0 0;
-    background-color: #999;
-}
-
 .button {
-    display: table-cell;
-    width: 50%;
     padding: 10px 0;
     font-weight: 700;
-    border: 1px solid #999;
     background-color: #ccc;
 }

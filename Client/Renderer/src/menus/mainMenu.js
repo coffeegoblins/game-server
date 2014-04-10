@@ -1,12 +1,12 @@
-define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/inputHandler', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
-    function (MainMenuTemplate, GameTemplate, InputHandler, PlotManager, LoginPopup, BrowserNavigation)
+define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
+    function (MainMenuTemplate, GameTemplate, PlotManager, LoginPopup, BrowserNavigation)
     {
         'use strict';
         function MainMenu()
         {
             BrowserNavigation.on('root', this.show.bind(this));
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
-            
+
             this.loginPopup = new LoginPopup(this);
         }
 
@@ -14,49 +14,37 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
         {
             document.body.innerHTML = MainMenuTemplate;
             document.body.className = 'main-menu';
-            
-            this.mainMenuChains = document.getElementById('mainMenuChains');
 
-            InputHandler.registerClickEvent('singlePlayer', this.onSinglePlayerButtonClicked, this);
-            InputHandler.registerClickEvent('multiPlayer', this.onMultiPlayerButtonClicked, this);
-            InputHandler.registerClickEvent('options', this.onOptionsButtonClicked, this);
-            InputHandler.registerClickEvent('exit', this.onExitButtonClicked, this);
-            
+            this.mainMenuChains = document.getElementById('mainMenuChains');
+            this.mainMenuChains.on('click', '.menuItem p', this.onMenuItemClicked.bind(this));
             this.lowerMenu();
         };
 
         MainMenu.prototype.hide = function ()
         {
             document.body.innerHTML = "";
-            InputHandler.unregisterClickEvent('singlePlayer');
-            InputHandler.unregisterClickEvent('multiPlayer');
-            InputHandler.unregisterClickEvent('options');
-            InputHandler.unregisterClickEvent('exit');
         };
 
-        MainMenu.prototype.onSinglePlayerButtonClicked = function ()
+        MainMenu.prototype.onMenuItemClicked = function (e)
         {
-            BrowserNavigation.addState('singlePlayer');
-            this.loadSinglePlayer();
+            switch (e.target.id)
+            {
+                case 'singlePlayer':
+                    BrowserNavigation.addState('singlePlayer');
+                    this.loadSinglePlayer();
+                    break;
+                case 'multiPlayer':
+                    this.mainMenuChains.className = 'raiseChains';
+                    setTimeout(this.loginPopup.show.bind(this.loginPopup), 0);
+                    break;
+                case 'options':
+
+                    break;
+                case 'exit':
+
+                    break;
+            }
         };
-
-        MainMenu.prototype.onMultiPlayerButtonClicked = function ()
-        {
-            this.mainMenuChains.className = 'raiseChains';  
-            
-            setTimeout(function() { this.loginPopup.show() }.bind(this), 0);
-        };
-
-        MainMenu.prototype.onOptionsButtonClicked = function ()
-        {
-
-        };
-
-        MainMenu.prototype.onExitButtonClicked = function ()
-        {
-
-        };
-
 
         MainMenu.prototype.loadSinglePlayer = function ()
         {
@@ -65,8 +53,8 @@ define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/
             document.body.innerHTML = GameTemplate;
             PlotManager.loadLevel('level1');
         };
-        
-        MainMenu.prototype.lowerMenu = function()
+
+        MainMenu.prototype.lowerMenu = function ()
         {
             this.mainMenuChains.className = 'lowerChains';
         };

@@ -1,5 +1,5 @@
-define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandler', 'lib/socket.io', 'Renderer/src/menus/lobbyMenu'],
-    function (Template, InputHandler, io, LobbyMenu)
+define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Renderer/src/menus/lobbyMenu', 'Core/src/utility'],
+    function (Template, io, LobbyMenu, Utility)
     {
         function LoginPopup(mainMenu)
         {
@@ -8,97 +8,59 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
         LoginPopup.prototype.show = function ()
         {
-            document.getElementById('content').innerHTML += Template;
-            
-            InputHandler.registerClickEvent('cancelButton', this.onCancelButtonClicked, this);
-            InputHandler.registerClickEvent('registerTab', this.onRegisterTabClicked, this);
-            InputHandler.registerClickEvent('loginTab', this.onLoginTabClicked, this);
-            InputHandler.registerClickEvent('loginButton', this.onLoginButtonClicked, this);
-            InputHandler.registerClickEvent('registerButton', this.onRegisterButtonClicked, this);
-
-            this.confirmPasswordBox = document.getElementById('confirmPasswordBox');
-            this.loginTab = document.getElementById('loginTab');
-            this.loginButton = document.getElementById('loginButton');
-            this.registerTab = document.getElementById('registerTab');
-            this.registerButton = document.getElementById('registerButton');
-            this.loginError = document.getElementById('loginError');
+            Utility.insertTemplate(document.getElementById('content'), Template);
+            this.loginPopup = document.getElementById('loginPopup');
             this.errorMessage = document.getElementById('errorMessage');
 
-            this.loginError.style.display = 'none';
-            this.confirmPasswordBox.style.display = 'none';
-            this.registerButton.style.display = 'none';
+            document.getElementById('loginTab').addEventListener('click', this.onLoginTabClicked.bind(this), false);
+            document.getElementById('registerTab').addEventListener('click', this.onRegisterTabClicked.bind(this), false);
+            document.getElementById('loginButton').addEventListener('click', this.onLoginButtonClicked.bind(this), false);
+            document.getElementById('registerButton').addEventListener('click', this.onRegisterButtonClicked.bind(this), false);
+            document.getElementById('cancelButton').addEventListener('click', this.onCancelButtonClicked.bind(this), false);
         };
 
         LoginPopup.prototype.hide = function ()
         {
-            var popup = document.getElementById('overlay');
-            if (popup)
-            {
-                popup.parentNode.removeChild(popup);
-            }
-
-            InputHandler.unregisterClickEvent('cancelButton');
-            InputHandler.unregisterClickEvent('registerButton');
-            InputHandler.unregisterClickEvent('loginButton');
-            InputHandler.registerClickEvent('registerTab');
-            InputHandler.registerClickEvent('loginTab');
+            var content = document.getElementById('content');
+            while (content.lastChild)
+                content.removeChild(content.lastChild);
         };
 
-        LoginPopup.prototype.onCancelButtonClicked = function (e)
+        LoginPopup.prototype.onCancelButtonClicked = function ()
         {
             this.hide();
             this.mainMenu.mainMenuChains.className = 'lowerChains';
         };
 
-        LoginPopup.prototype.onRegisterTabClicked = function (e)
+        LoginPopup.prototype.onRegisterTabClicked = function ()
         {
-            if (this.confirmPasswordBox.style.display != 'block')
-            {
-                this.confirmPasswordBox.style.display = 'block';
-                this.registerButton.style.display = null;
-                this.loginButton.style.display = 'none';
-                this.loginError.style.display = 'none';
-
-                this.registerTab.className = 'tab';
-                this.loginTab.className = 'unselectedTab';
-
-                return;
-            }
+            this.errorMessage.textContent = '';
+            this.loginPopup.className = 'register';
         };
 
-        LoginPopup.prototype.onLoginTabClicked = function (e)
+        LoginPopup.prototype.onLoginTabClicked = function ()
         {
-            if (this.confirmPasswordBox.style.display === 'block')
-            {
-                this.confirmPasswordBox.style.display = 'none';
-                this.registerButton.style.display = 'none';
-                this.loginButton.style.display = null;
-                this.loginError.style.display = 'none';
-
-                this.registerTab.className = 'unselectedTab';
-                this.loginTab.className = 'tab';
-
-                return;
-            }
+            this.errorMessage.textContent = '';
+            this.loginPopup.className = 'login';
         };
 
-        LoginPopup.prototype.onRegisterButtonClicked = function (e)
+        LoginPopup.prototype.onRegisterButtonClicked = function ()
         {
             var password = document.getElementById('passwordInput').value;
             var confirmPassword = document.getElementById('confirmPasswordInput').value;
 
             if (password !== confirmPassword)
             {
-                this.loginError.style.display = null;
-                this.errorMessage.innerHTML = 'Passwords did not match!';
+                this.errorMessage.textContent = 'Passwords did not match!';
                 return;
             }
-            
+
             if (!this.connect())
             {
                 return;
             }
 
+            var username = document.getElementById('usernameInput').value;
             this.socket.emit('register', username, btoa(password));
 
             this.socket.on('registration_succeeded', function ()
@@ -109,15 +71,11 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
 
             this.socket.on('registration_failed', function (error)
             {
-                if (error)
-                {
-                    this.loginError.style.display = null;
-                    this.errorMessage.innerHTML = error;
-                }
+                this.errorMessage.textContent = error || '';
             }.bind(this));
         };
 
-        LoginPopup.prototype.onLoginButtonClicked = function (e)
+        LoginPopup.prototype.onLoginButtonClicked = function ()
         {
             if (!this.connect())
             {
@@ -130,37 +88,31 @@ define(['text!Renderer/content/templates/loginPopup.html', 'Core/src/inputHandle
             this.hide();
             LobbyMenu.show();
         };
-        
+
         LoginPopup.prototype.connect = function ()
         {
             var username = document.getElementById('usernameInput').value;
             var password = document.getElementById('passwordInput').value;
-            
-            this.socket = io.connect('http://127.0.0.1:1988');  
 
+            this.socket = io.connect('http://127.0.0.1:1988');
             this.socket.emit('login', username, btoa(password));
 
             this.socket.on('login_failed', function (error)
             {
-                if (error)
-                {
-                    this.loginError.style.display = null;
-                    this.errorMessage.innerHTML = error;
-                }
+                this.errorMessage.textContent = error || '';
             }.bind(this));
 
             this.socket.on('login_succeeded', function ()
             {
                 this.loadLobby();
             }.bind(this));
-            
+
             if (!this.socket.socket.connected)
             {
-                this.loginError.style.display = null;
-                this.errorMessage.innerHTML = 'Unable to connect to the server.';
+                this.errorMessage.textContent = 'Unable to connect to the server.';
                 return false;
             }
-            
+
             return true;
         };
 
