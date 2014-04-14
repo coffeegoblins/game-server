@@ -1,26 +1,19 @@
-<link rel="stylesheet" type="text/css" href="Renderer/content/templates/loginPopup.css"/>
+<link rel="stylesheet" type="text/css" href="Renderer/content/templates/loginPopup.css" />
 
-<div id="overlay">
-    <div id="loginPopup" class="login">
-        <header class="element-container two-element-container">
-            <span id="loginTab" class="tab">Login</span>
-            <span id="registerTab" class="tab">Register</span>
-        </header>
-        <div id="loginPopupContents">
-            <div id="errorMessage"></div>
-            <label>Username</label>
-            <input type="text" id="usernameInput">
-            <label>Password</label>
-            <input type="password" id="passwordInput">
-            <div class="register-item">
-                <label>Confirm Password</label>
-                <input type="password" id="confirmPasswordInput">
-            </div>
+<div id="loginPopup">
+    <div class="content">
+        <div id="loginError">
+            <img id="warningIcon" src="Renderer/content/images/cancelIcon.png" />
+            <div id="errorMessage">&nbsp;</div>
         </div>
-        <footer class="element-container two-element-container">
-            <span id="cancelButton" class="button">Cancel</span>
-            <span id="loginButton" class="button login-item">Login</span>
-            <span id="registerButton" class="button register-item">Register</span>
-        </footer>
+        <input type="text" id="usernameInput" placeholder="Username">
+        <input type="password" id="passwordInput" placeholder="Password">
+        <input type="button" id="loginButton" value="Login">
+
+        <p>Complete the login information and confirm your password to register.</p>
+        <input type="password" id="confirmPasswordInput" placeholder="Confirm Password">
+        <input type="button" id="registerButton" value="Register">
     </div>
 </div>
+
+

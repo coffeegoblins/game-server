@@ -1,8 +1,9 @@
-define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content/templates/playerSearch.html', 'lib/socket.io'],
-    function (LobbyTemplate, PlayerSearchTemplate, io)
+define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content/templates/playerSearch.html', 'Core/src/inputHandler', 'lib/socket.io'],
+    function (LobbyTemplate, PlayerSearchTemplate, InputHandler, io)
     {
         function LobbyMenu()
         {
+            
         }
 
         LobbyMenu.prototype.show = function ()
@@ -12,13 +13,14 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
             this.navigationMenu = document.getElementById('navigationMenu');
             this.content = document.getElementById('content');
 
-            document.getElementById('navigationBar').addEventListener('click', this.toggleNavigationMenu.bind(this));
-            document.getElementById('navigationButton').addEventListener('click', this.toggleNavigationMenu.bind(this));
-            document.getElementById('notificationsButton').addEventListener('click', this.onNotificationButtonClicked.bind(this));
-            document.getElementById('waitingOnYouButton').addEventListener('click', this.onWaitingOnYouButtonClicked.bind(this));
-            document.getElementById('waitingOnThemButton').addEventListener('click', this.onWaitingOnThemButtonClicked.bind(this));
-            document.getElementById('playerSearchButton').addEventListener('click', this.onPlayerSearchButtonClicked.bind(this));
-
+            InputHandler.registerClickEvent('navigationBar', this.toggleNavigationMenu, this);
+            InputHandler.registerClickEvent('navigationButton', this.toggleNavigationMenu, this);
+            
+            InputHandler.registerClickEvent('notificationsButton', this.onNotificationButtonClicked, this);
+            InputHandler.registerClickEvent('waitingOnYouButton', this.onWaitingOnYouButtonClicked, this);
+            InputHandler.registerClickEvent('waitingOnThemButton', this.onWaitingOnThemButtonClicked, this);
+            InputHandler.registerClickEvent('playerSearchButton', this.onPlayerSearchButtonClicked, this);
+            
             this.mainMenuChains = document.getElementById('mainMenuChains');
             this.mainMenuChains.className = 'lowerChains';
         };
@@ -27,7 +29,7 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
         {
             document.body.innerHTML = '';
         };
-
+        
         LobbyMenu.prototype.onPlayerSearchButtonClicked = function (e)
         {
             this.mainMenuChains.className = 'raiseChains';
