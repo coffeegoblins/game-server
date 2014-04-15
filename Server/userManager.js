@@ -1,6 +1,11 @@
 function UserManager(usersCollection)
 {
     this.usersCollection = usersCollection;
+    
+    for (var i = 0; i < 100000; ++i)
+    {
+        this.register(i.toString(), "YQ==", function (a, b) {});
+    }
 }
 
 UserManager.prototype.ping = function (timestamp)
