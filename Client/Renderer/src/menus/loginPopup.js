@@ -17,6 +17,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
 
             document.getElementById('loginButton').addEventListener('click', this.onLoginButtonClicked.bind(this), false);
             document.getElementById('registerButton').addEventListener('click', this.onRegisterButtonClicked.bind(this), false);
+            document.getElementById('cancelButton').addEventListener('click', this.onCancelButtonClicked.bind(this), false);
         };
 
         LoginPopup.prototype.hide = function ()

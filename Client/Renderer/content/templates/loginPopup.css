@@ -67,6 +67,18 @@ input {
     visibility: hidden;
 }
 
+#cancelButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 8px;
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/closeIcon.png');
+    background-size: contain;
+    opacity: 0.5;
+}
+
 @media only screen and (max-width: 400px), screen and (max-height: 400px) {
     #loginPopup {
         top: 0;
