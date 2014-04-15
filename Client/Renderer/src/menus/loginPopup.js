@@ -55,7 +55,6 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
                 {
                     if (error)
                     {
-                        this.warningIcon.style.display = "";
                         this.errorMessage.innerHTML = error;
                     }
                 }.bind(this));
@@ -72,7 +71,6 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
                 {
                     if (error)
                     {
-                        this.warningIcon.style.display = "";
                         this.errorMessage.innerHTML = error;
                     }
                 }.bind(this));
@@ -91,9 +89,11 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
             LobbyMenu.show();
         };
 
-        LoginPopup.prototype.connect = function ()
+        LoginPopup.prototype.connect = function (callback)
         {
             this.socket = io.connect('http://127.0.0.1:1988');
+            
+            this.socket.on('connect', callback);
             
             this.socket.on('error', function (error)
             {

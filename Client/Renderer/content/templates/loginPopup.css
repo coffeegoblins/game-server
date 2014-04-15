@@ -49,7 +49,7 @@ input {
     position: relative;
     vertical-align: middle;
     text-align: center;
-    margin: 10px;
+    margin: 10px 30px;
 }
 
 #errorMessage:before {
