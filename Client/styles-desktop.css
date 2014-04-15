@@ -1,43 +1,43 @@
-#turnQueue {
-    left: 8px;
-    top: 203px;
-}
+/*#turnQueue {*/
+    /*left: 8px;*/
+    /*top: 203px;*/
+/*}*/
 
-.unit-view.primary {
-    left: 0;
-    top: 0;
-    border-radius: 0 0 8px 0;
-}
+/*.unit-view.primary {*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*border-radius: 0 0 8px 0;*/
+/*}*/
 
-.unit-view.secondary {
-    right: 0;
-    top: 0;
-    border-radius: 0 0 0 8px;
-}
+/*.unit-view.secondary {*/
+    /*right: 0;*/
+    /*top: 0;*/
+    /*border-radius: 0 0 0 8px;*/
+/*}*/
 
-.outerBar {
-    margin-top: 4px;
-}
+/*.outerBar {*/
+    /* margin-top: 4px; */
+/*}*/
 
-.active-unit-preview {
-    height: 128px;
-    width: 128px;
-}
+/*.active-unit-preview {*/
+    /*height: 128px;*/
+    /*width: 128px;*/
+/*}*/
 
-.turn-queue-preview {
-    height: 72px;
-}
+/*.turn-queue-preview {*/
+    /*height: 72px;*/
+/*}*/
 
-.unit-preview {
-    width: 64px;
-    height: 64px;
-}
+/*.unit-preview {*/
+    /*width: 64px;*/
+    /*height: 64px;*/
+/*}*/
 
-.action-container {
-    height: 64px;
-}
+/*.action-container {*/
+    /*height: 32px;*/
+/*}*/
 
-.action {
-    height: 64px;
-    width: 64px;
-}
+/*.action {*/
+    /*height: 32px;*/
+    /*width: 32px;*/
+/*}*/

@@ -1,53 +1,84 @@
 {
     "archer": {
-        "shortShot": {
+        "rangedAttack": {
             "cost": 20,
-            "damage": 1,
-            "displayName": "Short Shot",
+            "damage": 30,
+            "range": 100,
+            "displayName": "Attack",
             "track": "bow1"
         },
-        "longShot": {
+        "overheadAttack": {
             "cost": 35,
-            "damage": 1,
-            "displayName": "Long Shot",
+            "damage": 50,
+            "displayName": "Overhead Attack",
             "track": "bow1"
+        },
+        "meleeAttack": {
+            "cost": 10,
+            "damage": 5,
+            "range": 10
         }
     },
     "swordAndShield": {
         "strike": {
             "cost": 30,
-            "damage": 1,
+            "damage": 30,
+            "range": 10,
             "displayName": "Strike",
             "track": "strike"
         },
-        "shield": {
+        "shieldBash": {
             "cost": 30,
-            "damage": 0.8,
+            "damage": 25,
+            "range": 10,
             "displayName": "Shield Bash",
             "track": "shieldBash1"
+        },
+        "placeholder": {
+            "cost": 30,
+            "damage": 30,
+            "range": 10
         }
     },
     "twoHanded": {
         "strike": {
             "cost": 30,
-            "damage": 1,
+            "damage": 30,
+            "range": 10,
             "displayName": "Strike",
             "track": "twoHandedStrike"
         },
         "sweep": {
             "cost": 40,
-            "damage": 0.75,
+            "damage": 30,
+            "range": 14,
             "displayName": "Sweep",
             "track": "sweep",
             "useCrossNodes": true
+        },
+        "overhead": {
+            "cost": 50,
+            "damage": 60,
+            "range": 10
         }
     },
     "dualWield": {
         "strike": {
             "cost": 30,
-            "damage": 1,
+            "damage": 25,
+            "range": 10,
             "displayName": "Strike",
             "track": "dualStrike"
+        },
+        "throwDagger": {
+            "cost": 40,
+            "damage": 20,
+            "range": 28
+        },
+        "placeholder": {
+            "cost": 30,
+            "damage": 30,
+            "range": 10
         }
     }
 }

@@ -1,4 +1,4 @@
-define(['Core/src/eventManager'], function (EventManager)
+define(['Core/src/events'], function (Events)
 {
     'use strict';
 
@@ -11,7 +11,7 @@ define(['Core/src/eventManager'], function (EventManager)
 
     EventTest.prototype.scenarioSetup = function ()
     {
-        EventManager.register(TestObject.prototype);
+        Events.register(TestObject.prototype);
     };
 
     EventTest.prototype.testOnMethod = function ()

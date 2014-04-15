@@ -1,4 +1,4 @@
-define(['./eventManager'], function (Events)
+define(['./events'], function (Events)
 {
     'use strict';
 

@@ -1,5 +1,5 @@
 define([
-    './tests/eventManagerTest',
+    './tests/eventTest',
     './tests/inputHandlerTest',
     './tests/mapTest',
     './tests/pathManagerTest',

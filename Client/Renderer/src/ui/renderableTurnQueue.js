@@ -1,4 +1,4 @@
-define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/utility'], function (Renderer, EventManager, InputHandler, Utility)
+define(['Core/src/events', 'Core/src/inputHandler', 'Core/src/utility'], function (Events, InputHandler, Utility)
 {
     'use strict';
     function RenderableTurnQueue(element)
@@ -7,8 +7,6 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
         this.element = element;
 
         InputHandler.addClickListener(this.element, this.handleClick.bind(this));
-        this.handleResize(window.innerWidth, window.innerHeight);
-        Renderer.on('resize', this, this.handleResize);
     }
 
     RenderableTurnQueue.prototype.addUnit = function (unit)
@@ -24,7 +22,7 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
             backgroundElement.className = 'container enemy-team';
 
         unitData.imageElement = document.createElement('div');
-        unitData.imageElement.className = 'unit-preview unit-type-' + unit.weapon.type;
+        unitData.imageElement.className = 'unit-preview unit-type-' + unit.type;
 
         backgroundElement.appendChild(unitData.imageElement);
         unitData.element.appendChild(backgroundElement);
@@ -36,22 +34,14 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
 
     RenderableTurnQueue.prototype.fadeIn = function (unitData)
     {
-        var dimension = this.isLandscapeMode ? 'width' : 'height';
-        setTimeout(function ()
-        {
-            unitData.imageElement.style.opacity = 1;
-            unitData.element.style[dimension] = '';
-        }, 0);
+        unitData.imageElement.style.opacity = 1;
+        unitData.element.style.height = '';
     };
 
     RenderableTurnQueue.prototype.fadeOut = function (unitData)
     {
-        var dimension = this.isLandscapeMode ? 'width' : 'height';
-        setTimeout(function ()
-        {
-            unitData.imageElement.style.opacity = 0;
-            unitData.element.style[dimension] = '0px';
-        }, 0);
+        unitData.imageElement.style.opacity = 0;
+        unitData.element.style.height = '0px';
     };
 
     RenderableTurnQueue.prototype.handleClick = function (e)
@@ -69,25 +59,6 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
         }
 
         return false;
-    };
-
-    RenderableTurnQueue.prototype.handleResize = function (width, height)
-    {
-        var wasLandscapeMode = this.isLandscapeMode;
-        this.isLandscapeMode = (Utility.isMobile && width > height);
-
-        if (this.units.length && this.isLandscapeMode !== wasLandscapeMode)
-        {
-            var firstUnit = this.units[0];
-            firstUnit.element.classList.add('no-transition');
-            firstUnit.element.style.width = this.isLandscapeMode ? '0px' : '';
-            firstUnit.element.style.height = this.isLandscapeMode ? '' : '0px';
-
-            setTimeout(function ()
-            {
-                firstUnit.element.classList.remove('no-transition');
-            }, 0);
-        }
     };
 
     RenderableTurnQueue.prototype.handleUnitSelection = function (unitData)
@@ -161,6 +132,6 @@ define(['renderer', 'Core/src/eventManager', 'Core/src/inputHandler', 'Core/src/
         this.handleUnitSelection(unitData);
     };
 
-    EventManager.register(RenderableTurnQueue.prototype);
+    Events.register(RenderableTurnQueue.prototype);
     return RenderableTurnQueue;
 });

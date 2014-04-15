@@ -1,13 +1,12 @@
-define(['text!../../content/soldierData.json', '../eventManager', '../pathManager', 'renderer', '../scheduler', '../soundManager', '../utility'],
-    function (SoldierData, EventManager, PathManager, Renderer, Scheduler, SoundManager, Utility)
+define(['text!../../content/soldierData.json', '../events', '../pathManager', 'renderer', '../scheduler', '../soundManager', 'Renderer/src/ui/unitStatusPanel', '../utility'],
+    function (SoldierData, Events, PathManager, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
     {
         'use strict';
         var soldierData = JSON.parse(SoldierData);
 
-        function Player(map, units, activeUnitView, renderableTurnQueue)
+        function Player(map, units, renderableTurnQueue)
         {
             this.map = map;
-            this.activeUnitView = activeUnitView;
             this.renderableTurnQueue = renderableTurnQueue;
 
             this.units = units || [];
@@ -21,8 +20,9 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
 
         Player.prototype.endTurn = function ()
         {
-            this.unit = null;
+            this.closeUnitStatusPanel(this.unit);
             this.trigger('endTurn', this);
+            this.unit = null;
         };
 
         Player.prototype.calculateCrossNodes = function (selectedNode, availableNodes)
@@ -43,46 +43,42 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
             return crossNodes;
         };
 
+        Player.prototype.closeUnitStatusPanel = function (unit)
+        {
+            if (unit.statusPanel)
+            {
+                unit.statusPanel.close();
+                unit.statusPanel = null;
+            }
+        };
+
+        Player.prototype.getAttack = function (name)
+        {
+            return soldierData[this.unit.type][name];
+        };
+
         Player.prototype.getAttacks = function ()
         {
             var attacks = [];
-            var weapon = this.unit.weapon;
-            var attackType = soldierData[weapon.type];
+            var attackType = soldierData[this.unit.type];
 
             for (var attackName in attackType)
             {
                 var attack = Utility.merge({name: attackName}, attackType[attackName]);
-                attack.totalDamage = attack.damage * weapon.damage;
+                attack.isDisabled = (attack.cost > this.unit.ap);
                 attacks.push(attack);
             }
 
             return attacks;
         };
 
-        Player.prototype.getAttackRange = function (attackName)
-        {
-            switch (attackName)
-            {
-                case 'shield':
-                case 'strike':
-                    return Math.min(this.unit.weapon.range, PathManager.defaultMoveCost);
-
-                case 'sweep':
-                    return Math.min(this.unit.weapon.range, PathManager.diagonalMoveCost);
-
-                case 'shortShot':
-                    return this.unit.weapon.range / 2;
-
-                case 'longShot':
-                    return this.unit.weapon.range;
-            }
-        };
-
         Player.prototype.moveUnit = function (tiles, cost)
         {
             this.unit.setState('run');
             Renderer.camera.trackUnit(this.unit);
-            this.activeUnitView.apBar.disableTransitions();
+
+            if (this.unit.statusPanel)
+                this.unit.statusPanel.apBar.disableTransitions();
 
             var startTile = this.map.getTile(this.unit.tileX, this.unit.tileY);
             startTile.unit = null;
@@ -131,7 +127,10 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
                     this.unit.tileY = currentNode.y + (deltaY * nodeProgressPercentage);
 
                     this.unit.ap = startAp + (endAp - startAp) * progressPercentage;
-                    this.activeUnitView.updateValues();
+                    if (this.unit.statusPanel)
+                    {
+                        this.unit.statusPanel.updateValues();
+                    }
                 },
                 completedMethod: function ()
                 {
@@ -141,8 +140,11 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
 
                     this.unit.ap = endAp;
                     this.unit.setState('idle');
-                    this.activeUnitView.apBar.enableTransitions();
-                    this.activeUnitView.updateValues();
+                    if (this.unit.statusPanel)
+                    {
+                        this.unit.statusPanel.apBar.enableTransitions();
+                        this.unit.statusPanel.updateValues();
+                    }
 
                     Renderer.camera.trackUnit();
                     this.onMoveComplete();
@@ -150,11 +152,21 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
             });
         };
 
-        Player.prototype.onSoldierDeath = function (soldier)
+        Player.prototype.onSoldierDeath = function (unit)
         {
-            Utility.removeElement(this.units, soldier);
+            this.closeUnitStatusPanel(unit);
+            Utility.removeElement(this.units, unit);
             if (!this.units.length)
                 this.trigger('defeat', this);
+        };
+
+        Player.prototype.openUnitStatusPanel = function (unit)
+        {
+            if (!unit.statusPanel)
+            {
+                unit.statusPanel = new UnitStatusPanel();
+                unit.statusPanel.open(unit);
+            }
         };
 
         Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
@@ -165,16 +177,22 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
             this.unit.ap -= attack.cost;
             this.unit.setDirection(deltaX, deltaY);
             this.unit.setState('attack');
-
             SoundManager.playTrack(attack.track);
+
+            if (this.unit.statusPanel)
+                this.unit.statusPanel.updateValues();
 
             this.unit.on('animationComplete', this, function onAttackFinished()
             {
                 for (var i = 0; i < affectedTiles.length; ++i)
                 {
-                    var node = affectedTiles[i];
-                    if (node.tile.unit)
-                        node.tile.unit.damage(attack.totalDamage);
+                    var unit = affectedTiles[i].tile.unit;
+                    if (unit)
+                    {
+                        unit.damage(attack.damage);
+                        if (unit.statusPanel)
+                            unit.statusPanel.updateValues();
+                    }
                 }
 
                 this.unit.setState('idle');
@@ -186,8 +204,9 @@ define(['text!../../content/soldierData.json', '../eventManager', '../pathManage
         Player.prototype.performTurn = function (unit)
         {
             this.unit = unit;
+            this.openUnitStatusPanel(unit);
         };
 
-        EventManager.register(Player.prototype);
+        Events.register(Player.prototype);
         return Player;
     });

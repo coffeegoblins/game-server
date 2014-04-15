@@ -1,5 +1,5 @@
 define([
-        'Core/src/eventManager',
+        'Core/src/events',
         'Core/src/inputHandler',
         'Core/src/scheduler',
         'Core/src/utility',
@@ -33,7 +33,7 @@ define([
             this.renderablePaths.length = 0;
 
             InputHandler.on('drag', this, this.onDrag);
-            InputHandler.registerClickEvent('canvas', this.onClick, this);
+            InputHandler.on('click', this, this.onClick);
             window.addEventListener('resize', this.onResize, false);
 
             this.onResize();
@@ -44,7 +44,7 @@ define([
         {
             this.clearEvents();
             InputHandler.off('drag', this);
-            InputHandler.unregisterClickEvent('canvas');
+            InputHandler.off('click', this);
             window.removeEventListener('resize', this.onResize, false);
         };
 

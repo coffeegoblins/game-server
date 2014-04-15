@@ -77,7 +77,7 @@ define([
 
             // Swap the two images
             this.images.push(this.images.shift());
-            this.images[0].className = 'active-unit-preview unit-type-' + unit.weapon.type;
+            this.images[0].className = 'active-unit-preview unit-type-' + unit.type;
             this.images[1].classList.add('previous');
 
             this.images[0].style.opacity = 1;

@@ -1,4 +1,4 @@
-define(['./eventManager', './utility'], function (EventManager, Utility)
+define(['./events', './utility'], function (Events, Utility)
 {
     'use strict';
 
@@ -76,6 +76,6 @@ define(['./eventManager', './utility'], function (EventManager, Utility)
         Utility.removeElement(this.unitList, unit);
     };
 
-    EventManager.register(TurnManager.prototype);
+    Events.register(TurnManager.prototype);
     return TurnManager;
 });

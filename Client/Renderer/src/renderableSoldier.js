@@ -9,7 +9,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         this.unit = unit;
         this.style = {opacity: 1};
 
-        this.createSpriteSheets(this.unit.weapon.type);
+        this.createSpriteSheets(this.unit.type);
         this.unit.on('directionChange', this.onDirectionChange.bind(this));
         this.unit.on('stateChange', this.onDirectionChange.bind(this));
         this.onDirectionChange();
@@ -86,7 +86,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         var width = 40 * camera.scale;
         var height = 64 * camera.scale;
         var left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
-        var top = position.y - camera.viewportRect.y - height / 2;
+        var top = position.y  - camera.viewportRect.y - height / 2;
 
         return x >= left && x <= left + width && y >= top && y <= top + height;
     };

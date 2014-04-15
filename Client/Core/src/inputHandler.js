@@ -1,4 +1,4 @@
-define(['./eventManager', './scheduler', './utility'], function (EventManager, Scheduler, Utility)
+define(['./events', './scheduler', './utility'], function (Events, Scheduler, Utility)
 {
     'use strict';
 
@@ -322,6 +322,6 @@ define(['./eventManager', './scheduler', './utility'], function (EventManager, S
         document.body.style.msTouchAction = 'none';
     }
 
-    EventManager.register(InputHandler);
+    Events.register(InputHandler);
     return InputHandler;
 });

@@ -1,6 +1,5 @@
 define([
         'renderer',
-        'text!../content/weapons.json',
         './scheduler',
         './inputHandler',
         './browserNavigation',
@@ -10,50 +9,29 @@ define([
         './players/automatedPlayer',
         './players/localPlayer',
         './players/remotePlayer',
-        'Renderer/src/ui/unitView',
         'Renderer/src/ui/renderableTurnQueue'
     ],
-    function (Renderer, WeaponData, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, UnitView, RenderableTurnQueue)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, RenderableTurnQueue)
     {
         'use strict';
-        var weaponData = JSON.parse(WeaponData);
 
         function createSoldiers(positions)
         {
+            var types = ['swordAndShield', 'archer', 'dualWield', 'twoHanded'];
+
             var soldiers = [];
             for (var i = 0; i < positions.length; i++)
             {
                 var position = positions[i];
-                var weaponName;
-                switch (i % 4)
-                {
-                    case 0:
-                        weaponName = 'Bronze Sword and Shield';
-                        break;
-
-                    case 1:
-                        weaponName = 'Short Bow';
-                        break;
-
-                    case 2:
-                        weaponName = 'Twin Bronze Swords';
-                        break;
-
-                    case 3:
-                        weaponName = 'Iron Longsword';
-                        break;
-                }
-
                 var soldier = new Soldier({
                     name: 'Unit ' + (i + 1),
                     tileX: position.x,
                     tileY: position.y,
-                    weapon: weaponData[weaponName],
+                    type: types[i % 4],
                     direction: position.direction
 
                 });
 
-                soldier.weapon.name = weaponName;
                 soldiers.push(soldier);
             }
 
@@ -74,7 +52,7 @@ define([
                 LevelLoader.loadLevel(levelName, function (map, startPoints)
                 {
                     this.currentMap = map;
-                    this.activeUnitView = new UnitView(document.querySelector('.unit-view'));
+                    //this.activeUnitView = new UnitView(document.querySelector('.unit-view'));
                     this.renderableTurnQueue = new RenderableTurnQueue(document.getElementById('turnQueue'));
 
                     var player1Positions = [];
@@ -90,8 +68,8 @@ define([
                     }
 
                     this.players = [
-                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions), this.activeUnitView, this.renderableTurnQueue),
-                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions), this.activeUnitView, this.renderableTurnQueue)
+                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions), this.renderableTurnQueue),
+                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions), this.renderableTurnQueue)
                     ];
 
                     for (i = 0; i < this.players.length; i++)
@@ -118,7 +96,7 @@ define([
             onBeginTurn: function (unit)
             {
                 unit.isSelected = true;
-                this.activeUnitView.show(unit);
+                //this.activeUnitView.show(unit);
                 this.renderableTurnQueue.onBeginTurn(unit);
                 Renderer.camera.moveToUnit(unit, this.onCameraMoved.bind(this));
             },
@@ -131,7 +109,7 @@ define([
             onEndTurn: function (unit, index)
             {
                 unit.isSelected = false;
-                this.activeUnitView.hide();
+                //this.activeUnitView.hide();
                 this.renderableTurnQueue.onEndTurn(unit, index);
                 Renderer.clearRenderablePaths();
 

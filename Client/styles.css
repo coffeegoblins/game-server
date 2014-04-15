@@ -42,20 +42,12 @@ body.main-menu {
 
 #turnQueue {
     position: fixed;
+    overflow: hidden;
     opacity: 0.8;
-}
-
-.active-unit-preview {
-    opacity: 0;
-    background-size: 100%;
-    -webkit-transition: opacity 1s;
-    transition: opacity 1s;
-}
-
-.active-unit-preview.previous {
-    position: absolute;
-    z-index: -1;
     top: 0;
+    left: 0;
+    bottom: 0;
+    padding: 8px;
 }
 
 .turn-queue-preview {
@@ -70,6 +62,8 @@ body.main-menu {
 .turn-queue-preview .container {
     overflow: hidden;
     border-radius: 4px;
+
+    /*TODO: find a better way to do this*/
     height: calc(100% - 8px);
 }
 
@@ -78,100 +72,132 @@ body.main-menu {
     box-shadow: 0 0 6px 1px #fff;
 }
 
+.turn-queue-preview {
+    height: 72px;
+}
+
 .unit-preview {
-    background-size: 100%;
-    -webkit-transition: opacity 1s;
-    transition: opacity 1s;
+    width: 64px;
+    height: 64px;
 }
 
-.unit-view {
-    position: fixed;
+.floating-panel {
+    position: absolute;
     opacity: 0;
-    -webkit-transition: 0.5s opacity;
-    transition: 0.5s opacity;
-    padding: 4px;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
 }
 
-.unit-view .unit-name {
-    font-size: 20px;
-    text-shadow: 1px 1px #b3b3b3;
+.floating-panel.isVisible {
+    opacity: 1;
 }
 
-.unit-image-container {
-    position: relative;
+.action-panel {
+    width: 132px;
+    height: 88px;
 }
 
-.unit-view .outerBar {
+.confirmation-panel {
+    margin-top: 16px;
+}
+
+.unit-status-panel {
+    position: absolute;
+    width: 68px;
+    margin-top: -60px;
+}
+
+.action {
+    width: 44px;
+    height: 44px;
+    background-size: 32px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.action.disabled {
+    opacity: 0.5;
+}
+
+.confirmation-panel .action {
+    display: inline-block;
+}
+
+.action-panel .action {
+    position: absolute;
+    top: 0;
+    left: 44px;
+    width: 44px;
+    height: 44px;
+    -webkit-transition: top 0.5s, left 0.5s;
+    transition: top 0.5s, left 0.5s;
+}
+
+.action-panel.isVisible .action:nth-child(1) {
+    left: 0;
+    top: 0;
+}
+
+.action-panel.isVisible .action:nth-child(2) {
+    left: 88px;
+    top: 0;
+}
+
+.action-panel.isVisible .action.action:nth-child(3) {
+    left: 0;
+    top: 44px;
+}
+
+.action-panel.isVisible .action.action:nth-child(4) {
+    top: 44px;
+    left: 44px;
+}
+
+.action-panel.isVisible .action.action:nth-child(5) {
+    top: 44px;
+    left: 88px;
+}
+
+.outerBar {
     position: relative;
     border: 1px solid #5f5f5f;
     background-color: #505050;
-    height: 12px;
-    border-radius: 4px;
+    border-radius: 2px;
+    height: 7px;
 }
 
-.unit-view .innerBar, .unit-view .innerBarPreview {
+.ap-bar {
+    height: 6px;
+    border-top: none;
+}
+
+.innerBar, .innerBarPreview {
     position: absolute;
-    border-radius: 3px;
-    height: 100%;
+    border-radius: 1px;
     left: 0;
+    top: 0;
+    bottom: 0;
 }
 
-.unit-view .innerBar {
+.innerBar {
     -webkit-transition: width 1s;
     transition: width 1s;
 }
 
-.unit-view .innerBarPreview {
+.innerBarPreview {
     display: none;
 }
 
-.unit-view .innerBarPreview.blink {
+.innerBarPreview.blink {
     display: block;
 }
 
 .hp-bar .innerBar, .hp-bar .innerBarPreview {
     background: #13b22b;
-    background: -webkit-linear-gradient(top, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
-    background: linear-gradient(to bottom, #13b22b 0%, #13b11e 50%, #0ea81b 52%, #31e037 100%);
 }
 
 .ap-bar .innerBar, .ap-bar .innerBarPreview {
     background: #d6ca20;
-    background: -webkit-linear-gradient(top, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
-    background: linear-gradient(to bottom, #d6ca20 0%, #e0c321 50%, #ceb618 52%, #edd978 100%);
-}
-
-#actionBarView {
-    position: fixed;
-    left: 50%;
-    bottom: 0;
-    opacity: 0;
-    -webkit-transition: 0.5s opacity;
-    transition: 0.5s opacity;
-}
-
-.action-container {
-    display: inline-block;
-    margin-left: -50%;
-    padding: 8px;
-    background: -webkit-linear-gradient(top, #707070 0%, #383838 51%, #2d2d2d 100%);
-    background: linear-gradient(to bottom, #707070 0%, #383838 51%, #2d2d2d 100%);
-    border-radius: 8px 8px 0 0;
-}
-
-.action-container div {
-    display: inline-block;
-    margin-right: 8px;
-}
-
-.action-container div:last-child {
-    margin: 0;
-}
-
-.action-container .divider {
-    width: 1px;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.15);
 }
 
 .unit-type-archer {
@@ -190,55 +216,51 @@ body.main-menu {
     background-image: url('Renderer/content/images/twoHandedIcon.png');
 }
 
-.action {
-    background-size: 100%;
-}
-
-.action.disabled {
-    opacity: 0.3;
-}
-
-.action.attack {
-    background-image: url('Renderer/content/images/attackIcon.png');
-}
-
-.action.cancel {
-    background-image: url('Renderer/content/images/cancelIcon.png');
-}
-
-.action.confirmMove {
-    background-image: url('Renderer/content/images/confirmMoveIcon.png');
-}
-
-.action.endTurn {
-    background-image: url('Renderer/content/images/endTurnIcon.png');
-}
-
-.action.longShot {
-    background-image: url('Renderer/content/images/rangeAttackIcon.png');
-}
-
-.action.move {
+.action[data-action-name="move"] {
     background-image: url('Renderer/content/images/moveIcon.png');
 }
 
-.action.rangeAttack {
+.action[data-action-name="endTurn"] {
+    background-image: url('Renderer/content/images/endTurnIcon.png');
+}
+
+.action[data-action-name="confirm"] {
+    background-image: url('Renderer/content/images/confirmIcon.png');
+}
+
+.action[data-action-name="cancel"] {
+    background-image: url('Renderer/content/images/cancelIcon.png');
+}
+
+.action[data-action-name="rangedAttack"] {
     background-image: url('Renderer/content/images/rangeAttackIcon.png');
 }
 
-.action.shield {
-    background-image: url('Renderer/content/images/shieldIcon.png');
-}
-
-.action.shortShot {
+.action[data-action-name="overheadAttack"] {
     background-image: url('Renderer/content/images/rangeAttackIcon.png');
 }
 
-.action.strike {
+.action[data-action-name="meleeAttack"] {
+    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+}
+
+.action[data-action-name="strike"], .action[data-action-name="placeholder"] {
     background-image: url('Renderer/content/images/attackIcon.png');
 }
 
-.action.sweep {
+.action[data-action-name="shieldBash"] {
+    background-image: url('Renderer/content/images/shieldIcon.png');
+}
+
+.action[data-action-name="sweep"] {
+    background-image: url('Renderer/content/images/attackIcon.png');
+}
+
+.action[data-action-name="overhead"] {
+    background-image: url('Renderer/content/images/attackIcon.png');
+}
+
+.action[data-action-name="throwDagger"] {
     background-image: url('Renderer/content/images/attackIcon.png');
 }
 

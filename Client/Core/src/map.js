@@ -1,4 +1,4 @@
-define(['./eventManager'], function (EventManager)
+define(['./events'], function (Events)
 {
     'use strict';
 
@@ -64,18 +64,11 @@ define(['./eventManager'], function (EventManager)
     {
         var tile;
         if (soldier)
-        {
             tile = this.getTile(soldier.tileX, soldier.tileY);
-        }
         else
-        {
             tile = this.getTile(x, y);
-        }
 
-        if (tile)
-        {
-            this.trigger('tileClick', tile, x, y, soldier);
-        }
+        this.trigger('tileClick', tile, x, y, soldier);
     };
 
     Map.prototype.getTile = function (x, y)
@@ -105,6 +98,6 @@ define(['./eventManager'], function (EventManager)
         tile.unit = null;
     };
 
-    EventManager.register(Map.prototype);
+    Events.register(Map.prototype);
     return Map;
 });

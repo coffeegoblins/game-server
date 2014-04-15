@@ -1,4 +1,4 @@
-define(['Core/src/eventManager', './imageCache', './utility'], function (EventManager, ImageCache, Utility)
+define(['Core/src/events', './imageCache', './utility'], function (Events, ImageCache, Utility)
 {
     'use strict';
 
@@ -120,6 +120,6 @@ define(['Core/src/eventManager', './imageCache', './utility'], function (EventMa
         }
     };
 
-    EventManager.register(SpriteSheet.prototype);
+    Events.register(SpriteSheet.prototype);
     return SpriteSheet;
 });

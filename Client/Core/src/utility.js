@@ -48,6 +48,17 @@ define(function ()
             }
         },
 
+        findParentElement: function (element, selector)
+        {
+            while (element && element.matches)
+            {
+                if (element.matches(selector))
+                    return element;
+
+                element = element.parentNode;
+            }
+        },
+
         insertTemplate: function (element, template)
         {
             element.insertAdjacentHTML('beforeend', template);
