@@ -2,34 +2,37 @@
     "archer": {
         "idle": {
             "spriteSheet": "archer - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 64,
+            "tileWidth": 64,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.1,
+            "isLooping": true,
+            "frames": {
+                "31": 5
+            }
         },
 
         "run": {
             "spriteSheet": "archer - run",
-            "tileHeight": 128,
-            "tileWidth": 128,
-            "frameCount": 32,
-            "speed": 0.075,
+            "tileHeight": 64,
+            "tileWidth": 64,
+            "frameCount": 16,
+            "speed": 0.04,
             "isLooping": true
         },
 
         "attack": {
             "spriteSheet": "archer - attack",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 112,
+            "tileWidth": 112,
             "frameCount": 32,
             "speed": 0.075
         },
 
         "death": {
             "spriteSheet": "archer - death",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 96,
+            "tileWidth": 96,
             "frameCount": 32,
             "speed": 0.075
         }
@@ -38,33 +41,36 @@
     "dualWield": {
         "idle": {
             "spriteSheet": "dualWield - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 64,
+            "tileWidth": 64,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.1,
+            "isLooping": true,
+            "frames": {
+                "31": 5
+            }
         },
         "run": {
             "spriteSheet": "dualWield - run",
-            "tileHeight": 128,
-            "tileWidth": 128,
-            "frameCount": 32,
-            "speed": 0.075,
+            "tileHeight": 64,
+            "tileWidth": 64,
+            "frameCount": 16,
+            "speed": 0.04,
             "isLooping": true
         },
 
         "attack": {
             "spriteSheet": "dualWield - attack",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 112,
+            "tileWidth": 112,
             "frameCount": 32,
             "speed": 0.075
         },
 
         "death": {
             "spriteSheet": "dualWield - death",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 96,
+            "tileWidth": 96,
             "frameCount": 32,
             "speed": 0.075
         }
@@ -112,34 +118,37 @@
     "twoHanded": {
         "idle": {
             "spriteSheet": "twoHanded - idle",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 64,
+            "tileWidth": 64,
             "frameCount": 32,
-            "speed": 0.075,
-            "isLooping": true
+            "speed": 0.1,
+            "isLooping": true,
+            "frames": {
+                "31": 5
+            }
         },
 
         "run": {
             "spriteSheet": "twoHanded - run",
-            "tileHeight": 128,
-            "tileWidth": 128,
-            "frameCount": 32,
-            "speed": 0.075,
+            "tileHeight": 64,
+            "tileWidth": 64,
+            "frameCount": 16,
+            "speed": 0.04,
             "isLooping": true
         },
 
         "attack": {
             "spriteSheet": "twoHanded - attack",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 112,
+            "tileWidth": 112,
             "frameCount": 32,
             "speed": 0.075
         },
 
         "death": {
             "spriteSheet": "twoHanded - death",
-            "tileHeight": 128,
-            "tileWidth": 128,
+            "tileHeight": 96,
+            "tileWidth": 96,
             "frameCount": 32,
             "speed": 0.075
         }

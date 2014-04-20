@@ -8,10 +8,9 @@ define([
         './soldier',
         './players/automatedPlayer',
         './players/localPlayer',
-        './players/remotePlayer',
-        'Renderer/src/ui/renderableTurnQueue'
+        './players/remotePlayer'
     ],
-    function (Renderer, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, RenderableTurnQueue)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
     {
         'use strict';
 
@@ -52,9 +51,6 @@ define([
                 LevelLoader.loadLevel(levelName, function (map, startPoints)
                 {
                     this.currentMap = map;
-                    //this.activeUnitView = new UnitView(document.querySelector('.unit-view'));
-                    this.renderableTurnQueue = new RenderableTurnQueue(document.getElementById('turnQueue'));
-
                     var player1Positions = [];
                     var player2Positions = [];
 
@@ -68,8 +64,8 @@ define([
                     }
 
                     this.players = [
-                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions), this.renderableTurnQueue),
-                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions), this.renderableTurnQueue)
+                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions)),
+                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions))
                     ];
 
                     for (i = 0; i < this.players.length; i++)
@@ -83,7 +79,6 @@ define([
                             var unit = player.units[j];
                             this.turnManager.addUnit(unit);
                             Renderer.addRenderableSoldier(unit);
-                            this.renderableTurnQueue.addUnit(unit);
                             this.currentMap.addUnit(unit, unit.tileX, unit.tileY);
                         }
                     }
@@ -97,7 +92,6 @@ define([
             {
                 unit.isSelected = true;
                 //this.activeUnitView.show(unit);
-                this.renderableTurnQueue.onBeginTurn(unit);
                 Renderer.camera.moveToUnit(unit, this.onCameraMoved.bind(this));
             },
 
@@ -110,7 +104,6 @@ define([
             {
                 unit.isSelected = false;
                 //this.activeUnitView.hide();
-                this.renderableTurnQueue.onEndTurn(unit, index);
                 Renderer.clearRenderablePaths();
 
                 this.turnManager.beginTurn();

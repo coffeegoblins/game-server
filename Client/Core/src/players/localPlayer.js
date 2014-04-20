@@ -9,9 +9,6 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
             this.isLocal = true;
             this.actionPanel = new ActionPanel();
             this.actionPanel.on('actionSelected', this, this.onActionSelected);
-
-            this.renderableTurnQueue.on('selectUnit', this, this.onUnitSelected);
-            this.renderableTurnQueue.on('deselectUnit', this, this.onUnitDeselected);
         }
 
         LocalPlayer.prototype = Object.create(Player.prototype);
@@ -33,13 +30,13 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
 
             InputHandler.disableInput();
             this.actionPanel.close();
-            this.renderableTurnQueue.select();
+            this.onUnitDeselected(this.selectedUnit);
             this.map.off('tileClick', this);
         };
 
         LocalPlayer.prototype.onTileClick = function (tile, x, y, soldier)
         {
-            this.renderableTurnQueue.select(soldier);
+            this.onUnitSelected(soldier);
         };
 
         LocalPlayer.prototype.onActionSelected = function (actionName)
@@ -196,14 +193,27 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
 
         LocalPlayer.prototype.onUnitDeselected = function (unit)
         {
-            if (unit !== this.unit)
+            if (unit && unit !== this.unit)
                 this.closeUnitStatusPanel(unit);
         };
 
         LocalPlayer.prototype.onUnitSelected = function (unit)
         {
-            if (unit !== this.unit)
-                this.openUnitStatusPanel(unit);
+            if (unit !== this.unit && unit !== this.selectedUnit)
+            {
+                if (this.selectedUnit)
+                {
+                    this.selectedUnit.isTargeted = false;
+                    this.onUnitDeselected(this.selectedUnit);
+                }
+
+                this.selectedUnit = unit;
+                if (this.selectedUnit)
+                {
+                    this.selectedUnit.isTargeted = true;
+                    this.openUnitStatusPanel(this.selectedUnit);
+                }
+            }
         };
 
         LocalPlayer.prototype.resetActionState = function ()

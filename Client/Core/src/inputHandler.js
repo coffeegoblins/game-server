@@ -198,7 +198,7 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
         }
         else
         {
-            InputHandler.trigger('click', e);
+            e.target.click();
         }
     };
 

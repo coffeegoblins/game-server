@@ -4,11 +4,9 @@ define(['text!../../content/soldierData.json', '../events', '../pathManager', 'r
         'use strict';
         var soldierData = JSON.parse(SoldierData);
 
-        function Player(map, units, renderableTurnQueue)
+        function Player(map, units)
         {
             this.map = map;
-            this.renderableTurnQueue = renderableTurnQueue;
-
             this.units = units || [];
             for (var i = 0; i < this.units.length; i++)
             {
@@ -45,7 +43,7 @@ define(['text!../../content/soldierData.json', '../events', '../pathManager', 'r
 
         Player.prototype.closeUnitStatusPanel = function (unit)
         {
-            if (unit.statusPanel)
+            if (unit && unit.statusPanel)
             {
                 unit.statusPanel.close();
                 unit.statusPanel = null;

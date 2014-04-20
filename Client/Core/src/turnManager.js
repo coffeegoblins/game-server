@@ -11,6 +11,7 @@ define(['./events', './utility'], function (Events, Utility)
     TurnManager.prototype.addUnit = function (unit)
     {
         this.unitList.push(unit);
+        unit.turnNumber = this.unitList.length;
         unit.on('death', this, this.removeUnit);
     };
 
@@ -68,12 +69,20 @@ define(['./events', './utility'], function (Events, Utility)
         }
 
         this.activeUnit = null;
+        this.updateTurnNumbers();
         this.trigger('endTurn', currentUnit, placementIndex + 1);
     };
 
     TurnManager.prototype.removeUnit = function (unit)
     {
         Utility.removeElement(this.unitList, unit);
+        this.updateTurnNumbers();
+    };
+
+    TurnManager.prototype.updateTurnNumbers = function ()
+    {
+        for (var i = 0; i < this.unitList.length; i++)
+            this.unitList[i].turnNumber = i + 1;
     };
 
     Events.register(TurnManager.prototype);

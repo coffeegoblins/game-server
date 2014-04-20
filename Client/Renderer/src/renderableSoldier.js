@@ -57,16 +57,13 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
     RenderableSoldier.prototype.getSelectionColor = function ()
     {
-        if (this.unit.isSelected)
+        if (this.unit.isSelected || this.unit.isTargeted)
         {
             if (this.unit.player.isLocal)
-                return '#3ddb11';
+                return '#00db30';//'#3ddb11';
 
-            return '#f93b34';
+            return '#ff1f00';// '#f93b34';
         }
-
-        if (this.unit.isTargeted)
-            return '#a0a0a0';
     };
 
     RenderableSoldier.prototype.getTileX = function ()
@@ -86,7 +83,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         var width = 40 * camera.scale;
         var height = 64 * camera.scale;
         var left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
-        var top = position.y  - camera.viewportRect.y - height / 2;
+        var top = position.y - camera.viewportRect.y - height / 2;
 
         return x >= left && x <= left + width && y >= top && y <= top + height;
     };
@@ -136,6 +133,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
             drawEllipse(context, tileLeft, tileTop, tileWidth, tileHeight);
 
+            context.lineWidth = 1;
             context.strokeStyle = color;
             context.fillStyle = color;
 
@@ -153,6 +151,31 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
                 left, top, width, height);
         }
+
+        context.globalAlpha = 0.8;
+
+        // Draw the turn queue number
+        context.font = '12px Arial';
+        context.lineWidth = 4;
+        context.textBaseline = 'top';
+        context.textAlign = 'left';
+
+        if (this.unit.player.isLocal)
+        {
+            context.fillStyle = '#00db30';
+            context.strokeStyle = '#00230a';
+        }
+        else
+        {
+            context.fillStyle = '#ff1f00';
+            context.strokeStyle = '#240a00';
+        }
+
+        var textLeft = position.x - camera.viewportRect.x + camera.halfTileWidth - (48 * camera.scale) / 2;
+        var textTop = position.y - camera.viewportRect.y - (48 * camera.scale) / 2;
+
+        context.strokeText(this.unit.turnNumber, textLeft, textTop);
+        context.fillText(this.unit.turnNumber, textLeft, textTop);
 
         context.globalAlpha = 1;
     };

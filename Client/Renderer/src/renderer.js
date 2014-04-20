@@ -33,7 +33,7 @@ define([
             this.renderablePaths.length = 0;
 
             InputHandler.on('drag', this, this.onDrag);
-            InputHandler.on('click', this, this.onClick);
+            InputHandler.registerClickEvent('canvas', this.onClick, this);
             window.addEventListener('resize', this.onResize, false);
 
             this.onResize();
@@ -44,7 +44,7 @@ define([
         {
             this.clearEvents();
             InputHandler.off('drag', this);
-            InputHandler.off('click', this);
+            InputHandler.unregisterClickEvent('canvas');
             window.removeEventListener('resize', this.onResize, false);
         };
 
