@@ -55,17 +55,6 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         }
     };
 
-    RenderableSoldier.prototype.getSelectionColor = function ()
-    {
-        if (this.unit.isSelected || this.unit.isTargeted)
-        {
-            if (this.unit.player.isLocal)
-                return '#00db30';//'#3ddb11';
-
-            return '#ff1f00';// '#f93b34';
-        }
-    };
-
     RenderableSoldier.prototype.getTileX = function ()
     {
         return this.unit.tileX;
@@ -114,34 +103,19 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             return;
 
         var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);
+        position.x -= camera.viewportRect.x - camera.halfTileWidth;
+        position.y -= camera.viewportRect.y;
+
         var width = spriteSheet.tileWidth * camera.scale;
         var height = spriteSheet.tileHeight * camera.scale;
-        var left = position.x - camera.viewportRect.x + camera.halfTileWidth - width / 2;
-        var top = position.y - camera.viewportRect.y - height / 2;
+        var left = position.x - width / 2;
+        var top = position.y - height / 2;
 
         if (!camera.isInView(left, top, width, height))
             return;
 
-        var color = this.getSelectionColor();
-        if (color)
-        {
-            var tileWidth = camera.tileWidth * 2 / 3;
-            var tileHeight = camera.tileHeight * 2 / 3;
-
-            var tileLeft = position.x - camera.viewportRect.x + camera.halfTileWidth - tileWidth / 2;
-            var tileTop = position.y - camera.viewportRect.y + camera.halfTileHeight - tileHeight / 2;
-
-            drawEllipse(context, tileLeft, tileTop, tileWidth, tileHeight);
-
-            context.lineWidth = 1;
-            context.strokeStyle = color;
-            context.fillStyle = color;
-
-            context.globalAlpha = 0.3;
-            context.fill();
-            context.globalAlpha = 0.75;
-            context.stroke();
-        }
+        if (this.unit.isSelected || this.unit.isTargeted)
+            this.renderSelection(context, camera, position);
 
         spriteSheet.updateAnimation(deltaTime);
         var tileRect = spriteSheet.getCurrentTileBounds();
@@ -152,13 +126,43 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                 left, top, width, height);
         }
 
-        context.globalAlpha = 0.8;
+        this.renderTurnIndicator(context, camera, position);
+        context.globalAlpha = 1;
+    };
 
-        // Draw the turn queue number
+    RenderableSoldier.prototype.renderSelection = function (context, camera, position)
+    {
+        var tileWidth = camera.tileWidth * 2 / 3;
+        var tileHeight = camera.tileHeight * 2 / 3;
+
+        var tileLeft = position.x - tileWidth / 2;
+        var tileTop = position.y + camera.halfTileHeight - tileHeight / 2;
+
+        drawEllipse(context, tileLeft, tileTop, tileWidth, tileHeight);
+
+        context.lineWidth = 1;
+        if (this.unit.player.isLocal)
+        {
+            context.fillStyle = 'rgba(0, 219, 48, 0.3)';
+            context.strokeStyle = 'rgba(28, 105, 0, 0.5)';
+        }
+        else
+        {
+            context.fillStyle = 'rgba(255, 31, 0, 0.3)';
+            context.strokeStyle = 'rgba(105, 18, 0, 0.5)';
+        }
+
+        context.fill();
+        context.stroke();
+    };
+
+    RenderableSoldier.prototype.renderTurnIndicator = function (context, camera, position)
+    {
+        context.globalAlpha = 0.8;
         context.font = '12px Arial';
-        context.lineWidth = 4;
         context.textBaseline = 'top';
         context.textAlign = 'left';
+        context.lineWidth = 4;
 
         if (this.unit.player.isLocal)
         {
@@ -171,13 +175,11 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
             context.strokeStyle = '#240a00';
         }
 
-        var textLeft = position.x - camera.viewportRect.x + camera.halfTileWidth - (48 * camera.scale) / 2;
-        var textTop = position.y - camera.viewportRect.y - (48 * camera.scale) / 2;
+        var textLeft = position.x - camera.scale * 24;
+        var textTop = position.y - camera.scale * 24;
 
         context.strokeText(this.unit.turnNumber, textLeft, textTop);
         context.fillText(this.unit.turnNumber, textLeft, textTop);
-
-        context.globalAlpha = 1;
     };
 
     function drawEllipse(context, left, top, width, height)

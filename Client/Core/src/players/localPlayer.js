@@ -224,6 +224,7 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
             this.availableTiles = null;
 
             Renderer.clearRenderablePaths();
+            this.unit.statusPanel.previewAP();
             this.actionPanel.show();
 
             this.map.off('tileClick', this, this.onMoveTileSelected);

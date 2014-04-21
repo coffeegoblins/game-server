@@ -62,8 +62,6 @@ body.main-menu {
 .turn-queue-preview .container {
     overflow: hidden;
     border-radius: 4px;
-
-    /*TODO: find a better way to do this*/
     height: calc(100% - 8px);
 }
 
@@ -81,30 +79,39 @@ body.main-menu {
     height: 64px;
 }
 
-.floating-panel {
-    position: absolute;
-    opacity: 0;
-    -webkit-transition: opacity 0.5s;
-    transition: opacity 0.5s;
+.test {
+    color: rgba(217, 145, 0, 0.40);
+    color: rgba(95, 58, 0, 0.40);
 }
 
-.floating-panel.isVisible {
-    opacity: 1;
+.floating-panel {
+    position: absolute;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+    opacity: 0;
+}
+
+.floating-panel:not(.isVisible) {
+    pointer-events: none;
 }
 
 .action-panel {
     width: 132px;
     height: 88px;
+    z-index: 5;
 }
 
 .confirmation-panel {
     margin-top: 16px;
+    z-index: 10;
 }
 
 .unit-status-panel {
     position: absolute;
-    width: 68px;
+    pointer-events: none;
     margin-top: -60px;
+    width: 68px;
+    z-index: 1;
 }
 
 .action {
@@ -117,6 +124,7 @@ body.main-menu {
 
 .action.disabled {
     opacity: 0.5;
+    pointer-events: none;
 }
 
 .confirmation-panel .action {

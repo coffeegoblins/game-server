@@ -6,7 +6,6 @@ define(['Core/src/utility'], function (Utility)
         this.element = element;
         this.foregroundElement = element.querySelector('.innerBar');
         this.previewElement = element.querySelector('.innerBarPreview');
-        this.foregroundElement.style.width = '100%';
     }
 
     RenderableProgressBar.prototype.disableTransitions = function ()

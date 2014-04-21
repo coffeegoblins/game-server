@@ -5,8 +5,9 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
     {
         this.element = document.createElement('div');
         this.element.className = 'floating-panel';
-        this.updateEventData = {context: this, method: this.updatePosition};
+        this.element.style.opacity = 0;
 
+        this.updateEventData = {context: this, method: this.updatePosition};
         this.element.addEventListener('webkitTransitionEnd', this.onTransitionEnd.bind(this));
         this.element.addEventListener('transitionend', this.onTransitionEnd.bind(this));
     }
@@ -19,7 +20,9 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
 
     FloatingPanel.prototype.hide = function ()
     {
+        this.element.style.opacity = 0;
         this.element.classList.remove('isVisible');
+        this.onTransitionEnd();
     };
 
     FloatingPanel.prototype.onTransitionEnd = function ()
@@ -30,9 +33,9 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
             Scheduler.unschedule(this.updateEventData);
             document.body.removeChild(this.element);
         }
-        else if (this.element.classList.contains('isVisible'))
+        else if (this.element.style.opacity == 0)
         {
-            this.isVisible = true;
+            this.isVisible = false;
         }
     };
 
@@ -53,6 +56,8 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
 
     FloatingPanel.prototype.show = function ()
     {
+        this.isVisible = true;
+        this.element.style.opacity = 1;
         this.element.classList.add('isVisible');
     };
 

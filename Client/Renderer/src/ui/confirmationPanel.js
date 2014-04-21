@@ -39,6 +39,7 @@ define(['./floatingPanel'], function (FloatingPanel)
     {
         if (this.isVisible)
         {
+            e.preventDefault();
             e.stopImmediatePropagation();
             if (!e.target.classList.contains('disabled'))
             {
