@@ -10,6 +10,7 @@
         "overheadAttack": {
             "cost": 35,
             "damage": 50,
+            "range": 50,
             "displayName": "Overhead Attack",
             "track": "bow1"
         },

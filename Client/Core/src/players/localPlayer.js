@@ -194,18 +194,17 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
         LocalPlayer.prototype.onUnitDeselected = function (unit)
         {
             if (unit && unit !== this.unit)
+            {
+                this.selectedUnit.isTargeted = false;
                 this.closeUnitStatusPanel(unit);
+            }
         };
 
         LocalPlayer.prototype.onUnitSelected = function (unit)
         {
             if (unit !== this.unit && unit !== this.selectedUnit)
             {
-                if (this.selectedUnit)
-                {
-                    this.selectedUnit.isTargeted = false;
-                    this.onUnitDeselected(this.selectedUnit);
-                }
+                this.onUnitDeselected(this.selectedUnit);
 
                 this.selectedUnit = unit;
                 if (this.selectedUnit)
@@ -225,6 +224,7 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
 
             Renderer.clearRenderablePaths();
             this.unit.statusPanel.previewAP();
+            this.actionPanel.updateActions();
             this.actionPanel.show();
 
             this.map.off('tileClick', this, this.onMoveTileSelected);

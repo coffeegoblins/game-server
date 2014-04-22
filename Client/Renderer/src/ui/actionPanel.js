@@ -52,9 +52,27 @@ define(['./floatingPanel'], function (FloatingPanel)
 
             if (action.isDisabled)
                 actionElement.classList.add('disabled');
+            else
+                actionElement.classList.remove('disabled');
 
+            action.element = actionElement;
             actionElement.title = action.displayName;
             actionElement.setAttribute('data-action-name', action.name);
+        }
+    };
+
+    ActionPanel.prototype.updateActions = function ()
+    {
+        for (var i = 0; i < this.actions.length; i++)
+        {
+            var action = this.actions[i];
+            if (action.cost != null)
+            {
+                if (action.cost > this.target.ap)
+                    action.element.classList.add('disabled');
+                else
+                    action.element.classList.remove('disabled');
+            }
         }
     };
 
