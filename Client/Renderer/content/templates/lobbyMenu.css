@@ -4,97 +4,47 @@
 }
 
 .section {
-    background-color: rgba(0, 0, 0, 0.5);
-    margin: 10px;
-    padding: 10px;
-}
-
-#leftColumn {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    background: #CCC;
     width: 100%;
-    max-width: 350px;
-    float: left;
-}
-#leftColumn table {
-    width: 100%;
-}
-#leftColumn .buttonWidth {
-    width: 50px;
-}
-#rightColumn {
-    float: left;
-}
-#rightColumn ul {
-    display: inline;
-}
-#rightColumn li {
-    float: left;
-    padding: 0px 10px;
-}
-#rightColumn li:nth-child(odd) {
-    background: #999;
-    border-radius: 10px;
-    padding: 0px 10px;
-    color: #FFF;
-}
-#searchBox {
-    padding: 10px 0px;
-}
-.playerName {
-    font-family: Arial;
-    font-size: 24px;
-    font-weight: 700;
-    color: #000;
-}
-.playerRecord {
-    padding: 10px 0px 0px 0px;
-}
-.playerRanking {
-    float: left;
-    font-size: 24px;
-    font-family: Arial;
-    font-weight: 900;
-    color: #417C00;
-    text-shadow: 1px 1px 0 #000;
-    padding: 0px 10px;
-}
-.result {
-    padding: 10px;
-}
-.result input {
     height: 100%;
 }
-.resultsTable {
+
+#searchSection {
+    padding: 20px 10px;
+    border-bottom: 1px solid #333;
+    text-align: right;
+}
+
+#searchResults {
     width: 100%;
     border-collapse: collapse;
-    color: #FFF;
-    left: 0px;
-    top: 0px;
+    table-layout: fixed;
 }
-.resultsTable table {
+#searchResults table {
     border-collapse: collapse;
     width: 100%;
     margin: 0px;
     padding: 0px;
 }
-.resultsTable tr:nth-child(odd) {
+#searchResults tr:nth-child(odd) {
     background-color: #DDD;
 }
-.resultsTable tr:nth-child(even) {
+#searchResults tr:nth-child(even) {
     background-color: #CCC;
 }
-.resultsTable td {
+#searchResults td {
     vertical-align: middle;
     padding: 10px;
-    font-size: 14px;
     font-family: Arial;
 }
-.resultsTable td:last-child {
+#searchResults td:last-child {
     width: 100px;
 }
-.resultsTable td:last-child input {
-    width: 100px;
-}
-.resultsTable th {
+#searchResults th {
     display: block;
     background-color: #999;
     padding: 10px;
@@ -104,4 +54,9 @@
     font-weight: 700;
     color: #ffffff;
     display: table-cell;
+}
+
+.userName {
+    word-wrap: break-word;
+    
 }

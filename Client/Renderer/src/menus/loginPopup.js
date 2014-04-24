@@ -86,7 +86,9 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
         LoginPopup.prototype.loadLobby = function ()
         {
             this.hide();
-            LobbyMenu.show();
+            
+            var lobbyMenu = new LobbyMenu(this.socket);
+            lobbyMenu.show();
         };
 
         LoginPopup.prototype.connect = function (callback)

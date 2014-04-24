@@ -102,7 +102,7 @@ io.sockets.on('connection', function (socket)
             }
 
             socket.emit('login_succeeded');
-            // Subscribe to more sockets
+            subscribeToEvents(socket);
         });
     });
 
@@ -117,6 +117,28 @@ io.sockets.on('connection', function (socket)
             }
 
             socket.emit('registration_succeeded');
+            subscribeToEvents(socket);
         });
     });
 });
+
+function subscribeToEvents(socket)
+{
+    socket.on('playerSearch', function (searchCriteria, startingUsername)
+    {
+        console.log('Player Search Called.');
+        
+        // TODO Filter characters
+        var searchResults = userManager.selectPlayers(searchCriteria, startingUsername);
+        
+        if (searchResults.length === 0)
+        {
+            socket.emit('search_failed', 'No players found.');
+        }
+        
+        searchResults.toArray(function (error, result)
+        {
+            socket.emit('search_succeeded', result);
+        });
+    });
+}
