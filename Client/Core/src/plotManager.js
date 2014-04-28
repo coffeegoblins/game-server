@@ -91,8 +91,19 @@ define([
             onBeginTurn: function (unit)
             {
                 unit.isSelected = true;
-                //this.activeUnitView.show(unit);
                 Renderer.camera.moveToUnit(unit, this.onCameraMoved.bind(this));
+
+                // Update all the turn numbers
+                for (var i = 0; i < this.players.length; i++)
+                {
+                    var player = this.players[i];
+                    for (var j = 0; j < player.units.length; j++)
+                    {
+                        unit = player.units[j];
+                        if (unit.statusPanel)
+                            unit.statusPanel.updateValues();
+                    }
+                }
             },
 
             onCameraMoved: function (unit)
@@ -100,12 +111,10 @@ define([
                 unit.player.performTurn(unit);
             },
 
-            onEndTurn: function (unit, index)
+            onEndTurn: function (unit)
             {
                 unit.isSelected = false;
-                //this.activeUnitView.hide();
                 Renderer.clearRenderablePaths();
-
                 this.turnManager.beginTurn();
             },
 

@@ -4,9 +4,9 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
         'use strict';
         function LocalPlayer()
         {
+            this.isLocal = true;
             Player.apply(this, arguments);
 
-            this.isLocal = true;
             this.actionPanel = new ActionPanel();
             this.actionPanel.on('actionSelected', this, this.onActionSelected);
         }
@@ -210,7 +210,7 @@ define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../
                 if (this.selectedUnit)
                 {
                     this.selectedUnit.isTargeted = true;
-                    this.openUnitStatusPanel(this.selectedUnit);
+                    this.openUnitStatusPanel(this.selectedUnit, true);
                 }
             }
         };

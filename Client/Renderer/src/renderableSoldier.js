@@ -126,7 +126,6 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
                 left, top, width, height);
         }
 
-        this.renderTurnIndicator(context, camera, position);
         context.globalAlpha = 1;
     };
 
@@ -154,32 +153,6 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
 
         context.fill();
         context.stroke();
-    };
-
-    RenderableSoldier.prototype.renderTurnIndicator = function (context, camera, position)
-    {
-        context.globalAlpha = 0.8;
-        context.font = '12px Arial';
-        context.textBaseline = 'top';
-        context.textAlign = 'left';
-        context.lineWidth = 4;
-
-        if (this.unit.player.isLocal)
-        {
-            context.fillStyle = '#00db30';
-            context.strokeStyle = '#00230a';
-        }
-        else
-        {
-            context.fillStyle = '#ff1f00';
-            context.strokeStyle = '#240a00';
-        }
-
-        var textLeft = position.x - camera.scale * 24;
-        var textTop = position.y - camera.scale * 24;
-
-        context.strokeText(this.unit.turnNumber, textLeft, textTop);
-        context.fillText(this.unit.turnNumber, textLeft, textTop);
     };
 
     function drawEllipse(context, left, top, width, height)

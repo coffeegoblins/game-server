@@ -104,9 +104,35 @@ body.main-menu {
 .unit-status-panel {
     position: absolute;
     pointer-events: none;
-    margin-top: -60px;
-    width: 68px;
+    margin-top: -56px;
     z-index: 1;
+    vertical-align: middle;
+}
+
+.turn-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #240a00;
+    color: #ff1f00;
+    line-height: 20px;
+    margin-top: -6px;
+}
+
+.unit-status-panel.local .turn-indicator {
+    background-color: #00230a;
+    color: #00db30;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 50px;
 }
 
 .action {

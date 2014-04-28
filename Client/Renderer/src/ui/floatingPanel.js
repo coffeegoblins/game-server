@@ -45,9 +45,8 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
 
         this.target = target;
         this.isClosing = false;
-        this.halfWidth = this.element.offsetWidth / 2;
-        this.halfHeight = this.element.offsetHeight / 2;
 
+        this.updateMeasurement();
         this.updatePosition();
         this.show();
 
@@ -59,6 +58,12 @@ define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, 
         this.isVisible = true;
         this.element.style.opacity = 1;
         this.element.classList.add('isVisible');
+    };
+
+    FloatingPanel.prototype.updateMeasurement = function ()
+    {
+        this.halfWidth = this.element.offsetWidth / 2;
+        this.halfHeight = this.element.offsetHeight / 2;
     };
 
     FloatingPanel.prototype.updatePosition = function ()
