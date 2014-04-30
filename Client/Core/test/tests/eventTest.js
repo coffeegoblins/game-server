@@ -1,4 +1,4 @@
-define(['Core/src/events'], function (Events)
+define(['core/src/events'], function (Events)
 {
     'use strict';
 

@@ -60,7 +60,7 @@ input {
     height: 18px;
     vertical-align: sub;
     margin-right: 8px;
-    background-image: url('../images/cancelIcon.png');
+    background-image: url('./images/cancelIcon.png');
 }
 
 #errorMessage:empty {
@@ -74,7 +74,7 @@ input {
     margin: 8px;
     width: 16px;
     height: 16px;
-    background-image: url('../images/closeIcon.png');
+    background-image: url('./images/closeIcon.png');
     background-size: contain;
     opacity: 0.5;
 }

@@ -1,5 +1,5 @@
 define([
-        'renderer',
+        'renderer/src/renderer',
         './scheduler',
         './inputHandler',
         './browserNavigation',

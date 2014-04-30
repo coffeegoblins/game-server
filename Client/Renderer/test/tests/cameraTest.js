@@ -1,4 +1,4 @@
-define(['Core/src/scheduler', 'Renderer/src/camera/camera'], function (Scheduler, Camera)
+define(['core/src/scheduler', 'renderer/src/camera/camera'], function (Scheduler, Camera)
 {
     'use strict';
 

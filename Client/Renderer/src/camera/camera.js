@@ -1,4 +1,4 @@
-define(['Renderer/src/effects/transitionEffect'], function (TransitionEffect)
+define(['renderer/src/effects/transitionEffect'], function (TransitionEffect)
 {
     'use strict';
 

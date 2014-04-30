@@ -1,4 +1,4 @@
-define(['Core/src/spriteSheet'], function (SpriteSheet)
+define(['core/src/spriteSheet'], function (SpriteSheet)
 {
     'use strict';
 
@@ -7,7 +7,7 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         this.map = map;
         if (map.spriteSheet)
         {
-            var filePath = 'Renderer/content/images/' + map.spriteSheet + '.png';
+            var filePath = 'renderer/content/images/' + map.spriteSheet + '.png';
             this.tileSheet = new SpriteSheet('background', filePath, {
                 tileHeight: 48,
                 tileWidth: 96

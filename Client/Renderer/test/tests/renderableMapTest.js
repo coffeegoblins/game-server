@@ -1,4 +1,4 @@
-define(['Renderer/src/renderableMap', 'Core/src/map'], function (RenderableMap, Map)
+define(['renderer/src/renderableMap', 'core/src/map'], function (RenderableMap, Map)
 {
     'use strict';
 

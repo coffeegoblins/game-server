@@ -1,4 +1,4 @@
-define(['Renderer/src/ui/actionPanel', 'Renderer/src/ui/confirmationPanel', '../inputHandler', '../pathManager', './player', 'renderer', '../utility'],
+define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../inputHandler', '../pathManager', './player', 'renderer/src/renderer', '../utility'],
     function (ActionPanel, ConfirmationPanel, InputHandler, PathManager, Player, Renderer, Utility)
     {
         'use strict';

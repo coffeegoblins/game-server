@@ -1,14 +1,14 @@
 define([
-        'Core/src/events',
-        'Core/src/inputHandler',
-        'Core/src/scheduler',
-        'Core/src/utility',
-        'Renderer/src/renderableMap',
-        'Renderer/src/renderableLadder',
-        'Renderer/src/renderableObject',
-        'Renderer/src/renderableSoldier',
-        'Renderer/src/camera/camera',
-        'Renderer/src/renderablePath'
+        'core/src/events',
+        'core/src/inputHandler',
+        'core/src/scheduler',
+        'core/src/utility',
+        'renderer/src/renderableMap',
+        'renderer/src/renderableLadder',
+        'renderer/src/renderableObject',
+        'renderer/src/renderableSoldier',
+        'renderer/src/camera/camera',
+        'renderer/src/renderablePath'
     ],
     function (Events, InputHandler, Scheduler, Utility, RenderableMap, RenderableLadder, RenderableObject, RenderableSoldier, Camera, RenderablePath)
     {

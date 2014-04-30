@@ -1,4 +1,4 @@
-define(['Core/src/spriteSheet'], function (SpriteSheet)
+define(['core/src/spriteSheet'], function (SpriteSheet)
 {
     'use strict';
 
@@ -10,7 +10,7 @@ define(['Core/src/spriteSheet'], function (SpriteSheet)
         if (this.object.type === 'tree')
             size = {tileWidth: 128, tileHeight: 128};
 
-        var path = 'Renderer/content/images/' + this.object.type + '.png';
+        var path = 'renderer/content/images/' + this.object.type + '.png';
         this.spriteSheet = new SpriteSheet(this.object.type, path, size);
         this.spriteSheet.setCurrentTile(object.style);
     }

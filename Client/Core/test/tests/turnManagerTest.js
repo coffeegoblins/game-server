@@ -1,4 +1,4 @@
-define(['Core/src/turnManager', 'Core/src/soldier'], function (TurnManager, Soldier)
+define(['core/src/turnManager', 'core/src/soldier'], function (TurnManager, Soldier)
 {
     'use strict';
 

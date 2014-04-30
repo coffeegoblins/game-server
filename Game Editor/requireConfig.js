@@ -3,7 +3,7 @@ require.config({
     shim: {},
     paths: {
         Core: '../Client/Core',
-        renderer: '../Client/Renderer/src/renderer',
+        renderer: '../Client/renderer/src/renderer',
         text: '../lib/text'
     }
 });

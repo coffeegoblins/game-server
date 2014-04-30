@@ -1,4 +1,4 @@
-define(['renderer', './map', './worldObject', './ladder', 'jsonLoader'], function (Renderer, Map, WorldObject, Ladder, loadJSON)
+define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoader'], function (Renderer, Map, WorldObject, Ladder, loadJSON)
 {
     'use strict';
 

@@ -1,4 +1,4 @@
-define(['Renderer/src/effects/blinkEffect'], function (BlinkEffect)
+define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
 {
     'use strict';
 

@@ -1,4 +1,4 @@
-define(['Core/src/attackManager', 'Core/src/map', 'Renderer/src/ui/unitView', 'Renderer/src/ui/actionBarView', 'Core/src/utility'],
+define(['core/src/attackManager', 'core/src/map', 'renderer/src/ui/unitView', 'renderer/src/ui/actionBarView', 'core/src/utility'],
     function (AttackManager, Map, UnitView, ActionBarView, Utility)
     {
         'use strict';

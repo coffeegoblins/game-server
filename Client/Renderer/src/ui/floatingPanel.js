@@ -1,4 +1,4 @@
-define(['Core/src/events', 'renderer', 'Core/src/scheduler'], function (Events, Renderer, Scheduler)
+define(['core/src/events', 'renderer/src/renderer', 'core/src/scheduler'], function (Events, Renderer, Scheduler)
 {
     'use strict';
     function FloatingPanel()

@@ -1,4 +1,4 @@
-define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content/templates/playerSearch.html', 'lib/socket.io'],
+define(['text!menu/lobbyMenu.html', 'text!menu/playerSearch.html', 'lib/socket.io'],
     function (LobbyTemplate, PlayerSearchTemplate, io)
     {
         function LobbyMenu(socket)

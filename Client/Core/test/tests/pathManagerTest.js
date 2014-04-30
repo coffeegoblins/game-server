@@ -1,4 +1,4 @@
-define(['Core/src/pathManager', 'Core/src/map', 'Core/src/utility'], function (PathManager, Map, Utility)
+define(['core/src/pathManager', 'core/src/map', 'core/src/utility'], function (PathManager, Map, Utility)
 {
     'use strict';
 

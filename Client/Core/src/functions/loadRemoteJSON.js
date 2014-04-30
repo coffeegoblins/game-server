@@ -5,7 +5,7 @@ define(function ()
     {
         var request = new XMLHttpRequest();
         request.overrideMimeType('application/json');
-        request.open('GET', 'Core/content/' + fileName + '.json');
+        request.open('GET', 'core/content/' + fileName + '.json');
 
         request.onreadystatechange = function ()
         {
