@@ -7,14 +7,14 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
             
             this.socket.on('search_succeeded', function (cursor)
             {
-                for (var x = this.searchResults.rows.length - 1; x >= 0; --x)
+                for (var x = this.searchResultsTable.rows.length - 1; x >= 0; --x)
                 {
-                    this.searchResults.deleteRow(x);
+                    this.searchResultsTable.deleteRow(x);
                 }
                 
                 for (var i = 0; i < cursor.length; ++i)
                 {
-                    var row = this.searchResults.insertRow(i);
+                    var row = this.searchResultsTable.insertRow(i);
                     
                     var cell1 = row.insertCell(0);
                     var cell2 = row.insertCell(1);
@@ -51,7 +51,7 @@ define(['text!Renderer/content/templates/lobbyMenu.html', 'text!Renderer/content
             this.mainMenuChains.className = 'raiseChains';
             this.content.innerHTML += PlayerSearchTemplate;
             this.searchCriteria = document.getElementById('searchCriteria');
-            this.searchResults = document.getElementById('searchResults');
+            this.searchResultsTable = document.getElementById('searchResultsTable');
             
             document.getElementById('searchButton').addEventListener('click', this.onSearchButtonClicked.bind(this));
         };

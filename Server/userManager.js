@@ -70,11 +70,13 @@ UserManager.prototype.register = function (username, password, callback)
 
 UserManager.prototype.selectPlayers = function (searchCriteria, startingUsername)
 {
+    console.log(searchCriteria);
+    
     var regex = new RegExp(searchCriteria);
     
     console.log(regex);
     
-    var cursor = this.usersCollection.find({lowerCaseUsername: regex}).limit(50);
+    var cursor = this.usersCollection.find({lowerCaseUsername: regex}).limit(200);
     
     console.log(cursor.count(function (x, y) { console.log(y); }));
     

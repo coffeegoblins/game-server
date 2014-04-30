@@ -13,38 +13,59 @@
     height: 100%;
 }
 
+#searchSectionTable {
+    display: table;
+    width: 100%;
+}
+
 #searchSection {
-    padding: 20px 10px;
-    border-bottom: 1px solid #333;
+    padding: 5px;
+    height: 40px;
     text-align: right;
+    vertical-align: middle;
+    box-shadow: 0px 3px 5px #888;
+    position: relative;
+    display: table-cell;
+    z-index: 1;
+    background: #CCC;
 }
 
 #searchResults {
+    overflow: auto;
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+#searchResultsTable {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
 }
-#searchResults table {
+
+#searchResultsTable table {
     border-collapse: collapse;
     width: 100%;
     margin: 0px;
     padding: 0px;
 }
-#searchResults tr:nth-child(odd) {
+#searchResultsTable tr:nth-child(odd) {
     background-color: #DDD;
 }
-#searchResults tr:nth-child(even) {
+#searchResultsTable tr:nth-child(even) {
     background-color: #CCC;
 }
-#searchResults td {
+#searchResultsTable td {
     vertical-align: middle;
     padding: 10px;
     font-family: Arial;
 }
-#searchResults td:last-child {
+#searchResultsTable td:last-child {
     width: 100px;
 }
-#searchResults th {
+#searchResultsTable th {
     display: block;
     background-color: #999;
     padding: 10px;
