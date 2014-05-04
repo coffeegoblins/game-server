@@ -70,17 +70,17 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
 
         Player.prototype.getAttack = function (name)
         {
-            return soldierData[this.unit.type][name];
+            return soldierData[this.unit.type].attacks[name];
         };
 
         Player.prototype.getAttacks = function ()
         {
             var attacks = [];
-            var attackType = soldierData[this.unit.type];
+            var attackDefinitions = soldierData[this.unit.type].attacks;
 
-            for (var attackName in attackType)
+            for (var attackName in attackDefinitions)
             {
-                var attack = Utility.merge({name: attackName}, attackType[attackName]);
+                var attack = Utility.merge({name: attackName}, attackDefinitions[attackName]);
                 attack.isDisabled = (attack.cost > this.unit.ap);
                 attacks.push(attack);
             }
