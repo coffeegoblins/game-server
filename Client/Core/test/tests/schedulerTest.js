@@ -1,4 +1,4 @@
-define(['Core/src/scheduler'], function (Scheduler)
+define(['core/src/scheduler'], function (Scheduler)
 {
     'use strict';
 

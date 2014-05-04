@@ -1,4 +1,4 @@
-define(['Core/src/inputHandler', 'Core/src/scheduler'], function (InputHandler, Scheduler)
+define(['core/src/inputHandler', 'core/src/scheduler'], function (InputHandler, Scheduler)
 {
     'use strict';
 

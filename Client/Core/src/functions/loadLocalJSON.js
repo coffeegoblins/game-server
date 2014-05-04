@@ -1,4 +1,4 @@
-define(['text!Core/content/level1.json', 'text!Core/content/level2.json'],
+define(['text!core/content/level1.json', 'text!core/content/level2.json'],
     function (Sounds, Weapons, Level1, Level2)
     {
         'use strict';

@@ -5,8 +5,8 @@
     paths: {
         require: 'lib/require',
         text: 'lib/text',
-        renderer: 'Renderer/src/renderer',
-        jsonLoader: 'Core/src/functions/loadRemoteJSON'
+        renderer: 'renderer/src/renderer',
+        jsonLoader: 'core/src/functions/loadRemoteJSON'
     },
     optimize: 'uglify2',
     optimizeCss: 'standard',

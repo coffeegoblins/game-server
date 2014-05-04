@@ -19,7 +19,7 @@ body {
 }
 
 body.main-menu {
-    background-image: url("Renderer/content/images/mainMenu.jpg");
+    background-image: url("./menu/images/mainMenu.jpg");
     background-position: left top;
 }
 
@@ -230,67 +230,67 @@ body.main-menu {
 }
 
 .unit-type-archer {
-    background-image: url('Renderer/content/images/archerIcon.png');
+    background-image: url('renderer/content/images/archerIcon.png');
 }
 
 .unit-type-dualWield {
-    background-image: url('Renderer/content/images/dualWieldIcon.png');
+    background-image: url('renderer/content/images/dualWieldIcon.png');
 }
 
 .unit-type-swordAndShield {
-    background-image: url('Renderer/content/images/swordAndShieldIcon.png');
+    background-image: url('renderer/content/images/swordAndShieldIcon.png');
 }
 
 .unit-type-twoHanded {
-    background-image: url('Renderer/content/images/twoHandedIcon.png');
+    background-image: url('renderer/content/images/twoHandedIcon.png');
 }
 
 .action[data-action-name="move"] {
-    background-image: url('Renderer/content/images/moveIcon.png');
+    background-image: url('renderer/content/images/moveIcon.png');
 }
 
 .action[data-action-name="endTurn"] {
-    background-image: url('Renderer/content/images/endTurnIcon.png');
+    background-image: url('renderer/content/images/endTurnIcon.png');
 }
 
 .action[data-action-name="confirm"] {
-    background-image: url('Renderer/content/images/confirmIcon.png');
+    background-image: url('renderer/content/images/confirmIcon.png');
 }
 
 .action[data-action-name="cancel"] {
-    background-image: url('Renderer/content/images/cancelIcon.png');
+    background-image: url('renderer/content/images/cancelIcon.png');
 }
 
 .action[data-action-name="rangedAttack"] {
-    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+    background-image: url('renderer/content/images/rangeAttackIcon.png');
 }
 
 .action[data-action-name="overheadAttack"] {
-    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+    background-image: url('renderer/content/images/rangeAttackIcon.png');
 }
 
 .action[data-action-name="meleeAttack"] {
-    background-image: url('Renderer/content/images/rangeAttackIcon.png');
+    background-image: url('renderer/content/images/rangeAttackIcon.png');
 }
 
 .action[data-action-name="strike"], .action[data-action-name="placeholder"] {
-    background-image: url('Renderer/content/images/attackIcon.png');
+    background-image: url('renderer/content/images/attackIcon.png');
 }
 
 .action[data-action-name="shieldBash"] {
-    background-image: url('Renderer/content/images/shieldIcon.png');
+    background-image: url('renderer/content/images/shieldIcon.png');
 }
 
 .action[data-action-name="sweep"] {
-    background-image: url('Renderer/content/images/attackIcon.png');
+    background-image: url('renderer/content/images/attackIcon.png');
 }
 
 .action[data-action-name="overhead"] {
-    background-image: url('Renderer/content/images/attackIcon.png');
+    background-image: url('renderer/content/images/attackIcon.png');
 }
 
 .action[data-action-name="throwDagger"] {
-    background-image: url('Renderer/content/images/attackIcon.png');
+    background-image: url('renderer/content/images/attackIcon.png');
 }
 
 .player-team {

@@ -1,10 +1,10 @@
 define([
-        'text!Renderer/content/templates/unitView.html',
-        'text!Renderer/content/templates/unitViewMobile.html',
-        'Core/src/inputHandler',
-        'Renderer/src/ui/renderableProgressBar',
-        'renderer',
-        'Core/src/utility'
+        'text!renderer/content/templates/unitView.html',
+        'text!renderer/content/templates/unitViewMobile.html',
+        'core/src/inputHandler',
+        'renderer/src/ui/renderableProgressBar',
+        'renderer/src/renderer',
+        'core/src/utility'
     ],
     function (DesktopTemplate, MobileTemplate, InputHandler, RenderableProgressBar, Renderer, Utility)
     {

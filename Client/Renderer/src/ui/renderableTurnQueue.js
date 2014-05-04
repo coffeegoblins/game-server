@@ -1,4 +1,4 @@
-define(['Core/src/events', 'Core/src/inputHandler', 'Core/src/utility'], function (Events, InputHandler, Utility)
+define(['core/src/events', 'core/src/inputHandler', 'core/src/utility'], function (Events, InputHandler, Utility)
 {
     'use strict';
     function RenderableTurnQueue(element)

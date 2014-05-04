@@ -1,4 +1,4 @@
-define(['./floatingPanel', 'Renderer/src/ui/renderableProgressBar', 'text!../../content/templates/unitStatusPanel.html'], function (FloatingPanel, RenderableProgressBar, Template)
+define(['./floatingPanel', 'renderer/src/ui/renderableProgressBar', 'text!../../content/templates/unitStatusPanel.html'], function (FloatingPanel, RenderableProgressBar, Template)
 {
     'use strict';
     function UnitStatusPanel()

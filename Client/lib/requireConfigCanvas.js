@@ -3,7 +3,6 @@ require.config({
     shim: {},
     paths: {
         text: 'lib/text',
-        renderer: 'Renderer/src/renderer',
-        jsonLoader: 'Core/src/functions/loadRemoteJSON'
+        jsonLoader: 'core/src/functions/loadRemoteJSON'
     }
 });

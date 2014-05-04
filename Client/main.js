@@ -1,4 +1,4 @@
-require(['Core/src/domEvents', 'Core/src/scheduler', 'Core/src/commandManager', 'Renderer/src/menus/mainMenu'],
+require(['core/src/domEvents', 'core/src/scheduler', 'core/src/commandManager', 'menu/mainMenu'],
     function (DomEvents, Scheduler, CommandManager, MainMenu)
     {
         'use strict';

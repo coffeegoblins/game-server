@@ -1,4 +1,4 @@
-define(['text!../../content/soldierData.json', '../events', '../options', '../pathManager', 'renderer', '../scheduler', '../soundManager', 'Renderer/src/ui/unitStatusPanel', '../utility'],
+define(['text!../../content/soldierData.json', '../events', '../options', '../pathManager', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
     function (SoldierData, Events, Options, PathManager, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
     {
         'use strict';

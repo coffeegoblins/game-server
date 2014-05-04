@@ -1,4 +1,4 @@
-define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffect', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, TransitionEffect, AnimationDefinitions)
+define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffect', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, TransitionEffect, AnimationDefinitions)
 {
     'use strict';
 
@@ -22,7 +22,7 @@ define(['Core/src/imageCache', 'Core/src/spriteSheet', './effects/transitionEffe
         for (var animationName in animationDefinitions)
         {
             var animationDefinition = animationDefinitions[animationName];
-            var spriteSheet = new SpriteSheet(type + animationName, 'Renderer/content/images/' + animationDefinition.spriteSheet + '.png', {
+            var spriteSheet = new SpriteSheet(type + animationName, 'renderer/content/images/' + animationDefinition.spriteSheet + '.png', {
                 tileWidth: animationDefinition.tileWidth,
                 tileHeight: animationDefinition.tileHeight
             });

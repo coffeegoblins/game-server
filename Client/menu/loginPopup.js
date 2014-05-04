@@ -1,4 +1,4 @@
-define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Renderer/src/menus/lobbyMenu', 'Core/src/utility'],
+define(['text!menu/loginPopup.html', 'lib/socket.io', 'menu/lobbyMenu', 'core/src/utility'],
     function (Template, io, LobbyMenu, Utility)
     {
         function LoginPopup(mainMenu)
@@ -32,7 +32,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
             this.hide();
             this.mainMenu.mainMenuChains.className = 'lowerChains';
         };
-        
+
         LoginPopup.prototype.onRegisterButtonClicked = function ()
         {
             if (this.passwordInput.value !== this.confirmPasswordInput.value)
@@ -41,8 +41,8 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
                 return;
             }
 
-            this.connect(function () 
-            {  
+            this.connect(function ()
+            {
                 this.socket.emit('register', this.usernameInput.value, btoa(this.passwordInput.value));
 
                 this.socket.on('registration_succeeded', function ()
@@ -63,7 +63,7 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
 
         LoginPopup.prototype.onLoginButtonClicked = function ()
         {
-            this.connect(function () 
+            this.connect(function ()
             {
                 this.socket.emit('login', this.usernameInput.value, btoa(this.passwordInput.value));
 
@@ -79,14 +79,14 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
                 {
                     this.loadLobby();
                 }.bind(this));
-                
+
             }.bind(this));
         };
 
         LoginPopup.prototype.loadLobby = function ()
         {
             this.hide();
-            
+
             var lobbyMenu = new LobbyMenu(this.socket);
             lobbyMenu.show();
         };
@@ -94,19 +94,19 @@ define(['text!Renderer/content/templates/loginPopup.html', 'lib/socket.io', 'Ren
         LoginPopup.prototype.connect = function (callback)
         {
             this.socket = io.connect('http://127.0.0.1:1988');
-            
+
             this.socket.on('connect', callback);
-            
+
             this.socket.on('error', function (error)
             {
                 this.errorMessage.innerHTML = 'Unable to connect to the server.';
             }.bind(this));
-            
+
             this.socket.on('connect_error', function ()
             {
                 this.errorMessage.innerHTML = 'Unable to connect to the server.';
             }.bind(this));
-            
+
             this.socket.on('connect_failed', function ()
             {
                 this.errorMessage.innerHTML = 'Unable to connect to the server.';

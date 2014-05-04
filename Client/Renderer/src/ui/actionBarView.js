@@ -1,4 +1,4 @@
-define(['Core/src/inputHandler', 'Core/src/utility'], function (InputHandler, Utility)
+define(['core/src/inputHandler', 'core/src/utility'], function (InputHandler, Utility)
 {
     'use strict';
     var maxOpacity = 0.8;

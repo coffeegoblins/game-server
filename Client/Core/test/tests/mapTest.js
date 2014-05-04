@@ -1,4 +1,4 @@
-define(['Core/src/map'], function (Map)
+define(['core/src/map'], function (Map)
 {
     'use strict';
 

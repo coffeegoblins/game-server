@@ -1,4 +1,4 @@
-define(['text!Renderer/content/templates/mainMenu.html', 'text!Renderer/content/templates/game.html', 'Core/src/plotManager', './loginPopup', 'Core/src/browserNavigation'],
+define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html', 'core/src/plotManager', 'menu/loginPopup', 'core/src/browserNavigation'],
     function (MainMenuTemplate, GameTemplate, PlotManager, LoginPopup, BrowserNavigation)
     {
         'use strict';

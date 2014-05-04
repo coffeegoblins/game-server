@@ -3,10 +3,10 @@ require.config({
     shim: {},
     paths: {
         Core: '../',
-        Renderer: '../../Renderer',
-        renderer: '../../Renderer/src/renderer',
+        Renderer: '../../renderer',
+        renderer: '../../renderer/src/renderer',
         text: '../../lib/text',
         TestFramework: '../../../TestFramework',
-        loadLevelData: 'Core/src/loadLocalLevelData'
+        loadLevelData: 'core/src/loadLocalLevelData'
     }
 });

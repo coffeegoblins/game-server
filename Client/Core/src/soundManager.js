@@ -1,4 +1,4 @@
-define(['text!Core/content/tracks.json', './utility'], function (TrackDefinitions, Utility)
+define(['text!core/content/tracks.json', './utility'], function (TrackDefinitions, Utility)
 {
     'use strict';
 
@@ -22,7 +22,7 @@ define(['text!Core/content/tracks.json', './utility'], function (TrackDefinition
 
     function loadChannel(sound)
     {
-        var audio = new Audio('Core/content/sounds/' + sound.name + sound.format);
+        var audio = new Audio('core/content/sounds/' + sound.name + sound.format);
         if (!sound.isLoaded)
         {
             audio.addEventListener('canplaythrough', function onAudioLoaded()

@@ -1,4 +1,4 @@
-define(['Core/src/utility'], function (Utility)
+define(['core/src/utility'], function (Utility)
 {
     'use strict';
 

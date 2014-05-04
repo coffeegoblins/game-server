@@ -1,4 +1,4 @@
-define(['Core/src/events', './imageCache', './utility'], function (Events, ImageCache, Utility)
+define(['core/src/events', './imageCache', './utility'], function (Events, ImageCache, Utility)
 {
     'use strict';
 

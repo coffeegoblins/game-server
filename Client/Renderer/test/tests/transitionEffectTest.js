@@ -1,4 +1,4 @@
-define(['Renderer/src/effects/transitionEffect', 'Core/src/scheduler'], function (TransitionEffect, Scheduler)
+define(['renderer/src/effects/transitionEffect', 'core/src/scheduler'], function (TransitionEffect, Scheduler)
 {
     'use strict';
 
