@@ -1,13 +1,16 @@
-define(['text!menu/loginPopup.html', 'lib/socket.io', 'menu/lobbyMenu', 'core/src/utility'],
-    function (Template, io, LobbyMenu, Utility)
+define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
+    function (Template, io, Utility)
     {
         function LoginPopup(mainMenu)
         {
             this.mainMenu = mainMenu;
         }
 
-        LoginPopup.prototype.show = function ()
+        LoginPopup.prototype.show = function (loginSuccessCallback, loginSuccessContext)
         {
+            this.loginSuccessCallback = loginSuccessCallback;
+            this.loginSuccessContext = loginSuccessContext;
+
             Utility.insertTemplate(document.getElementById('content'), Template);
             this.loginPopup = document.getElementById('loginPopup');
             this.errorMessage = document.getElementById('errorMessage');
@@ -48,7 +51,12 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'menu/lobbyMenu', 'core/sr
                 this.socket.on('registration_succeeded', function ()
                 {
                     console.log('Registration Succeeded');
-                    this.loadLobby();
+                    this.hide();
+
+                    if (this.loginSuccessCallback)
+                    {
+                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket);
+                    }
                 }.bind(this));
 
                 this.socket.on('registration_failed', function (error)
@@ -77,18 +85,15 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'menu/lobbyMenu', 'core/sr
 
                 this.socket.on('login_succeeded', function ()
                 {
-                    this.loadLobby();
+                    this.hide();
+
+                    if (this.loginSuccessCallback)
+                    {
+                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket);
+                    }
                 }.bind(this));
 
             }.bind(this));
-        };
-
-        LoginPopup.prototype.loadLobby = function ()
-        {
-            this.hide();
-
-            var lobbyMenu = new LobbyMenu(this.socket);
-            lobbyMenu.show();
         };
 
         LoginPopup.prototype.connect = function (callback)
