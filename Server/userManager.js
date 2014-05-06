@@ -1,3 +1,5 @@
+var ObjectID = require('mongodb').ObjectID;
+
 function UserManager(usersCollection)
 {
     this.usersCollection = usersCollection;
@@ -21,7 +23,7 @@ UserManager.prototype.login = function (username, password, callback)
         if (!error && user && user.password === password)
         {
             console.log(username + ' has logged in.');
-            callback(null);
+            callback(null, user);
             return;
         }
 
@@ -42,7 +44,7 @@ UserManager.prototype.register = function (username, password, callback)
 
     console.log('Registering user: ' + lowerCaseUsername);
 
-    this.usersCollection.findOne({'username': lowerCaseUsername}, function (error, existingUser)
+    this.usersCollection.findOne({'lowerCaseUsername': lowerCaseUsername}, function (error, existingUser)
     {
         if (existingUser)
         {
@@ -63,7 +65,7 @@ UserManager.prototype.register = function (username, password, callback)
             }
 
             console.log(lowerCaseUsername + ' has been registered.');
-            callback(null, user._id);
+            callback(null, user);
         });
     }.bind(this));
 };
@@ -81,37 +83,20 @@ UserManager.prototype.selectPlayers = function (searchCriteria, startingUsername
     console.log(cursor.count(function (x, y) { console.log(y); }));
     
     return cursor;
-    
-//    cursor.each(function (error, object) {
-//        console.log("Object: ");
-//        console.log(object);
-//    });
-    
-    
-//    //.toArray(function(err, results)
-//    {
-//        console.log(results); // output all records
-//    });
-//    this.usersCollection.find({'username' : searchCriteria}, function (error, cursor)
-//    {
-//        console.log(cursor);
-//        console.log("Count: ");
-//        console.log(cursor.count());
-//        console.log("Next: ");
-//        console.log(cursor.next());
-//        console.log("Next Object: ");
-//        console.log(cursor.nextObject());
-//        console.log("Fields: ");
-//        console.log(cursor.fields());
-//    });
-//    
-//    var cursor = this.usersCollection.find({ 'username': searchCriteria });  
-//    
-//    console.log(cursor.toArray(function (array)
-//                               {
-//                                   console.log(array);
-//                               }));
-//    
+};
+
+UserManager.prototype.selectPlayerByID = function (id, callback)
+{
+    this.usersCollection.findOne({'_id': new ObjectID(id)}, function (error, user)
+    {
+        if (!user)
+        {
+            callback('Unable to find a user with the id: ' + id, null);
+            return;
+        }
+
+        callback(null, user);
+    }.bind(this));
 };
 
 module.exports = function (usersCollection)

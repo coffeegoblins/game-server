@@ -48,14 +48,14 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
             {
                 this.socket.emit('register', this.usernameInput.value, btoa(this.passwordInput.value));
 
-                this.socket.on('registration_succeeded', function ()
+                this.socket.on('registration_succeeded', function (user)
                 {
                     console.log('Registration Succeeded');
                     this.hide();
 
                     if (this.loginSuccessCallback)
                     {
-                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket);
+                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket, user);
                     }
                 }.bind(this));
 
@@ -83,13 +83,13 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                     }
                 }.bind(this));
 
-                this.socket.on('login_succeeded', function ()
+                this.socket.on('login_succeeded', function (user)
                 {
                     this.hide();
 
                     if (this.loginSuccessCallback)
                     {
-                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket);
+                        this.loginSuccessCallback.call(this.loginSuccessContext, this.socket, user);
                     }
                 }.bind(this));
 

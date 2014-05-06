@@ -62,7 +62,7 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
             PlotManager.loadLevel('level1');
         };
 
-        MainMenu.prototype.onLoginSucceeded = function(socket)
+        MainMenu.prototype.onLoginSucceeded = function(socket, user)
         {
             while (this.mainMenuChains.lastChild)
                 this.mainMenuChains.removeChild(this.mainMenuChains.lastChild);
@@ -72,8 +72,9 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
             document.getElementById('searchButton').addEventListener('click', this.onPlayerSearchButtonClicked.bind(this));
 
             this.socket = socket;
+            this.user = user;
 
-            this.socket.on('search_succeeded', function (cursor)
+            this.socket.on('player_search_succeeded', function (cursor)
             {
                 for (var x = this.searchResultsTable.rows.length - 1; x >= 0; --x)
                 {
@@ -89,13 +90,11 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
 
                     cell1.innerHTML = cursor[i].username;
                     cell1.className = "userName";
-                    cell2.innerHTML = "<input type='button' value='Challenge!'>";
+                    cell2.innerHTML = "<input type='button' value='Challenge!' id='" + cursor[i]._id + "'>";
+
+                    document.getElementById(cursor[i]._id).addEventListener('click', this.onPlayerChallenged.bind(this));
                 }
             }.bind(this));
-//            this.mainMenuChains.innerHTML = MultiplayerButtonsTemplate;
-//            this.mainMenuChains.className = 'lowerChains';
-
-            // this.mainMenuChains.on('click', '.menuItem p', this.onMenuItemClicked.bind(this));
         };
 
         MainMenu.prototype.onPlayerSearchButtonClicked = function ()
@@ -106,7 +105,12 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
             this.searchCriteria = document.getElementById('searchCriteria');
             this.searchResultsTable = document.getElementById('searchResultsTable');
 
-            this.socket.emit('playerSearch', this.searchCriteria.value);
+            this.socket.emit('player_search', this.searchCriteria.value);
+        };
+
+        MainMenu.prototype.onPlayerChallenged = function(e)
+        {
+            this.socket.emit('player_challenge', this.user._id, e.target.id);
         };
 
         return new MainMenu();

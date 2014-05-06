@@ -2,6 +2,7 @@ var fileSystem = require('fs');
 var atob = require('atob');
 var mongoDB = require('mongodb');
 var userManager = null;
+var notificationManager = null;
 
 // Initial Config
 var config = JSON.parse(fileSystem.readFileSync('./config.json'));
@@ -50,6 +51,19 @@ database.open(function (error)
         console.log('Selected the users collection.');
         userManager = require('./userManager')(collection);
     });
+
+    database.collection('notifications', function (error, collection)
+    {
+        if (error)
+        {
+            console.log('Unable to select the notifications collection. ' + error);
+            return;
+        }
+
+        // Setup endpoint
+        console.log('Selected the notifications collection.');
+        notificationManager = require('./notificationManager')(collection);
+    });
 });
 
 // Enable Cross Origin Resource Sharing (CORS)
@@ -60,40 +74,11 @@ app.all('*', function (req, res, next)
     next();
 });
 
-//io.set('authorization', function (request, callback)
-//{
-//    var token = request.query.token;
-//    var registration = request.query.registration;
-//
-//    if (!token)
-//    {
-//        return;
-//    }
-//
-//    var decryptedToken = atob(token);
-//    var credentials = decryptedToken.split(":");
-//
-//    if (registration)
-//    {
-//        userManager.register(credentials[0], credentials[1], function (error)
-//        {
-//            callback(error, error === null);
-//        });
-//    }
-//    else
-//    {
-//        userManager.login(credentials[0], credentials[1], function (error)
-//        {
-//            callback(error, error === null);
-//        });
-//    }
-//});
-
 io.sockets.on('connection', function (socket)
 {
     socket.on('login', function (username, password)
     {
-        userManager.login(username, password, function (error)
+        userManager.login(username, password, function (error, user)
         {
             if (error)
             {
@@ -101,14 +86,14 @@ io.sockets.on('connection', function (socket)
                 return;
             }
 
-            socket.emit('login_succeeded');
+            socket.emit('login_succeeded', user);
             subscribeToEvents(socket);
         });
     });
 
     socket.on('register', function (username, password)
     {
-        userManager.register(username, password, function (error)
+        userManager.register(username, password, function (error, user)
         {
             if (error)
             {
@@ -116,7 +101,7 @@ io.sockets.on('connection', function (socket)
                 return;
             }
 
-            socket.emit('registration_succeeded');
+            socket.emit('registration_succeeded', user);
             subscribeToEvents(socket);
         });
     });
@@ -124,7 +109,7 @@ io.sockets.on('connection', function (socket)
 
 function subscribeToEvents(socket)
 {
-    socket.on('playerSearch', function (searchCriteria, startingUsername)
+    socket.on('player_search', function (searchCriteria, startingUsername)
     {
         console.log('Player Search Called.');
         
@@ -133,12 +118,49 @@ function subscribeToEvents(socket)
         
         if (searchResults.length === 0)
         {
-            socket.emit('search_failed', 'No players found.');
+            socket.emit('player_search_failed', 'No players found.');
         }
         
         searchResults.toArray(function (error, result)
         {
-            socket.emit('search_succeeded', result);
+            socket.emit('player_search_succeeded', result);
+        });
+    });
+
+    socket.on('player_challenge', function(challengerID, opponentID)
+    {
+        console.log("Player is being challenged.");
+
+        userManager.selectPlayerByID(challengerID, function (challengerError, challengerUser)
+        {
+            if (challengerError)
+            {
+                socket.emit('player_challenge_error', challengerError);
+                console.log(challengerError);
+                return;
+            }
+
+            console.log("Challenger exists!");
+
+            userManager.selectPlayerByID(opponentID, function(opponentError, opponentUser)
+            {
+                if (opponentError)
+                {
+                    socket.emit('player_challenge_error', opponentError);
+                    console.log(opponentError);
+                    return;
+                }
+
+                console.log("Opponent exists!");
+
+                console.log(challengerUser.username + " (" + challengerUser._id + ") is challenging " + opponentUser.username + " (" + opponentUser._id + ")");
+
+                notificationManager.initiateChallenge(challengerUser, opponentUser, function(error)
+                {
+                    socket.emit('player_challenge_error', error);
+                    console.log("Failed to challenge.");
+                });
+            });
         });
     });
 }
