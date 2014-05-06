@@ -19,7 +19,7 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
         {
             Player.prototype.performTurn.call(this, unit);
 
-            this.actionPanel.open(unit, this.getAttacks());
+            this.actionPanel.open(unit, this.getAttacks(unit));
             this.map.on('tileClick', this, this.onTileClick);
             InputHandler.enableInput();
         };
@@ -51,27 +51,14 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             this.actionPanel.hide();
             if (actionName === 'move')
             {
-                this.availableTiles = PathManager.calculateAvailableTiles(this.map, {
-                    x: this.unit.tileX,
-                    y: this.unit.tileY,
-                    maxDistance: this.unit.ap,
-                    maxClimbableHeight: this.unit.maxMoveableHeight
-                });
-
+                this.availableTiles = this.getMoveTiles(this.unit);
                 Renderer.addRenderablePath('moveTiles', this.availableTiles, false);
                 this.map.on('tileClick', this, this.onMoveTileSelected);
             }
             else
             {
-                this.currentAttack = this.getAttack(actionName);
-                this.availableTiles = PathManager.calculateAvailableTiles(this.map, Utility.merge({
-                    x: this.unit.tileX,
-                    y: this.unit.tileY,
-                    maxClimbableHeight: this.unit.maxMoveableHeight,
-                    ignoreUnits: true,
-                    excludePlayer: this,
-                    maxDistance: this.currentAttack.range
-                }, this.currentAttack));
+                this.currentAttack = this.getAttack(this.unit, actionName);
+                this.availableTiles = this.getAttackTiles(this.unit, this.currentAttack);
 
                 Renderer.addRenderablePath('attack', this.availableTiles, false);
                 this.map.on('tileClick', this, this.onAttackTileSelected);

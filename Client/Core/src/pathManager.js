@@ -17,9 +17,6 @@ define(['./utility'], function (Utility)
     {
     }
 
-    PathManager.defaultMoveCost = 10;
-    PathManager.diagonalMoveCost = 14;
-
     PathManager.calculateAvailableTiles = function (map, options)
     {
         var currentNode = {distance: 0, x: options.x, y: options.y, tile: map.getTile(options.x, options.y), neighbors: []};
@@ -70,10 +67,10 @@ define(['./utility'], function (Utility)
                 }
 
                 var heightDifference = tile.height - currentNode.tile.height;
-                var distance = currentNode.distance + (isDiagonal ? PathManager.diagonalMoveCost : PathManager.defaultMoveCost);
+                var distance = currentNode.distance + (isDiagonal ? Math.SQRT2 : 1);
 
                 if (Math.abs(heightDifference) <= options.maxClimbableHeight)
-                    distance += heightDifference;
+                    distance += heightDifference / 10;
 
                 if (distance < newNode.distance)
                     newNode.distance = distance;

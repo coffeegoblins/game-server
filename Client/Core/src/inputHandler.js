@@ -300,13 +300,14 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
     // Block anything we don't want to happen
     var preventDefault = function (e)
     {
-        e.preventDefault();
+        if (inputHandler.handleInput)
+            e.preventDefault();
     };
 
     window.addEventListener('contextmenu', preventDefault, false);
     window.addEventListener('MSHoldVisual', preventDefault, false);
     window.addEventListener('selectstart', preventDefault, false);
-    //window.addEventListener('wheel', preventDefault, false);
+    window.addEventListener('wheel', preventDefault, false);
 
     // Hook into input events
     window.addEventListener('mousedown', onMouseDown, false);
