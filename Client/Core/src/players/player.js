@@ -34,15 +34,17 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
         Player.prototype.calculateCrossNodes = function (selectedNode, availableNodes)
         {
             var crossNodes = [];
+            var x = selectedNode.x;
+            var y = selectedNode.y;
+
             for (var i = 0; i < availableNodes.length; ++i)
             {
                 var node = availableNodes[i];
-
-                if ((node.x === selectedNode.x && (node.y === selectedNode.y - 1 || node.y === selectedNode.y + 1)) ||
-                    (node.y === selectedNode.y && (node.x === selectedNode.x - 1 || node.x === selectedNode.x + 1)))
+                if (node.tile.unit !== this.unit &&
+                    (node.x === x && Math.abs(node.y - y) === 1) ||
+                    (node.y === y && Math.abs(node.x - x) === 1))
                 {
-                    if (node.tile.unit !== this.unit)
-                        crossNodes.push(node);
+                    crossNodes.push(node);
                 }
             }
 
@@ -68,24 +70,51 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             }
         };
 
-        Player.prototype.getAttack = function (name)
+        Player.prototype.getAttack = function (unit, name)
         {
-            return soldierData[this.unit.type][name];
+            var attackDefinition = soldierData[unit.type].attacks[name];
+            var attack = Utility.merge({name: name}, attackDefinition);
+            attack.isDisabled = (attack.cost > unit.ap);
+
+            if (!attack.range)
+                attack.range = 1;
+
+            return attackDefinition;
         };
 
-        Player.prototype.getAttacks = function ()
+        Player.prototype.getAttacks = function (unit)
         {
             var attacks = [];
-            var attackType = soldierData[this.unit.type];
+            var attackDefinitions = soldierData[unit.type].attacks;
 
-            for (var attackName in attackType)
-            {
-                var attack = Utility.merge({name: attackName}, attackType[attackName]);
-                attack.isDisabled = (attack.cost > this.unit.ap);
-                attacks.push(attack);
-            }
+            for (var attackName in attackDefinitions)
+                attacks.push(this.getAttack(unit, attackName));
 
             return attacks;
+        };
+
+        Player.prototype.getAttackTiles = function (unit, attack)
+        {
+            return PathManager.calculateAvailableTiles(this.map, Utility.merge({
+                x: unit.tileX,
+                y: unit.tileY,
+                excludePlayer: this,
+                ignoreUnits: true,
+                maxClimbableHeight: unit.maxMoveableHeight,
+                maxDistance: attack.range
+            }, attack));
+        };
+
+        Player.prototype.getMoveTiles = function (unit)
+        {
+            var maxDistance = unit.ap / soldierData[unit.type].moveCost;
+
+            return PathManager.calculateAvailableTiles(this.map, {
+                x: unit.tileX,
+                y: unit.tileY,
+                maxDistance: maxDistance,
+                maxClimbableHeight: unit.maxMoveableHeight
+            });
         };
 
         Player.prototype.getUnitStatusPanelOptions = function (unit, isSelection)
@@ -216,8 +245,14 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             var deltaX = targetTile.x - this.unit.tileX;
             var deltaY = targetTile.y - this.unit.tileY;
 
+            // TODO: Create a method for this that isn't tied to the UI
+            //       Filter out affected tile targets
+            //       Apply cost, direction, and target lock
+            //       Compute resulting hit outcome and damage
+
             this.unit.ap -= attack.cost;
             this.unit.setDirection(deltaX, deltaY);
+
             this.unit.setState('attack');
             SoundManager.playTrack(attack.track);
 
@@ -226,6 +261,7 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
 
             this.unit.on('animationComplete', this, function onAttackFinished()
             {
+                // TODO: Split this out? Simplify to apply precomputed damage
                 for (var i = 0; i < affectedTiles.length; ++i)
                 {
                     var unit = affectedTiles[i].tile.unit;

@@ -95,19 +95,18 @@ define([
                 this.renderablePaths[i].render(this.context, this.camera);
 
             // Make sure the objects are drawn in the right order
-            this.renderables.sort(function (obj1, obj2)
+            sortRenderables(this.renderables);
+
+            if (window.output)
             {
-                if (obj1.isDead !== obj2.isDead)
-                    return obj1.isDead ? -1 : 1;
+                for (i = 0; i < this.renderables.length; i++)
+                {
+                    var obj = this.renderables[i].object || this.renderables[i].unit;
+                    console.log(obj.tileX, obj.tileY, obj);
+                }
 
-                if (obj1.getTileX() !== obj2.getTileX())
-                    return obj1.getTileX() - obj2.getTileX();
-
-                if (obj1.getTileY() !== obj2.getTileY())
-                    return obj1.getTileY() - obj2.getTileY();
-
-                return 0;
-            });
+                window.output = false;
+            }
 
             for (i = 0; i < this.renderables.length; i++)
                 this.renderables[i].render(this.context, deltaTime, this.camera);
@@ -164,6 +163,84 @@ define([
         {
             Utility.removeElementByProperty(this.renderablePaths, 'id', id);
         };
+
+        function sortRenderables(items)
+        {
+            for (var i = 1; i < items.length; i++)
+            {
+                var obj1 = items[i];
+                for (var j = i - 1; j >= 0; j--)
+                {
+                    // obj1 < obj2
+                    var obj2 = items[j];
+                    if (obj1.isDead)
+                        break;
+
+                    if (!obj2.isDead)
+                    {
+                        if (obj1.getTileX() > obj2.getTileX())
+                            break;
+
+                        if (obj1.getTileY() > obj2.getTileY())
+                            break;
+                    }
+
+                    items[j + 1] = items[j];
+                }
+
+                items[j + 1] = obj1;
+            }
+        }
+
+        function sortRenderables2(items)
+        {
+            var len = items.length;
+            for (var i = 0; i < len; i++)
+            {
+                var value = items[i];
+                for (var j = i - 1; j > -1 && items[j] > value; j--)
+                {
+                    //items[j + 1] = items[j];
+                }
+
+
+                items.splice(j + 1, 0, value);
+                items.splice(i, 1);
+            }
+            //
+            //            var newArray = [];
+            //
+            //            var length = items.length;
+            //            for (var i = 0; i < length; i++)
+            //            {
+            //                var value = items[i];
+            //                for (var j = newArray.length - 1; j >= 0; j--)
+            //                {
+            //                    if (value > length[j])
+            //                    {
+            //                        newArray.splice(j + 1, 0, value);
+            //                        break;
+            //                    }
+            //                }
+            //
+            //                if (j < 0)
+            //                    newArray.unshift(value);
+            //            }
+
+            //            this.renderables.sort(function (obj1, obj2)
+            //            {
+            //                if (obj1.isDead !== obj2.isDead)
+            //                    return obj1.isDead ? -1 : 1;
+            //
+            //                if (obj1.getTileX() !== obj2.getTileX())
+            //                    return obj1.getTileX() - obj2.getTileX();
+            //
+            //                if (obj1.getTileY() !== obj2.getTileY())
+            //                    return obj1.getTileY() - obj2.getTileY();
+            //
+            //                return 0;
+            //            });
+        }
 
         return new Renderer();
     });

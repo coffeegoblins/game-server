@@ -1,85 +1,127 @@
 {
     "archer": {
-        "rangedAttack": {
-            "cost": 20,
-            "damage": 30,
-            "range": 100,
-            "displayName": "Attack",
-            "track": "bow1"
-        },
-        "overheadAttack": {
-            "cost": 35,
-            "damage": 50,
-            "range": 50,
-            "displayName": "Overhead Attack",
-            "track": "bow1"
-        },
-        "meleeAttack": {
-            "cost": 10,
-            "damage": 5,
-            "range": 10
+        "apRegen": 1,
+        "moveCost": 12,
+        "attacks": {
+            "rangedAttack": {
+                "cost": 20,
+                "range": 10,
+                "isObstructable": true,
+                "displayName": "Attack",
+                "track": "bow1",
+
+                "damage": {
+                    "swordAndShield": 20,
+                    "dualWield": 30,
+                    "twoHanded": 30
+                },
+                "accuracy": {
+                    "swordAndShield": 0.2,
+                    "dualWield": 0.6,
+                    "twoHanded": 0.9
+                }
+            },
+            "overheadAttack": {
+                "cost": 35,
+                "range": 5,
+                "displayName": "Overhead Attack",
+                "track": "bow1",
+                "damage": {
+                    "swordAndShield": 15,
+                    "dualWield": 20,
+                    "twoHanded": 20
+                },
+                "accuracy": {
+                    "swordAndShield": 0.2,
+                    "dualWield": 0.6,
+                    "twoHanded": 0.9
+                }
+            },
+            "meleeAttack": {
+                "cost": 10,
+                "damage": 5,
+                "accuracy": 100
+            }
         }
     },
+
     "swordAndShield": {
-        "strike": {
-            "cost": 30,
-            "damage": 30,
-            "range": 10,
-            "displayName": "Strike",
-            "track": "strike"
-        },
-        "shieldBash": {
-            "cost": 30,
-            "damage": 25,
-            "range": 10,
-            "displayName": "Shield Bash",
-            "track": "shieldBash1"
-        },
-        "placeholder": {
-            "cost": 30,
-            "damage": 30,
-            "range": 10
+        "apRegen": 1,
+        "moveCost": 15,
+        "attacks": {
+            "strike": {
+                "cost": 30,
+                "damage": 30,
+                "accuracy": 100,
+                "displayName": "Strike",
+                "track": "strike"
+            },
+            "shieldBash": {
+                "cost": 30,
+                "damage": 25,
+                "accuracy": 100,
+                "displayName": "Shield Bash",
+                "track": "shieldBash1"
+            },
+            "placeholder": {
+                "cost": 30,
+                "damage": 30,
+                "accuracy": 100
+            }
         }
     },
+
     "twoHanded": {
-        "strike": {
-            "cost": 30,
-            "damage": 30,
-            "range": 10,
-            "displayName": "Strike",
-            "track": "twoHandedStrike"
-        },
-        "sweep": {
-            "cost": 40,
-            "damage": 30,
-            "range": 14,
-            "displayName": "Sweep",
-            "track": "sweep",
-            "useCrossNodes": true
-        },
-        "overhead": {
-            "cost": 50,
-            "damage": 60,
-            "range": 10
+        "apRegen": 1,
+        "moveCost": 12,
+        "attacks": {
+            "strike": {
+                "cost": 30,
+                "damage": 30,
+                "accuracy": 100,
+                "displayName": "Strike",
+                "track": "twoHandedStrike"
+            },
+            "sweep": {
+                "cost": 40,
+                "range": 1.5,
+                "damage": 30,
+                "accuracy": 100,
+                "displayName": "Sweep",
+                "track": "sweep",
+                "useCrossNodes": true
+            },
+            "overhead": {
+                "cost": 50,
+                "damage": 60,
+                "accuracy": 100
+            }
         }
     },
+
     "dualWield": {
-        "strike": {
-            "cost": 30,
-            "damage": 25,
-            "range": 10,
-            "displayName": "Strike",
-            "track": "dualStrike"
-        },
-        "throwDagger": {
-            "cost": 40,
-            "damage": 20,
-            "range": 28
-        },
-        "placeholder": {
-            "cost": 30,
-            "damage": 30,
-            "range": 10
+        "apRegen": 1,
+        "moveCost": 10,
+        "attacks": {
+            "strike": {
+                "cost": 30,
+                "damage": 25,
+                "accuracy": 100,
+                "displayName": "Strike",
+                "track": "dualStrike"
+            },
+            "throwDagger": {
+                "cost": 40,
+                "range": 2.9,
+                "damage": 20,
+                "accuracy": 100,
+                "isObstructable": true
+            },
+            "placeholder": {
+                "cost": 30,
+                "damage": 30,
+                "accuracy": 100
+            }
         }
     }
 }
