@@ -26,9 +26,7 @@ define([
                     name: 'Unit ' + (i + 1),
                     tileX: position.x,
                     tileY: position.y,
-                    type: types[i % 4],
-                    direction: position.direction
-
+                    type: types[i % 4]
                 });
 
                 soldiers.push(soldier);

@@ -40,7 +40,7 @@
             "meleeAttack": {
                 "cost": 10,
                 "damage": 5,
-                "accuracy": 100
+                "accuracy": 0.9
             }
         }
     },
@@ -52,21 +52,21 @@
             "strike": {
                 "cost": 30,
                 "damage": 30,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "strike"
             },
             "shieldBash": {
                 "cost": 30,
                 "damage": 25,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "displayName": "Shield Bash",
                 "track": "shieldBash1"
             },
             "placeholder": {
                 "cost": 30,
                 "damage": 30,
-                "accuracy": 100
+                "accuracy": 0.9
             }
         }
     },
@@ -78,7 +78,7 @@
             "strike": {
                 "cost": 30,
                 "damage": 30,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "twoHandedStrike"
             },
@@ -86,7 +86,7 @@
                 "cost": 40,
                 "range": 1.5,
                 "damage": 30,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "displayName": "Sweep",
                 "track": "sweep",
                 "useCrossNodes": true
@@ -94,7 +94,7 @@
             "overhead": {
                 "cost": 50,
                 "damage": 60,
-                "accuracy": 100
+                "accuracy": 0.9
             }
         }
     },
@@ -106,7 +106,7 @@
             "strike": {
                 "cost": 30,
                 "damage": 25,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "dualStrike"
             },
@@ -114,13 +114,13 @@
                 "cost": 40,
                 "range": 2.9,
                 "damage": 20,
-                "accuracy": 100,
+                "accuracy": 0.9,
                 "isObstructable": true
             },
             "placeholder": {
                 "cost": 30,
                 "damage": 30,
-                "accuracy": 100
+                "accuracy": 0.9
             }
         }
     }

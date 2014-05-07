@@ -150,7 +150,7 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             {
                 this.selectedTiles = PathManager.calculatePathFromNodes(pathNode, this.unit.tileX, this.unit.tileY);
                 this.selectedTile = this.selectedTiles[this.selectedTiles.length - 1];
-                this.unit.statusPanel.previewAP(this.selectedTile.distance);
+                this.unit.statusPanel.previewAP(this.selectedTile.distance * this.getMoveCost(this.unit));
 
                 this.confirmationPanel.enableConfirm();
                 Renderer.addRenderablePath('selectedPath', this.selectedTiles, true);

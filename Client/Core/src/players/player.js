@@ -79,7 +79,7 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             if (!attack.range)
                 attack.range = 1;
 
-            return attackDefinition;
+            return attack;
         };
 
         Player.prototype.getAttacks = function (unit)
@@ -105,9 +105,14 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             }, attack));
         };
 
+        Player.prototype.getMoveCost = function (unit)
+        {
+            return soldierData[unit.type].moveCost;
+        };
+
         Player.prototype.getMoveTiles = function (unit)
         {
-            var maxDistance = unit.ap / soldierData[unit.type].moveCost;
+            var maxDistance = unit.ap / this.getMoveCost(unit);
 
             return PathManager.calculateAvailableTiles(this.map, {
                 x: unit.tileX,
@@ -149,8 +154,8 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             startTile.unit = null;
 
             var startAp = this.unit.ap;
-            var endAp = startAp - cost;
-            var totalTime = cost / 35;
+            var endAp = startAp - cost * this.getMoveCost(this.unit);
+            var totalTime = cost / 3.5;
 
             var path = tiles.slice();
             path.unshift({x: this.unit.tileX, y: this.unit.tileY});
@@ -221,6 +226,10 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
         {
             this.closeUnitStatusPanel(unit, true);
             Utility.removeElement(this.units, unit);
+
+            if (unit.target)
+                unit.target.target = null;
+
             if (!this.units.length)
                 this.trigger('defeat', this);
         };
@@ -242,16 +251,9 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
 
         Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
         {
-            var deltaX = targetTile.x - this.unit.tileX;
-            var deltaY = targetTile.y - this.unit.tileY;
-
-            // TODO: Create a method for this that isn't tied to the UI
-            //       Filter out affected tile targets
-            //       Apply cost, direction, and target lock
-            //       Compute resulting hit outcome and damage
-
             this.unit.ap -= attack.cost;
-            this.unit.setDirection(deltaX, deltaY);
+            this.applyTargetLock(this.unit, targetTile);
+            var targets = this.calculateDamage(this.unit, attack, affectedTiles);
 
             this.unit.setState('attack');
             SoundManager.playTrack(attack.track);
@@ -261,15 +263,14 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
 
             this.unit.on('animationComplete', this, function onAttackFinished()
             {
-                // TODO: Split this out? Simplify to apply precomputed damage
-                for (var i = 0; i < affectedTiles.length; ++i)
+                for (var i = 0; i < targets.length; i++)
                 {
-                    var unit = affectedTiles[i].tile.unit;
-                    if (unit)
+                    var target = targets[i];
+                    if (target.damage)
                     {
-                        unit.damage(attack.damage);
-                        if (unit.statusPanel)
-                            unit.statusPanel.updateValues();
+                        target.unit.damage(target.damage);
+                        if (target.unit.statusPanel)
+                            target.unit.statusPanel.updateValues();
                     }
                 }
 
@@ -277,6 +278,58 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
                 this.unit.off('animationComplete', this, onAttackFinished);
                 this.onAttackComplete();
             });
+        };
+
+        Player.prototype.applyTargetLock = function (unit, targetTile)
+        {
+            var deltaX = targetTile.x - this.unit.tileX;
+            var deltaY = targetTile.y - this.unit.tileY;
+            unit.setDirection(deltaX, deltaY);
+
+            var targetUnit = targetTile.tile.unit;
+            if (targetUnit && !targetUnit.target)
+            {
+                targetUnit.setDirection(-deltaX, -deltaY);
+                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
+                {
+                    unit.target = targetUnit;
+                    targetUnit.target = unit;
+                }
+            }
+        };
+
+        Player.prototype.calculateDamage = function (unit, attack, affectedNodes)
+        {
+            var targets = [];
+            for (var i = 0; i < affectedNodes.length; i++)
+            {
+                var affectedUnit = affectedNodes[i].tile.unit;
+                if (affectedUnit)
+                {
+                    var damage;
+                    var unitType = affectedUnit.type;
+                    var accuracy = attack.accuracy[unitType] || attack.accuracy;
+
+                    if (Math.random() < accuracy)
+                        damage = attack.damage[unitType] || attack.damage;
+
+                    var deltaX = affectedUnit.tileX - unit.tileX;
+                    var deltaY = affectedUnit.tileY - unit.tileY;
+
+                    var attackDirection = Math.atan2(deltaX, deltaY);
+                    var targetDirection = Math.atan2(affectedUnit.worldDirection.x, affectedUnit.worldDirection.y);
+
+                    var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
+                    if (directionDelta > Math.PI * 0.66)
+                        damage *= 2;
+                    else if (directionDelta > Math.PI * 0.33)
+                        damage *= 1.5;
+
+                    targets.push({unit: affectedUnit, damage: damage});
+                }
+            }
+
+            return targets;
         };
 
         Player.prototype.performTurn = function (unit)

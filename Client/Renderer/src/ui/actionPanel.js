@@ -10,8 +10,8 @@ define(['./floatingPanel'], function (FloatingPanel)
         this.element.on('click', '.action', this.onActionClick.bind(this));
 
         this.actions = [
-            {name: 'move', title: 'Move'},
-            {name: 'endTurn', title: 'End Turn'}
+            {name: 'move', displayName: 'Move'},
+            {name: 'endTurn', displayName: 'End Turn'}
         ];
 
         for (var i = 0; i < 5; i++)
