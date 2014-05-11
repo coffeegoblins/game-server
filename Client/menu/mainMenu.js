@@ -1,8 +1,6 @@
-define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
-        'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
+define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
         'core/src/plotManager', 'menu/loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html'],
-    function (MainMenuTemplate, GameTemplate, MainMenuButtonsTemplate, SearchBarTemplate,
-               PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate)
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate)
     {
         'use strict';
         function MainMenu()
@@ -57,12 +55,15 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
         MainMenu.prototype.loadSinglePlayer = function ()
         {
             this.hide();
+
             document.body.className = 'game';
-            document.body.innerHTML = GameTemplate;
+            while (document.body.lastChild)
+                document.body.removeChild(document.body.lastChild);
+
             PlotManager.loadLevel('level1');
         };
 
-        MainMenu.prototype.onLoginSucceeded = function(socket, user)
+        MainMenu.prototype.onLoginSucceeded = function (socket, user)
         {
             while (this.mainMenuChains.lastChild)
                 this.mainMenuChains.removeChild(this.mainMenuChains.lastChild);
@@ -108,7 +109,7 @@ define(['text!menu/mainMenu.html', 'text!renderer/content/templates/game.html',
             this.socket.emit('player_search', this.searchCriteria.value);
         };
 
-        MainMenu.prototype.onPlayerChallenged = function(e)
+        MainMenu.prototype.onPlayerChallenged = function (e)
         {
             this.socket.emit('player_challenge', this.user._id, e.target.id);
         };

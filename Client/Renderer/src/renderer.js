@@ -25,8 +25,9 @@ define([
 
         Renderer.prototype.initialize = function ()
         {
-            this.canvas = document.getElementById('canvas');
+            this.canvas = document.createElement('canvas');
             this.context = this.canvas.getContext('2d');
+            document.body.appendChild(this.canvas);
 
             this.camera = new Camera();
             this.renderables.length = 0;
