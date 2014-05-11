@@ -110,6 +110,31 @@ define([
 
             for (i = 0; i < this.renderables.length; i++)
                 this.renderables[i].render(this.context, deltaTime, this.camera);
+
+            // Test rendering occlusion quads
+            if (window.quads)
+            {
+                this.context.lineWidth = 1;
+                this.context.strokeStyle = 'blue';
+
+                for (var i = 0; i < window.quads.length; ++i)
+                {
+                    var quad = window.quads[i].vertices;
+
+                    var vertex0 = this.camera.tileToScreen(quad[0].x, quad[0].y);
+                    var vertex1 = this.camera.tileToScreen(quad[1].x, quad[1].y);
+                    var vertex2 = this.camera.tileToScreen(quad[2].x, quad[2].y);
+                    var vertex3 = this.camera.tileToScreen(quad[3].x, quad[3].y);
+
+                    this.context.beginPath();
+                    this.context.moveTo(vertex0.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex0.y - this.camera.viewportRect.y);
+                    this.context.lineTo(vertex1.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex1.y - this.camera.viewportRect.y);
+                    this.context.lineTo(vertex2.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex2.y - this.camera.viewportRect.y);
+                    this.context.lineTo(vertex3.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex3.y - this.camera.viewportRect.y);
+                    this.context.closePath();
+                    this.context.stroke();
+                }
+            }
         };
 
         Renderer.prototype.addRenderableMap = function (renderableMap)
@@ -171,7 +196,6 @@ define([
                 var obj1 = items[i];
                 for (var j = i - 1; j >= 0; j--)
                 {
-                    // obj1 < obj2
                     var obj2 = items[j];
                     if (obj1.isDead)
                         break;
@@ -190,56 +214,6 @@ define([
 
                 items[j + 1] = obj1;
             }
-        }
-
-        function sortRenderables2(items)
-        {
-            var len = items.length;
-            for (var i = 0; i < len; i++)
-            {
-                var value = items[i];
-                for (var j = i - 1; j > -1 && items[j] > value; j--)
-                {
-                    //items[j + 1] = items[j];
-                }
-
-
-                items.splice(j + 1, 0, value);
-                items.splice(i, 1);
-            }
-            //
-            //            var newArray = [];
-            //
-            //            var length = items.length;
-            //            for (var i = 0; i < length; i++)
-            //            {
-            //                var value = items[i];
-            //                for (var j = newArray.length - 1; j >= 0; j--)
-            //                {
-            //                    if (value > length[j])
-            //                    {
-            //                        newArray.splice(j + 1, 0, value);
-            //                        break;
-            //                    }
-            //                }
-            //
-            //                if (j < 0)
-            //                    newArray.unshift(value);
-            //            }
-
-            //            this.renderables.sort(function (obj1, obj2)
-            //            {
-            //                if (obj1.isDead !== obj2.isDead)
-            //                    return obj1.isDead ? -1 : 1;
-            //
-            //                if (obj1.getTileX() !== obj2.getTileX())
-            //                    return obj1.getTileX() - obj2.getTileX();
-            //
-            //                if (obj1.getTileY() !== obj2.getTileY())
-            //                    return obj1.getTileY() - obj2.getTileY();
-            //
-            //                return 0;
-            //            });
         }
 
         return new Renderer();

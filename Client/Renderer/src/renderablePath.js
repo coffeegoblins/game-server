@@ -32,6 +32,8 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
 
         this.colorArray[9] = ')';
         this.strokeArray[9] = ')';
+
+        // TODO: Sort by occlusion for opacity
     }
 
     RenderablePath.prototype.render = function (context, camera)
@@ -58,6 +60,28 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
             var bottom = top + camera.tileHeight - 4;
             var xCenter = (left + right) / 2;
             var yCenter = (top + bottom) / 2;
+
+            switch (node.occlusionPercentage)
+            {
+                case 20:
+                    context.fillStyle = 'green';
+                    break;
+                case 40:
+                    context.fillStyle = 'yellowgreen';
+                    break;
+                case 60:
+                    context.fillStyle = 'yellow';
+                    break;
+                case 80:
+                    context.fillStyle = 'orange';
+                    break;
+                case 100:
+                    context.fillStyle = 'red';
+                    break;
+                default:
+                    context.fillStyle = this.colorArray.join('');
+                    break;
+            }
 
             context.beginPath();
             context.moveTo(xCenter, top);

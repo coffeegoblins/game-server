@@ -1,5 +1,5 @@
-define(['text!../../content/soldierData.json', '../events', '../options', '../pathManager', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
-    function (SoldierData, Events, Options, PathManager, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
+define(['text!../../content/soldierData.json', '../events', '../options', '../attackManager', '../pathManager', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
+    function (SoldierData, Events, Options, AttackManager, PathManager, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
     {
         'use strict';
         var soldierData = JSON.parse(SoldierData);
@@ -29,6 +29,25 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
             this.closeUnitStatusPanel(this.unit);
             this.trigger('endTurn', this);
             this.unit = null;
+        };
+
+
+        Player.prototype.applyCombatLock = function (unit, targetTile)
+        {
+            var deltaX = targetTile.x - this.unit.tileX;
+            var deltaY = targetTile.y - this.unit.tileY;
+            unit.setDirection(deltaX, deltaY);
+
+            var targetUnit = targetTile.tile.unit;
+            if (targetUnit && !targetUnit.target)
+            {
+                targetUnit.setDirection(-deltaX, -deltaY);
+                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
+                {
+                    unit.target = targetUnit;
+                    targetUnit.target = unit;
+                }
+            }
         };
 
         Player.prototype.calculateCrossNodes = function (selectedNode, availableNodes)
@@ -95,14 +114,7 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
 
         Player.prototype.getAttackTiles = function (unit, attack)
         {
-            return PathManager.calculateAvailableTiles(this.map, Utility.merge({
-                x: unit.tileX,
-                y: unit.tileY,
-                excludePlayer: this,
-                ignoreUnits: true,
-                maxClimbableHeight: unit.maxMoveableHeight,
-                maxDistance: attack.range
-            }, attack));
+            return AttackManager.calculateTiles(this.map, unit, attack);
         };
 
         Player.prototype.getMoveCost = function (unit)
@@ -113,7 +125,6 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
         Player.prototype.getMoveTiles = function (unit)
         {
             var maxDistance = unit.ap / this.getMoveCost(unit);
-
             return PathManager.calculateAvailableTiles(this.map, {
                 x: unit.tileX,
                 y: unit.tileY,
@@ -252,8 +263,8 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
         Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
         {
             this.unit.ap -= attack.cost;
-            this.applyTargetLock(this.unit, targetTile);
-            var targets = this.calculateDamage(this.unit, attack, affectedTiles);
+            this.applyCombatLock(this.unit, targetTile);
+            var targets = AttackManager.calculateDamage(this.unit, attack, affectedTiles);
 
             this.unit.setState('attack');
             SoundManager.playTrack(attack.track);
@@ -278,58 +289,6 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../pa
                 this.unit.off('animationComplete', this, onAttackFinished);
                 this.onAttackComplete();
             });
-        };
-
-        Player.prototype.applyTargetLock = function (unit, targetTile)
-        {
-            var deltaX = targetTile.x - this.unit.tileX;
-            var deltaY = targetTile.y - this.unit.tileY;
-            unit.setDirection(deltaX, deltaY);
-
-            var targetUnit = targetTile.tile.unit;
-            if (targetUnit && !targetUnit.target)
-            {
-                targetUnit.setDirection(-deltaX, -deltaY);
-                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
-                {
-                    unit.target = targetUnit;
-                    targetUnit.target = unit;
-                }
-            }
-        };
-
-        Player.prototype.calculateDamage = function (unit, attack, affectedNodes)
-        {
-            var targets = [];
-            for (var i = 0; i < affectedNodes.length; i++)
-            {
-                var affectedUnit = affectedNodes[i].tile.unit;
-                if (affectedUnit)
-                {
-                    var damage;
-                    var unitType = affectedUnit.type;
-                    var accuracy = attack.accuracy[unitType] || attack.accuracy;
-
-                    if (Math.random() < accuracy)
-                        damage = attack.damage[unitType] || attack.damage;
-
-                    var deltaX = affectedUnit.tileX - unit.tileX;
-                    var deltaY = affectedUnit.tileY - unit.tileY;
-
-                    var attackDirection = Math.atan2(deltaX, deltaY);
-                    var targetDirection = Math.atan2(affectedUnit.worldDirection.x, affectedUnit.worldDirection.y);
-
-                    var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
-                    if (directionDelta > Math.PI * 0.66)
-                        damage *= 2;
-                    else if (directionDelta > Math.PI * 0.33)
-                        damage *= 1.5;
-
-                    targets.push({unit: affectedUnit, damage: damage});
-                }
-            }
-
-            return targets;
         };
 
         Player.prototype.performTurn = function (unit)
