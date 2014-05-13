@@ -1,11 +1,12 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', 'menu/loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html'],
-    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate)
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './unitSelection'],
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, UnitSelection)
     {
         'use strict';
         function MainMenu()
         {
             BrowserNavigation.on('root', this.show.bind(this));
+            BrowserNavigation.on('unitSelection', this.loadUnitSelection.bind(this));
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
 
             this.loginPopup = new LoginPopup(this);
@@ -22,7 +23,6 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.mainMenuChains.innerHTML = MainMenuButtonsTemplate;
 
             this.mainMenuChains.on('click', '.menuItem p', this.onMenuItemClicked.bind(this));
-
             this.mainMenuChains.className = 'lowerChains';
         };
 
@@ -36,8 +36,9 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             switch (e.target.id)
             {
                 case 'singlePlayer':
-                    BrowserNavigation.addState('singlePlayer');
-                    this.loadSinglePlayer();
+                    this.mainMenuChains.className = 'raiseChains';
+                    BrowserNavigation.addState('unitSelection');
+                    this.loadUnitSelection();
                     break;
                 case 'multiPlayer':
                     this.mainMenuChains.className = 'raiseChains';
@@ -54,13 +55,24 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.loadSinglePlayer = function ()
         {
-            this.hide();
-
             document.body.className = 'game';
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
             PlotManager.loadLevel('level1');
+        };
+
+        MainMenu.prototype.loadUnitSelection = function ()
+        {
+            document.body.className = '';
+
+            var unitSelection = new UnitSelection().show();
+            unitSelection.on('cancel', this, this.show);
+            unitSelection.on('confirm', this, function ()
+            {
+                BrowserNavigation.addState('singlePlayer');
+                this.loadSinglePlayer();
+            });
         };
 
         MainMenu.prototype.onLoginSucceeded = function (socket, user)

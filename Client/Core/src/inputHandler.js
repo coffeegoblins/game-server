@@ -199,7 +199,8 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
         else
         {
             e.target.click();
-            e.preventDefault();
+            if (e.preventDefault)
+                e.preventDefault();
         }
     };
 

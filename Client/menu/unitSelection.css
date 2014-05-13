@@ -1,0 +1,149 @@
+.unit-selection {
+    max-width: 800px;
+    margin: 16px auto;
+    background-color: #755b18;
+    border: 1px solid #533e08;
+}
+
+.unit-selection nav {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tab-header {
+    list-style: none;
+
+    padding: 0;
+    margin: 8px 0 -6px 0;
+}
+
+.tab {
+    display: inline-block;
+    width: 25%;
+    margin: 0;
+    padding: 0;
+}
+
+.tab-header-content {
+    border: 1px solid transparent;
+    margin-left: 8px;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    opacity: 0.4;
+}
+
+.tab:last-child .tab-header-content {
+    margin-right: 8px;
+}
+
+.tab.selected .tab-header-content {
+    opacity: 1;
+    border: rgba(255, 255, 255, 0.3) 1px solid;
+    border-bottom-color: #755b18;
+}
+
+.tab .unit-type {
+    height: 32px;
+    margin: 4px;
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-size: 32px;
+}
+
+.tab .unit-count {
+    position: absolute;
+
+    right: -4px;
+    top: -4px;
+    background-color: #29da7e;
+    border: 1px solid #1f8127;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+.unit-count:empty {
+    display: none;
+}
+
+.tab[data-unit="archer"] .unit-type {
+    background-image: url('../renderer/content/images/archerIcon.png');
+}
+
+.tab[data-unit="rogue"] .unit-type {
+    background-image: url('../renderer/content/images/dualWieldIcon.png');
+}
+
+.tab[data-unit="shield"] .unit-type {
+    background-image: url('../renderer/content/images/swordAndShieldIcon.png');
+}
+
+.tab[data-unit="sword"] .unit-type {
+    background-image: url('../renderer/content/images/twoHandedIcon.png');
+}
+
+.tab-content {
+    padding: 0 16px;
+}
+
+.tab-content:not(.selected) {
+    display: none;
+}
+
+.unit-preview {
+    width: 64px;
+    height: 64px;
+    float: left;
+    background-size: 1024px;
+    background-position: -8px -128px;
+}
+
+.tab-content[data-unit="shield"] .unit-preview {
+    background-image: url('../renderer/content/images/swordAndShield - idle.png');
+}
+
+.tab-content[data-unit="sword"] .unit-preview {
+    background-image: url('../renderer/content/images/twoHanded - idle.png');
+}
+
+.tab-content[data-unit="archer"] .unit-preview {
+    background-image: url('../renderer/content/images/archer - idle.png');
+}
+
+.tab-content[data-unit="rogue"] .unit-preview {
+    background-image: url('../renderer/content/images/dualWield - idle.png');
+}
+
+.tab-content ul {
+    padding: 0 0 0 16px;
+
+    margin: 0;
+}
+
+.tab-content li {
+}
+
+.unit-selection footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    margin-top: 16px;
+}
+
+.unit-selection .button-panel {
+    float: right;
+    margin: 8px;
+}
+
+.unit-selection .button-panel button {
+    margin-left: 8px;
+    min-width: 60px;
+    min-height: 24px;
+}
+
+.clear-fix:after {
+    content: " ";
+    clear: both;
+    display: block;
+}
