@@ -1,16 +1,11 @@
 var ObjectID = require('mongodb').ObjectID;
 
-function UserManager(usersCollection)
+function UserManager(databaseManager)
 {
-    this.usersCollection = usersCollection;
+    this.databaseManager = databaseManager;
 }
 
-UserManager.prototype.ping = function (timestamp)
-{
-    // TODO: Implementation
-};
-
-UserManager.prototype.login = function (username, password, callback)
+UserManager.prototype.login = function (responseCallback, loginSuccessCallback, username, password)
 {
     var searchCriteria = {
         'username': username
@@ -18,24 +13,26 @@ UserManager.prototype.login = function (username, password, callback)
 
     console.log('Attempting to login ' + username + '.');
 
-    this.usersCollection.findOne(searchCriteria, function (error, user)
+    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
-        if (!error && user && user.password === password)
+        if (error || !user || user.password !== password)
         {
-            console.log(username + ' has logged in.');
-            callback(null, user);
+            console.log('Invalid username or password for ' + username + '.');
+            responseCallback('login_failed', 'Invalid username or password.');
+
             return;
         }
 
-        console.log('Invalid username or password for ' + username + '.');
-        callback('Invalid username or password.');
+        console.log(username + ' has logged in.');
+        responseCallback('login_succeeded', user);
+        loginSuccessCallback();
     });
 };
 
-UserManager.prototype.register = function (username, password, callback)
+UserManager.prototype.register = function (responseCallback, loginSuccessCallback, username, password)
 {
     var lowerCaseUsername = username.toLowerCase();
-    
+
     var user = {
         username: username,
         lowerCaseUsername: lowerCaseUsername,
@@ -44,50 +41,72 @@ UserManager.prototype.register = function (username, password, callback)
 
     console.log('Registering user: ' + lowerCaseUsername);
 
-    this.usersCollection.findOne({'lowerCaseUsername': lowerCaseUsername}, function (error, existingUser)
+    var searchCriteria = {
+        'lowerCaseUsername': lowerCaseUsername
+    };
+
+    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, existingUser)
     {
         if (existingUser)
         {
             console.log(lowerCaseUsername + ' already exists as a user!');
-            callback('That username is already taken. Enter another username.', null);
+            responseCallback('registration_failed', 'That username is already taken. Enter another username.');
             return;
         }
 
         console.log(lowerCaseUsername + ' does not exist. Creating...');
 
-        this.usersCollection.insert(user, function (error, user)
+        this.databaseManager.usersCollection.insert(user, function (error, user)
         {
             if (error)
             {
                 console.log('Error registering ' + lowerCaseUsername + '.' + error);
-                callback(error, null);
+                responseCallback('registration_failed', error);
                 return;
             }
 
             console.log(lowerCaseUsername + ' has been registered.');
-            callback(null, user);
+            responseCallback('registration_succeeded', user);
+        loginSuccessCallback();
         });
     }.bind(this));
 };
 
-UserManager.prototype.selectPlayers = function (searchCriteria, startingUsername)
+UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria, startingUsername)
 {
-    console.log(searchCriteria);
-    
+    // TODO Filter characters
     var regex = new RegExp(searchCriteria);
-    
-    console.log(regex);
-    
-    var cursor = this.usersCollection.find({lowerCaseUsername: regex}).limit(200);
-    
-    console.log(cursor.count(function (x, y) { console.log(y); }));
-    
-    return cursor;
+
+    var searchResults = this.databaseManager.usersCollection.find(
+    {
+        lowerCaseUsername: regex
+    }).limit(200);
+
+    if (searchResults.length === 0)
+    {
+        responseCallback('player_search_failed', 'No players found.');
+        return;
+    }
+
+    searchResults.toArray(function (error, result)
+    {
+        if (error)
+        {
+            responseCallback('player_search_failed', error);
+            return;
+        }
+
+        responseCallback('player_search_succeeded', result);
+    });
 };
 
 UserManager.prototype.selectPlayerByID = function (id, callback)
 {
-    this.usersCollection.findOne({'_id': new ObjectID(id)}, function (error, user)
+    var searchCriteria = {
+        '_id': new ObjectID(id)
+    };
+
+    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (!user)
         {
@@ -99,7 +118,4 @@ UserManager.prototype.selectPlayerByID = function (id, callback)
     }.bind(this));
 };
 
-module.exports = function (usersCollection)
-{
-    return new UserManager(usersCollection);
-};
+module.exports = UserManager;
