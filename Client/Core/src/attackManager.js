@@ -148,17 +148,11 @@ define(function ()
             var tileNode = tileNodes[i];
             var occlusionPercentage = getOcclusionPercentage(tileNode, quads);
 
-            //if (occlusionPercentage > 0.9)
-            //    tileNodes.splice(i, 1);
-            //else if (occlusionPercentage)
-            //    tileNode.occlusionPercentage = occlusionPercentage;
-
-            // TODO: Remove. This was for debugging purposes.
-            tileNode.occlusionPercentage = Math.round(occlusionPercentage * 100);
+            if (occlusionPercentage > 0.9)
+                tileNodes.splice(i, 1);
+            else if (occlusionPercentage)
+                tileNode.occlusionPercentage = occlusionPercentage;
         }
-
-        // TODO: Remove. This was for debugging purposes.
-        window.quads = quads;
     }
 
 

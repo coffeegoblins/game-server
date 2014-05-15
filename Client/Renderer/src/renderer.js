@@ -112,31 +112,6 @@ define([
 
             for (i = 0; i < this.renderables.length; i++)
                 this.renderables[i].render(this.context, deltaTime, this.camera);
-
-            // Test rendering occlusion quads
-            if (window.quads)
-            {
-                this.context.lineWidth = 1;
-                this.context.strokeStyle = 'blue';
-
-                for (var i = 0; i < window.quads.length; ++i)
-                {
-                    var quad = window.quads[i].vertices;
-
-                    var vertex0 = this.camera.tileToScreen(quad[0].x, quad[0].y);
-                    var vertex1 = this.camera.tileToScreen(quad[1].x, quad[1].y);
-                    var vertex2 = this.camera.tileToScreen(quad[2].x, quad[2].y);
-                    var vertex3 = this.camera.tileToScreen(quad[3].x, quad[3].y);
-
-                    this.context.beginPath();
-                    this.context.moveTo(vertex0.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex0.y - this.camera.viewportRect.y);
-                    this.context.lineTo(vertex1.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex1.y - this.camera.viewportRect.y);
-                    this.context.lineTo(vertex2.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex2.y - this.camera.viewportRect.y);
-                    this.context.lineTo(vertex3.x - this.camera.viewportRect.x + this.camera.halfTileWidth, vertex3.y - this.camera.viewportRect.y);
-                    this.context.closePath();
-                    this.context.stroke();
-                }
-            }
         };
 
         Renderer.prototype.addRenderableMap = function (renderableMap)
