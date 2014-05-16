@@ -9,7 +9,7 @@ function UserManager()
 UserManager.prototype.login = function (responseCallback, loginSuccessCallback, username, password)
 {
     var searchCriteria = {
-        'username': username
+        'lowerCaseUsername': username.toLowerCase()
     };
 
     console.log('Attempting to login ' + username + '.');
@@ -68,7 +68,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
 
             console.log(lowerCaseUsername + ' has been registered.');
             responseCallback('registration_succeeded', user);
-        loginSuccessCallback();
+            loginSuccessCallback();
         });
     }.bind(this));
 };
