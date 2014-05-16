@@ -1,4 +1,3 @@
-var ObjectID = require('mongodb').ObjectID;
 var mongoDB = require('mongodb');
 var async = require('async');
 
@@ -70,4 +69,4 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
     }.bind(this));
 };
 
-module.exports = new DatabaseManager();
+module.exports = exports = new DatabaseManager();

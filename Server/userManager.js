@@ -1,8 +1,9 @@
 var ObjectID = require('mongodb').ObjectID;
+var databaseManager = require('./databaseManager');
 
-function UserManager(databaseManager)
+function UserManager()
 {
-    this.databaseManager = databaseManager;
+
 }
 
 UserManager.prototype.login = function (responseCallback, loginSuccessCallback, username, password)
@@ -13,7 +14,7 @@ UserManager.prototype.login = function (responseCallback, loginSuccessCallback, 
 
     console.log('Attempting to login ' + username + '.');
 
-    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
+    databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (error || !user || user.password !== password)
         {
@@ -45,7 +46,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         'lowerCaseUsername': lowerCaseUsername
     };
 
-    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, existingUser)
+    databaseManager.usersCollection.findOne(searchCriteria, function (error, existingUser)
     {
         if (existingUser)
         {
@@ -56,7 +57,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
 
         console.log(lowerCaseUsername + ' does not exist. Creating...');
 
-        this.databaseManager.usersCollection.insert(user, function (error, user)
+        databaseManager.usersCollection.insert(user, function (error, user)
         {
             if (error)
             {
@@ -77,7 +78,7 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
     // TODO Filter characters
     var regex = new RegExp(searchCriteria);
 
-    var searchResults = this.databaseManager.usersCollection.find(
+    var searchResults = databaseManager.usersCollection.find(
     {
         lowerCaseUsername: regex
     }).limit(200);
@@ -106,7 +107,7 @@ UserManager.prototype.selectPlayerByID = function (id, callback)
         '_id': new ObjectID(id)
     };
 
-    this.databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
+    databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (!user)
         {

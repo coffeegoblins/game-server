@@ -1,10 +1,10 @@
 var UserManager = require('./userManager');
 var async = require('async');
+var databaseManager = require('./databaseManager');
 
-function NotificationManager(databaseManager)
+function NotificationManager()
 {
-    this.databaseManager = databaseManager;
-    this.userManager = new UserManager(databaseManager);
+    this.userManager = new UserManager();
 }
 
 NotificationManager.prototype.initiateChallenge = function (responseCallback, challengerID, opponentID)
@@ -47,7 +47,7 @@ NotificationManager.prototype.onPlayersSelected = function (responseCallback, er
         creationTime: new Date().getTime()
     };
 
-    this.databaseManager.notificationsCollection.insert(notification, function (error)
+    databaseManager.notificationsCollection.insert(notification, function (error)
     {
         if (error)
         {

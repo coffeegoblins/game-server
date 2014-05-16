@@ -30,8 +30,8 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 {
     console.log("Database Ready.");
 
-    var userManager = new UserManager(databaseManager);
-    var notificationManager = new NotificationManager(databaseManager);
+    var userManager = new UserManager();
+    var notificationManager = new NotificationManager();
 
     io.sockets.on('connection', function (socket)
     {
