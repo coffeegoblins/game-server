@@ -98,7 +98,7 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
                 this.selectedTiles = [this.selectedTile];
                 if (this.currentAttack.useCrossNodes)
                 {
-                    this.selectedTiles.push.apply(this.selectedTiles, this.calculateCrossNodes(this.selectedTile, this.availableTiles));
+                    this.selectedTiles.push.apply(this.selectedTiles, this.getCrossNodes(this.selectedTile, this.availableTiles));
                 }
 
                 for (var i = 0; i < this.selectedTiles.length; i++)

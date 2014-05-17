@@ -1,4 +1,4 @@
-define(['./events', './utility'], function (Events, Utility)
+define(function ()
 {
     'use strict';
 
@@ -18,7 +18,6 @@ define(['./events', './utility'], function (Events, Utility)
     TurnManager.prototype.beginTurn = function ()
     {
         this.activeUnit = this.unitList[0];
-        this.trigger('beginTurn', this.activeUnit);
     };
 
     TurnManager.prototype.incrementAP = function ()
@@ -57,7 +56,6 @@ define(['./events', './utility'], function (Events, Utility)
         for (var placementIndex = this.unitList.length - 1; placementIndex >= 0; --placementIndex)
         {
             var comparisonUnit = this.unitList[placementIndex];
-
             var currentUnitTurnsToMove = currentUnit.maxAP - currentUnit.ap;
             var comparisonUnitTurnsToMove = comparisonUnit.maxAP - comparisonUnit.ap;
 
@@ -70,12 +68,14 @@ define(['./events', './utility'], function (Events, Utility)
 
         this.activeUnit = null;
         this.updateTurnNumbers();
-        this.trigger('endTurn', currentUnit, placementIndex + 1);
     };
 
     TurnManager.prototype.removeUnit = function (unit)
     {
-        Utility.removeElement(this.unitList, unit);
+        var index = this.unitList.indexOf(unit);
+        if (index >= 0)
+            this.unitList.splice(index, 1);
+
         this.updateTurnNumbers();
     };
 
@@ -85,6 +85,5 @@ define(['./events', './utility'], function (Events, Utility)
             this.unitList[i].turnNumber = i + 1;
     };
 
-    Events.register(TurnManager.prototype);
     return TurnManager;
 });

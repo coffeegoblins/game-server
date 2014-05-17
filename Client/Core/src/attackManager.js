@@ -157,6 +157,44 @@ define(function ()
 
 
     return {
+        applyCombatLock: function (unit, targetTile)
+        {
+            var deltaX = targetTile.x - unit.tileX;
+            var deltaY = targetTile.y - unit.tileY;
+            unit.setDirection(deltaX, deltaY);
+
+            var targetUnit = targetTile.tile.unit;
+            if (targetUnit && !targetUnit.target)
+            {
+                targetUnit.setDirection(-deltaX, -deltaY);
+                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
+                {
+                    unit.target = targetUnit;
+                    targetUnit.target = unit;
+                }
+            }
+        },
+
+        calculateCrossNodes: function (unit, selectedNode, availableNodes)
+        {
+            var crossNodes = [];
+            var x = selectedNode.x;
+            var y = selectedNode.y;
+
+            for (var i = 0; i < availableNodes.length; ++i)
+            {
+                var node = availableNodes[i];
+                if (node.tile.unit !== unit &&
+                    (node.x === x && Math.abs(node.y - y) === 1) ||
+                    (node.y === y && Math.abs(node.x - x) === 1))
+                {
+                    crossNodes.push(node);
+                }
+            }
+
+            return crossNodes;
+        },
+
         calculateDamage: function (unit, attack, affectedNodes)
         {
             var targets = [];

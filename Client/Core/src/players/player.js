@@ -31,45 +31,6 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
             this.unit = null;
         };
 
-
-        Player.prototype.applyCombatLock = function (unit, targetTile)
-        {
-            var deltaX = targetTile.x - this.unit.tileX;
-            var deltaY = targetTile.y - this.unit.tileY;
-            unit.setDirection(deltaX, deltaY);
-
-            var targetUnit = targetTile.tile.unit;
-            if (targetUnit && !targetUnit.target)
-            {
-                targetUnit.setDirection(-deltaX, -deltaY);
-                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
-                {
-                    unit.target = targetUnit;
-                    targetUnit.target = unit;
-                }
-            }
-        };
-
-        Player.prototype.calculateCrossNodes = function (selectedNode, availableNodes)
-        {
-            var crossNodes = [];
-            var x = selectedNode.x;
-            var y = selectedNode.y;
-
-            for (var i = 0; i < availableNodes.length; ++i)
-            {
-                var node = availableNodes[i];
-                if (node.tile.unit !== this.unit &&
-                    (node.x === x && Math.abs(node.y - y) === 1) ||
-                    (node.y === y && Math.abs(node.x - x) === 1))
-                {
-                    crossNodes.push(node);
-                }
-            }
-
-            return crossNodes;
-        };
-
         Player.prototype.closeUnitStatusPanel = function (unit, force)
         {
             if (unit && unit.statusPanel)
@@ -115,6 +76,11 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
         Player.prototype.getAttackTiles = function (unit, attack)
         {
             return AttackManager.calculateTiles(this.map, unit, attack);
+        };
+
+        Player.prototype.getCrossNodes = function (selectedTile, availableTiles)
+        {
+            return AttackManager.calculateCrossNodes(this.unit, selectedTile, availableTiles);
         };
 
         Player.prototype.getMoveCost = function (unit)
@@ -263,7 +229,7 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
         Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
         {
             this.unit.ap -= attack.cost;
-            this.applyCombatLock(this.unit, targetTile);
+            AttackManager.applyCombatLock(this.unit, targetTile);
             var targets = AttackManager.calculateDamage(this.unit, attack, affectedTiles);
 
             this.unit.setState('attack');
