@@ -20,9 +20,9 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
         return this.map.getTile(Math.floor(x / scale), Math.floor(y / scale));
     };
 
-    RenderableMap.prototype.onClick = function (e, position, soldier)
+    RenderableMap.prototype.onClick = function (e, position)
     {
-        this.map.onClick(e, position.x, position.y, soldier);
+        this.map.onClick(e, position.x, position.y);
     };
 
     RenderableMap.prototype.render = function (context, camera)

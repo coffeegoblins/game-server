@@ -2,7 +2,6 @@ define(['./events'], function (Events)
 {
     'use strict';
 
-
     function Map(width, height)
     {
         this.tiles = [];
@@ -60,15 +59,10 @@ define(['./events'], function (Events)
         return true;
     };
 
-    Map.prototype.onClick = function (e, x, y, soldier)
+    Map.prototype.onClick = function (e, x, y)
     {
-        var tile;
-        if (soldier)
-            tile = this.getTile(soldier.tileX, soldier.tileY);
-        else
-            tile = this.getTile(x, y);
-
-        this.trigger('tileClick', tile, x, y, soldier);
+        var tile = this.getTile(x, y);
+        this.trigger('tileClick', tile, x, y);
     };
 
     Map.prototype.getTile = function (x, y)

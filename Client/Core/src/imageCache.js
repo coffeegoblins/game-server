@@ -3,6 +3,7 @@ define(function ()
     'use strict';
 
     var images = {};
+    var globalIndex = 0;
 
     function onImageLoaded()
     {
@@ -49,6 +50,7 @@ define(function ()
                 path: path
             };
 
+            image.globalIndex = globalIndex++;
             image.data.onload = onImageLoaded.bind(image);
             image.data.src = path;
             images[id] = image;

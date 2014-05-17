@@ -34,9 +34,9 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             this.map.off('tileClick', this);
         };
 
-        LocalPlayer.prototype.onTileClick = function (tile, x, y, soldier)
+        LocalPlayer.prototype.onTileClick = function (tile)
         {
-            this.onUnitSelected(soldier);
+            this.onUnitSelected(tile.unit);
         };
 
         LocalPlayer.prototype.onActionSelected = function (actionName)

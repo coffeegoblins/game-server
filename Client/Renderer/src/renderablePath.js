@@ -6,6 +6,20 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
     {
         this.id = id;
         this.nodes = nodes;
+
+        // Sort the nodes for opacity
+        for (var i = 0; i < this.nodes.length; i++)
+        {
+            var node = this.nodes[i];
+            node.opacity = (1 - (node.occlusionPercentage)) || 1;
+        }
+
+        this.nodes.sort(function (node1, node2)
+        {
+            return node1.opacity - node2.opacity;
+        });
+
+        // Construct the color arrays
         this.colorArray = ['rgba('];
         this.strokeArray = ['rgba('];
 
@@ -27,7 +41,7 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
         }
         else
         {
-            this.style = {opacity: 0.4};
+            this.style = {opacity: 0.5};
         }
 
         this.colorArray[9] = ')';
@@ -36,33 +50,32 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
 
     RenderablePath.prototype.render = function (context, camera)
     {
-        this.colorArray[8] = this.style.opacity;
-        this.strokeArray[8] = this.style.opacity;
-
         context.lineWidth = 1;
-        context.fillStyle = this.colorArray.join('');
+        this.strokeArray[8] = this.style.opacity;
         context.strokeStyle = this.strokeArray.join('');
 
+        var currentOpacity;
         for (var i = 0; i < this.nodes.length; ++i)
         {
             var node = this.nodes[i];
             var position = camera.tileToScreen(node.x, node.y);
-
             var left = position.x - camera.viewportRect.x + 2;
             var top = position.y - camera.viewportRect.y + 2;
 
             if (!camera.isInView(left, top, camera.tileWidth, camera.tileHeight))
                 continue;
 
+            if (node.opacity !== currentOpacity)
+            {
+                currentOpacity = node.opacity;
+                this.colorArray[8] = currentOpacity * this.style.opacity;
+                context.fillStyle = this.colorArray.join('');
+            }
+
             var right = left + camera.tileWidth - 4;
             var bottom = top + camera.tileHeight - 4;
             var xCenter = (left + right) / 2;
             var yCenter = (top + bottom) / 2;
-
-            if (node.occlusionPercentage)
-                context.globalAlpha = 0.2 + node.occlusionPercentage;
-            else
-                context.globalAlpha = 1;
 
             context.beginPath();
             context.moveTo(xCenter, top);
@@ -73,8 +86,6 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
             context.fill();
             context.stroke();
         }
-
-        context.globalAlpha = 1;
     };
 
     return RenderablePath;

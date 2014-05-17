@@ -55,6 +55,11 @@ define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffe
         }
     };
 
+    RenderableSoldier.prototype.getImageIndex = function ()
+    {
+        return this.spriteSheets[this.unit.state].image.globalIndex;
+    };
+
     RenderableSoldier.prototype.getTileX = function ()
     {
         return this.unit.tileX;
