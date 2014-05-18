@@ -76,11 +76,11 @@
         }
     },
 
-    "swordAndShield": {
+    "shield": {
         "idle": {
-            "spriteSheet": "swordAndShield - idle",
-            "tileHeight": 64,
-            "tileWidth": 64,
+            "spriteSheet": "shield - idle",
+            "tileHeight": 80,
+            "tileWidth": 80,
             "frameCount": 32,
             "speed": 0.1,
             "isLooping": true,
@@ -90,18 +90,18 @@
         },
 
         "run": {
-            "spriteSheet": "swordAndShield - run",
-            "tileHeight": 64,
-            "tileWidth": 64,
+            "spriteSheet": "shield - run",
+            "tileHeight": 80,
+            "tileWidth": 80,
             "frameCount": 16,
             "speed": 0.04,
             "isLooping": true
         },
 
         "attack": {
-            "spriteSheet": "swordAndShield - attack",
-            "tileHeight": 112,
-            "tileWidth": 112,
+            "spriteSheet": "shield - attack",
+            "tileHeight": 100,
+            "tileWidth": 100,
             "frameCount": 32,
             "speed": 0.075
         },

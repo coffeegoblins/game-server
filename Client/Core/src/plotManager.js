@@ -16,7 +16,7 @@ define([
 
         function createSoldiers(positions)
         {
-            var types = ['archer', 'swordAndShield', 'dualWield', 'twoHanded'];
+            var types = ['archer', 'shield', 'dualWield', 'twoHanded'];
 
             var soldiers = [];
             for (var i = 0; i < positions.length; i++)

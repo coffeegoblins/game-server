@@ -102,7 +102,7 @@
 }
 
 .tab-content[data-unit="shield"] .unit-preview {
-    background-image: url('../renderer/content/images/swordAndShield - idle.png');
+    background-image: url('../renderer/content/images/shield - idle.png');
 }
 
 .tab-content[data-unit="sword"] .unit-preview {

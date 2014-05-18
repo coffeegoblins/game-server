@@ -36,7 +36,10 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
 
         LocalPlayer.prototype.onTileClick = function (tile)
         {
-            this.onUnitSelected(tile.unit);
+            if (tile)
+            {
+                this.onUnitSelected(tile.unit);
+            }
         };
 
         LocalPlayer.prototype.onActionSelected = function (actionName)

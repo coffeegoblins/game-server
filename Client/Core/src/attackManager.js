@@ -195,17 +195,20 @@ define(function ()
             return crossNodes;
         },
 
-        calculateDamage: function (unit, attack, affectedNodes)
+        calculateDamage: function (unit, attack, nodes)
         {
             var targets = [];
-            for (var i = 0; i < affectedNodes.length; i++)
+            for (var i = 0; i < nodes.length; i++)
             {
-                var affectedUnit = affectedNodes[i].tile.unit;
+                var affectedUnit = nodes[i].tile.unit;
                 if (affectedUnit)
                 {
                     var damage;
                     var unitType = affectedUnit.type;
                     var accuracy = attack.accuracy[unitType] || attack.accuracy;
+
+                    if (nodes.occlusionPercentage)
+                        accuracy *= (1 - nodes.occlusionPercentage);
 
                     if (Math.random() < accuracy)
                         damage = attack.damage[unitType] || attack.damage;
@@ -218,9 +221,13 @@ define(function ()
 
                     var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
                     if (directionDelta > Math.PI * 0.66)
-                        damage *= 2;
+                    { // The attack was from behind
+                        damage *= attack.backDamage || 2;
+                    }
                     else if (directionDelta > Math.PI * 0.33)
-                        damage *= 1.5;
+                    { // The attack was from the side
+                        damage *= attack.sideDamage || 1.5;
+                    }
 
                     targets.push({unit: affectedUnit, damage: damage});
                 }
