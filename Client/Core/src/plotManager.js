@@ -16,7 +16,7 @@ define([
 
         function createSoldiers(positions)
         {
-            var types = ['archer', 'swordAndShield', 'dualWield', 'twoHanded'];
+            var types = ['archer', 'shield', 'dualWield', 'twoHanded'];
 
             var soldiers = [];
             for (var i = 0; i < positions.length; i++)
@@ -41,10 +41,7 @@ define([
                 Scheduler.clear();
                 Renderer.initialize();
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
-
                 this.turnManager = new TurnManager();
-                this.turnManager.on('beginTurn', this, this.onBeginTurn);
-                this.turnManager.on('endTurn', this, this.onEndTurn);
 
                 LevelLoader.loadLevel(levelName, function (map, startPoints)
                 {
@@ -70,7 +67,7 @@ define([
                     {
                         var player = this.players[i];
                         player.on('defeat', this, this.onPlayerDefeat);
-                        player.on('endTurn', this, this.onEndTurnAction);
+                        player.on('endTurn', this, this.endTurn);
 
                         for (var j = 0; j < player.units.length; j++)
                         {
@@ -82,12 +79,15 @@ define([
                     }
 
                     InputHandler.disableInput();
-                    this.turnManager.beginTurn();
+                    this.beginTurn();
                 }.bind(this));
             },
 
-            onBeginTurn: function (unit)
+            beginTurn: function ()
             {
+                this.turnManager.beginTurn();
+
+                var unit = this.turnManager.activeUnit;
                 unit.isSelected = true;
                 Renderer.camera.moveToUnit(unit, this.onCameraMoved.bind(this));
 
@@ -104,21 +104,18 @@ define([
                 }
             },
 
+            endTurn: function ()
+            {
+                this.turnManager.activeUnit.isSelected = false;
+                this.turnManager.endTurn();
+
+                Renderer.clearRenderablePaths();
+                this.beginTurn();
+            },
+
             onCameraMoved: function (unit)
             {
                 unit.player.performTurn(unit);
-            },
-
-            onEndTurn: function (unit)
-            {
-                unit.isSelected = false;
-                Renderer.clearRenderablePaths();
-                this.turnManager.beginTurn();
-            },
-
-            onEndTurnAction: function ()
-            {
-                this.turnManager.endTurn();
             },
 
             onPlayerDefeat: function (player)

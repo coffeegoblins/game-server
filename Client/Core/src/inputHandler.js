@@ -234,13 +234,18 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
         }
     }
 
+    function getEventObj(e)
+    {
+        return {identifier: e.identifier, pageX: e.pageX, pageY: e.pageY, target: e.target};
+    }
+
     function onTouchStart(e)
     {
         if (inputHandler.handleInput && e.changedTouches)
         {
             for (var i = 0; i < e.changedTouches.length; i++)
             {
-                var touch = e.changedTouches[i];
+                var touch = getEventObj(e.changedTouches[i]);
                 inputHandler.activeTouches[touch.identifier] = inputHandler.handlePressEvent(touch);
             }
 
@@ -254,7 +259,7 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
         {
             for (var i = 0; i < e.changedTouches.length; i++)
             {
-                var touch = e.changedTouches[i];
+                var touch = getEventObj(e.changedTouches[i]);
                 var activeTouch = inputHandler.activeTouches[touch.identifier];
                 if (activeTouch)
                 {
@@ -272,7 +277,7 @@ define(['./events', './scheduler', './utility'], function (Events, Scheduler, Ut
         {
             for (var i = 0; i < e.changedTouches.length; i++)
             {
-                var touch = e.changedTouches[i];
+                var touch = getEventObj(e.changedTouches[i]);
                 var activeTouch = inputHandler.activeTouches[touch.identifier];
                 if (activeTouch)
                 {

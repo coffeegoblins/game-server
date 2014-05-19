@@ -157,17 +157,58 @@ define(function ()
 
 
     return {
-        calculateDamage: function (unit, attack, affectedNodes)
+        applyCombatLock: function (unit, targetTile)
+        {
+            var deltaX = targetTile.x - unit.tileX;
+            var deltaY = targetTile.y - unit.tileY;
+            unit.setDirection(deltaX, deltaY);
+
+            var targetUnit = targetTile.tile.unit;
+            if (targetUnit && !targetUnit.target)
+            {
+                targetUnit.setDirection(-deltaX, -deltaY);
+                if (Math.abs(deltaX) + Math.abs(deltaY) === 1)
+                {
+                    unit.target = targetUnit;
+                    targetUnit.target = unit;
+                }
+            }
+        },
+
+        calculateCrossNodes: function (unit, selectedNode, availableNodes)
+        {
+            var crossNodes = [];
+            var x = selectedNode.x;
+            var y = selectedNode.y;
+
+            for (var i = 0; i < availableNodes.length; ++i)
+            {
+                var node = availableNodes[i];
+                if (node.tile.unit !== unit &&
+                    (node.x === x && Math.abs(node.y - y) === 1) ||
+                    (node.y === y && Math.abs(node.x - x) === 1))
+                {
+                    crossNodes.push(node);
+                }
+            }
+
+            return crossNodes;
+        },
+
+        calculateDamage: function (unit, attack, nodes)
         {
             var targets = [];
-            for (var i = 0; i < affectedNodes.length; i++)
+            for (var i = 0; i < nodes.length; i++)
             {
-                var affectedUnit = affectedNodes[i].tile.unit;
+                var affectedUnit = nodes[i].tile.unit;
                 if (affectedUnit)
                 {
                     var damage;
                     var unitType = affectedUnit.type;
                     var accuracy = attack.accuracy[unitType] || attack.accuracy;
+
+                    if (nodes.occlusionPercentage)
+                        accuracy *= (1 - nodes.occlusionPercentage);
 
                     if (Math.random() < accuracy)
                         damage = attack.damage[unitType] || attack.damage;
@@ -180,9 +221,13 @@ define(function ()
 
                     var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
                     if (directionDelta > Math.PI * 0.66)
-                        damage *= 2;
+                    { // The attack was from behind
+                        damage *= attack.backDamage || 2;
+                    }
                     else if (directionDelta > Math.PI * 0.33)
-                        damage *= 1.5;
+                    { // The attack was from the side
+                        damage *= attack.sideDamage || 1.5;
+                    }
 
                     targets.push({unit: affectedUnit, damage: damage});
                 }

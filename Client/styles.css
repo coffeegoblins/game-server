@@ -198,7 +198,7 @@ canvas {
     background-image: url('renderer/content/images/dualWieldIcon.png');
 }
 
-.unit-type-swordAndShield {
+.unit-type-shield {
     background-image: url('renderer/content/images/swordAndShieldIcon.png');
 }
 
@@ -234,11 +234,15 @@ canvas {
     background-image: url('renderer/content/images/rangeAttackIcon.png');
 }
 
-.action[data-action-name="strike"], .action[data-action-name="placeholder"] {
+.action[data-action-name="strike"] {
     background-image: url('renderer/content/images/attackIcon.png');
 }
 
 .action[data-action-name="shieldBash"] {
+    background-image: url('renderer/content/images/shieldIcon.png');
+}
+
+.action[data-action-name="defend"] {
     background-image: url('renderer/content/images/shieldIcon.png');
 }
 
@@ -251,6 +255,10 @@ canvas {
 }
 
 .action[data-action-name="throwDagger"] {
+    background-image: url('renderer/content/images/attackIcon.png');
+}
+
+.action[data-action-name="vitalStrike"] {
     background-image: url('renderer/content/images/attackIcon.png');
 }
 

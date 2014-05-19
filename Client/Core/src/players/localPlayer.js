@@ -34,9 +34,12 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             this.map.off('tileClick', this);
         };
 
-        LocalPlayer.prototype.onTileClick = function (tile, x, y, soldier)
+        LocalPlayer.prototype.onTileClick = function (tile)
         {
-            this.onUnitSelected(soldier);
+            if (tile)
+            {
+                this.onUnitSelected(tile.unit);
+            }
         };
 
         LocalPlayer.prototype.onActionSelected = function (actionName)
@@ -98,7 +101,7 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
                 this.selectedTiles = [this.selectedTile];
                 if (this.currentAttack.useCrossNodes)
                 {
-                    this.selectedTiles.push.apply(this.selectedTiles, this.calculateCrossNodes(this.selectedTile, this.availableTiles));
+                    this.selectedTiles.push.apply(this.selectedTiles, this.getCrossNodes(this.selectedTile, this.availableTiles));
                 }
 
                 for (var i = 0; i < this.selectedTiles.length; i++)

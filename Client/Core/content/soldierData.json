@@ -11,12 +11,12 @@
                 "displayName": "Attack",
                 "track": "bow1",
                 "damage": {
-                    "swordAndShield": 20,
+                    "shield": 20,
                     "dualWield": 30,
                     "twoHanded": 30
                 },
                 "accuracy": {
-                    "swordAndShield": 0.2,
+                    "shield": 0.2,
                     "dualWield": 0.6,
                     "twoHanded": 0.9
                 }
@@ -28,12 +28,12 @@
                 "displayName": "Overhead Attack",
                 "track": "bow1",
                 "damage": {
-                    "swordAndShield": 15,
+                    "shield": 15,
                     "dualWield": 20,
                     "twoHanded": 20
                 },
                 "accuracy": {
-                    "swordAndShield": 0.1,
+                    "shield": 0.1,
                     "dualWield": 0.3,
                     "twoHanded": 0.4
                 }
@@ -47,7 +47,7 @@
         }
     },
 
-    "swordAndShield": {
+    "shield": {
         "apRegen": 1,
         "moveCost": 15,
         "attacks": {
@@ -65,11 +65,10 @@
                 "displayName": "Shield Bash",
                 "track": "shieldBash1"
             },
-            "placeholder": {
+            "defend": {
                 "cost": 30,
-                "damage": 30,
-                "accuracy": 0.9,
-                "displayName": "Placeholder"
+                "range": 1.5,
+                "displayName": "Defend"
             }
         }
     },
@@ -122,11 +121,12 @@
                 "isObstructable": true,
                 "displayName": "Dagger throw"
             },
-            "placeholder": {
+            "vitalStrike": {
                 "cost": 30,
-                "damage": 30,
+                "damage": 5,
+                "backDamage": 10,
                 "accuracy": 0.9,
-                "displayName": "Placeholder"
+                "displayName": "Vital Strike"
             }
         }
     }
