@@ -1,0 +1,74 @@
+{
+    "login": {
+        "name": "login",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "loginError",
+            "success": "loginSuccess"
+        }
+    },
+    "register": {
+        "name": "register",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "registerError",
+            "success": "registerSuccess"
+        }
+    },
+    "challengeUser": {
+        "name": "challengeUser",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "challengeUserError",
+            "success": "challengeUserSuccess"
+        }
+    },
+    "challengeAccepted": {
+        "name": "challengeAccepted",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "challengeAcceptedError",
+
+            "success": "challengeAcceptedSuccess"
+        }
+    },
+    "challengeDeclined": {
+        "name": "challengeDeclined",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "challengeDeclinedError",
+            "success": "challengeDeclinedSuccess"
+        }
+    },
+    "connection": {
+        "name": "connection",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "events": "events"
+        }
+    },
+    "gameStateUpdate": {
+        "name": "gameStateUpdate",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "gameStateUpdateError",
+            "success": "gameStateUpdateSuccess"
+        }
+    },
+    "searchByUsername": {
+        "name": "searchByUsername",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "searchByUsernameError",
+            "success": "searchByUsernameSuccess"
+        }
+    }
+}

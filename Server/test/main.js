@@ -1,4 +1,4 @@
-require(['TestFramework/testRunner', './testDefinitions'], function (TestRunner, TestDefinitions)
+require(['../../TestFramework/testRunner', './testDefinitions'], function (TestRunner, TestDefinitions)
 {
     'use strict';
     TestRunner.runTests(TestDefinitions);

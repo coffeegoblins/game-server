@@ -13,7 +13,10 @@ define(['./lib/socket.io'], function (io)
 
         this.socket.on('connect', function ()
         {
-            callback(null, this.socket);
+            this.socket.on('events', function (events)
+            {
+                callback(null, this.socket, events);
+            }.bind(this));
         }.bind(this));
 
         this.socket.on('error', function (error)

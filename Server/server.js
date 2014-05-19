@@ -8,6 +8,9 @@ var atob = require('atob');
 // Initial Config
 var config = JSON.parse(fileSystem.readFileSync('./config.json'));
 
+// Socket IO Events
+var events = JSON.parse(fileSystem.readFileSync('./events.json'));
+
 // Server
 var app = require('express')();
 app.use(app.router);
@@ -30,11 +33,14 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 {
     console.log("Database Ready.");
 
-    var userManager = new UserManager();
-    var notificationManager = new NotificationManager();
+    var userManager = new UserManager(events);
+    var notificationManager = new NotificationManager(events);
 
     io.sockets.on('connection', function (socket)
     {
+        socket.on('test', function(arg) { console.log(arg); });
+        socket.emit(events.connection.response.events, events);
+
         function responseCallback()
         {
             socket.emit.apply(socket, Array.prototype.slice.call(arguments, 0));
@@ -42,12 +48,12 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 
         function subscribeToEvents()
         {
-            socket.on('player_search', userManager.selectPlayers.bind(userManager, responseCallback));
-            socket.on('player_challenge', notificationManager.initiateChallenge.bind(notificationManager, responseCallback));
-            socket.on('game_update', function () {}.bind(userManager, responseCallback));
+            socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
+            socket.on(events.challengeUser.name, notificationManager.initiateChallenge.bind(notificationManager, responseCallback));
+            socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
         }
 
-        socket.on('login', userManager.login.bind(userManager, responseCallback, subscribeToEvents));
-        socket.on('register', userManager.register.bind(userManager, responseCallback, subscribeToEvents));
+        socket.on(events.login.name, userManager.login.bind(userManager, responseCallback, subscribeToEvents));
+        socket.on(events.register.name, userManager.register.bind(userManager, responseCallback, subscribeToEvents));
     });
 });

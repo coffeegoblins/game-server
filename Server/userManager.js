@@ -1,33 +1,35 @@
 var ObjectID = require('mongodb').ObjectID;
 var databaseManager = require('./databaseManager');
 
-function UserManager()
+function UserManager(events)
 {
-
+    this.events = events;
 }
 
 UserManager.prototype.login = function (responseCallback, loginSuccessCallback, username, password)
 {
+    var lowerCaseUsername = username.toLowerCase();
+
     var searchCriteria = {
-        'lowerCaseUsername': username.toLowerCase()
+        'lowerCaseUsername': lowerCaseUsername
     };
 
-    console.log('Attempting to login ' + username + '.');
+    console.log('Attempting to login ' + lowerCaseUsername + '.');
 
     databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (error || !user || user.password !== password)
         {
-            console.log('Invalid username or password for ' + username + '.');
-            responseCallback('login_failed', 'Invalid username or password.');
+            console.log('Invalid username or password for ' + lowerCaseUsername + '.');
+            responseCallback(this.events.login.response.error, 'Invalid username or password.');
 
             return;
         }
 
-        console.log(username + ' has logged in.');
-        responseCallback('login_succeeded', user);
+        console.log(lowerCaseUsername + ' has logged in.');
+        responseCallback(this.events.login.response.success, user);
         loginSuccessCallback();
-    });
+    }.bind(this));
 };
 
 UserManager.prototype.register = function (responseCallback, loginSuccessCallback, username, password)
@@ -51,25 +53,26 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         if (existingUser)
         {
             console.log(lowerCaseUsername + ' already exists as a user!');
-            responseCallback('registration_failed', 'That username is already taken. Enter another username.');
+            responseCallback(this.events.register.response.error, 'That username is already taken. Enter another username.');
             return;
         }
 
         console.log(lowerCaseUsername + ' does not exist. Creating...');
 
-        databaseManager.usersCollection.insert(user, function (error, user)
+        databaseManager.usersCollection.insert(user, function (error)
         {
             if (error)
             {
                 console.log('Error registering ' + lowerCaseUsername + '.' + error);
-                responseCallback('registration_failed', error);
+                responseCallback(this.events.register.response.error, error);
                 return;
             }
 
             console.log(lowerCaseUsername + ' has been registered.');
-            responseCallback('registration_succeeded', user);
+
+            responseCallback(this.events.register.response.success, user);
             loginSuccessCallback();
-        });
+        }.bind(this));
     }.bind(this));
 };
 
@@ -85,7 +88,7 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
 
     if (searchResults.length === 0)
     {
-        responseCallback('player_search_failed', 'No players found.');
+        responseCallback(this.events.searchByUsername.response.error, 'No players found.');
         return;
     }
 
@@ -93,18 +96,18 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
     {
         if (error)
         {
-            responseCallback('player_search_failed', error);
+            responseCallback(this.events.searchByUsername.response.error, error);
             return;
         }
 
-        responseCallback('player_search_succeeded', result);
+        responseCallback(this.events.searchByUsername.response.success, result);
     });
 };
 
 UserManager.prototype.selectPlayerByID = function (id, callback)
 {
     var searchCriteria = {
-        '_id': new ObjectID(id)
+        '_id ': new ObjectID(id)
     };
 
     databaseManager.usersCollection.findOne(searchCriteria, function (error, user)

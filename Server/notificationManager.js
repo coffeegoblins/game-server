@@ -2,9 +2,10 @@ var UserManager = require('./userManager');
 var async = require('async');
 var databaseManager = require('./databaseManager');
 
-function NotificationManager()
+function NotificationManager(events)
 {
-    this.userManager = new UserManager();
+    this.events = events;
+    this.userManager = new UserManager(events);
 }
 
 NotificationManager.prototype.initiateChallenge = function (responseCallback, challengerID, opponentID)
@@ -31,7 +32,7 @@ NotificationManager.prototype.onPlayersSelected = function (responseCallback, er
 {
     if (error)
     {
-        responseCallback('player_challenge_error', error);
+        responseCallback(this.events.challengeUser.response.error, error);
         return;
     }
 
@@ -51,12 +52,12 @@ NotificationManager.prototype.onPlayersSelected = function (responseCallback, er
     {
         if (error)
         {
-            responseCallback('player_challenge_error', error);
+            responseCallback(this.events.challengeUser.response.error, error);
             console.log("Failed to challenge.");
             return;
         }
 
-        responseCallback('player_challenge_succeeded');
+        responseCallback(this.events.challengeUser.response.success);
     });
 };
 
