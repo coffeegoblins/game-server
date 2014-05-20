@@ -24,7 +24,7 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
         {
             UserTestUtility.createUser(socket, events, function (error, user)
             {
-                socket.emit(events.login.name, user.username, user.password + "INVALID");
+                socket.emit(events.login.name, user.username, "INVALID");
 
                 socket.on(events.login.response.error, function (error)
                 {
@@ -44,22 +44,42 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket, events) {
+        ConnectionUtility.connect(function (error, socket, events)
+        {
+            socket.emit(events.login.name, "INVALID", "INVALID");
 
-        });
+            socket.on(events.login.response.error, function (error)
+            {
+                assertTruthy(error !== null);
+                testComplete = true;
+            });
+        }.bind(this));
 
         async(function ()
         {
             return testComplete;
-        }, 2000);
+        }, 'The user did not fail to login.', 10000);
     };
 
     UserManagerTest.prototype.testLoginSuccess = function ()
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket, events) {
+        ConnectionUtility.connect(function (error, socket, events)
+        {
+            UserTestUtility.createUser(socket, events, function (error, user)
+            {
+                socket.emit(events.login.name, user.username, user.password);
 
+                socket.on(events.login.response.success, function (serverUser)
+                {                    
+                    assertTruthy('The call was successful, but the user is undefined.', serverUser);
+                    assertTruthy('An invalid user database object was returned.', serverUser._id);
+                    assertTruthy('An invalid user database object was returned.', user._id !== null);
+                    assertEquals('The server user did not equal the login user', serverUser.username, user.username);
+                    testComplete = true;
+                });
+            });
         });
 
         async(function ()
@@ -72,8 +92,9 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket, events) {
-
+        ConnectionUtility.connect(function (error, socket, events)
+        {
+            testComplete = true;
         });
 
         async(function ()
@@ -86,8 +107,9 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket, events) {
-
+        ConnectionUtility.connect(function (error, socket, events)
+        {
+            testComplete = true;
         });
 
         async(function ()
@@ -100,8 +122,9 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket, events) {
-
+        ConnectionUtility.connect(function (error, socket, events)
+        {
+            testComplete = true;
         });
 
         async(function ()
@@ -114,8 +137,9 @@ define(['../connectionUtility', '../userTestUtility'], function (ConnectionUtili
     {
         var testComplete = false;
 
-        ConnectionUtility.connect(function (error, socket) {
-
+        ConnectionUtility.connect(function (error, socket)
+        {
+            testComplete = true;
         });
 
         async(function ()

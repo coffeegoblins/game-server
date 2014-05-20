@@ -9,12 +9,16 @@ define(['./lib/socket.io'], function (io)
 
     ConnectionUtility.prototype.connect = function (callback)
     {
-        this.socket = io.connect('http://127.0.0.1:1988');
+        this.socket = io.connect('http://127.0.0.1:1988',
+        {
+            'force new connection': true
+        });
 
         this.socket.on('connect', function ()
         {
             this.socket.on('events', function (events)
             {
+                this.events = events;
                 callback(null, this.socket, events);
             }.bind(this));
         }.bind(this));
