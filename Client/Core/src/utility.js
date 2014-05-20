@@ -1,8 +1,8 @@
 define(function ()
 {
     'use strict';
-    return {
 
+    return {
         containsElement: function (array, element)
         {
             for (var i = 0; i < array.length; i++)

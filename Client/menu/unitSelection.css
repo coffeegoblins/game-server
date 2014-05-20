@@ -1,8 +1,8 @@
 .unit-selection {
     max-width: 800px;
     margin: 16px auto;
-    background-color: #755b18;
-    border: 1px solid #533e08;
+    background-color: #885728;
+    border: 1px solid #4b2520;
 }
 
 .unit-selection nav {
@@ -38,7 +38,7 @@
 .tab.selected .tab-header-content {
     opacity: 1;
     border: rgba(255, 255, 255, 0.3) 1px solid;
-    border-bottom-color: #755b18;
+    border-bottom-color: #885728;
 }
 
 .tab .unit-type {
@@ -119,7 +119,6 @@
 
 .tab-content ul {
     padding: 0 0 0 16px;
-
     margin: 0;
 }
 
