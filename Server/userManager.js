@@ -44,35 +44,21 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
 
     console.log('Registering user: ' + lowerCaseUsername);
 
-    var searchCriteria = {
-        'lowerCaseUsername': lowerCaseUsername
-    };
-
-    databaseManager.usersCollection.findOne(searchCriteria, function (error, existingUser)
+    databaseManager.usersCollection.insert(user, function (error)
     {
-        if (existingUser)
+        if (error)
         {
-            console.log(lowerCaseUsername + ' already exists as a user!');
+            console.log('Unable to register ' + lowerCaseUsername);
+            console.log(error);
+
             responseCallback(this.events.register.response.error, 'That username is already taken. Enter another username.');
             return;
         }
 
-        console.log(lowerCaseUsername + ' does not exist. Creating...');
+        console.log(lowerCaseUsername + ' has been registered.');
 
-        databaseManager.usersCollection.insert(user, function (error)
-        {
-            if (error)
-            {
-                console.log('Error registering ' + lowerCaseUsername + '.' + error);
-                responseCallback(this.events.register.response.error, error);
-                return;
-            }
-
-            console.log(lowerCaseUsername + ' has been registered.');
-
-            responseCallback(this.events.register.response.success, user);
-            loginSuccessCallback();
-        }.bind(this));
+        responseCallback(this.events.register.response.success, user);
+        loginSuccessCallback();
     }.bind(this));
 };
 

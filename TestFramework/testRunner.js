@@ -3,9 +3,12 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
     'use strict';
 
     var isReady = false;
-    var onReady = function () {isReady = true;};
+    var onReady = function ()
+    {
+        isReady = true;
+    };
 
-    var scenarios = [];
+    var scenarioQueue = [];
     var output = [];
 
     var currentScenario;
@@ -14,7 +17,8 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
     var useLogger;
 
 
-    function TestFramework() { }
+    function TestFramework()
+    {}
 
     AsyncFramework.onMethodComplete = function ()
     {
@@ -47,52 +51,97 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
         }
     }
 
+    function executeAsyncMethod(method, context, finishedCallback)
+    {
+        try
+        {
+            if (method)
+            {
+                method.call(context, finishedCallback);
+                return;
+            }
+
+            finishedCallback(null);
+        }
+        catch (e)
+        {
+            if (useLogger)
+                console.log(e.stack);
+
+            return e;
+        }
+    }
+
     function beginExecutingScenario()
     {
-        currentScenario = scenarios.shift();
-        currentScenario.output = {name: currentScenario.scenario.name, testCount: currentScenario.methods.length, tests: []};
-        currentScenario.output.setupException = executeMethod(currentScenario.scenario.scenarioSetup, currentScenario.scenario);
+        currentScenario = scenarioQueue.shift();
 
-        currentTestIndex = 0;
-        executeScenarioTests();
+        currentScenario.output = {
+            name: currentScenario.scenario.name,
+            testCount: currentScenario.methods.length,
+            tests: []
+        };
+
+        executeAsyncMethod(currentScenario.scenario.scenarioSetupAsync, currentScenario.scenario, function (error)
+        {
+            currentScenario.output.setupException = error;
+            currentScenario.output.setupException += executeMethod(currentScenario.scenario.scenarioSetup, currentScenario.scenario);
+
+            currentTestIndex = 0;
+            executeScenarioTests();
+        });
     }
 
     function executeScenarioTests()
     {
-        var testOutput = {name: currentScenario.methods[currentTestIndex]};
-        testOutput.setupException = executeMethod(currentScenario.scenario.setup, currentScenario.scenario);
+        var testOutput = {
+            name: currentScenario.methods[currentTestIndex]
+        };
 
-        testOutput.exception = executeMethod(currentScenario.scenario[currentScenario.methods[currentTestIndex]], currentScenario.scenario);
-        currentScenario.output.tests[currentTestIndex] = testOutput;
+        executeAsyncMethod(currentScenario.scenario.setupAsync, currentScenario.scenario, function (error)
+        {
+            testOutput.setupException = error;
+            testOutput.setupException = executeMethod(currentScenario.scenario.setup, currentScenario.scenario);
 
-        if (!AsyncFramework.isRunning())
-            onScenarioTestFinished();
+            testOutput.exception = executeMethod(currentScenario.scenario[currentScenario.methods[currentTestIndex]], currentScenario.scenario);
+            currentScenario.output.tests[currentTestIndex] = testOutput;
+
+            if (!AsyncFramework.isRunning())
+                onScenarioTestFinished();
+        });
     }
 
     function onScenarioTestFinished()
     {
-        currentScenario.output.tests[currentTestIndex].tearDownException = executeMethod(currentScenario.scenario.tearDown, currentScenario.scenario);
-        Assertions.clearWatches();
+        executeAsyncMethod(currentScenario.scenario.tearDownAsync, currentScenario.scenario, function (error)
+        {
+            currentScenario.output.tests[currentTestIndex].tearDownException = error;
+            currentScenario.output.tests[currentTestIndex].tearDownException = executeMethod(currentScenario.scenario.tearDown, currentScenario.scenario);
+            Assertions.clearWatches();
 
-        currentTestIndex++;
-        if (currentTestIndex < currentScenario.methods.length)
-            executeScenarioTests();
-        else
-            finishExecutingScenario();
+            currentTestIndex++;
+            if (currentTestIndex < currentScenario.methods.length)
+                executeScenarioTests();
+            else
+                finishExecutingScenario();
+        });
     }
 
     function finishExecutingScenario()
     {
-        currentScenario.output.tearDownException = executeMethod(currentScenario.scenario.scenarioTearDown, currentScenario.scenario);
-        output.push(currentScenario.output);
-        currentScenario = null;
+        executeAsyncMethod(currentScenario.scenario.scenarioTearDownAsync, currentScenario.scenario, function (error)
+        {
+            currentScenario.output.tearDownException = executeMethod(currentScenario.scenario.scenarioTearDown, currentScenario.scenario);
+            output.push(currentScenario.output);
+            currentScenario = null;
 
-        if (scenarios.length)
-            beginExecutingScenario();
-        else if (onCompleteCallback)
-            onCompleteCallback(output);
-        else
-            TestOutput.display(output);
+            if (scenarioQueue.length)
+                beginExecutingScenario();
+            else if (onCompleteCallback)
+                onCompleteCallback(output);
+            else
+                TestOutput.display(output);
+        });
     }
 
     TestFramework.runTests = function (testScenarios, onComplete, logErrors)
@@ -117,15 +166,22 @@ define(['./assertions', './asyncFramework', './testOutput'], function (Assertion
             var scenario = testScenarios[i];
             for (var property in scenario)
             {
-                if (typeof(scenario[property]) === 'function' && !/setup|tearDown|scenarioSetup|scenarioTearDown/.test(property))
+                // Add tests
+                if (typeof (scenario[property]) === 'function' && !/setup|setupAsync|tearDownAsync|tearDown|scenarioSetup|scenarioSetupAsync|scenarioTearDown|scenarioTearDownAsync/.test(property))
                     methods.push(property);
             }
 
             if (methods.length)
-                scenarios.push({scenario: scenario, methods: methods});
+            {
+                scenarioQueue.push(
+                {
+                    scenario: scenario,
+                    methods: methods
+                });
+            }
         }
 
-        if (scenarios.length)
+        if (scenarioQueue.length)
             beginExecutingScenario();
     };
 
