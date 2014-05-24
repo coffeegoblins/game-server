@@ -91,8 +91,8 @@
 
         "run": {
             "spriteSheet": "shield - run",
-            "tileHeight": 80,
-            "tileWidth": 80,
+            "tileHeight": 60,
+            "tileWidth": 60,
             "frameCount": 16,
             "speed": 0.04,
             "isLooping": true
@@ -100,18 +100,26 @@
 
         "attack": {
             "spriteSheet": "shield - attack",
-            "tileHeight": 100,
-            "tileWidth": 100,
+            "tileHeight": 80,
+            "tileWidth": 80,
             "frameCount": 32,
-            "speed": 0.075
+            "speed": 0.04
+        },
+
+        "defend": {
+            "spriteSheet": "shield - defend",
+            "tileHeight": 60,
+            "tileWidth": 60,
+            "frameCount": 16,
+            "speed": 0.04
         },
 
         "death": {
-            "spriteSheet": "swordAndShield - death",
-            "tileHeight": 96,
-            "tileWidth": 96,
+            "spriteSheet": "shield - death",
+            "tileHeight": 70,
+            "tileWidth": 70,
             "frameCount": 32,
-            "speed": 0.075
+            "speed": 0.04
         }
     },
 
