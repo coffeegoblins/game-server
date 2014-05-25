@@ -1,19 +1,35 @@
-define(['text!../../content/soldierData.json', '../events', '../options', '../attackManager', '../pathManager', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
-    function (SoldierData, Events, Options, AttackManager, PathManager, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
+define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../soundManager', '../unitLogic', 'renderer/src/ui/unitStatusPanel', '../utility'],
+    function (Events, Options, Renderer, Scheduler, SoundManager, UnitLogic, UnitStatusPanel, Utility)
     {
         'use strict';
-        var soldierData = JSON.parse(SoldierData);
 
         function getOption(key, isSelection)
         {
             return Options[key] === 'always' || (isSelection && Options[key] === 'selected');
         }
 
+        function getUnitLogic()
+        {
+            // This is test code that assures that the game logic can be serialized and reconstructed
+            var unitLogicString = JSON.stringify(UnitLogic, function (key, value)
+            {
+                return (typeof value === 'function') ? value.toString() : value;
+            });
+
+            return Object.freeze(JSON.parse(unitLogicString, function (key, value)
+            {
+                if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
+                    return eval('(' + value + ')');
+
+                return value;
+            }));
+        }
 
         function Player(map, units)
         {
             this.map = map;
             this.units = units || [];
+            this.unitLogic = getUnitLogic();
 
             for (var i = 0; i < this.units.length; i++)
             {
@@ -50,55 +66,6 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
             }
         };
 
-        Player.prototype.getAttack = function (unit, name)
-        {
-            var attackDefinition = soldierData[unit.type].attacks[name];
-            var attack = Utility.merge({name: name}, attackDefinition);
-            attack.isDisabled = (attack.cost > unit.ap);
-
-            if (!attack.range)
-                attack.range = 1;
-
-            return attack;
-        };
-
-        Player.prototype.getAttacks = function (unit)
-        {
-            var attacks = [];
-            var attackDefinitions = soldierData[unit.type].attacks;
-
-            for (var attackName in attackDefinitions)
-                attacks.push(this.getAttack(unit, attackName));
-
-            return attacks;
-        };
-
-        Player.prototype.getAttackTiles = function (unit, attack)
-        {
-            return AttackManager.calculateTiles(this.map, unit, attack);
-        };
-
-        Player.prototype.getCrossNodes = function (selectedTile, availableTiles)
-        {
-            return AttackManager.calculateCrossNodes(this.unit, selectedTile, availableTiles);
-        };
-
-        Player.prototype.getMoveCost = function (unit)
-        {
-            return soldierData[unit.type].moveCost;
-        };
-
-        Player.prototype.getMoveTiles = function (unit)
-        {
-            var maxDistance = unit.ap / this.getMoveCost(unit);
-            return PathManager.calculateAvailableTiles(this.map, {
-                x: unit.tileX,
-                y: unit.tileY,
-                maxDistance: maxDistance,
-                maxClimbableHeight: unit.maxMoveableHeight
-            });
-        };
-
         Player.prototype.getUnitStatusPanelOptions = function (unit, isSelection)
         {
             var options = {};
@@ -119,7 +86,7 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
                 return options;
         };
 
-        Player.prototype.moveUnit = function (tiles, cost)
+        Player.prototype.moveUnit = function (tiles)
         {
             this.unit.setState('run');
             Renderer.camera.trackUnit(this.unit);
@@ -127,24 +94,24 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
             if (this.unit.statusPanel)
                 this.unit.statusPanel.apBar.disableTransitions();
 
-            var startTile = this.map.getTile(this.unit.tileX, this.unit.tileY);
-            startTile.unit = null;
+            var endTileNode = tiles[tiles.length - 1];
+            var cost = this.unitLogic.beginMoveUnit(this.map, this.unit, endTileNode);
 
             var startAp = this.unit.ap;
-            var endAp = startAp - cost * this.getMoveCost(this.unit);
-            var totalTime = cost / 3.5;
+            var endAp = this.unit.ap - cost;
 
             var path = tiles.slice();
             path.unshift({x: this.unit.tileX, y: this.unit.tileY});
 
             var progressTime = 0;
             var progressPercentage = 0;
+            var totalTime = endTileNode.distance / 3.5;
 
             for (var i = 1; i < path.length; i++)
             {
                 var node = path[i];
                 node.startPercentage = progressPercentage;
-                node.endPercentage = node.distance / cost;
+                node.endPercentage = node.distance / endTileNode.distance;
                 node.percentageShare = node.endPercentage - node.startPercentage;
                 progressPercentage = node.endPercentage;
             }
@@ -181,12 +148,9 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
                 },
                 completedMethod: function ()
                 {
-                    this.unit.tileX = nextNode.x;
-                    this.unit.tileY = nextNode.y;
-                    nextNode.tile.unit = this.unit;
-
-                    this.unit.ap = endAp;
                     this.unit.setState('idle');
+                    this.unitLogic.endMoveUnit(this.unit, endTileNode, cost);
+
                     if (this.unit.statusPanel)
                     {
                         this.unit.statusPanel.apBar.enableTransitions();
@@ -201,11 +165,9 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
 
         Player.prototype.onSoldierDeath = function (unit)
         {
+            this.unitLogic.breakCombatLock(unit);
             this.closeUnitStatusPanel(unit, true);
             Utility.removeElement(this.units, unit);
-
-            if (unit.target)
-                unit.target.target = null;
 
             if (!this.units.length)
                 this.trigger('defeat', this);
@@ -228,9 +190,20 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
 
         Player.prototype.performAttack = function (targetTile, affectedTiles, attack)
         {
-            this.unit.ap -= attack.cost;
-            AttackManager.applyCombatLock(this.unit, targetTile);
-            var targets = AttackManager.calculateDamage(this.unit, attack, affectedTiles);
+            var results = this.unitLogic.performAttack(this.unit, attack, targetTile, affectedTiles);
+            for (var i = 0; i < results.length; i++)
+            {
+                var result = results[i];
+                if (!result.damage)
+                {
+                    result.unit.setState('evade');
+                    result.unit.on('animationComplete', function onAnimationComplete()
+                    {
+                        this.setState('idle');
+                        this.off('animationComplete', onAnimationComplete);
+                    });
+                }
+            }
 
             this.unit.setState('attack');
             SoundManager.playTrack(attack.track);
@@ -240,15 +213,11 @@ define(['text!../../content/soldierData.json', '../events', '../options', '../at
 
             this.unit.on('animationComplete', this, function onAttackFinished()
             {
-                for (var i = 0; i < targets.length; i++)
+                for (var i = 0; i < results.length; i++)
                 {
-                    var target = targets[i];
-                    if (target.damage)
-                    {
-                        target.unit.damage(target.damage);
-                        if (target.unit.statusPanel)
-                            target.unit.statusPanel.updateValues();
-                    }
+                    var result = results[i];
+                    if (result.damage && result.unit.statusPanel)
+                        result.unit.statusPanel.updateValues();
                 }
 
                 this.unit.setState('idle');

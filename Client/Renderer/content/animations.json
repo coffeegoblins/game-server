@@ -38,7 +38,7 @@
         }
     },
 
-    "dualWield": {
+    "rogue": {
         "idle": {
             "spriteSheet": "dualWield - idle",
             "tileHeight": 64,
@@ -106,12 +106,16 @@
             "speed": 0.04
         },
 
-        "defend": {
+        "evade": {
             "spriteSheet": "shield - defend",
             "tileHeight": 60,
             "tileWidth": 60,
             "frameCount": 16,
-            "speed": 0.04
+            "speed": 0.04,
+            "reverseOnComplete": true,
+            "frames": {
+                "15": 0.25
+            }
         },
 
         "death": {
@@ -123,7 +127,7 @@
         }
     },
 
-    "twoHanded": {
+    "sword": {
         "idle": {
             "spriteSheet": "twoHanded - idle",
             "tileHeight": 64,

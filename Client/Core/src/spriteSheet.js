@@ -64,12 +64,17 @@ define(['core/src/events', './imageCache', './utility'], function (Events, Image
         return this.image && this.image.isLoaded;
     };
 
-    SpriteSheet.prototype.playAnimation = function (name)
+    SpriteSheet.prototype.playAnimation = function (name, isReversed)
     {
         this.currentAnimation = this.animations[name];
         this.currentAnimation.isComplete = false;
-        this.setCurrentTile(this.currentAnimation.start);
+        this.currentAnimation.isReversed = (isReversed === true);
         this.animationTime = 0;
+
+        if (isReversed)
+            this.setCurrentTile(this.currentAnimation.end);
+        else
+            this.setCurrentTile(this.currentAnimation.start);
     };
 
     SpriteSheet.prototype.setCurrentTile = function (index)
@@ -88,29 +93,53 @@ define(['core/src/events', './imageCache', './utility'], function (Events, Image
 
     SpriteSheet.prototype.updateAnimation = function (deltaTime)
     {
-        if (!this.currentAnimation && !this.currentAnimation.isComplete)
+        if (!this.currentAnimation || this.currentAnimation.isComplete)
             return;
 
         var frameTime = 0;
         this.animationTime += deltaTime;
 
-        for (var i = this.currentAnimation.start; i <= this.currentAnimation.end; i++)
+        var startFrame, endFrame, direction;
+        if (this.currentAnimation.isReversed)
         {
-            if (this.currentAnimation.frames[i] != null)
-                frameTime += this.currentAnimation.frames[i];
+            startFrame = this.currentAnimation.end;
+            endFrame = this.currentAnimation.start - 1;
+            direction = -1;
+        }
+        else
+        {
+            startFrame = this.currentAnimation.start;
+            endFrame = this.currentAnimation.end + 1;
+            direction = 1;
+        }
+
+        var frame = startFrame;
+        while (frame !== endFrame)
+        {
+            if (this.currentAnimation.frames[frame] != null)
+                frameTime += this.currentAnimation.frames[frame];
             else
                 frameTime += this.currentAnimation.speed;
 
             if (this.animationTime < frameTime)
             {
-                this.setCurrentTile(i);
+                this.setCurrentTile(frame);
                 return;
             }
+
+            frame += direction;
         }
 
-        if (this.currentAnimation.isLooping)
+        if (this.currentAnimation.reverseOnComplete && !this.currentAnimation.isReversed)
         {
             this.animationTime -= frameTime;
+            this.currentAnimation.isReversed = true;
+            this.setCurrentTile(this.currentAnimation.end);
+        }
+        else if (this.currentAnimation.isLooping)
+        {
+            this.animationTime -= frameTime;
+            this.currentAnimation.isReversed = false;
             this.setCurrentTile(this.currentAnimation.start);
         }
         else

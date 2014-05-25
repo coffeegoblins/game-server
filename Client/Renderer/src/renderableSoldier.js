@@ -1,4 +1,4 @@
-define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffect', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, TransitionEffect, AnimationDefinitions)
+define(['core/src/imageCache', 'core/src/spriteSheet', 'text!../content/animations.json'], function (ImageCache, SpriteSheet, AnimationDefinitions)
 {
     'use strict';
 
@@ -29,7 +29,7 @@ define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffe
 
             for (var i = 0; i < 8; i++)
             {
-                var frames;
+                var frames = null;
                 if (animationDefinition.frames)
                 {
                     frames = {};
@@ -45,6 +45,7 @@ define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffe
                     start: i * animationDefinition.frameCount,
                     end: (i + 1) * animationDefinition.frameCount - 1,
                     isLooping: animationDefinition.isLooping,
+                    reverseOnComplete: animationDefinition.reverseOnComplete,
                     speed: animationDefinition.speed,
                     frames: frames
                 });
@@ -91,14 +92,7 @@ define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffe
     {
         this.unit.trigger('animationComplete', animation.name);
         if (animation.id === 'death')
-        {
             this.isDead = true;
-            TransitionEffect.transitionFloat({
-                source: this.style,
-                property: 'opacity',
-                targetValue: 0.6
-            });
-        }
     };
 
     RenderableSoldier.prototype.render = function (context, deltaTime, camera)
@@ -126,12 +120,9 @@ define(['core/src/imageCache', 'core/src/spriteSheet', './effects/transitionEffe
         var tileRect = spriteSheet.getCurrentTileBounds();
         if (tileRect)
         {
-            context.globalAlpha = this.style.opacity;
             context.drawImage(spriteSheet.image.data, tileRect.x, tileRect.y, tileRect.width, tileRect.height,
                 left, top, width, height);
         }
-
-        context.globalAlpha = 1;
     };
 
     RenderableSoldier.prototype.renderSelection = function (context, camera, position)

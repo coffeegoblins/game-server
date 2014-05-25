@@ -11,14 +11,16 @@
                 "displayName": "Attack",
                 "track": "bow1",
                 "damage": {
+                    "archer": 30,
+                    "rogue": 30,
                     "shield": 20,
-                    "dualWield": 30,
-                    "twoHanded": 30
+                    "sword": 25
                 },
                 "accuracy": {
+                    "archer": 0.75,
+                    "rogue": 0.5,
                     "shield": 0.2,
-                    "dualWield": 0.6,
-                    "twoHanded": 0.9
+                    "sword": 0.9
                 }
             },
             "overheadAttack": {
@@ -28,14 +30,16 @@
                 "displayName": "Overhead Attack",
                 "track": "bow1",
                 "damage": {
+                    "archer": 25,
+                    "rogue": 25,
                     "shield": 15,
-                    "dualWield": 20,
-                    "twoHanded": 20
+                    "sword": 20
                 },
                 "accuracy": {
+                    "archer": 0.25,
+                    "rogue": 0.2,
                     "shield": 0.1,
-                    "dualWield": 0.3,
-                    "twoHanded": 0.4
+                    "sword": 0.4
                 }
             },
             "meleeAttack": {
@@ -43,6 +47,36 @@
                 "damage": 5,
                 "accuracy": 0.9,
                 "displayName": "Melee Attack"
+            }
+        }
+    },
+
+    "rogue": {
+        "apRegen": 1,
+        "moveCost": 10,
+        "attacks": {
+            "strike": {
+                "cost": 30,
+                "damage": 25,
+                "accuracy": 0.9,
+                "displayName": "Strike",
+                "track": "dualStrike"
+            },
+            "throwDagger": {
+                "cost": 40,
+                "range": 2.9,
+                "damage": 20,
+                "accuracy": 0.9,
+                "isObstructable": true,
+                "displayName": "Dagger throw"
+            },
+            "vitalStrike": {
+                "cost": 30,
+                "damage": 5,
+                "sideDamage": 5,
+                "backDamage": 10,
+                "accuracy": 0.9,
+                "displayName": "Vital strike"
             }
         }
     },
@@ -60,7 +94,7 @@
             },
             "shieldBash": {
                 "cost": 30,
-                "damage": 25,
+                "damage": 10,
                 "accuracy": 0.9,
                 "displayName": "Shield Bash",
                 "track": "shieldBash1"
@@ -73,7 +107,7 @@
         }
     },
 
-    "twoHanded": {
+    "sword": {
         "apRegen": 1,
         "moveCost": 12,
         "attacks": {
@@ -96,37 +130,13 @@
             "overhead": {
                 "cost": 50,
                 "damage": 60,
-                "accuracy": 0.9,
+                "accuracy": {
+                    "archer": 0.4,
+                    "rogue": 0.3,
+                    "shield": 0.8,
+                    "sword": 0.4
+                },
                 "displayName": "Overhead strike"
-            }
-        }
-    },
-
-    "dualWield": {
-        "apRegen": 1,
-        "moveCost": 10,
-        "attacks": {
-            "strike": {
-                "cost": 30,
-                "damage": 25,
-                "accuracy": 0.9,
-                "displayName": "Strike",
-                "track": "dualStrike"
-            },
-            "throwDagger": {
-                "cost": 40,
-                "range": 2.9,
-                "damage": 20,
-                "accuracy": 0.9,
-                "isObstructable": true,
-                "displayName": "Dagger throw"
-            },
-            "vitalStrike": {
-                "cost": 30,
-                "damage": 5,
-                "backDamage": 10,
-                "accuracy": 0.9,
-                "displayName": "Vital Strike"
             }
         }
     }

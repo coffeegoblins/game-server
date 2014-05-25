@@ -19,6 +19,7 @@ define(['./utility'], function (Utility)
         }
         else
         {
+            context = this;
             method = arguments[1];
         }
 

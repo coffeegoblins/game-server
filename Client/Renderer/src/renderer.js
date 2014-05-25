@@ -151,11 +151,10 @@ define([
                 for (var j = i - 1; j >= 0; j--)
                 {
                     var obj2 = items[j];
-                    if (obj1.isDead)
+                    if (obj2.isDead)
                         break;
 
-                    if (!obj2.isDead)
-                    {
+                    if (!obj1.isDead){
                         if (obj1.getTileX() > obj2.getTileX())
                             break;
 

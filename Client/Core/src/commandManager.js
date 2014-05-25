@@ -1,5 +1,5 @@
-define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager', 'core/src/pathManager'],
-    function (Renderer, PlotManager, SoundManager, PathManager)
+define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager'],
+    function (Renderer, PlotManager, SoundManager)
     {
         'use strict';
 
@@ -8,11 +8,6 @@ define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager'
         CommandManager.endTurn = function ()
         {
             PlotManager.turnManager.endTurn();
-        };
-
-        CommandManager.getAvailableTiles = function ()
-        {
-            return PathManager.calculateAvailableTiles(PlotManager.currentMap, PlotManager.turnManager.activeUnit);
         };
 
         CommandManager.moveViewport = function (x, y, milliseconds)

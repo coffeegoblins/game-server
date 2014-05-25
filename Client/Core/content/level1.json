@@ -77,31 +77,31 @@
             },
             {
                 "type": "tree",
-                "style": 0,
+                "style": 4,
                 "x": 14,
                 "y": 8
             },
             {
                 "type": "tree",
-                "style": 1,
+                "style": 5,
                 "x": 15,
                 "y": 3
             },
             {
                 "type": "tree",
-                "style": 2,
+                "style": 6,
                 "x": 9,
                 "y": 13
             },
             {
                 "type": "tree",
-                "style": 3,
+                "style": 7,
                 "x": 10,
                 "y": 6
             },
             {
                 "type": "tree",
-                "style": 0,
+                "style": 8,
                 "x": 15,
                 "y": 10
             }
