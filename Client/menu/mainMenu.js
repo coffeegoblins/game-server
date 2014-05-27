@@ -87,7 +87,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.socket = socket;
             this.user = user;
 
-            this.socket.on('player_search_succeeded', function (cursor)
+            this.socket.on(this.socket.events.searchByUsername.response.success, function (cursor)
             {
                 for (var x = this.searchResultsTable.rows.length - 1; x >= 0; --x)
                 {
@@ -118,12 +118,12 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.searchCriteria = document.getElementById('searchCriteria');
             this.searchResultsTable = document.getElementById('searchResultsTable');
 
-            this.socket.emit('player_search', this.searchCriteria.value);
+            this.socket.emit(this.socket.events.searchByUsername.name, this.searchCriteria.value);
         };
 
         MainMenu.prototype.onPlayerChallenged = function (e)
         {
-            this.socket.emit('player_challenge', this.user._id, e.target.id);
+            this.socket.emit(this.socket.events.challengeUser.name, this.user._id, e.target.id);
         };
 
         return new MainMenu();
