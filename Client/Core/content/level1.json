@@ -1,4 +1,6 @@
-{"layers": [
+{
+    "name": "Level1",
+    "layers": [
     {
         "name": "Object Layer",
         "type": "objectLayer",

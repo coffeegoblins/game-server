@@ -46,9 +46,9 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
 
             this.connect(function ()
             {
-                this.socket.emit('register', this.usernameInput.value, btoa(this.passwordInput.value));
+                this.socket.emit(this.socket.events.register.response.success, this.usernameInput.value, btoa(this.passwordInput.value));
 
-                this.socket.on('registration_succeeded', function (user)
+                this.socket.on(this.socket.events.register.response.success, function (user)
                 {
                     console.log('Registration Succeeded');
                     this.hide();
@@ -59,7 +59,7 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                     }
                 }.bind(this));
 
-                this.socket.on('registration_failed', function (error)
+                this.socket.on(this.socket.events.register.response.error, function (error)
                 {
                     if (error)
                     {
@@ -73,9 +73,9 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
         {
             this.connect(function ()
             {
-                this.socket.emit('login', this.usernameInput.value, btoa(this.passwordInput.value));
+                this.socket.emit(this.socket.events.login.name, this.usernameInput.value, btoa(this.passwordInput.value));
 
-                this.socket.on('login_failed', function (error)
+                this.socket.on(this.socket.events.login.response.error, function (error)
                 {
                     if (error)
                     {
@@ -83,7 +83,7 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                     }
                 }.bind(this));
 
-                this.socket.on('login_succeeded', function (user)
+                this.socket.on(this.socket.events.login.response.success, function (user)
                 {
                     this.hide();
 
@@ -100,7 +100,14 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
         {
             this.socket = io.connect('http://127.0.0.1:1988');
 
-            this.socket.on('connect', callback);
+            this.socket.on('connect', function ()
+            {
+                this.socket.on('events', function (events)
+                {
+                    this.socket.events = events;
+                    callback();
+                }.bind(this));
+            }.bind(this));
 
             this.socket.on('error', function (error)
             {
