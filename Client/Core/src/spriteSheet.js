@@ -3,6 +3,7 @@ define(['core/src/events', './imageCache', './utility'], function (Events, Image
     'use strict';
 
     var defaults = {
+        speed: 0.0167,
         tileWidth: 64,
         tileHeight: 64
     };

@@ -2,39 +2,53 @@
     "archer": {
         "idle": {
             "spriteSheet": "archer - idle",
-            "tileHeight": 64,
-            "tileWidth": 64,
+            "tileHeight": 60,
+            "tileWidth": 60,
             "frameCount": 32,
-            "speed": 0.1,
+            "speed": 0.06,
             "isLooping": true,
             "frames": {
-                "31": 5
+                "0": 10
+            }
+        },
+
+        "idleAction1": {
+            "spriteSheet": "archer - idleAction1",
+            "tileHeight": 60,
+            "tileWidth": 60,
+            "frameCount": 16,
+            "speed": 0.06,
+            "frames": {
+                "8": 0.75
             }
         },
 
         "run": {
             "spriteSheet": "archer - run",
-            "tileHeight": 64,
-            "tileWidth": 64,
+            "tileHeight": 60,
+            "tileWidth": 60,
             "frameCount": 16,
-            "speed": 0.04,
+            "speed": 0.06,
             "isLooping": true
         },
 
         "attack": {
             "spriteSheet": "archer - attack",
-            "tileHeight": 112,
-            "tileWidth": 112,
+            "tileHeight": 70,
+            "tileWidth": 70,
             "frameCount": 32,
-            "speed": 0.075
+            "speed": 0.06,
+            "frames": {
+                "20": 0.18
+            }
         },
 
         "death": {
             "spriteSheet": "archer - death",
-            "tileHeight": 96,
-            "tileWidth": 96,
+            "tileHeight": 70,
+            "tileWidth": 70,
             "frameCount": 32,
-            "speed": 0.075
+            "speed": 0.06
         }
     },
 
@@ -86,6 +100,17 @@
             "isLooping": true,
             "frames": {
                 "31": 5
+            }
+        },
+
+        "idleAction1": {
+            "spriteSheet": "shield - idleAction1",
+            "tileHeight": 65,
+            "tileWidth": 65,
+            "frameCount": 16,
+            "speed": 0.06,
+            "frames": {
+                "8": 0.75
             }
         },
 

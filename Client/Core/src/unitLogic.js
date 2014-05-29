@@ -462,7 +462,7 @@ define(['text!../content/soldierData.json', './utility'], function (SoldierData,
             var currentNodes = new this.DualKeyHash();
             var completedNodes = new this.DualKeyHash();
 
-            var maxDistance = unit.ap / this.getMoveCost(unit);
+            var maxDistance = unit.ap / this.soldierData[unit.type].moveCost;
             var currentNode = {
                 distance: 0,
                 x: unit.tileX,

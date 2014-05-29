@@ -107,8 +107,8 @@ define(['core/src/imageCache', 'core/src/spriteSheet', 'text!../content/animatio
 
         var width = spriteSheet.tileWidth * camera.scale;
         var height = spriteSheet.tileHeight * camera.scale;
-        var left = position.x - width / 2;
-        var top = position.y - height / 2;
+        var left = Math.floor(position.x - width / 2);
+        var top  = Math.floor(position.y - height / 2);
 
         if (!camera.isInView(left, top, width, height))
             return;
