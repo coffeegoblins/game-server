@@ -54,58 +54,64 @@
                 "y": 6
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 1,
                 "x": 9,
                 "y": 3
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 0,
                 "x": 10,
                 "y": 10
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 2,
                 "x": 15,
                 "y": 12
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 3,
                 "x": 5,
                 "y": 11
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 4,
                 "x": 14,
                 "y": 8
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 5,
                 "x": 15,
                 "y": 3
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 6,
                 "x": 9,
                 "y": 13
             },
             {
-                "type": "tree",
-                "style": 7,
-                "x": 10,
+                "type": "object",
+                "style": 9,
+                "x": 22,
                 "y": 6
             },
             {
-                "type": "tree",
+                "type": "object",
                 "style": 8,
                 "x": 15,
                 "y": 10
+            },
+            {
+                "type": "object",
+                "style": 10,
+                "x": 19,
+                "y": 4
             }
         ]
     },

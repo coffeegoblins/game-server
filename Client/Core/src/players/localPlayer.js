@@ -42,17 +42,17 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             }
         };
 
-        LocalPlayer.prototype.onActionSelected = function (actionName)
+        LocalPlayer.prototype.onActionSelected = function (action)
         {
             Renderer.clearRenderablePaths();
-            if (actionName === 'endTurn')
+            if (action.name === 'endTurn')
             {
                 this.endTurn();
                 return;
             }
 
             this.actionPanel.hide();
-            if (actionName === 'move')
+            if (action.name === 'move')
             {
                 this.availableTiles = this.unitLogic.getMoveTiles(this.map, this.unit);
                 Renderer.addRenderablePath('moveTiles', this.availableTiles, false);
@@ -60,7 +60,7 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             }
             else
             {
-                this.currentAttack = this.unitLogic.getAttack(this.unit, actionName);
+                this.currentAttack = action;
                 this.availableTiles = this.unitLogic.getAttackTiles(this.map, this.unit, this.currentAttack);
 
                 Renderer.addRenderablePath('attack', this.availableTiles, false);

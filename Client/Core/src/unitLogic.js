@@ -1,4 +1,4 @@
-define(['text!../content/soldierData.json', './utility'], function (SoldierData, Utility)
+define(['text!../content/soldierData.json'], function (SoldierData)
 {
     'use strict';
 
@@ -215,25 +215,26 @@ define(['text!../content/soldierData.json', './utility'], function (SoldierData,
 
         DualKeyHash: DualKeyHash,
         OcclusionCalculator: OcclusionCalculator,
-        merge: Utility.merge,
 
 
         // Soldier data accessors
-        getAttack: function (unit, name)
-        {
-            var attack = this.merge({name: name, range: 1}, this.soldierData[unit.type].attacks[name]);
-            attack.isDisabled = (attack.cost > unit.ap);
-            return attack;
-        },
-
         getAttacks: function (unit)
         {
-            // TODO: Change this to an array in solider data to ensure order?
-            var attackNames = Object.keys(this.soldierData[unit.type].attacks);
-            return attackNames.map(function (attackName)
+            var attacks = [];
+            var attackDefinitions = this.soldierData[unit.type].attacks;
+            for (var i = 0; i < attackDefinitions.length; i++)
             {
-                return this.getAttack(unit, attackName);
-            }, this);
+                var attack = {range: 1};
+                var attackDefinition = attackDefinitions[i];
+
+                for (var property in attackDefinition)
+                    attack[property] = attackDefinition[property];
+
+                attack.isDisabled = (attack.cost > unit.ap);
+                attacks.push(attack);
+            }
+
+            return attacks;
         },
 
         getAttackCost: function (unit, attack, targetTile)

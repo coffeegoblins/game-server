@@ -1,9 +1,9 @@
 {
     "archer": {
-        "apRegen": 1,
         "moveCost": 12,
-        "attacks": {
-            "rangedAttack": {
+        "attacks": [
+            {
+                "name": "rangedAttack",
                 "cost": 20,
                 "range": 10,
                 "minRange": 1.9,
@@ -23,7 +23,8 @@
                     "sword": 0.9
                 }
             },
-            "overheadAttack": {
+            {
+                "name": "overheadAttack",
                 "cost": 35,
                 "range": 8,
                 "minRange": 3.9,
@@ -42,27 +43,29 @@
                     "sword": 0.4
                 }
             },
-            "meleeAttack": {
+            {
+                "name": "meleeAttack",
                 "cost": 10,
                 "damage": 5,
                 "accuracy": 0.9,
                 "displayName": "Melee Attack"
             }
-        }
+        ]
     },
 
     "rogue": {
-        "apRegen": 1,
         "moveCost": 10,
-        "attacks": {
-            "strike": {
+        "attacks": [
+            {
+                "name": "strike",
                 "cost": 30,
                 "damage": 25,
                 "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "dualStrike"
             },
-            "throwDagger": {
+            {
+                "name": "throwDagger",
                 "cost": 40,
                 "range": 2.9,
                 "damage": 20,
@@ -70,7 +73,8 @@
                 "isObstructable": true,
                 "displayName": "Dagger throw"
             },
-            "vitalStrike": {
+            {
+                "name": "vitalStrike",
                 "cost": 30,
                 "damage": 5,
                 "sideDamage": 5,
@@ -78,47 +82,50 @@
                 "accuracy": 0.9,
                 "displayName": "Vital strike"
             }
-        }
+        ]
     },
 
     "shield": {
-        "apRegen": 1,
         "moveCost": 15,
-        "attacks": {
-            "strike": {
+        "attacks": [
+            {
+                "name": "strike",
                 "cost": 30,
                 "damage": 30,
                 "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "strike"
             },
-            "shieldBash": {
+            {
+                "name": "shieldBash",
                 "cost": 30,
                 "damage": 10,
                 "accuracy": 0.9,
                 "displayName": "Shield Bash",
                 "track": "shieldBash1"
             },
-            "defend": {
+            {
+                "name": "defend",
                 "cost": 30,
                 "range": 1.5,
                 "displayName": "Defend"
             }
-        }
+        ]
     },
 
     "sword": {
-        "apRegen": 1,
         "moveCost": 12,
-        "attacks": {
-            "strike": {
+        "attacks": [
+            {
+                "name": "strike",
                 "cost": 30,
                 "damage": 30,
                 "accuracy": 0.9,
                 "displayName": "Strike",
                 "track": "twoHandedStrike"
             },
-            "sweep": {
+            {
+                "name": "sweep",
                 "cost": 40,
                 "range": 1.5,
                 "damage": 30,
@@ -127,17 +134,18 @@
                 "track": "sweep",
                 "useCrossNodes": true
             },
-            "overhead": {
+            {
+                "name": "overhead",
                 "cost": 50,
+                "displayName": "Overhead strike",
                 "damage": 60,
                 "accuracy": {
                     "archer": 0.4,
                     "rogue": 0.3,
                     "shield": 0.8,
                     "sword": 0.4
-                },
-                "displayName": "Overhead strike"
+                }
             }
-        }
+        ]
     }
 }

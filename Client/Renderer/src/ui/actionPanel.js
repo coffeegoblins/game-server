@@ -33,7 +33,16 @@ define(['./floatingPanel'], function (FloatingPanel)
             e.stopImmediatePropagation();
             if (!e.target.classList.contains('disabled'))
             {
-                this.trigger('actionSelected', e.target.getAttribute('data-action-name'));
+                var actionName = e.target.getAttribute('data-action-name');
+                for (var i = 0; i < this.actions.length; i++)
+                {
+                    var action = this.actions[i];
+                    if (action.name === actionName)
+                    {
+                        this.trigger('actionSelected', action);
+                        break;
+                    }
+                }
             }
         }
     };
@@ -42,7 +51,6 @@ define(['./floatingPanel'], function (FloatingPanel)
     {
         FloatingPanel.prototype.open.apply(this, arguments);
 
-        this.actions.length = 2;
         this.actions.push.apply(this.actions, attacks);
 
         for (var i = 0; i < this.element.children.length; i++)
@@ -55,7 +63,6 @@ define(['./floatingPanel'], function (FloatingPanel)
             else
                 actionElement.classList.remove('disabled');
 
-            action.element = actionElement;
             actionElement.title = action.displayName;
             actionElement.setAttribute('data-action-name', action.name);
         }
@@ -68,10 +75,11 @@ define(['./floatingPanel'], function (FloatingPanel)
             var action = this.actions[i];
             if (action.cost != null)
             {
+                var actionElement = this.element.children[i];
                 if (action.cost > this.target.ap)
-                    action.element.classList.add('disabled');
+                    actionElement.classList.add('disabled');
                 else
-                    action.element.classList.remove('disabled');
+                    actionElement.classList.remove('disabled');
             }
         }
     };
