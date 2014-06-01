@@ -81,7 +81,7 @@
     background-image: url('../renderer/content/images/swordAndShieldIcon.png');
 }
 
-.tab[data-unit="sword"] .unit-type {
+.tab[data-unit="warrior"] .unit-type {
     background-image: url('../renderer/content/images/twoHandedIcon.png');
 }
 
@@ -105,8 +105,8 @@
     background-image: url('../renderer/content/images/shield - idle.png');
 }
 
-.tab-content[data-unit="sword"] .unit-preview {
-    background-image: url('../renderer/content/images/twoHanded - idle.png');
+.tab-content[data-unit="warrior"] .unit-preview {
+    background-image: url('../renderer/content/images/warrior - idle.png');
 }
 
 .tab-content[data-unit="archer"] .unit-preview {
@@ -114,7 +114,7 @@
 }
 
 .tab-content[data-unit="rogue"] .unit-preview {
-    background-image: url('../renderer/content/images/dualWield - idle.png');
+    background-image: url('../renderer/content/images/shield - idle.png');
 }
 
 .tab-content ul {

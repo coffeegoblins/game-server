@@ -203,7 +203,7 @@ canvas {
     background-image: url('renderer/content/images/swordAndShieldIcon.png');
 }
 
-.unit-type-sword {
+.unit-type-warrior {
     background-image: url('renderer/content/images/twoHandedIcon.png');
 }
 
