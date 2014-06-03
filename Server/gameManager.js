@@ -9,14 +9,14 @@ function GameManager(events)
 GameManager.prototype.createGame = function (responseCallback, levelName)
 {
     var searchCriteria = {
-        name: levelName.toString();
-    }
+        name: levelName.toString()
+    };
 
     databaseManager.levelsCollection.find(searchCriteria, function (error, level)
     {
         if (error)
         {
-            responseCallback(this.events.createGame.response.error, "Unable to create the game because a valid level was not selected.");
+            thisi.responseCallback(this.events.createGame.response.error, "Unable to create the game because a valid level was not selected.");
             return;
         }
 
@@ -47,7 +47,7 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
     {
         if (error)
         {
-            rollbackUpdate(rollbacks);
+            this.rollbackUpdate(rollbacks);
 
             responseCallback(this.events.updateGame.response.error, error);
             return;
@@ -59,11 +59,11 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
     switch (update.action)
     {
     case 'MOVE':
-        performMove(update.unitID, update.target, updateHandler);
+        this.performMove(update.unitID, update.target, updateHandler);
         break;
 
     case 'ATTACK':
-        performAttack(update.unitID, update.target, updateHandler);
+        this.performAttack(update.unitID, update.target, updateHandler);
         break;
     }
 };
