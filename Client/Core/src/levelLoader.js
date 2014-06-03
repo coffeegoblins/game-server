@@ -18,9 +18,9 @@ define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoad
             var height = 0;
 
             var layer;
-            for (var i = 0; i < levelData.layers.length; i++)
+            for (var layerName in levelData.layers)
             {
-                layer = levelData.layers[i];
+                layer = levelData.layers[layerName];
                 if (layer.type === 'tileLayer')
                 {
                     var rect = layer.properties.rect;
@@ -32,19 +32,19 @@ define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoad
             var soldiers = [];
             var map = new Map(width, height);
 
-            for (i = 0; i < levelData.layers.length; i++)
+            for (layerName in levelData.layers)
             {
-                layer = levelData.layers[i];
+                layer = levelData.layers[layerName];
                 if (layer.type === 'objectLayer')
                 {
                     soldiers.push.apply(soldiers, this.loadObjects(layer, map));
                 }
-                else if (layer.name === 'Background')
+                else if (layerName === 'background')
                 {
                     map.spriteSheet = layer.spriteSheet;
                     this.loadTiles(layer, map, 'spriteIndex');
                 }
-                else if (layer.name === 'Heights')
+                else if (layerName === 'heights')
                 {
                     this.loadTiles(layer, map, 'height');
                 }
@@ -74,6 +74,7 @@ define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoad
 
                     default:
                         var worldObject = new WorldObject(object);
+                        worldObject.type = 'object';
                         map.addObject(worldObject, object.x, object.y);
                         Renderer.addRenderableObject(worldObject);
                         break;

@@ -5,12 +5,13 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
     function RenderableObject(object)
     {
         this.object = object;
+        var type = this.object.type || 'object';
 
         var size;
-        if (this.object.type === 'object')
+        if (type === 'object')
             size = {tileWidth: 128, tileHeight: 128};
 
-        var path = 'renderer/content/images/' + this.object.type + '.png';
+        var path = 'renderer/content/images/' + type + '.png';
         this.spriteSheet = new SpriteSheet(this.object.type, path, size);
         this.spriteSheet.setCurrentTile(object.style);
     }

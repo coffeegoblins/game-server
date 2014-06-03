@@ -51,6 +51,7 @@ define(['./floatingPanel'], function (FloatingPanel)
     {
         FloatingPanel.prototype.open.apply(this, arguments);
 
+        this.actions.length = 2;
         this.actions.push.apply(this.actions, attacks);
 
         for (var i = 0; i < this.element.children.length; i++)

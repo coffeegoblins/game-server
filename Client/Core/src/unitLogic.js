@@ -371,6 +371,9 @@ define(['text!../content/soldierData.json'], function (SoldierData)
                         }
 
                         targetUnit.damage(damage);
+
+                        if (attack.breakCombatLock)
+                            this.breakCombatLock(targetUnit);
                     }
 
                     targets.push({unit: targetUnit, damage: damage});

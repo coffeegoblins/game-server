@@ -14,13 +14,13 @@
                     "archer": 30,
                     "rogue": 30,
                     "shield": 20,
-                    "sword": 25
+                    "warrior": 25
                 },
                 "accuracy": {
                     "archer": 0.75,
                     "rogue": 0.5,
                     "shield": 0.2,
-                    "sword": 0.9
+                    "warrior": 0.9
                 }
             },
             {
@@ -34,13 +34,13 @@
                     "archer": 25,
                     "rogue": 25,
                     "shield": 15,
-                    "sword": 20
+                    "warrior": 20
                 },
                 "accuracy": {
                     "archer": 0.25,
                     "rogue": 0.2,
                     "shield": 0.1,
-                    "sword": 0.4
+                    "warrior": 0.4
                 }
             },
             {
@@ -101,6 +101,7 @@
                 "cost": 30,
                 "damage": 10,
                 "accuracy": 0.9,
+                "breakCombatLock": true,
                 "displayName": "Shield Bash",
                 "track": "shieldBash1"
             },
@@ -113,7 +114,7 @@
         ]
     },
 
-    "sword": {
+    "warrior": {
         "moveCost": 12,
         "attacks": [
             {
@@ -143,7 +144,7 @@
                     "archer": 0.4,
                     "rogue": 0.3,
                     "shield": 0.8,
-                    "sword": 0.4
+                    "warrior": 0.4
                 }
             }
         ]
