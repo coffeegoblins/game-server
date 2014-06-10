@@ -58,7 +58,7 @@ NotificationManager.prototype.onPlayersSelected = function (responseCallback, er
         }
 
         responseCallback(this.events.challengeUser.response.success);
-    });
+    }.bind(this));
 };
 
 module.exports = NotificationManager;

@@ -47,8 +47,6 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
     {
         if (error)
         {
-            this.rollbackUpdate(rollbacks);
-
             responseCallback(this.events.updateGame.response.error, error);
             return;
         }
@@ -66,10 +64,6 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
         this.performAttack(update.unitID, update.target, updateHandler);
         break;
     }
-};
-
-GameManager.prototype.rollbackUpdate = function () {
-
 };
 
 GameManager.prototype.performMove = function (unitID, targetTile, callback)

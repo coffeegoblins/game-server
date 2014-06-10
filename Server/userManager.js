@@ -87,20 +87,20 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
         }
 
         responseCallback(this.events.searchByUsername.response.success, result);
-    });
+    }.bind(this));
 };
 
 UserManager.prototype.selectPlayerByID = function (id, callback)
 {
     var searchCriteria = {
-        '_id ': new ObjectID(id)
+        '_id': new ObjectID(id)
     };
 
     databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (!user)
         {
-            callback('Unable to find a user with the id: ' + id, null);
+            callback('Unable to find a user with the id: ' + id + '\n' + error, null);
             return;
         }
 

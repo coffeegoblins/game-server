@@ -1,6 +1,6 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './unitSelection'],
-    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, UnitSelection)
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './unitSelection', './notifications'],
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, UnitSelection, Notifications)
     {
         'use strict';
         function MainMenu()
@@ -82,10 +82,15 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
             this.mainMenuBar.innerHTML = SearchBarTemplate;
 
+            document.getElementById('notificationsButton').addEventListener('click', this.onNotificationsButtonClicked.bind(this));
             document.getElementById('searchButton').addEventListener('click', this.onPlayerSearchButtonClicked.bind(this));
-
             this.socket = socket;
             this.user = user;
+
+//             this.socket.on(this.socket.events.notification.name, function (notification)
+//             {
+//                 this.notificationManager.addNotification(notification);
+//             }.bind(this));
 
             this.socket.on(this.socket.events.searchByUsername.response.success, function (cursor)
             {
@@ -108,6 +113,11 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                     document.getElementById(cursor[i]._id).addEventListener('click', this.onPlayerChallenged.bind(this));
                 }
             }.bind(this));
+        };
+
+        MainMenu.prototype.onNotificationsButtonClicked = function ()
+        {
+            Notifications.toggle();
         };
 
         MainMenu.prototype.onPlayerSearchButtonClicked = function ()

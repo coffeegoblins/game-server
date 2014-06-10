@@ -25,7 +25,7 @@
     transition: transform 2s;
     -webkit-transition: -webkit-transform 2s;
     transform: translateY(-300%);
-    -webkit-transform:  translateY(-300%);
+    -webkit-transform: translateY(-300%);
 }
 .menuChain {
     background-image: url('./images/menuChain.png');
@@ -50,40 +50,57 @@
     padding: 10px;
     cursor: pointer;
 }
-
 #multiplayerBar {
     height: 40px;
     display: table;
-    float: right;
+    float: left;
 }
-
-#notifications {
+#notificationsButton {
     vertical-align: middle;
     box-shadow: inset 1px 1px 5px #000;
     opacity: 0.5;
 }
-
 #notificationsWrapper {
     vertical-align: middle;
     display: table-cell;
 }
-
+#notifications {
+    position: absolute;
+    margin: 5px 0px;
+}
+#notifications input {
+    width: 50%;
+    height: 30px;
+}
+#notifications > div {
+    padding: 10px;
+}
+#notifications > div:nth-child(odd) {
+    background-color: #CCC;
+}
+#notifications > div:nth-child(even) {
+    background-color: #EEE;
+}
+.notificationTitle {
+    font-weight: 700;
+    font-size: 24px;
+}
+.notificationMessage {
+    padding: 10px;
+}
 #searchBar {
     display: table-cell;
     vertical-align: middle;
     padding: 0px 10px;
     height: 100%;
 }
-
 #searchBar input {
     vertical-align: middle;
 }
-
 #searchSectionTable {
     display: table;
     width: 100%;
 }
-
 #searchSection {
     padding: 5px;
     height: 40px;
@@ -95,7 +112,6 @@
     z-index: 1;
     background: #CCC;
 }
-
 #searchResults {
     overflow: auto;
     position: fixed;
@@ -105,12 +121,10 @@
     bottom: 0;
     z-index: 0;
 }
-
 #searchResultsTable {
     width: 100%;
     border-collapse: collapse;
 }
-
 #searchResultsTable table {
     border-collapse: collapse;
     width: 100%;
@@ -142,26 +156,20 @@
     color: #ffffff;
     display: table-cell;
 }
-
 .userName {
     word-wrap: break-word;
-
 }
-
 #buttonWrapper {
     display: table-cell;
-
     vertical-align: middle;
     height: 100%;
 }
-
 @media only screen and (max-width: 400px) {
     #mainMenuChains {
         left: 50%;
         margin-left: -125px;
-
         width: 250px;
-}
+    }
 }
 @keyframes bounce {
     0% {
