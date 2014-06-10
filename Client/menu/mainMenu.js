@@ -1,12 +1,13 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './unitSelection', './notifications'],
-    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, UnitSelection, Notifications)
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications'],
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications)
     {
         'use strict';
+
         function MainMenu()
         {
             BrowserNavigation.on('root', this.show.bind(this));
-            BrowserNavigation.on('unitSelection', this.loadUnitSelection.bind(this));
+            BrowserNavigation.on('battleConfiguration', this.loadBattleConfiguration.bind(this));
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
 
             this.loginPopup = new LoginPopup(this);
@@ -35,21 +36,24 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
         {
             switch (e.target.id)
             {
-                case 'singlePlayer':
-                    this.mainMenuChains.className = 'raiseChains';
-                    BrowserNavigation.addState('unitSelection');
-                    this.loadUnitSelection();
-                    break;
-                case 'multiPlayer':
-                    this.mainMenuChains.className = 'raiseChains';
-                    setTimeout(this.loginPopup.show(this.onLoginSucceeded, this), 0);
-                    break;
-                case 'options':
+            case 'singlePlayer':
+                this.mainMenuChains.className = 'raiseChains';
+                BrowserNavigation.addState('battleConfiguration');
+                this.loadBattleConfiguration();
+                break;
+            case 'multiPlayer':
+                this.mainMenuChains.className = 'raiseChains';
+                setTimeout(function ()
+                {
+                    this.loginPopup.show(this.onLoginSucceeded, this);
+                }.bind(this), 0);
+                break;
+            case 'options':
 
-                    break;
-                case 'exit':
+                break;
+            case 'exit':
 
-                    break;
+                break;
             }
         };
 
@@ -62,13 +66,14 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             PlotManager.loadLevel('level1');
         };
 
-        MainMenu.prototype.loadUnitSelection = function ()
+        MainMenu.prototype.loadBattleConfiguration = function ()
         {
+            document.body.innerHTML = MainMenuTemplate;
             document.body.className = '';
 
-            var unitSelection = new UnitSelection().show();
-            unitSelection.on('cancel', this, this.show);
-            unitSelection.on('confirm', this, function ()
+            var battleConfig = new BattleConfiguration().show();
+            battleConfig.on('cancel', this, this.show);
+            battleConfig.on('confirm', this, function ()
             {
                 BrowserNavigation.addState('singlePlayer');
                 this.loadSinglePlayer();
@@ -87,10 +92,10 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.socket = socket;
             this.user = user;
 
-//             this.socket.on(this.socket.events.notification.name, function (notification)
-//             {
-//                 this.notificationManager.addNotification(notification);
-//             }.bind(this));
+            //             this.socket.on(this.socket.events.notification.name, function (notification)
+            //             {
+            //                 this.notificationManager.addNotification(notification);
+            //             }.bind(this));
 
             this.socket.on(this.socket.events.searchByUsername.response.success, function (cursor)
             {

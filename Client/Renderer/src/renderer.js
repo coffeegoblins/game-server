@@ -26,7 +26,7 @@ define([
         Renderer.prototype.initialize = function ()
         {
             this.canvas = document.createElement('canvas');
-            this.canvas.id = 'canvas';
+            this.canvas.id = 'game-canvas';
             document.body.appendChild(this.canvas);
 
             this.context = this.canvas.getContext('2d');
@@ -35,7 +35,7 @@ define([
             this.renderablePaths.length = 0;
 
             InputHandler.on('drag', this, this.onDrag);
-            InputHandler.registerClickEvent('canvas', this.onClick, this);
+            InputHandler.registerClickEvent('game-canvas', this.onClick, this);
             window.addEventListener('resize', this.onResize, false);
 
             this.onResize();
@@ -46,7 +46,7 @@ define([
         {
             this.clearEvents();
             InputHandler.off('drag', this);
-            InputHandler.unregisterClickEvent('canvas');
+            InputHandler.unregisterClickEvent('game-canvas');
             window.removeEventListener('resize', this.onResize, false);
         };
 
