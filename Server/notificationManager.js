@@ -1,6 +1,4 @@
 var UserManager = require('./userManager');
-var async = require('async');
-var databaseManager = require('./databaseManager');
 
 function NotificationManager(events)
 {
@@ -8,56 +6,24 @@ function NotificationManager(events)
     this.userManager = new UserManager(events);
 }
 
-NotificationManager.prototype.initiateChallenge = function (responseCallback, challengerID, opponentID)
+NotificationManager.prototype.getNotifications = function (responseCallback, userID)
 {
-    var parameters = [challengerID, opponentID];
-
-    async.map(parameters, this.selectPlayersForChallenge.bind(this), this.onPlayersSelected.bind(this, responseCallback));
-};
-
-NotificationManager.prototype.selectPlayersForChallenge = function (userID, asyncCallback)
-{
-    this.userManager.selectPlayerByID(userID, function (error, user)
+    if (!userID)
     {
-        if (error)
-        {
-            throw error;
-        }
-
-        asyncCallback(null, user);
-    });
-};
-
-NotificationManager.prototype.onPlayersSelected = function (responseCallback, error, users)
-{
-    if (error)
-    {
-        responseCallback(this.events.challengeUser.response.error, error);
+        responseCallback(this.events.getNotifications.response.error, "You are not logged in.");
         return;
     }
 
-    var challengerUser = users[0];
-    var opponentUser = users[1];
-
-    console.log(challengerUser.username + " (" + challengerUser._id + ") is challenging " + opponentUser.username + " (" + opponentUser._id + ")");
-
-    var notification = {
-        sourceUser: challengerUser._id,
-        targetUser: opponentUser._id,
-        type: "CHALLENGE",
-        creationTime: new Date().getTime()
-    };
-
-    databaseManager.notificationsCollection.insert(notification, function (error)
+    this.userManager.selectPlayerByID(userID, function (error, user)
     {
-        if (error)
+        if (error || !user)
         {
-            responseCallback(this.events.challengeUser.response.error, error);
-            console.log("Failed to challenge.");
+            console.log(error);
+            responseCallback(this.events.getNotifications.response.error, "Unable to retrieve notifications.");
             return;
         }
 
-        responseCallback(this.events.challengeUser.response.success);
+        responseCallback(this.events.getNotifications.response.success, user.notifications);
     }.bind(this));
 };
 

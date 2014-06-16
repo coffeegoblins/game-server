@@ -91,11 +91,17 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             document.getElementById('searchButton').addEventListener('click', this.onPlayerSearchButtonClicked.bind(this));
             this.socket = socket;
             this.user = user;
+            this.notifications = new Notifications(socket);
 
-            //             this.socket.on(this.socket.events.notification.name, function (notification)
-            //             {
-            //                 this.notificationManager.addNotification(notification);
-            //             }.bind(this));
+            this.socket.emit(this.socket.events.getNotifications.name);
+
+            this.socket.on(this.socket.events.getNotifications.response.success, function (notifications)
+            {
+                for (var i = 0; i < notifications.length; ++i)
+                {
+                    this.notifications.addNotification(notifications[i]);
+                }
+            }.bind(this));
 
             this.socket.on(this.socket.events.searchByUsername.response.success, function (cursor)
             {
@@ -122,7 +128,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.onNotificationsButtonClicked = function ()
         {
-            Notifications.toggle();
+            this.notifications.toggle();
         };
 
         MainMenu.prototype.onPlayerSearchButtonClicked = function ()
