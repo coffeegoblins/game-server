@@ -28,7 +28,7 @@ UserManager.prototype.login = function (responseCallback, loginSuccessCallback, 
 
         console.log(lowerCaseUsername + ' has logged in.');
         responseCallback(this.events.login.response.success, user);
-        loginSuccessCallback();
+        loginSuccessCallback(user._id);
     }.bind(this));
 };
 
@@ -39,12 +39,13 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
     var user = {
         username: username,
         lowerCaseUsername: lowerCaseUsername,
-        password: password
+        password: password,
+        notifications: new Array()
     };
 
     console.log('Registering user: ' + lowerCaseUsername);
 
-    databaseManager.usersCollection.insert(user, function (error)
+    databaseManager.usersCollection.insert(user, function (error, createdUser)
     {
         if (error)
         {
@@ -58,7 +59,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         console.log(lowerCaseUsername + ' has been registered.');
 
         responseCallback(this.events.register.response.success, user);
-        loginSuccessCallback();
+        loginSuccessCallback(createdUser._id);
     }.bind(this));
 };
 

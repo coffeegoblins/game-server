@@ -70,5 +70,14 @@
             "error": "searchByUsernameError",
             "success": "searchByUsernameSuccess"
         }
+    },
+    "getNotifications": {
+        "name": "getNotifications",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "getNotificationsError",
+            "success": "getNotificationsSuccess"
+        }
     }
 }
