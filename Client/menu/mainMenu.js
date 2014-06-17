@@ -144,7 +144,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.onPlayerChallenged = function (e)
         {
-            this.socket.emit(this.socket.events.challengeUser.name, this.user._id, e.target.id);
+            this.socket.emit(this.socket.events.challengeUser.name, e.target.id);
         };
 
         return new MainMenu();
