@@ -14,29 +14,30 @@ define([
     {
         'use strict';
 
-        function createSoldiers(positions)
+        function createSoldiers(positions, unitTypes)
         {
-            var types = ['archer', 'rogue', 'shield', 'warrior'];
-
             var soldiers = [];
-            for (var i = 0; i < positions.length; i++)
+            var positionIndex = 0;
+            for (var unitType in unitTypes)
             {
-                var position = positions[i];
-                var soldier = new Soldier({
-                    name: 'Unit ' + (i + 1),
-                    tileX: position.x,
-                    tileY: position.y,
-                    type: types[i % 4]
-                });
+                for (var i = 0; i < unitTypes[unitType]; i++)
+                {
+                    var position = positions[positionIndex++];
+                    var soldier = new Soldier({
+                        tileX: position.x,
+                        tileY: position.y,
+                        type: unitType
+                    });
 
-                soldiers.push(soldier);
+                    soldiers.push(soldier);
+                }
             }
 
             return soldiers;
         }
 
         return {
-            loadLevel: function (levelName)
+            loadLevel: function (levelName, units)
             {
                 Scheduler.clear();
                 Renderer.initialize();
@@ -59,8 +60,10 @@ define([
                     }
 
                     this.players = [
-                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions)),
-                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions))
+                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions, units)),
+                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions, {
+                            archer: 1, rogue: 1, shield: 1, warrior: 1
+                        }))
                     ];
 
                     for (i = 0; i < this.players.length; i++)

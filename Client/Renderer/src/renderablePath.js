@@ -5,7 +5,7 @@ define(['renderer/src/effects/blinkEffect'], function (BlinkEffect)
     function RenderablePath(id, nodes, isSelected)
     {
         this.id = id;
-        this.nodes = nodes;
+        this.nodes = nodes.slice();
 
         // Sort the nodes for opacity
         for (var i = 0; i < this.nodes.length; i++)

@@ -155,11 +155,14 @@ define([
                         break;
 
                     if (!obj1.isDead){
-                        if (obj1.getTileX() > obj2.getTileX())
+                        var obj1Position = obj1.getTileRight() + obj1.getTileBottom();
+                        var obj2Position = obj2.getTileRight() + obj2.getTileBottom();
+
+                        if (obj1Position > obj2Position)
                             break;
 
-                        if (obj1.getTileY() > obj2.getTileY())
-                            break;
+                       //if (obj1.getTileY() > obj2.getTileY())
+                       //    break;
                     }
 
                     items[j + 1] = items[j];

@@ -4,11 +4,14 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'
 
     function BattleConfiguration()
     {
-        this.units = {shield: 0, warrior: 0, archer: 0, rogue: 0, count: 0};
         this.levels = {
             level1: {minUnits: 4, maxUnits: 4},
-            level2: {minUnits: 4, maxUnits: 4}
+            level2: {minUnits: 4, maxUnits: 4},
+            level3: {minUnits: 4, maxUnits: 4}
         };
+
+        var battleConfig = window.localStorage.getItem('battleConfig');
+        this.config = battleConfig ? JSON.parse(battleConfig) : {};
     }
 
     BattleConfiguration.prototype.hide = function ()
@@ -58,40 +61,75 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'
         if (e.target.classList.contains('disabled'))
             return;
 
-        var unitCount = this.units[this.selectedUnit.type] + amount;
-        this.units[this.selectedUnit.type] = unitCount;
-        this.units.count += amount;
+        var levelConfig = this.config[this.levelName];
+        var unitTypeCount = levelConfig.units[this.selectedUnit.type] + amount;
+        levelConfig.units[this.selectedUnit.type] = unitTypeCount;
+        levelConfig.unitCount += amount;
 
-        if (this.units.count >= this.level.maxUnits)
+        if (levelConfig.unitCount >= this.level.maxUnits)
             this.addButton.classList.add('disabled');
         else
             this.addButton.classList.remove('disabled');
 
-        if (unitCount === 0)
+        if (unitTypeCount === 0)
             this.removeButton.classList.add('disabled');
         else
             this.removeButton.classList.remove('disabled');
 
-        this.confirmButton.disabled = (this.units.count < this.level.minUnits);
-        this.selectedUnit.tab.querySelector('.unit-count').textContent = unitCount || '';
+        this.confirmButton.disabled = (levelConfig.unitCount < this.level.minUnits);
+        this.selectedUnit.tab.querySelector('.unit-count').textContent = unitTypeCount || '';
     };
 
     BattleConfiguration.prototype.onCancel = function ()
     {
+        window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('cancel');
     };
 
     BattleConfiguration.prototype.onConfirm = function ()
     {
-        this.trigger('confirm');
+        window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
+        this.trigger('confirm', this.levelName, this.config[this.levelName].units);
     };
 
     BattleConfiguration.prototype.onLevelChanged = function ()
     {
-        var levelName = this.levelSelect.value;
-        this.level = this.levels[levelName];
+        this.levelName = this.levelSelect.value;
+        this.level = this.levels[this.levelName];
 
+        if (!this.config[this.levelName])
+        {
+            this.config[this.levelName] = {
+                units: {shield: 0, warrior: 0, archer: 0, rogue: 0},
+                unitCount: 0
+            };
+        }
+
+        this.unitSlider.min = this.level.minUnits;
+        this.unitSlider.max = this.level.maxUnits;
+        this.unitSlider.disabled = (this.level.minUnits === this.level.maxUnits);
         this.onUnitCountChanged();
+
+        var levelConfig = this.config[this.levelName];
+        for (var unitName in levelConfig.units)
+        {
+            var unitCountElement = this.element.querySelector('.tab[data-unit="' + unitName + '"] .unit-count');
+            unitCountElement.textContent = levelConfig.units[unitName] || '';
+        }
+
+        this.confirmButton.disabled = (levelConfig.unitCount < this.level.minUnits);
+        if (levelConfig.unitCount >= this.level.maxUnits)
+            this.addButton.classList.add('disabled');
+        else
+            this.addButton.classList.remove('disabled');
+
+        if (this.selectedUnit)
+        {
+            if (levelConfig[this.selectedUnit.type] === 0)
+                this.removeButton.classList.add('disabled');
+            else
+                this.removeButton.classList.remove('disabled');
+        }
     };
 
     BattleConfiguration.prototype.onTabClick = function (e)
@@ -112,10 +150,6 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'
 
     BattleConfiguration.prototype.onUnitCountChanged = function ()
     {
-        this.unitSlider.min = this.level.minUnits;
-        this.unitSlider.max = this.level.maxUnits;
-        this.unitSlider.disabled = (this.level.minUnits === this.level.maxUnits);
-
         this.unitSlider.nextSibling.textContent = this.unitSlider.value;
     };
 
@@ -149,7 +183,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'
         contentElement.classList.add('selected');
         this.selectedUnit = {tab: tabElement, content: contentElement, type: unitType};
 
-        if (this.units[unitType] === 0)
+        if (this.config[this.levelName].units[unitType] === 0)
             this.removeButton.classList.add('disabled');
         else
             this.removeButton.classList.remove('disabled');

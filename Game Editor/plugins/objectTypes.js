@@ -2,8 +2,15 @@ define(['Editor'], function (Editor)
 {
     'use strict';
 
-    var objectSpriteSheet = new Editor.SpriteSheet({tileWidth: 128, tileHeight: 128});
-    objectSpriteSheet.setImage(Editor.ImageCache.loadImage('objects', 'resources/object.png'));
+    var spriteSheets = {
+        small: new Editor.SpriteSheet({tileWidth: 70, tileHeight: 70}),
+        medium: new Editor.SpriteSheet({tileWidth: 96, tileHeight: 96}),
+        large: new Editor.SpriteSheet({tileWidth: 128, tileHeight: 128})
+    };
+
+    spriteSheets.small.setImage(Editor.ImageCache.loadImage('smallObjects', 'resources/objects-small.png'));
+    spriteSheets.medium.setImage(Editor.ImageCache.loadImage('mediumObjects', 'resources/objects-medium.png'));
+    spriteSheets.large.setImage(Editor.ImageCache.loadImage('largeObjects', 'resources/objects-large.png'));
 
 
     function DefaultObject() { }
@@ -16,10 +23,11 @@ define(['Editor'], function (Editor)
 
     DefaultObject.prototype.draw = function (viewport)
     {
-        if (objectSpriteSheet.image.isLoaded && this.style != null)
+        var spriteSheet = spriteSheets[this.size];
+        if (spriteSheet && spriteSheet.image.isLoaded && this.style != null)
         {
-            objectSpriteSheet.setCurrentTile(this.style);
-            viewport.renderer.drawSpriteSheet(viewport, objectSpriteSheet, this.rect);
+            spriteSheet.setCurrentTile(this.style);
+            viewport.renderer.drawSpriteSheet(viewport, spriteSheet, this.rect);
         }
         else
         {
@@ -40,6 +48,13 @@ define(['Editor'], function (Editor)
         {
             this.rect.setPosition(this.position.x * 96, this.position.y * 96);
         }
+        else if (property.key === ' size')
+        {
+            if (propertyValue === 'large')
+                this.rect.setSize(192, 192);
+            else
+                this.rect.setSize(96, 96);
+        }
     };
 
     DefaultObject.prototype.setPosition = function (x, y)
@@ -53,7 +68,9 @@ define(['Editor'], function (Editor)
     DefaultObject.prototype.deserialize = function (data)
     {
         this.position = {x: data.x, y: data.y};
-        this.rect = new Rectangle(this.position.x * 96, this.position.y * 96, 96, 96);
+
+        var size = (data.size === 'large') ? 192 : 96;
+        this.rect = new Rectangle(this.position.x * 96, this.position.y * 96, size, size);
 
         delete data.x;
         delete data.y;

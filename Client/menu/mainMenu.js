@@ -29,41 +29,39 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.hide = function ()
         {
-            document.body.innerHTML = "";
+            document.body.innerHTML = '';
         };
 
         MainMenu.prototype.onMenuItemClicked = function (e)
         {
             switch (e.target.id)
             {
-            case 'singlePlayer':
-                this.mainMenuChains.className = 'raiseChains';
-                BrowserNavigation.addState('battleConfiguration');
-                this.loadBattleConfiguration();
-                break;
-            case 'multiPlayer':
-                this.mainMenuChains.className = 'raiseChains';
-                setTimeout(function ()
-                {
-                    this.loginPopup.show(this.onLoginSucceeded, this);
-                }.bind(this), 0);
-                break;
-            case 'options':
-
-                break;
-            case 'exit':
-
-                break;
+                case 'singlePlayer':
+                    this.mainMenuChains.className = 'raiseChains';
+                    BrowserNavigation.addState('battleConfiguration');
+                    this.loadBattleConfiguration();
+                    break;
+                case 'multiPlayer':
+                    this.mainMenuChains.className = 'raiseChains';
+                    setTimeout(function ()
+                    {
+                        this.loginPopup.show(this.onLoginSucceeded, this);
+                    }.bind(this), 0);
+                    break;
+                case 'options':
+                    break;
+                case 'exit':
+                    break;
             }
         };
 
-        MainMenu.prototype.loadSinglePlayer = function ()
+        MainMenu.prototype.loadSinglePlayer = function (levelName, units)
         {
             document.body.className = 'game';
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
-            PlotManager.loadLevel('level1');
+            PlotManager.loadLevel(levelName, units);
         };
 
         MainMenu.prototype.loadBattleConfiguration = function ()
@@ -73,10 +71,10 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
             var battleConfig = new BattleConfiguration().show();
             battleConfig.on('cancel', this, this.show);
-            battleConfig.on('confirm', this, function ()
+            battleConfig.on('confirm', this, function (levelName, units)
             {
                 BrowserNavigation.addState('singlePlayer');
-                this.loadSinglePlayer();
+                this.loadSinglePlayer(levelName, units);
             });
         };
 

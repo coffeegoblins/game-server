@@ -61,14 +61,14 @@ define(['core/src/imageCache', 'core/src/spriteSheet', 'text!../content/animatio
         return this.spriteSheets[this.unit.state].image.globalIndex;
     };
 
-    RenderableSoldier.prototype.getTileX = function ()
+    RenderableSoldier.prototype.getTileRight = function ()
     {
-        return this.unit.tileX;
+        return this.unit.tileX + 1;
     };
 
-    RenderableSoldier.prototype.getTileY = function ()
+    RenderableSoldier.prototype.getTileBottom = function ()
     {
-        return this.unit.tileY;
+        return this.unit.tileY + 1;
     };
 
     RenderableSoldier.prototype.isPointInside = function (camera, x, y)
@@ -108,7 +108,7 @@ define(['core/src/imageCache', 'core/src/spriteSheet', 'text!../content/animatio
         var width = spriteSheet.tileWidth * camera.scale;
         var height = spriteSheet.tileHeight * camera.scale;
         var left = Math.floor(position.x - width / 2);
-        var top  = Math.floor(position.y - height * 0.4);
+        var top = Math.floor(position.y - height * 0.4);
 
         if (!camera.isInView(left, top, width, height))
             return;

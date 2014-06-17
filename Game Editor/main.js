@@ -1,5 +1,4 @@
-
-define('engine/game/viewport',[],function ()
+define('engine/game/viewport', [], function ()
 {
     'use strict';
 
@@ -189,7 +188,7 @@ define('engine/game/viewport',[],function ()
 
     return Viewport;
 });
-define('engine/core/scheduler',[],function ()
+define('engine/core/scheduler', [], function ()
 {
     'use strict';
 
@@ -317,7 +316,7 @@ define('engine/core/scheduler',[],function ()
 
     return Scheduler;
 });
-define('engine/core/domShim',[],function ()
+define('engine/core/domShim', [], function ()
 {
     'use strict';
 
@@ -545,7 +544,7 @@ define('engine/core/domShim',[],function ()
         this.dispatchEvent(eventObj);
     };
 });
-define('engine/core/linkedList',[],function ()
+define('engine/core/linkedList', [], function ()
 {
     'use strict';
     function LinkedList()
@@ -675,7 +674,7 @@ define('engine/core/linkedList',[],function ()
 
     return LinkedList;
 });
-define('engine/core/rectangle',[],function ()
+define('engine/core/rectangle', [], function ()
 {
     'use strict';
 
@@ -814,7 +813,7 @@ define('engine/core/rectangle',[],function ()
 
     return Rectangle;
 });
-define('engine/core/utility',[],function ()
+define('engine/core/utility', [], function ()
 {
     'use strict';
 
@@ -1001,7 +1000,7 @@ define('engine/core/utility',[],function ()
         }
     };
 });
-define('engine/core/vector2',[],function ()
+define('engine/core/vector2', [], function ()
 {
     'use strict';
     function Vector2(x, y)
@@ -1119,7 +1118,7 @@ define('engine/core/vector2',[],function ()
 
     return Vector2;
 });
-define('engine/game/game',['./viewport', '../core/scheduler', '../core/domShim', '../core/linkedList', '../core/rectangle', '../core/utility', '../core/vector2'],
+define('engine/game/game', ['./viewport', '../core/scheduler', '../core/domShim', '../core/linkedList', '../core/rectangle', '../core/utility', '../core/vector2'],
     function (Viewport, Scheduler, DomShim, LinkedList, Rectangle, Utility, Vector2)
     {
         'use strict';
@@ -1161,7 +1160,7 @@ define('engine/game/game',['./viewport', '../core/scheduler', '../core/domShim',
             }
         };
     });
-define('engine/rendering/render2dIsometric',[],function ()
+define('engine/rendering/render2dIsometric', [], function ()
 {
     'use strict';
     return {
@@ -1197,17 +1196,19 @@ define('engine/rendering/render2dIsometric',[],function ()
             }
         },
 
-        drawSpriteSheet: function (viewport, spriteSheet, rect)
+        drawSpriteSheet: function (viewport, spriteSheet, rect, tileSize)
         {
             var tileRect = spriteSheet.getCurrentTileBounds();
             if (tileRect)
             {
-                var center = this.toScreen(viewport, rect.center.x, rect.center.y);
+                var position = this.toScreen(viewport, rect.left, rect.top);
+
+                var tileHeight = (rect.height * viewport.scale) / 2;
                 var imageWidth = spriteSheet.tileWidth * viewport.scale;
                 var imageHeight = spriteSheet.tileHeight * viewport.scale;
 
-                var left = center.x - imageWidth / 2;
-                var top = center.y - imageHeight / 2;
+                var left = position.x - (imageWidth / 2);
+                var top = position.y + tileHeight - imageHeight;
 
                 viewport.context.drawImage(spriteSheet.image.data,
                     tileRect.x, tileRect.y, tileRect.width, tileRect.height,
@@ -1325,7 +1326,7 @@ define('engine/rendering/render2dIsometric',[],function ()
         }
     };
 });
-define('engine/rendering/render2d',[],function ()
+define('engine/rendering/render2d', [], function ()
 {
     'use strict';
     return {
@@ -1442,7 +1443,7 @@ define('engine/rendering/render2d',[],function ()
         }
     };
 });
-define('engine/data/fileHandler',[],function ()
+define('engine/data/fileHandler', [], function ()
 {
     'use strict';
     var URL = window.URL || window.webkitURL;
@@ -1527,7 +1528,7 @@ define('engine/data/fileHandler',[],function ()
         }
     };
 });
-define('engine/media/imageCache',[],function ()
+define('engine/media/imageCache', [], function ()
 {
     'use strict';
 
@@ -1611,7 +1612,7 @@ define('engine/media/imageCache',[],function ()
         }
     };
 });
-define('engine/core/events',[],function ()
+define('engine/core/events', [], function ()
 {
     'use strict';
 
@@ -1698,7 +1699,7 @@ define('engine/core/events',[],function ()
         }
     };
 });
-define('engine/core/inputHandler',['./events'], function (Events)
+define('engine/core/inputHandler', ['./events'], function (Events)
 {
     'use strict';
 
@@ -2261,7 +2262,7 @@ define('engine/core/inputHandler',['./events'], function (Events)
     Events.register(InputHandler);
     return InputHandler;
 });
-define('editor/controls/popup',['engine/core/events'], function (Events)
+define('editor/controls/popup', ['engine/core/events'], function (Events)
 {
     'use strict';
     var activePopup;
@@ -2348,7 +2349,7 @@ define('editor/controls/popup',['engine/core/events'], function (Events)
     Events.register(Popup.prototype);
     return Popup;
 });
-define('editor/controls/propertiesSection',['engine/core/events'], function (Events)
+define('editor/controls/propertiesSection', ['engine/core/events'], function (Events)
 {
     'use strict';
 
@@ -2627,7 +2628,7 @@ define('editor/controls/propertiesSection',['engine/core/events'], function (Eve
     Events.register(PropertiesSection.prototype);
     return PropertiesSection;
 });
-define('engine/media/spriteSheet',['../core/events'], function (Events)
+define('engine/media/spriteSheet', ['../core/events'], function (Events)
 {
     'use strict';
 
@@ -2788,7 +2789,7 @@ define('engine/media/spriteSheet',['../core/events'], function (Events)
     Events.register(SpriteSheet.prototype);
     return SpriteSheet;
 });
-define('engine/spatial/tileMap',[],function ()
+define('engine/spatial/tileMap', [], function ()
 {
     'use strict';
     function TileMap(width, height, tileSize, ArrayType)
@@ -2848,7 +2849,7 @@ define('engine/spatial/tileMap',[],function ()
 
     return TileMap;
 });
-define('engine/data/webStorage',['../core/events'], function (Events)
+define('engine/data/webStorage', ['../core/events'], function (Events)
 {
     'use strict';
 
@@ -2934,10 +2935,11 @@ define('engine/data/webStorage',['../core/events'], function (Events)
  */
 /*jslint regexp: true */
 /*global require, XMLHttpRequest, ActiveXObject,
-  define, window, process, Packages,
-  java, location, Components, FileUtils */
+ define, window, process, Packages,
+ java, location, Components, FileUtils */
 
-define('text',['module'], function (module) {
+define('text', ['module'], function (module)
+{
     'use strict';
 
     var text, fs, Cc, Ci, xpcIsWindows,
@@ -2954,23 +2956,29 @@ define('text',['module'], function (module) {
     text = {
         version: '2.0.9',
 
-        strip: function (content) {
+        strip: function (content)
+        {
             //Strips <?xml ...?> declarations so that external SVG and XML
             //documents can be added to a document without worry. Also, if the string
             //is an HTML document, only the part inside the body tag is returned.
-            if (content) {
+            if (content)
+            {
                 content = content.replace(xmlRegExp, "");
                 var matches = content.match(bodyRegExp);
-                if (matches) {
+                if (matches)
+                {
                     content = matches[1];
                 }
-            } else {
+            }
+            else
+            {
                 content = "";
             }
             return content;
         },
 
-        jsEscape: function (content) {
+        jsEscape: function (content)
+        {
             return content.replace(/(['\\])/g, '\\$1')
                 .replace(/[\f]/g, "\\f")
                 .replace(/[\b]/g, "\\b")
@@ -2981,19 +2989,29 @@ define('text',['module'], function (module) {
                 .replace(/[\u2029]/g, "\\u2029");
         },
 
-        createXhr: masterConfig.createXhr || function () {
+        createXhr: masterConfig.createXhr || function ()
+        {
             //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
             var xhr, i, progId;
-            if (typeof XMLHttpRequest !== "undefined") {
+            if (typeof XMLHttpRequest !== "undefined")
+            {
                 return new XMLHttpRequest();
-            } else if (typeof ActiveXObject !== "undefined") {
-                for (i = 0; i < 3; i += 1) {
+            }
+            else if (typeof ActiveXObject !== "undefined")
+            {
+                for (i = 0; i < 3; i += 1)
+                {
                     progId = progIds[i];
-                    try {
+                    try
+                    {
                         xhr = new ActiveXObject(progId);
-                    } catch (e) {}
+                    }
+                    catch (e)
+                    {
+                    }
 
-                    if (xhr) {
+                    if (xhr)
+                    {
                         progIds = [progId];  // so faster next time
                         break;
                     }
@@ -3011,29 +3029,37 @@ define('text',['module'], function (module) {
          * @returns {Object} with properties "moduleName", "ext" and "strip"
          * where strip is a boolean.
          */
-        parseName: function (name) {
+        parseName: function (name)
+        {
             var modName, ext, temp,
                 strip = false,
                 index = name.indexOf("."),
                 isRelative = name.indexOf('./') === 0 ||
                              name.indexOf('../') === 0;
 
-            if (index !== -1 && (!isRelative || index > 1)) {
+            if (index !== -1 && (!isRelative || index > 1))
+            {
                 modName = name.substring(0, index);
                 ext = name.substring(index + 1, name.length);
-            } else {
+            }
+            else
+            {
                 modName = name;
             }
 
             temp = ext || modName;
             index = temp.indexOf("!");
-            if (index !== -1) {
+            if (index !== -1)
+            {
                 //Pull off the strip arg.
                 strip = temp.substring(index + 1) === "strip";
                 temp = temp.substring(0, index);
-                if (ext) {
+                if (ext)
+                {
                     ext = temp;
-                } else {
+                }
+                else
+                {
                     modName = temp;
                 }
             }
@@ -3055,10 +3081,12 @@ define('text',['module'], function (module) {
          * @param {String} url
          * @returns Boolean
          */
-        useXhr: function (url, protocol, hostname, port) {
+        useXhr: function (url, protocol, hostname, port)
+        {
             var uProtocol, uHostName, uPort,
                 match = text.xdRegExp.exec(url);
-            if (!match) {
+            if (!match)
+            {
                 return true;
             }
             uProtocol = match[2];
@@ -3073,15 +3101,18 @@ define('text',['module'], function (module) {
                    ((!uPort && !uHostName) || uPort === port);
         },
 
-        finishLoad: function (name, strip, content, onLoad) {
+        finishLoad: function (name, strip, content, onLoad)
+        {
             content = strip ? text.strip(content) : content;
-            if (masterConfig.isBuild) {
+            if (masterConfig.isBuild)
+            {
                 buildMap[name] = content;
             }
             onLoad(content);
         },
 
-        load: function (name, req, onLoad, config) {
+        load: function (name, req, onLoad, config)
+        {
             //Name has format: some.module.filext!strip
             //The strip part is optional.
             //if strip is present, then that means only get the string contents
@@ -3091,7 +3122,8 @@ define('text',['module'], function (module) {
 
             // Do not bother with the work if a build and text will
             // not be inlined.
-            if (config.isBuild && !config.inlineText) {
+            if (config.isBuild && !config.inlineText)
+            {
                 onLoad();
                 return;
             }
@@ -3100,61 +3132,74 @@ define('text',['module'], function (module) {
 
             var parsed = text.parseName(name),
                 nonStripName = parsed.moduleName +
-                    (parsed.ext ? '.' + parsed.ext : ''),
+                               (parsed.ext ? '.' + parsed.ext : ''),
                 url = req.toUrl(nonStripName),
                 useXhr = (masterConfig.useXhr) ||
                          text.useXhr;
 
             //Load the text. Use XHR if possible and in a browser.
-            if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
-                text.get(url, function (content) {
+            if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort))
+            {
+                text.get(url, function (content)
+                {
                     text.finishLoad(name, parsed.strip, content, onLoad);
-                }, function (err) {
-                    if (onLoad.error) {
+                }, function (err)
+                {
+                    if (onLoad.error)
+                    {
                         onLoad.error(err);
                     }
                 });
-            } else {
+            }
+            else
+            {
                 //Need to fetch the resource across domains. Assume
                 //the resource has been optimized into a JS module. Fetch
                 //by the module name + extension, but do not include the
                 //!strip part to avoid file system issues.
-                req([nonStripName], function (content) {
+                req([nonStripName], function (content)
+                {
                     text.finishLoad(parsed.moduleName + '.' + parsed.ext,
-                                    parsed.strip, content, onLoad);
+                        parsed.strip, content, onLoad);
                 });
             }
         },
 
-        write: function (pluginName, moduleName, write, config) {
-            if (buildMap.hasOwnProperty(moduleName)) {
+        write: function (pluginName, moduleName, write, config)
+        {
+            if (buildMap.hasOwnProperty(moduleName))
+            {
                 var content = text.jsEscape(buildMap[moduleName]);
                 write.asModule(pluginName + "!" + moduleName,
-                               "define(function () { return '" +
-                                   content +
-                               "';});\n");
+                        "define(function () { return '" +
+                        content +
+                        "';});\n");
             }
         },
 
-        writeFile: function (pluginName, moduleName, req, write, config) {
+        writeFile: function (pluginName, moduleName, req, write, config)
+        {
             var parsed = text.parseName(moduleName),
                 extPart = parsed.ext ? '.' + parsed.ext : '',
                 nonStripName = parsed.moduleName + extPart,
-                //Use a '.js' file name so that it indicates it is a
-                //script that can be loaded across domains.
+            //Use a '.js' file name so that it indicates it is a
+            //script that can be loaded across domains.
                 fileName = req.toUrl(parsed.moduleName + extPart) + '.js';
 
             //Leverage own load() method to load plugin value, but only
             //write out values that do not have the strip argument,
             //to avoid any potential issues with ! in file names.
-            text.load(nonStripName, req, function (value) {
+            text.load(nonStripName, req, function (value)
+            {
                 //Use own write() method to construct full module value.
                 //But need to create shell that translates writeFile's
                 //write() to the right interface.
-                var textWrite = function (contents) {
+                var textWrite = function (contents)
+                {
                     return write(fileName, contents);
                 };
-                textWrite.asModule = function (moduleName, contents) {
+                textWrite.asModule = function (moduleName, contents)
+                {
                     return write.asModule(moduleName, fileName, contents);
                 };
 
@@ -3164,78 +3209,99 @@ define('text',['module'], function (module) {
     };
 
     if (masterConfig.env === 'node' || (!masterConfig.env &&
-            typeof process !== "undefined" &&
-            process.versions &&
-            !!process.versions.node &&
-            !process.versions['node-webkit'])) {
+                                        typeof process !== "undefined" &&
+                                        process.versions && !!process.versions.node && !process.versions['node-webkit']))
+    {
         //Using special require.nodeRequire, something added by r.js.
         fs = require.nodeRequire('fs');
 
-        text.get = function (url, callback, errback) {
-            try {
+        text.get = function (url, callback, errback)
+        {
+            try
+            {
                 var file = fs.readFileSync(url, 'utf8');
                 //Remove BOM (Byte Mark Order) from utf8 files if it is there.
-                if (file.indexOf('\uFEFF') === 0) {
+                if (file.indexOf('\uFEFF') === 0)
+                {
                     file = file.substring(1);
                 }
                 callback(file);
-            } catch (e) {
+            }
+            catch (e)
+            {
                 errback(e);
             }
         };
-    } else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
-            text.createXhr())) {
-        text.get = function (url, callback, errback, headers) {
+    }
+    else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
+                                            text.createXhr()))
+    {
+        text.get = function (url, callback, errback, headers)
+        {
             var xhr = text.createXhr(), header;
             xhr.open('GET', url, true);
 
             //Allow plugins direct access to xhr headers
-            if (headers) {
-                for (header in headers) {
-                    if (headers.hasOwnProperty(header)) {
+            if (headers)
+            {
+                for (header in headers)
+                {
+                    if (headers.hasOwnProperty(header))
+                    {
                         xhr.setRequestHeader(header.toLowerCase(), headers[header]);
                     }
                 }
             }
 
             //Allow overrides specified in config
-            if (masterConfig.onXhr) {
+            if (masterConfig.onXhr)
+            {
                 masterConfig.onXhr(xhr, url);
             }
 
-            xhr.onreadystatechange = function (evt) {
+            xhr.onreadystatechange = function (evt)
+            {
                 var status, err;
                 //Do not explicitly handle errors, those should be
                 //visible via console output in the browser.
-                if (xhr.readyState === 4) {
+                if (xhr.readyState === 4)
+                {
                     status = xhr.status;
-                    if (status > 399 && status < 600) {
+                    if (status > 399 && status < 600)
+                    {
                         //An http 4xx or 5xx error. Signal an error.
                         err = new Error(url + ' HTTP status: ' + status);
                         err.xhr = xhr;
                         errback(err);
-                    } else {
+                    }
+                    else
+                    {
                         callback(xhr.responseText);
                     }
 
-                    if (masterConfig.onXhrComplete) {
+                    if (masterConfig.onXhrComplete)
+                    {
                         masterConfig.onXhrComplete(xhr, url);
                     }
                 }
             };
             xhr.send(null);
         };
-    } else if (masterConfig.env === 'rhino' || (!masterConfig.env &&
-            typeof Packages !== 'undefined' && typeof java !== 'undefined')) {
+    }
+    else if (masterConfig.env === 'rhino' || (!masterConfig.env &&
+                                              typeof Packages !== 'undefined' && typeof java !== 'undefined'))
+    {
         //Why Java, why is this so awkward?
-        text.get = function (url, callback) {
+        text.get = function (url, callback)
+        {
             var stringBuffer, line,
                 encoding = "utf-8",
                 file = new java.io.File(url),
                 lineSeparator = java.lang.System.getProperty("line.separator"),
                 input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
                 content = '';
-            try {
+            try
+            {
                 stringBuffer = new java.lang.StringBuffer();
                 line = input.readLine();
 
@@ -3244,63 +3310,75 @@ define('text',['module'], function (module) {
 
                 // Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
                 // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
-                if (line && line.length() && line.charAt(0) === 0xfeff) {
+                if (line && line.length() && line.charAt(0) === 0xfeff)
+                {
                     // Eat the BOM, since we've already found the encoding on this file,
                     // and we plan to concatenating this buffer with others; the BOM should
                     // only appear at the top of a file.
                     line = line.substring(1);
                 }
 
-                if (line !== null) {
+                if (line !== null)
+                {
                     stringBuffer.append(line);
                 }
 
-                while ((line = input.readLine()) !== null) {
+                while ((line = input.readLine()) !== null)
+                {
                     stringBuffer.append(lineSeparator);
                     stringBuffer.append(line);
                 }
                 //Make sure we return a JavaScript string and not a Java string.
                 content = String(stringBuffer.toString()); //String
-            } finally {
+            }
+            finally
+            {
                 input.close();
             }
             callback(content);
         };
-    } else if (masterConfig.env === 'xpconnect' || (!masterConfig.env &&
-            typeof Components !== 'undefined' && Components.classes &&
-            Components.interfaces)) {
+    }
+    else if (masterConfig.env === 'xpconnect' || (!masterConfig.env &&
+                                                  typeof Components !== 'undefined' && Components.classes &&
+                                                  Components.interfaces))
+    {
         //Avert your gaze!
         Cc = Components.classes,
-        Ci = Components.interfaces;
+            Ci = Components.interfaces;
         Components.utils['import']('resource://gre/modules/FileUtils.jsm');
         xpcIsWindows = ('@mozilla.org/windows-registry-key;1' in Cc);
 
-        text.get = function (url, callback) {
+        text.get = function (url, callback)
+        {
             var inStream, convertStream, fileObj,
                 readData = {};
 
-            if (xpcIsWindows) {
+            if (xpcIsWindows)
+            {
                 url = url.replace(/\//g, '\\');
             }
 
             fileObj = new FileUtils.File(url);
 
             //XPCOM, you so crazy
-            try {
+            try
+            {
                 inStream = Cc['@mozilla.org/network/file-input-stream;1']
-                           .createInstance(Ci.nsIFileInputStream);
+                    .createInstance(Ci.nsIFileInputStream);
                 inStream.init(fileObj, 1, 0, false);
 
                 convertStream = Cc['@mozilla.org/intl/converter-input-stream;1']
-                                .createInstance(Ci.nsIConverterInputStream);
+                    .createInstance(Ci.nsIConverterInputStream);
                 convertStream.init(inStream, "utf-8", inStream.available(),
-                Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+                    Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 
                 convertStream.readString(inStream.available(), readData);
                 convertStream.close();
                 inStream.close();
                 callback(readData.value);
-            } catch (e) {
+            }
+            catch (e)
+            {
                 throw new Error((fileObj && fileObj.path || '') + ': ' + e);
             }
         };
@@ -3308,11 +3386,11 @@ define('text',['module'], function (module) {
     return text;
 });
 
-define('text!editor/templates/mainPanel.html',[],function () { return '<div class="main-panel">\r\n    <div data-name="level-panel">\r\n        <div class="header">\r\n            <label>Level</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon add-icon" title="Add property"></div>\r\n            </div>\r\n        </div>\r\n        <div class="contents">\r\n            <input data-name="saveFileName" type="text" placeholder="File name"/>\r\n            <button data-name="new">New</button>\r\n            <button data-name="save">Save</button>\r\n            <input type="file" data-name="load"/>\r\n        </div>\r\n    </div>\r\n    <div data-name="grid-panel">\r\n        <div class="header">\r\n            <label>Grid</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon visibility-icon" title="Toggle grid visibility"></div>\r\n            </div>\r\n        </div>\r\n        <div class="contents"></div>\r\n    </div>\r\n    <div data-name="layer-panel">\r\n        <div class="header">\r\n            <label>Layers</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon up-icon" title="Move layer up"></div>\r\n                <div class="icon down-icon" title="Move layer down"></div>\r\n                <div class="icon add-icon" title="Add layer"></div>\r\n            </div>\r\n        </div>\r\n        <div class="layer-item-panel"></div>\r\n    </div>\r\n    <div class="properties-panel"></div>\r\n</div>';});
+define('text!editor/templates/mainPanel.html', [], function () { return '<div class="main-panel">\r\n    <div data-name="level-panel">\r\n        <div class="header">\r\n            <label>Level</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon add-icon" title="Add property"></div>\r\n            </div>\r\n        </div>\r\n        <div class="contents">\r\n            <input data-name="saveFileName" type="text" placeholder="File name"/>\r\n            <button data-name="new">New</button>\r\n            <button data-name="save">Save</button>\r\n            <input type="file" data-name="load"/>\r\n        </div>\r\n    </div>\r\n    <div data-name="grid-panel">\r\n        <div class="header">\r\n            <label>Grid</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon visibility-icon" title="Toggle grid visibility"></div>\r\n            </div>\r\n        </div>\r\n        <div class="contents"></div>\r\n    </div>\r\n    <div data-name="layer-panel">\r\n        <div class="header">\r\n            <label>Layers</label>\r\n            <div class="header-button-panel">\r\n                <div class="icon up-icon" title="Move layer up"></div>\r\n                <div class="icon down-icon" title="Move layer down"></div>\r\n                <div class="icon add-icon" title="Add layer"></div>\r\n            </div>\r\n        </div>\r\n        <div class="layer-item-panel"></div>\r\n    </div>\r\n    <div class="properties-panel"></div>\r\n</div>';});
 
-define('text!editor/templates/layer.html',[],function () { return '<div class="layer">\r\n    <div class="icon visibility-icon visible" title="Toggle layer visibility"></div>\r\n    <div class="layer-title-container">\r\n        <input type="text"/>\r\n    </div>\r\n    <div class="icon remove-icon" title="Remove layer"></div>\r\n</div>';});
+define('text!editor/templates/layer.html', [], function () { return '<div class="layer">\r\n    <div class="icon visibility-icon visible" title="Toggle layer visibility"></div>\r\n    <div class="layer-title-container">\r\n        <input type="text"/>\r\n    </div>\r\n    <div class="icon remove-icon" title="Remove layer"></div>\r\n</div>';});
 
-define('editor/core/mainPanel',['Editor', 'text!../templates/mainPanel.html', 'text!../templates/layer.html'], function (Editor, Template, LayerTemplate)
+define('editor/core/mainPanel', ['Editor', 'text!../templates/mainPanel.html', 'text!../templates/layer.html'], function (Editor, Template, LayerTemplate)
 {
     'use strict';
     function MainPanel()
@@ -3561,7 +3639,8 @@ define('editor/core/mainPanel',['Editor', 'text!../templates/mainPanel.html', 't
         }
     };
 
-    MainPanel.prototype.serializeData = function(){
+    MainPanel.prototype.serializeData = function ()
+    {
         var data = {layers: {}};
         data.fileName = this.element.querySelector('[data-name="saveFileName"]').value || 'level';
 
@@ -3641,7 +3720,7 @@ define('editor/core/mainPanel',['Editor', 'text!../templates/mainPanel.html', 't
 
     return MainPanel;
 });
-define('editor/core/editorInterface',['Editor', './mainPanel'], function (Editor, MainPanel)
+define('editor/core/editorInterface', ['Editor', './mainPanel'], function (Editor, MainPanel)
 {
     'use strict';
     function EditorInterface()
@@ -3774,9 +3853,9 @@ define('editor/core/editorInterface',['Editor', './mainPanel'], function (Editor
 
     return EditorInterface;
 });
-define('text!editor/templates/objectLayerPanel.html',[],function () { return '<div class="header">\r\n    <label>Object Layer Properties</label>\r\n    <div class="header-button-panel">\r\n        <div class="icon add-icon" title="Add property"></div>\r\n    </div>\r\n</div>\r\n<div class="contents tile-layer-panel"></div>';});
+define('text!editor/templates/objectLayerPanel.html', [], function () { return '<div class="header">\r\n    <label>Object Layer Properties</label>\r\n    <div class="header-button-panel">\r\n        <div class="icon add-icon" title="Add property"></div>\r\n    </div>\r\n</div>\r\n<div class="contents tile-layer-panel"></div>';});
 
-define('editor/layers/objectLayer',['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, Template)
+define('editor/layers/objectLayer', ['Editor', 'text!../templates/objectLayerPanel.html'], function (Editor, Template)
 {
     'use strict';
     function ObjectLayer()
@@ -3993,7 +4072,7 @@ define('editor/layers/objectLayer',['Editor', 'text!../templates/objectLayerPane
 
     return ObjectLayer;
 });
-define('editor/controls/tileSelectionPopup',['engine/core/events'], function (Events)
+define('editor/controls/tileSelectionPopup', ['engine/core/events'], function (Events)
 {
     'use strict';
     var activePopup;
@@ -4117,9 +4196,9 @@ define('editor/controls/tileSelectionPopup',['engine/core/events'], function (Ev
     Events.register(TileSelectionPopup.prototype);
     return TileSelectionPopup;
 });
-define('text!editor/templates/tileLayerPanel.html',[],function () { return '<div class="header">\r\n    <label>Tile Layer Properties</label>\r\n    <div class="header-button-panel">\r\n        <div class="icon add-icon" title="Add property"></div>\r\n    </div>\r\n</div>\r\n<div class="contents tile-layer-panel">\r\n    <div class="divider"></div>\r\n    <select data-name="spriteSheetSelect">\r\n        <option></option>\r\n    </select>\r\n    <!--<input type="file" data-name="spriteSheetInput"/>-->\r\n</div>';});
+define('text!editor/templates/tileLayerPanel.html', [], function () { return '<div class="header">\r\n    <label>Tile Layer Properties</label>\r\n    <div class="header-button-panel">\r\n        <div class="icon add-icon" title="Add property"></div>\r\n    </div>\r\n</div>\r\n<div class="contents tile-layer-panel">\r\n    <div class="divider"></div>\r\n    <select data-name="spriteSheetSelect">\r\n        <option></option>\r\n    </select>\r\n    <!--<input type="file" data-name="spriteSheetInput"/>-->\r\n</div>';});
 
-define('editor/layers/tileLayer',['Editor', 'engine/media/spriteSheet', '../controls/tileSelectionPopup', 'text!../templates/tileLayerPanel.html'], function (Editor, SpriteSheet, TileSelectionPopup, Template)
+define('editor/layers/tileLayer', ['Editor', 'engine/media/spriteSheet', '../controls/tileSelectionPopup', 'text!../templates/tileLayerPanel.html'], function (Editor, SpriteSheet, TileSelectionPopup, Template)
 {
     'use strict';
     var State = {
@@ -4368,7 +4447,8 @@ define('editor/layers/tileLayer',['Editor', 'engine/media/spriteSheet', '../cont
         this.spriteSheetName = imageName;
 
         this.spriteSheet.setImage(image);
-        if (image){
+        if (image)
+        {
             this.spriteSheet.tileWidth = image.tileWidth;
             this.spriteSheet.tileHeight = image.tileHeight;
         }
@@ -4467,4 +4547,4 @@ require(['engine/game/game', 'engine/rendering/render2dIsometric', 'engine/rende
             });
         }, Renderer);
     });
-define("editor/main", function(){});
+define("editor/main", function () {});

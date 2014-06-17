@@ -5,14 +5,28 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
     function RenderableObject(object)
     {
         this.object = object;
-        var type = this.object.type || 'object';
 
-        var size;
-        if (type === 'object')
+        var size, path;
+        if (this.object.size === 'small')
+        {
+            this.verticalOffset = 0.9;
+            size = {tileWidth: 70, tileHeight: 70};
+            path = 'renderer/content/images/objects-small.png';
+        }
+        else if (this.object.size === 'medium')
+        {
+            this.verticalOffset = 1;
+            size = {tileWidth: 96, tileHeight: 96};
+            path = 'renderer/content/images/objects-medium.png';
+        }
+        else
+        {
+            this.verticalOffset = 0.825;
             size = {tileWidth: 128, tileHeight: 128};
+            path = 'renderer/content/images/objects-large.png';
+        }
 
-        var path = 'renderer/content/images/' + type + '.png';
-        this.spriteSheet = new SpriteSheet(this.object.type, path, size);
+        this.spriteSheet = new SpriteSheet(this.object.size, path, size);
         this.spriteSheet.setCurrentTile(object.style);
     }
 
@@ -21,14 +35,14 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
         return this.spriteSheet.image.globalIndex;
     };
 
-    RenderableObject.prototype.getTileX = function ()
+    RenderableObject.prototype.getTileRight = function ()
     {
-        return this.object.tileX;
+        return this.object.tileX + this.object.sizeX;
     };
 
-    RenderableObject.prototype.getTileY = function ()
+    RenderableObject.prototype.getTileBottom = function ()
     {
-        return this.object.tileY;
+        return this.object.tileY + this.object.sizeY;
     };
 
     RenderableObject.prototype.render = function (context, deltaTime, camera)
@@ -40,11 +54,13 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
         if (tileRect)
         {
             var position = camera.tileToScreen(this.object.tileX, this.object.tileY);
+
+            var tileHeight = this.object.sizeY * camera.tileHeight;
             var imageWidth = this.spriteSheet.tileWidth * camera.scale;
             var imageHeight = this.spriteSheet.tileHeight * camera.scale;
 
-            var left = position.x - camera.viewportRect.x + camera.halfTileWidth - imageWidth / 2;
-            var top = position.y - camera.viewportRect.y - imageHeight / 2;
+            var left = position.x - camera.viewportRect.x + camera.halfTileWidth - (imageWidth / 2);
+            var top = position.y - camera.viewportRect.y + tileHeight * this.verticalOffset - imageHeight;
 
             if (camera.isInView(left, top, imageWidth, imageHeight))
             {
