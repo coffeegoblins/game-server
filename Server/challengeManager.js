@@ -41,7 +41,10 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
                     creationTime: new Date().getTime()
                 }
             }
-        });
+        },
+            function(){
+
+            });
     }.bind(this));
 };
 
@@ -62,7 +65,8 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
 
         for (var i = 0; i < currentUser.notifications.length; ++i)
         {
-            if (currentUser.notifications[i]._id.toString() === challengeID)
+            // Double equals for loose equality (_id is an object)
+            if (currentUser.notifications[i]._id == challengeID)
             {
                 console.log("Equality!");
                 notification = currentUser.notifications[i];
@@ -71,7 +75,6 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
 
         if (!notification)
         {
-
             console.log("Unable to accept the challenge because the challenge notification is not valid.");
             responseCallback(this.events.challengeAccepted.response.error, "Unable to accept the challenge because the challenge notification is not valid.");
             return;
@@ -111,7 +114,7 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
             {
                 "notifications": notification
             }
-        });
+        }, function(){});
     }.bind(this));
 };
 
@@ -130,7 +133,7 @@ ChallengeManager.prototype.declineChallenge = function (responseCallback, curren
                 _id: challengeID
             }
         }
-    });
+    }, function(){});
 };
 
 module.exports = ChallengeManager;
