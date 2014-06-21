@@ -118,12 +118,12 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                     // TODO Verify equality
                     if (currentGame.currentTurnUserID === this.user._id)
                     {
-                        li.innerHTML = currentGame.;
+                        li.innerHTML = currentGame.inactiveTurnUserName;
                         this.waitingOnThem.appendChild(li);
                         return;
                     }
 
-                    li.innerHTML = currentGame.currentTurnUserID;
+                    li.innerHTML = currentGame.currentTurnUserName;
                     this.waitingOnYou.appendChild(li);
                     return;
                 }
