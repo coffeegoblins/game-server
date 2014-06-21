@@ -6,6 +6,28 @@ function GameManager(events)
     this.events = events;
 }
 
+GameManager.prototype.getGames = function(responseCallback, currentUserID)
+{
+    console.log("Getting games for: " + currentUserID);
+
+    var searchCriteria = {
+        users._id: new ObjectID(currentUserID)
+    }
+
+    databaseManager.gamesCollection.find(searchCriteria, function (error, games)
+    {
+        if (error)
+        {
+            console.log(error);
+            responseCallback(this.events.getGames.response.error, "Unable to retrieve the list of games.");
+            return;
+        }
+
+        console.log(games);
+        responseCallback(this.events.getGames.response.success, games);
+    }.bind(this));
+};
+
 GameManager.prototype.createGame = function (responseCallback, levelName)
 {
     var searchCriteria = {

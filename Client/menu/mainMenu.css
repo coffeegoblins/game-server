@@ -164,6 +164,19 @@
     vertical-align: middle;
     height: 100%;
 }
+.gameList {
+    list-style-type: none;
+    padding: 0px;
+}
+.gameList li {
+    padding: 15px 10px;
+}
+.gameList li:nth-child(even) {
+    background: #DDD;
+}
+.gameList li:nth-child(odd) {
+    background: #EEE;
+}
 @media only screen and (max-width: 400px) {
     #mainMenuChains {
         left: 50%;

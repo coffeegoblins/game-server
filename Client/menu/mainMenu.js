@@ -1,6 +1,6 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications'],
-    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications)
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications', 'text!menu/games.html'],
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications, GamesTemplate)
     {
         'use strict';
 
@@ -36,22 +36,22 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
         {
             switch (e.target.id)
             {
-                case 'singlePlayer':
-                    this.mainMenuChains.className = 'raiseChains';
-                    BrowserNavigation.addState('battleConfiguration');
-                    this.loadBattleConfiguration();
-                    break;
-                case 'multiPlayer':
-                    this.mainMenuChains.className = 'raiseChains';
-                    setTimeout(function ()
-                    {
-                        this.loginPopup.show(this.onLoginSucceeded, this);
-                    }.bind(this), 0);
-                    break;
-                case 'options':
-                    break;
-                case 'exit':
-                    break;
+            case 'singlePlayer':
+                this.mainMenuChains.className = 'raiseChains';
+                BrowserNavigation.addState('battleConfiguration');
+                this.loadBattleConfiguration();
+                break;
+            case 'multiPlayer':
+                this.mainMenuChains.className = 'raiseChains';
+                setTimeout(function ()
+                {
+                    this.loginPopup.show(this.onLoginSucceeded, this);
+                }.bind(this), 0);
+                break;
+            case 'options':
+                break;
+            case 'exit':
+                break;
             }
         };
 
@@ -84,20 +84,48 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                 this.mainMenuChains.removeChild(this.mainMenuChains.lastChild);
 
             this.mainMenuBar.innerHTML = SearchBarTemplate;
+            this.mainMenuContent.innerHTML = GamesTemplate;
 
             document.getElementById('notificationsButton').addEventListener('click', this.onNotificationsButtonClicked.bind(this));
             document.getElementById('searchButton').addEventListener('click', this.onPlayerSearchButtonClicked.bind(this));
+
             this.socket = socket;
             this.user = user;
             this.notifications = new Notifications(socket);
+            this.waitingOnYou = document.getElementById('waitingOnYou');
+            this.waitingOnThem = document.getElementById('waitingOnThem');
 
             this.socket.emit(this.socket.events.getNotifications.name);
+            this.socket.emit(this.socket.events.getGames.name);
 
             this.socket.on(this.socket.events.getNotifications.response.success, function (notifications)
             {
                 for (var i = 0; i < notifications.length; ++i)
                 {
                     this.notifications.addNotification(notifications[i]);
+                }
+            }.bind(this));
+
+            this.socket.on(this.socket.events.getGames.response.success, function (games)
+            {
+                for (var i = 0; i < games.length; ++i)
+                {
+                    var currentGame = games[i];
+
+                    var li = document.createElement('li');
+                    li.id = currentGame._id;
+
+                    // TODO Verify equality
+                    if (currentGame.currentTurnUserID === this.user._id)
+                    {
+                        li.innerHTML = currentGame.;
+                        this.waitingOnThem.appendChild(li);
+                        return;
+                    }
+
+                    li.innerHTML = currentGame.currentTurnUserID;
+                    this.waitingOnYou.appendChild(li);
+                    return;
                 }
             }.bind(this));
 
