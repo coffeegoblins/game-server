@@ -44,24 +44,21 @@ define([
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
                 this.turnManager = new TurnManager();
 
-                LevelLoader.loadLevel(levelName, function (map, startPoints)
+                LevelLoader.loadLevel(levelName, function (data)
                 {
-                    this.currentMap = map;
-                    var player1Positions = [];
-                    var player2Positions = [];
+                    this.currentMap = data.map;
+                    Renderer.addRenderableMap(this.currentMap);
 
-                    for (var i = 0; i < startPoints.length; i++)
+                    for (var i = 0; i < data.objects.length; i++)
                     {
-                        var soldierPosition = startPoints[i];
-                        if (soldierPosition.player === 'Player1')
-                            player1Positions.push(soldierPosition);
-                        else
-                            player2Positions.push(soldierPosition);
+                        var obj = data.objects[i];
+                        data.map.addObject(obj, obj.x, obj.y);
+                        Renderer.addRenderableObject(obj);
                     }
 
                     this.players = [
-                        new LocalPlayer(this.currentMap, createSoldiers(player1Positions, units)),
-                        new AutomatedPlayer(this.currentMap, createSoldiers(player2Positions, {
+                        new LocalPlayer(this.currentMap, createSoldiers(data.player1Positions, units)),
+                        new AutomatedPlayer(this.currentMap, createSoldiers(data.player2Positions, {
                             archer: 1, rogue: 1, shield: 1, warrior: 1
                         }))
                     ];

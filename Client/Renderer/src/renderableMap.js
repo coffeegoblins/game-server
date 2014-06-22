@@ -8,7 +8,7 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
         if (map.spriteSheet)
         {
             var filePath = 'renderer/content/images/' + map.spriteSheet + '.png';
-            this.tileSheet = new SpriteSheet('background', filePath, {
+            this.tileSheet = new SpriteSheet(map.spriteSheet, filePath, {
                 tileHeight: 48,
                 tileWidth: 96
             });
@@ -27,7 +27,7 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
 
     RenderableMap.prototype.render = function (context, camera)
     {
-        if (!this.tileSheet.isLoaded)
+        if (!this.tileSheet.isLoaded())
             return;
 
         var viewportLeft = camera.viewportRect.x;

@@ -31,7 +31,7 @@ define(function ()
     {
         for (var i in images)
         {
-            if (images.hasOwnProperty(i) && !images[i].isLoaded)
+            if (!images[i].isLoaded)
                 return true;
         }
 

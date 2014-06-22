@@ -8,19 +8,22 @@ body {
     background-color: #000;
     background-repeat: no-repeat;
     background-size: cover;
-    overflow: hidden;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     margin: 0;
     padding: 0;
-    height: 100%;
 }
 
 body.main-menu {
     background-image: url("./menu/images/mainMenu.jpg");
     background-position: left top;
+}
+
+body.game {
+    height: 100%;
+    overflow: hidden;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 * {

@@ -47,7 +47,7 @@ define(['core/src/spriteSheet'], function (SpriteSheet)
 
     RenderableObject.prototype.render = function (context, deltaTime, camera)
     {
-        if (!this.spriteSheet.image.isLoaded)
+        if (!this.spriteSheet.isLoaded())
             return;
 
         var tileRect = this.spriteSheet.getCurrentTileBounds();

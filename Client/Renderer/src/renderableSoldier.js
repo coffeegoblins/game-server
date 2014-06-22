@@ -98,7 +98,7 @@ define(['core/src/imageCache', 'core/src/spriteSheet', 'text!../content/animatio
     RenderableSoldier.prototype.render = function (context, deltaTime, camera)
     {
         var spriteSheet = this.spriteSheets[this.unit.state];
-        if (!spriteSheet.image.isLoaded)
+        if (!spriteSheet.isLoaded())
             return;
 
         var position = camera.tileToScreen(this.unit.tileX, this.unit.tileY);

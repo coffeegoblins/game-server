@@ -1,4 +1,4 @@
-define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'], function (Template, Events, Utility)
+define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/utility'], function (Template, Events, LevelLoader, Renderer, Utility)
 {
     'use strict';
 
@@ -130,6 +130,18 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/utility'
             else
                 this.removeButton.classList.remove('disabled');
         }
+
+        LevelLoader.loadLevel(this.levelName, function (data)
+        {
+            for (var i = 0; i < data.objects.length; i++)
+            {
+                var obj = data.objects[i];
+                data.map.addObject(obj, obj.x, obj.y);
+            }
+
+            var levelPreview = document.getElementById('level-preview');
+            Renderer.renderPreview(levelPreview, data.map, data.objects);
+        }.bind(this));
     };
 
     BattleConfiguration.prototype.onTabClick = function (e)

@@ -1,4 +1,4 @@
-define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoader'], function (Renderer, Map, WorldObject, Ladder, loadJSON)
+define(['./map', './worldObject', './ladder', 'jsonLoader'], function (Map, WorldObject, Ladder, loadJSON)
 {
     'use strict';
 
@@ -29,59 +29,52 @@ define(['renderer/src/renderer', './map', './worldObject', './ladder', 'jsonLoad
                 }
             }
 
-            var soldiers = [];
-            var map = new Map(width, height);
+            var data = {
+                map: new Map(width, height),
+                objects: [],
+                player1Positions: [],
+                player2Positions: []
+            };
 
             for (layerName in levelData.layers)
             {
                 layer = levelData.layers[layerName];
                 if (layer.type === 'objectLayer')
                 {
-                    soldiers.push.apply(soldiers, this.loadObjects(layer, map));
+                    this.loadObjects(layer, data);
                 }
                 else if (layerName === 'background')
                 {
-                    map.spriteSheet = layer.spriteSheet;
-                    this.loadTiles(layer, map, 'spriteIndex');
+                    data.map.spriteSheet = layer.spriteSheet;
+                    this.loadTiles(layer, data.map, 'spriteIndex');
                 }
                 else if (layerName === 'heights')
                 {
-                    this.loadTiles(layer, map, 'height');
+                    this.loadTiles(layer, data.map, 'height');
                 }
             }
 
-            Renderer.addRenderableMap(map);
-            onComplete(map, soldiers);
+            onComplete(data);
         },
 
-        loadObjects: function (layer, map)
+        loadObjects: function (layer, data)
         {
-            var soldierStartPoints = [];
             for (var i = 0; i < layer.objects.length; i++)
             {
                 var object = layer.objects[i];
-                switch (object.typeName)
+                if (object.typeName === 'soldier')
                 {
-                    case 'ladder':
-                        var ladder = new Ladder(object);
-                        map.addObject(ladder, object.x, object.y);
-                        Renderer.addRenderableLadder(ladder);
-                        break;
+                    if (object.player === 'Player1')
+                        data.player1Positions.push(object);
+                    else
+                        data.player2Positions.push(object);
 
-                    case 'soldier':
-                        soldierStartPoints.push(object);
-                        break;
-
-                    default:
-                        var worldObject = new WorldObject(object);
-                        worldObject.type = 'object';
-                        map.addObject(worldObject, object.x, object.y);
-                        Renderer.addRenderableObject(worldObject);
-                        break;
+                }
+                else
+                {
+                    data.objects.push(new WorldObject(object));
                 }
             }
-
-            return soldierStartPoints;
         },
 
         loadTiles: function (layer, map, property)
