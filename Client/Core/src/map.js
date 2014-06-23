@@ -2,6 +2,7 @@ define(['./events'], function (Events)
 {
     'use strict';
 
+
     function Map(width, height)
     {
         this.tiles = [];
@@ -57,6 +58,11 @@ define(['./events'], function (Events)
         }
 
         return true;
+    };
+
+    Map.prototype.isTraversable = function (tile)
+    {
+        return !this.collisionTiles[tile.spriteIndex];
     };
 
     Map.prototype.onClick = function (e, x, y)

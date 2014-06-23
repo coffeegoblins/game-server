@@ -2,6 +2,15 @@ define(['./map', './worldObject', './ladder', 'jsonLoader'], function (Map, Worl
 {
     'use strict';
 
+    // TODO: What's the best way to store and associate this data?
+    var collisionTiles = {
+        terrain: {},
+        terrain2: {29: true}
+    };
+
+    for (var i = 17; i <= 32; i++)
+        collisionTiles.terrain[i] = true;
+
     return {
         loadLevel: function (fileName, onComplete)
         {
@@ -36,6 +45,7 @@ define(['./map', './worldObject', './ladder', 'jsonLoader'], function (Map, Worl
                 player2Positions: []
             };
 
+
             for (layerName in levelData.layers)
             {
                 layer = levelData.layers[layerName];
@@ -46,6 +56,7 @@ define(['./map', './worldObject', './ladder', 'jsonLoader'], function (Map, Worl
                 else if (layerName === 'background')
                 {
                     data.map.spriteSheet = layer.spriteSheet;
+                    data.map.collisionTiles = collisionTiles[layer.spriteSheet];
                     this.loadTiles(layer, data.map, 'spriteIndex');
                 }
                 else if (layerName === 'heights')

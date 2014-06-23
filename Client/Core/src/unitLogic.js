@@ -436,11 +436,7 @@ define(['text!../content/soldierData.json'], function (SoldierData)
         canMoveToTile: function (map, unit, currentNode, directionX, directionY)
         {
             var destinationTile = map.getTile(currentNode.x + directionX, currentNode.y + directionY);
-            if (!destinationTile || destinationTile.unit)
-                return false;
-
-            // TODO: Associate this with the map spritesheet. This range of tiles are can't be moved to.
-            if (destinationTile.spriteIndex > 16 && destinationTile.spriteIndex <= 32)
+            if (!destinationTile || destinationTile.unit || !map.isTraversable(destinationTile))
                 return false;
 
             var sourceIsClimbable, destinationIsClimbable;
