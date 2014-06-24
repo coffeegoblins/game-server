@@ -1,17 +1,24 @@
 var databaseManager = require('./databaseManager');
 var validator = require('./validationUtility');
+var ObjectID = require('mongodb').ObjectID;
 
 function GameManager(events)
 {
     this.events = events;
 }
 
-GameManager.prototype.getGames = function(responseCallback, currentUserID)
+GameManager.prototype.getGames = function (responseCallback, currentUserName)
 {
-    console.log("Getting games for: " + currentUserID);
+    if (!currentUserName)
+    {
+        responseCallback(this.events.getGames.response.error, "A valid username was not provided.");
+        return;
+    }
+
+    console.log("Getting games for: " + currentUserName);
 
     var searchCriteria = {
-        users._id: new ObjectID(currentUserID)
+        'users.lowerCaseUsername': currentUserName.toLowerCase()
     }
 
     databaseManager.gamesCollection.find(searchCriteria, function (error, games)
@@ -23,12 +30,23 @@ GameManager.prototype.getGames = function(responseCallback, currentUserID)
             return;
         }
 
-        console.log(games);
-        responseCallback(this.events.getGames.response.success, games);
+        games.toArray(function (error, gamesArray)
+        {
+            if (error)
+            {
+                responseCallback(this.events.getGames.response.success, error);
+                return;
+            }
+
+            // TODO Remove
+            console.log(gamesArray);
+
+            responseCallback(this.events.getGames.response.success, gamesArray);
+        }.bind(this));
     }.bind(this));
 };
 
-GameManager.prototype.createGame = function (responseCallback, levelName)
+GameManager.prototype.createGame = function (responseCallback, users, levelName)
 {
     var searchCriteria = {
         name: levelName.toString()
@@ -38,21 +56,30 @@ GameManager.prototype.createGame = function (responseCallback, levelName)
     {
         if (error)
         {
-            thisi.responseCallback(this.events.createGame.response.error, "Unable to create the game because a valid level was not selected.");
+            responseCallback(this.events.createGame.response.error, "Unable to create the game because a valid level was not selected.");
             return;
         }
+
+        var game = {
+            users: users,
+            waitingOn: users,
+            level: level,
+            turnCount: 0,
+            creationTime: new Date().getTime()
+        };
 
         databaseManager.gamesCollection.insert(game, function (error, gameResult)
         {
             if (error)
             {
+                console.log(error);
                 responseCallback(this.events.createGame.response.error, "Unable to create the game.");
                 return;
             }
 
-            responseCallback(this.events.createGame.response.success, gameResult._id);
-        });
-    });
+            responseCallback(this.events.createGame.response.success, gameResult);
+        }.bind(this));
+    }.bind(this));
 };
 
 GameManager.prototype.updateGame = function (responseCallback, updates)

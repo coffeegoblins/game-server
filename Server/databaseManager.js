@@ -25,47 +25,38 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
 
         console.log('Connected to ' + dbHost + ":" + dbPort);
 
-        var getUsersCollection = function (asyncCallback)
-        {
-            this.database.collection('users', function (error, collection)
+        async.parallel([
+            this.getCollection.bind(this, 'users'),
+            this.getCollection.bind(this, 'notifications'),
+            this.getCollection.bind(this, 'games'),
+            this.getCollection.bind(this, 'levels')
+        ],
+            function (error)
             {
                 if (error)
                 {
-                    throw 'Unable to select the users collection. ' + error;
+                    console.log(error);
+                    return;
                 }
 
-                console.log('Selected the users collection.');
-                this.usersCollection = collection;
+                callback();
+            });
+    }.bind(this));
+};
 
-                asyncCallback();
-            }.bind(this));
-        }.bind(this);
-
-        var getNotificationCollection = function (asyncCallback)
+DatabaseManager.prototype.getCollection = function (collectionName, asyncCallback)
+{
+    this.database.collection(collectionName, function (error, collection)
+    {
+        if (error)
         {
-            this.database.collection('notifications', function (error, collection)
-            {
-                if (error)
-                {
-                    throw 'Unable to select the notifications collection. ' + error;
-                }
+            throw 'Unable to select the users collection. ' + error;
+        }
 
-                console.log('Selected the notifications collection.');
-                this.notificationsCollection = collection;
-                asyncCallback();
-            }.bind(this));
-        }.bind(this);
+        console.log('Selected the ' + collectionName + ' collection.');
+        this[collectionName + 'Collection'] = collection;
 
-        async.parallel([getUsersCollection, getNotificationCollection], function (error)
-        {
-            if (error)
-            {
-                console.log(error);
-                return;
-            }
-
-            callback();
-        });
+        asyncCallback();
     }.bind(this));
 };
 

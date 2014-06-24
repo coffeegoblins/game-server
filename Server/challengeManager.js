@@ -7,11 +7,12 @@ function ChallengeManager(events)
 {
     this.events = events;
     this.userManager = new UserManager(events);
+    this.gameManager = new GameManager(events);
 }
 
-ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserID, opponentID)
+ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, levelName)
 {
-    this.userManager.selectPlayerByID(currentUserID, function (error, user)
+    this.userManager.selectPlayer(currentUserName, function (error, user)
     {
         if (error)
         {
@@ -20,37 +21,35 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
         }
 
         var searchCriteria = {
-            '_id': new ObjectID(opponentID)
+            'username': opponentUserName
         };
 
-        console.log(user._id + " is challenging " + opponentID);
-
-        // TODO Insert Challenge on current user
+        console.log(user.username + " is challenging " + opponentUserName);
 
         // TODO Handle error
         databaseManager.usersCollection.update(searchCriteria,
-        {
-            '$push':
             {
-                "notifications":
+                '$push':
                 {
-                    _id: new ObjectID(),
-                    sourceUserId: new ObjectID(user._id),
-                    sourceUserName: user.username,
-                    type: "CHALLENGE",
-                    creationTime: new Date().getTime()
+                    "notifications":
+                    {
+                        _id: new ObjectID(),
+                        sourceUserName: user.username,
+                        type: "CHALLENGE",
+                        data: levelName,
+                        creationTime: new Date().getTime()
+                    }
                 }
-            }
-        },
-            function(){
+            },
+            function () {
 
             });
     }.bind(this));
 };
 
-ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserID, challengeID)
+ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserName, challengeID)
 {
-    this.userManager.selectPlayerByID(currentUserID, function (error, currentUser)
+    this.userManager.selectPlayer(currentUserName, function (error, currentUser)
     {
         if (error)
         {
@@ -68,7 +67,6 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
             // Double equals for loose equality (_id is an object)
             if (currentUser.notifications[i]._id == challengeID)
             {
-                console.log("Equality!");
                 notification = currentUser.notifications[i];
             }
         }
@@ -81,7 +79,7 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
         }
 
         // TODO Delete Challenge on source user
-        this.userManager.selectPlayerByID(notification.sourceUserId, function (error, opponentUser)
+        this.userManager.selectPlayer(notification.sourceUserName, function (error, opponentUser)
         {
             if (error)
             {
@@ -89,39 +87,32 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
                 responseCallback(this.events.challengeAccepted.response.error, error);
                 return;
             }
-        });
 
-        // TODO Create game
-        // GameManager.createLobby(new ObjectID());
-
-        var searchCriteria = {
-            '_id': new ObjectID(currentUserID)
-        };
-
-        databaseManager.usersCollection.update(searchCriteria,
-        {
-            '$push':
-            {
-                "games":
+            var users = [
                 {
-                    _id: new ObjectID(),
-                    sourceUserId: notification.sourceUserId,
-                    sourceUserName: notification.sourceUserName,
-                    creationTime: new Date().getTime()
+                    username: currentUser.username,
+                    lowerCaseUsername: currentUser.lowerCaseUsername,
+                    units: []
+                },
+                {
+                    username: opponentUser.username,
+                    lowerCaseUsername: opponentUser.lowerCaseUsername,
+                    units: []
                 }
-            },
-            '$pull':
-            {
-                "notifications": notification
-            }
-        }, function(){});
+            ];
+
+            this.gameManager.createGame(responseCallback, users, notification.data);
+
+            // TODO Handle failure
+            this.removeChallenge(responseCallback, currentUserName, challengeID);
+        }.bind(this));
     }.bind(this));
 };
 
-ChallengeManager.prototype.declineChallenge = function (responseCallback, currentUserID, challengeID)
+ChallengeManager.prototype.removeChallenge = function (responseCallback, currentUserName, challengeID)
 {
     var searchCriteria = {
-        '_id': new ObjectID(currentUserID)
+        'lowerCaseUsername': currentUserName.toLowerCase()
     };
 
     databaseManager.usersCollection.update(searchCriteria,
@@ -133,7 +124,7 @@ ChallengeManager.prototype.declineChallenge = function (responseCallback, curren
                 _id: challengeID
             }
         }
-    }, function(){});
+    }, function () {});
 };
 
 module.exports = ChallengeManager;

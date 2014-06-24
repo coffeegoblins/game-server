@@ -2,6 +2,7 @@ var databaseManager = require('./databaseManager');
 var UserManager = require('./userManager');
 var NotificationManager = require('./notificationManager');
 var ChallengeManager = require('./challengeManager');
+var GameManager = require('./gameManager');
 
 var fileSystem = require('fs');
 var atob = require('atob');
@@ -37,6 +38,7 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
     var userManager = new UserManager(events);
     var notificationManager = new NotificationManager(events);
     var challengeManager = new ChallengeManager(events);
+    var gameManager = new GameManager(events);
 
     io.sockets.on('connection', function (socket)
     {
@@ -48,19 +50,19 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
             socket.emit.apply(socket, Array.prototype.slice.call(arguments, 0));
         }
 
-        function onLoginSucceeded(userID)
+        function onLoginSucceeded(username)
         {
-            socket.userID = userID;
+            socket.username = username;
 
             socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
             socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
 
-            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.userID))
-            socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.userID));
+            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.username))
+            socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.username));
 
-            socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.userID));
-            socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.userID));
-            socket.on(events.challengeDeclined.name, challengeManager.declineChallenge.bind(challengeManager, responseCallback, socket.userID));
+            socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.username));
+            socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.username));
+            socket.on(events.challengeDeclined.name, challengeManager.removeChallenge.bind(challengeManager, responseCallback, socket.username));
         }
 
         socket.on(events.login.name, userManager.login.bind(userManager, responseCallback, onLoginSucceeded));

@@ -6,17 +6,17 @@ function NotificationManager(events)
     this.userManager = new UserManager(events);
 }
 
-NotificationManager.prototype.getNotifications = function (responseCallback, userID)
+NotificationManager.prototype.getNotifications = function (responseCallback, userName)
 {
-    console.log("Getting notifications for: " + userID);
+    console.log("Getting notifications for: " + userName);
 
-    if (!userID)
+    if (!userName)
     {
         responseCallback(this.events.getNotifications.response.error, "You are not logged in.");
         return;
     }
 
-    this.userManager.selectPlayerByID(userID, function (error, user)
+    this.userManager.selectPlayer(userName, function (error, user)
     {
         if (error || !user)
         {

@@ -28,7 +28,7 @@ UserManager.prototype.login = function (responseCallback, loginSuccessCallback, 
 
         console.log(lowerCaseUsername + ' has logged in.');
         responseCallback(this.events.login.response.success, user);
-        loginSuccessCallback(user._id);
+        loginSuccessCallback(user.username);
     }.bind(this));
 };
 
@@ -40,7 +40,8 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         username: username,
         lowerCaseUsername: lowerCaseUsername,
         password: password,
-        notifications: new Array()
+        notifications: new Array(),
+        creationTime: new Date().getTime()
     };
 
     console.log('Registering user: ' + lowerCaseUsername);
@@ -59,7 +60,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         console.log(lowerCaseUsername + ' has been registered.');
 
         responseCallback(this.events.register.response.success, user);
-        loginSuccessCallback(createdUser._id);
+        loginSuccessCallback(createdUser.username);
     }.bind(this));
 };
 
@@ -91,17 +92,23 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
     }.bind(this));
 };
 
-UserManager.prototype.selectPlayerByID = function (id, callback)
+UserManager.prototype.selectPlayer = function (username, callback)
 {
+    if (!username)
+    {
+        callback("No username was provided");
+        return;
+    }
+
     var searchCriteria = {
-        '_id': new ObjectID(id)
+        'lowerCaseUsername': username.toLowerCase()
     };
 
     databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (!user)
         {
-            callback('Unable to find a user with the id: ' + id + '\n' + error, null);
+            callback('Unable to find a user with the name: ' + searchCriteria.lowerCaseUsername + '\n' + error);
             return;
         }
 

@@ -79,5 +79,23 @@
             "error": "getNotificationsError",
             "success": "getNotificationsSuccess"
         }
+    },
+    "createGame": {
+        "name": "createGame",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "createGameError",
+            "success": "createGameSuccess"
+        }
+    },
+    "getGames": {
+        "name": "getGames",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "getGamesError",
+            "success": "getGamesSuccess"
+        }
     }
 }

@@ -115,16 +115,25 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                     var li = document.createElement('li');
                     li.id = currentGame._id;
 
-                    // TODO Verify equality
-                    if (currentGame.currentTurnUserID === this.user._id)
+                    for (var j = 0; j < currentGame.users.length; ++j)
                     {
-                        li.innerHTML = currentGame.inactiveTurnUserName;
-                        this.waitingOnThem.appendChild(li);
-                        return;
+                        if (currentGame.waitingOn[j].lowerCaseUsername !== this.user.lowerCaseUsername)
+                        {
+                            li.innerHTML += currentGame.waitingOn[j].username;
+                            li.addEventListener('click', this.onGameClicked.bind(this, currentGame));
+                        }
                     }
 
-                    li.innerHTML = currentGame.currentTurnUserName;
-                    this.waitingOnYou.appendChild(li);
+                    for (var k = 0; k < currentGame.waitingOn.length; ++k)
+                    {
+                        if (currentGame.waitingOn[k].lowerCaseUsername === this.user.lowerCaseUsername)
+                        {
+                            this.waitingOnYou.appendChild(li);
+                            return;
+                        }
+                    }
+
+                    this.waitingOnThem.appendChild(li);
                     return;
                 }
             }.bind(this));
@@ -145,9 +154,9 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
                     cell1.innerHTML = cursor[i].username;
                     cell1.className = "userName";
-                    cell2.innerHTML = "<input type='button' value='Challenge!' id='" + cursor[i]._id + "'>";
+                    cell2.innerHTML = "<input type='button' value='Challenge!' id='" + cursor[i].username + "'>";
 
-                    document.getElementById(cursor[i]._id).addEventListener('click', this.onPlayerChallenged.bind(this));
+                    document.getElementById(cursor[i].username).addEventListener('click', this.onPlayerChallenged.bind(this));
                 }
             }.bind(this));
         };
@@ -170,7 +179,16 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.onPlayerChallenged = function (e)
         {
-            this.socket.emit(this.socket.events.challengeUser.name, e.target.id);
+            this.socket.emit(this.socket.events.challengeUser.name, e.target.id, "level1");
+        };
+
+        MainMenu.prototype.onGameClicked = function (game)
+        {
+            document.body.className = 'game';
+            while (document.body.lastChild)
+                document.body.removeChild(document.body.lastChild);
+
+            PlotManager.loadLevel('level1', game.units);
         };
 
         return new MainMenu();
