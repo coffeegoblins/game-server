@@ -3,14 +3,13 @@ define([
         './scheduler',
         './inputHandler',
         './browserNavigation',
-        './levelLoader',
         './turnManager',
         './soldier',
         './players/automatedPlayer',
         './players/localPlayer',
         './players/remotePlayer'
     ],
-    function (Renderer, Scheduler, InputHandler, BrowserNavigation, LevelLoader, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
     {
         'use strict';
 
@@ -37,14 +36,14 @@ define([
         }
 
         return {
-            loadLevel: function (unitLogic, levelName, units)
+            loadLevel: function (unitLogic, levelLoader, levelName, units)
             {
                 Scheduler.clear();
                 Renderer.initialize();
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
                 this.turnManager = new TurnManager();
 
-                LevelLoader.loadLevel(levelName, function (data)
+                levelLoader.loadLevel(levelName, function (data)
                 {
                     this.currentMap = data.map;
                     Renderer.addRenderableMap(this.currentMap);
@@ -99,7 +98,9 @@ define([
                     {
                         unit = player.units[j];
                         if (unit.statusPanel)
+                        {
                             unit.statusPanel.updateValues();
+                        }
                     }
                 }
             },
@@ -120,7 +121,7 @@ define([
 
             onPlayerDefeat: function (player)
             {
-                console.log('player defeated');
+                console.log('player ' + player.name + ' defeated');
             },
 
             uninitialize: function ()

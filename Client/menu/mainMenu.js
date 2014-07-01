@@ -1,16 +1,8 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications', 'text!menu/games.html'],
-    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications, GamesTemplate)
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications', 'text!menu/games.html', 'core/src/localJSONLoader', 'core/src/remoteJSONLoader', 'core/src/levelLoader'],
+    function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications, GamesTemplate, LocalJSONLoader, RemoteJSONLoader, LevelLoader)
     {
         'use strict';
-
-        function parseFunctions(key, value)
-        {
-            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
-                return eval('(' + value + ')');
-
-            return value;
-        }
 
         function MainMenu()
         {
@@ -19,6 +11,8 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
 
             this.loginPopup = new LoginPopup(this);
+
+            this.localLevelLoader = new LevelLoader(new LocalJSONLoader());
         }
 
         MainMenu.prototype.show = function ()
@@ -69,7 +63,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
-            PlotManager.loadLevel(this.gameLogic, levelName, units);
+            PlotManager.loadLevel(this.gameLogic, this.localLevelLoader, levelName, units);
         };
 
         MainMenu.prototype.loadBattleConfiguration = function ()
@@ -77,7 +71,8 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             document.body.innerHTML = MainMenuTemplate;
             document.body.className = '';
 
-            var battleConfig = new BattleConfiguration().show();
+            var levelLoader = this.socket ? this.remoteLevelLoader : this.localLevelLoader;
+            var battleConfig = new BattleConfiguration(levelLoader).show();
             battleConfig.on('cancel', this, this.show);
             battleConfig.on('confirm', this, function (levelName, units)
             {
@@ -123,8 +118,8 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.notifications = new Notifications(socket);
             this.waitingOnYou = document.getElementById('waitingOnYou');
             this.waitingOnThem = document.getElementById('waitingOnThem');
+            this.remoteLevelLoader = new LevelLoader(new RemoteJSONLoader(this.socket));
 
-            this.loadGameLogic();
             this.socket.emit(this.socket.events.getNotifications.name);
             this.socket.emit(this.socket.events.getGames.name);
 
@@ -209,7 +204,14 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
         MainMenu.prototype.onPlayerChallenged = function (e)
         {
-            this.socket.emit(this.socket.events.challengeUser.name, e.target.id, "level1");
+            this.mainMenuContent.innerHTML = "";
+
+            var battleConfig = new BattleConfiguration(this.remoteLevelLoader).show();
+            battleConfig.on('cancel', this, this.show);
+            battleConfig.on('confirm', this, function (levelName)
+            {
+                this.socket.emit(this.socket.events.challengeUser.name, e.target.id, levelName);
+            }.bind(this));
         };
 
         MainMenu.prototype.onGameClicked = function (game)
@@ -218,7 +220,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
-            PlotManager.loadLevel(this.gameLogic, 'level1', game.units);
+            PlotManager.loadLevel(this.gameLogic, this.remoteLevelLoader, 'level1', game.units);
         };
 
         return new MainMenu();
