@@ -2,7 +2,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
 {
     'use strict';
 
-    function BattleConfiguration()
+    function BattleConfiguration(levelLoader)
     {
         this.levels = {
             level1: {minUnits: 4, maxUnits: 4},
@@ -12,6 +12,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
 
         var battleConfig = window.localStorage.getItem('battleConfig');
         this.config = battleConfig ? JSON.parse(battleConfig) : {};
+        this.levelLoader = levelLoader;
     }
 
     BattleConfiguration.prototype.hide = function ()
@@ -131,7 +132,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
                 this.removeButton.classList.remove('disabled');
         }
 
-        LevelLoader.loadLevel(this.levelName, function (data)
+        this.levelLoader.loadLevel(this.levelName, function (data)
         {
             for (var i = 0; i < data.objects.length; i++)
             {
