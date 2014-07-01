@@ -37,7 +37,7 @@ define([
         }
 
         return {
-            loadLevel: function (levelName, units)
+            loadLevel: function (unitLogic, levelName, units)
             {
                 Scheduler.clear();
                 Renderer.initialize();
@@ -57,8 +57,8 @@ define([
                     }
 
                     this.players = [
-                        new LocalPlayer(this.currentMap, createSoldiers(data.player1Positions, units)),
-                        new AutomatedPlayer(this.currentMap, createSoldiers(data.player2Positions, {
+                        new LocalPlayer(unitLogic, this.currentMap, createSoldiers(data.player1Positions, units)),
+                        new AutomatedPlayer(unitLogic, this.currentMap, createSoldiers(data.player2Positions, {
                             archer: 1, rogue: 1, shield: 1, warrior: 1
                         }))
                     ];

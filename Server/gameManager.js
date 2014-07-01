@@ -2,10 +2,24 @@ var databaseManager = require('./databaseManager');
 var validator = require('./validationUtility');
 var ObjectID = require('mongodb').ObjectID;
 
+var gameLogic = require('./gameLogic/gameLogic');
+var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
+{
+    return (typeof value === 'function') ? value.toString() : value;
+});
+
 function GameManager(events)
 {
     this.events = events;
 }
+
+GameManager.prototype.getGameLogic = function (responseCallback, version)
+{
+    if (version !== gameLogic.version)
+    {
+        responseCallback(this.events.getGameLogic.response.success, serializedGameLogic);
+    }
+};
 
 GameManager.prototype.getGames = function (responseCallback, currentUserName)
 {
@@ -19,7 +33,7 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
 
     var searchCriteria = {
         'users.lowerCaseUsername': currentUserName.toLowerCase()
-    }
+    };
 
     databaseManager.gamesCollection.find(searchCriteria, function (error, games)
     {
@@ -105,13 +119,13 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
 
     switch (update.action)
     {
-    case 'MOVE':
-        this.performMove(update.unitID, update.target, updateHandler);
-        break;
+        case 'MOVE':
+            this.performMove(update.unitID, update.target, updateHandler);
+            break;
 
-    case 'ATTACK':
-        this.performAttack(update.unitID, update.target, updateHandler);
-        break;
+        case 'ATTACK':
+            this.performAttack(update.unitID, update.target, updateHandler);
+            break;
     }
 };
 
@@ -177,7 +191,8 @@ GameManager.prototype.performAttack = function ()
 };
 
 
-GameManager.prototype.selectGameByID = function (gameID) {
+GameManager.prototype.selectGameByID = function (gameID)
+{
 
 };
 

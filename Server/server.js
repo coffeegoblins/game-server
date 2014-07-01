@@ -57,8 +57,9 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
             socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
             socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
 
-            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.username))
+            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.username));
             socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.username));
+            socket.on(events.getGameLogic.name, gameManager.getGameLogic.bind(gameManager, responseCallback));
 
             socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.username));
             socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.username));

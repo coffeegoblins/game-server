@@ -1,5 +1,5 @@
-define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../soundManager', '../unitLogic', 'renderer/src/ui/unitStatusPanel', '../utility'],
-    function (Events, Options, Renderer, Scheduler, SoundManager, UnitLogic, UnitStatusPanel, Utility)
+define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
+    function (Events, Options, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
     {
         'use strict';
 
@@ -8,28 +8,11 @@ define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../
             return Options[key] === 'always' || (isSelection && Options[key] === 'selected');
         }
 
-        function getUnitLogic()
-        {
-            // This is test code that assures that the game logic can be serialized and reconstructed
-            var unitLogicString = JSON.stringify(UnitLogic, function (key, value)
-            {
-                return (typeof value === 'function') ? value.toString() : value;
-            });
-
-            return Object.freeze(JSON.parse(unitLogicString, function (key, value)
-            {
-                if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
-                    return eval('(' + value + ')');
-
-                return value;
-            }));
-        }
-
-        function Player(map, units)
+        function Player(unitLogic, map, units)
         {
             this.map = map;
             this.units = units || [];
-            this.unitLogic = getUnitLogic();
+            this.unitLogic = unitLogic;
 
             for (var i = 0; i < this.units.length; i++)
             {

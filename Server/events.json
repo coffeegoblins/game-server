@@ -97,5 +97,14 @@
             "error": "getGamesError",
             "success": "getGamesSuccess"
         }
+    },
+    "getGameLogic": {
+        "name": "getGameLogic",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "getGameLogicError",
+            "success": "getGameLogicSuccess"
+        }
     }
 }

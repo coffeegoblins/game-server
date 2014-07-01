@@ -4,6 +4,14 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
     {
         'use strict';
 
+        function parseFunctions(key, value)
+        {
+            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
+                return eval('(' + value + ')');
+
+            return value;
+        }
+
         function MainMenu()
         {
             BrowserNavigation.on('root', this.show.bind(this));
@@ -36,22 +44,22 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
         {
             switch (e.target.id)
             {
-            case 'singlePlayer':
-                this.mainMenuChains.className = 'raiseChains';
-                BrowserNavigation.addState('battleConfiguration');
-                this.loadBattleConfiguration();
-                break;
-            case 'multiPlayer':
-                this.mainMenuChains.className = 'raiseChains';
-                setTimeout(function ()
-                {
-                    this.loginPopup.show(this.onLoginSucceeded, this);
-                }.bind(this), 0);
-                break;
-            case 'options':
-                break;
-            case 'exit':
-                break;
+                case 'singlePlayer':
+                    this.mainMenuChains.className = 'raiseChains';
+                    BrowserNavigation.addState('battleConfiguration');
+                    this.loadBattleConfiguration();
+                    break;
+                case 'multiPlayer':
+                    this.mainMenuChains.className = 'raiseChains';
+                    setTimeout(function ()
+                    {
+                        this.loginPopup.show(this.onLoginSucceeded, this);
+                    }.bind(this), 0);
+                    break;
+                case 'options':
+                    break;
+                case 'exit':
+                    break;
             }
         };
 
@@ -61,7 +69,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
-            PlotManager.loadLevel(levelName, units);
+            PlotManager.loadLevel(this.gameLogic, levelName, units);
         };
 
         MainMenu.prototype.loadBattleConfiguration = function ()
@@ -76,6 +84,27 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                 BrowserNavigation.addState('singlePlayer');
                 this.loadSinglePlayer(levelName, units);
             });
+        };
+
+        MainMenu.prototype.loadGameLogic = function ()
+        {
+            var gameLogicVersion;
+            var serializedGameLogic = window.localStorage.getItem('gameLogic');
+            if (serializedGameLogic)
+            {
+                this.gameLogic = JSON.parse(serializedGameLogic, parseFunctions);
+                gameLogicVersion = this.gameLogic.version;
+            }
+
+            this.socket.emit(this.socket.events.getGameLogic.name, gameLogicVersion);
+            this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
+            {
+                if (gameLogic)
+                {
+                    window.localStorage.setItem('gameLogic', gameLogic);
+                    this.gameLogic = JSON.parse(gameLogic, parseFunctions);
+                }
+            }.bind(this));
         };
 
         MainMenu.prototype.onLoginSucceeded = function (socket, user)
@@ -95,6 +124,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.waitingOnYou = document.getElementById('waitingOnYou');
             this.waitingOnThem = document.getElementById('waitingOnThem');
 
+            this.loadGameLogic();
             this.socket.emit(this.socket.events.getNotifications.name);
             this.socket.emit(this.socket.events.getGames.name);
 
@@ -188,7 +218,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             while (document.body.lastChild)
                 document.body.removeChild(document.body.lastChild);
 
-            PlotManager.loadLevel('level1', game.units);
+            PlotManager.loadLevel(this.gameLogic, 'level1', game.units);
         };
 
         return new MainMenu();
