@@ -106,5 +106,23 @@
             "error": "getGameLogicError",
             "success": "getGameLogicSuccess"
         }
+    },
+    "getLevels": {
+        "name": "getLevels",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "getLevelsError",
+            "success": "getLevelsSuccess"
+        }
+    },
+    "getLevel": {
+        "name": "getLevel",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "getLevelError",
+            "success": "getLevelSuccess"
+        }
     }
 }
