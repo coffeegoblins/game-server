@@ -1,22 +1,11 @@
 var databaseManager = require('./databaseManager');
-var UserManager = require('./userManager');
-var NotificationManager = require('./notificationManager');
-var ChallengeManager = require('./challengeManager');
-var GameManager = require('./gameManager');
-var LevelManager = require('./levelManager');
-
 var fileSystem = require('fs');
-var atob = require('atob');
 
 // Initial Config
 var config = JSON.parse(fileSystem.readFileSync('./config.json'));
 
-// Socket IO Events
-var events = JSON.parse(fileSystem.readFileSync('./events.json'));
-
 // Server
 var app = require('express')();
-app.use(app.router);
 
 // Enable Cross Origin Resource Sharing (CORS)
 app.all('*', function (req, res, next)
@@ -29,50 +18,11 @@ app.all('*', function (req, res, next)
 var server = require('http').createServer(app);
 server.listen(config.port);
 
-var io = require('socket.io').listen(server);
-io.set('log level', 1);
+var socketio = require('socket.io').listen(server);
 
 databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 {
     console.log("Database Ready.");
 
-    var userManager = new UserManager(events);
-    var notificationManager = new NotificationManager(events);
-    var challengeManager = new ChallengeManager(events);
-    var gameManager = new GameManager(events);
-    var levelManager = new LevelManager(events);
-
-    io.sockets.on('connection', function (socket)
-    {
-        socket.on('test', function(arg) { console.log(arg); });
-        socket.emit(events.connection.response.events, events);
-
-        function responseCallback()
-        {
-            socket.emit.apply(socket, Array.prototype.slice.call(arguments, 0));
-        }
-
-        function onLoginSucceeded(username)
-        {
-            socket.username = username;
-
-            socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
-
-            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.username));
-
-            socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.username));
-            socket.on(events.getGameLogic.name, gameManager.getGameLogic.bind(gameManager, responseCallback));
-            socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
-
-            socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.username));
-            socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.username));
-            socket.on(events.challengeDeclined.name, challengeManager.removeChallenge.bind(challengeManager, responseCallback, socket.username));
-
-            socket.on(events.getLevel.name, levelManager.getLevels.bind(levelManager, responseCallback));
-            socket.on(events.getLevels.name, levelManager.getLevels.bind(levelManager, responseCallback));
-        }
-
-        socket.on(events.login.name, userManager.login.bind(userManager, responseCallback, onLoginSucceeded));
-        socket.on(events.register.name, userManager.register.bind(userManager, responseCallback, onLoginSucceeded));
-    });
+    require('./routes')(socketio);
 });

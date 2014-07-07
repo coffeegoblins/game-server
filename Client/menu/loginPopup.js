@@ -103,7 +103,7 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                 callback();
             }
 
-            this.socket = io.connect('http://127.0.0.1:1988');
+            this.socket = io('http://127.0.0.1:1988');
 
             this.socket.on('connect', function ()
             {
@@ -115,16 +115,6 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
             }.bind(this));
 
             this.socket.on('error', function (error)
-            {
-                this.errorMessage.innerHTML = 'Unable to connect to the server.';
-            }.bind(this));
-
-            this.socket.on('connect_error', function ()
-            {
-                this.errorMessage.innerHTML = 'Unable to connect to the server.';
-            }.bind(this));
-
-            this.socket.on('connect_failed', function ()
             {
                 this.errorMessage.innerHTML = 'Unable to connect to the server.';
             }.bind(this));

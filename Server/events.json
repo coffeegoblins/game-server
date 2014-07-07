@@ -32,7 +32,6 @@
         "port": "1988",
         "response": {
             "error": "challengeAcceptedError",
-
             "success": "challengeAcceptedSuccess"
         }
     },
