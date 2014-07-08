@@ -9,8 +9,8 @@ define([], function ()
 
     RemoteJSONLoader.prototype.loadLevel = function (levelName, onComplete)
     {
-        this.socket.emit(this.socket.events.getLevelByName, levelName);
-        this.socket.on(this.socket.events.getLevelByName.response.success, onComplete);
+        this.socket.emit(this.socket.events.getLevel, levelName);
+        this.socket.on(this.socket.events.getLevel.response.success, onComplete);
     };
 
     return RemoteJSONLoader;
