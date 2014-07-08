@@ -98,7 +98,7 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
 
         LoginPopup.prototype.connect = function (callback)
         {
-            if (this.socket && this.socket.socket.connected)
+            if (this.socket && this.socket.connected)
             {
                 callback();
             }

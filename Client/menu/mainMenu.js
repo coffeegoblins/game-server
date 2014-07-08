@@ -4,6 +4,14 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
     {
         'use strict';
 
+        function parseFunctions(key, value)
+        {
+            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
+                return eval('(' + value + ')');
+
+            return value;
+        }
+
         function MainMenu()
         {
             BrowserNavigation.on('root', this.show.bind(this));
@@ -11,7 +19,6 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             BrowserNavigation.on('singlePlayer', this.loadSinglePlayer.bind(this));
 
             this.loginPopup = new LoginPopup(this);
-
             this.localLevelLoader = new LevelLoader(new LocalJSONLoader());
         }
 
@@ -120,6 +127,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.waitingOnThem = document.getElementById('waitingOnThem');
             this.remoteLevelLoader = new LevelLoader(new RemoteJSONLoader(this.socket));
 
+            this.loadGameLogic();
             this.socket.emit(this.socket.events.getNotifications.name);
             this.socket.emit(this.socket.events.getGames.name);
 
