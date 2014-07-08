@@ -1,6 +1,7 @@
 {
     "host": "127.0.0.1",
     "port": "1988",
+    "databaseURL": "mongodb://127.0.0.1:27017/soldier_game",
     "dbName": "soldier_game",
     "dbHost": "127.0.0.1",
     "dbPort": "27017"

@@ -103,21 +103,40 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                 callback();
             }
 
-            this.socket = io('http://127.0.0.1:1988');
+//            var request = new XMLHttpRequest();
+//            request.overrideMimeType('application/json');
+//            var params = '{ username: "1" }';// + this.usernameInput.value + "&password=" + btoa(this.passwordInput.value);
+//            request.open('POST', 'http://127.0.0.1:1988/login');
+//
+//            //Send the proper header information along with the request
+//            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-            this.socket.on('connect', function ()
-            {
-                this.socket.on('events', function (events)
-                {
-                    this.socket.events = events;
-                    callback();
-                }.bind(this));
-            }.bind(this));
+//             request.onreadystatechange = function ()
+//             {
+//                 if (request.readyState === 4 && request.status === 200)
+//                 {
+//                     var response = JSON.parse(request.responseText);
+//                     console.log(response);
 
-            this.socket.on('error', function (error)
-            {
-                this.errorMessage.innerHTML = 'Unable to connect to the server.';
-            }.bind(this));
+                    this.socket = io('http://127.0.0.1:1988', { query: "token=1"});
+
+                    this.socket.on('connect', function ()
+                    {
+                        this.socket.on('events', function (events)
+                        {
+                            this.socket.events = events;
+                            callback();
+                        }.bind(this));
+                    }.bind(this));
+
+                    this.socket.on('error', function (error)
+                    {
+                        this.errorMessage.innerHTML = 'Unable to connect to the server.';
+                    }.bind(this));
+//                 }
+//             };
+
+//             request.send();
         };
 
         return LoginPopup;
