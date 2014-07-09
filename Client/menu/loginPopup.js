@@ -125,7 +125,7 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
 
                     this.socket = io('http://127.0.0.1:1988/',
                     {
-                        query: "token=" + response.token;
+                        query: "token=" + response.token
                     });
 
                     this.socket.on('connect', function ()
