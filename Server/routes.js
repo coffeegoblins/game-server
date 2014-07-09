@@ -22,10 +22,6 @@ module.exports = function (app, socketio)
 {
     app.post('/login', function (req, res)
     {
-        console.log(req);
-        console.log(req.body);
-        console.log(req.body.username);
-
         userManager.selectPlayer(req.body.username, function (error, user)
         {
             if (error)
@@ -46,11 +42,11 @@ module.exports = function (app, socketio)
         });
     });
 
-//    socketio.use(socketioJwt.authorize(
-//    {
-//        secret: jwtSecret,
-//        handshake: true
-//    }));
+    socketio.use(socketioJwt.authorize(
+    {
+        secret: jwtSecret,
+        handshake: true
+    }));
 
     socketio.sockets.on('connection', function (socket)
     {

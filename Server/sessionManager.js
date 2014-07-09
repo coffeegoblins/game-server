@@ -1,27 +1,7 @@
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var ObjectID = require('mongodb').ObjectID;
 var bcrypt = require('bcrypt-nodejs');
 var databaseManager = require('./databaseManager');
 var userManager = require('./userManager');
-
-passport.use(new LocalStrategy(function (username, password, done)
-{
-    userManager.selectPlayer(username, function (error, user)
-    {
-        if (error)
-        {
-            return done(error);
-        }
-
-        if (user.password !== password)
-        {
-            return done('Invalid username or password.', false);
-        }
-
-        return done(null, user);
-    });
-}));
 
 function SessionManager(events)
 {

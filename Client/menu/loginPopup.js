@@ -103,22 +103,30 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                 callback();
             }
 
-//            var request = new XMLHttpRequest();
-//            request.overrideMimeType('application/json');
-//            var params = '{ username: "1" }';// + this.usernameInput.value + "&password=" + btoa(this.passwordInput.value);
-//            request.open('POST', 'http://127.0.0.1:1988/login');
-//
-//            //Send the proper header information along with the request
-//            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            var request = new XMLHttpRequest();
+            request.overrideMimeType('application/json');
+            var params = 'username=' + encodeURIComponent(this.usernameInput.value) + "&password=" + encodeURIComponent(btoa(this.passwordInput.value));
+            request.open('POST', 'http://127.0.0.1:1988/login');
 
-//             request.onreadystatechange = function ()
-//             {
-//                 if (request.readyState === 4 && request.status === 200)
-//                 {
-//                     var response = JSON.parse(request.responseText);
-//                     console.log(response);
+            //Send the proper header information along with the request
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-                    this.socket = io('http://127.0.0.1:1988', { query: "token=1"});
+            request.onreadystatechange = function ()
+            {
+                // TODO Handle Error
+                if (request.readyState === 4 && request.status === 200)
+                {
+                    var response = JSON.parse(request.responseText);
+                    console.log(response);
+
+                    if (typeof(Storage) != "undefined") {
+                        localStorage.setItem("token", response.token);
+                    }
+
+                    this.socket = io('http://127.0.0.1:1988/',
+                    {
+                        query: "token=" + response.token;
+                    });
 
                     this.socket.on('connect', function ()
                     {
@@ -131,12 +139,12 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
 
                     this.socket.on('error', function (error)
                     {
-                        this.errorMessage.innerHTML = 'Unable to connect to the server.';
+                        this.errorMessage.innerHTML = 'Unable to connect to the server. \n' + error;
                     }.bind(this));
-//                 }
-//             };
+                }
+            }.bind(this);
 
-//             request.send();
+            request.send(params);
         };
 
         return LoginPopup;
