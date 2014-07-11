@@ -1,0 +1,51 @@
+#menuIcon {
+    position: absolute;
+    z-index: 2;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+#sideBar {
+    z-index: 1;
+    position: absolute;
+    background: #050;
+    width: 300px;
+    height: 100%;
+}
+
+#sideBar.collapsed {
+    left: -300px;
+}
+
+#userInfo {
+    border-bottom: 1px solid #CCC;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#notificationsCount,
+#waitingOnYouCount,
+#waitingOnThemCount {
+    float: right;
+}
+
+.sideBarItem {
+    font-weight: 700;
+    font-size: 24px;
+    padding: 10px;
+}
+
+#bottomRowItems {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+#logOutButton {
+    font-weight: 700;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+}

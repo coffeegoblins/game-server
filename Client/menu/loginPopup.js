@@ -119,7 +119,8 @@ define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
                     var response = JSON.parse(request.responseText);
                     console.log(response);
 
-                    if (typeof(Storage) != "undefined") {
+                    if (typeof(Storage) != "undefined")
+                    {
                         localStorage.setItem("token", response.token);
                     }
 

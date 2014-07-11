@@ -1,4 +1,21 @@
 {
+    "disconnect": {
+        "name": "disconnect",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "success": "disconnect"
+        }
+    },
+    "login": {
+        "name": "login",
+        "host": "127.0.0.1",
+        "port": "1988",
+        "response": {
+            "error": "loginError",
+            "success": "loginSuccess"
+        }
+    },
     "login": {
         "name": "login",
         "host": "127.0.0.1",

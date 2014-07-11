@@ -1,4 +1,4 @@
-define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager', 'menu/notifications'],
+define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager', 'menu/notificationsMenu'],
     function (Renderer, PlotManager, SoundManager, Notifications)
     {
         'use strict';

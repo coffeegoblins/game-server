@@ -1,5 +1,5 @@
-require(['core/src/domEvents', 'core/src/scheduler', 'core/src/commandManager', 'menu/mainMenu'],
-    function (DomEvents, Scheduler, CommandManager, MainMenu)
+require(['core/src/domEvents', 'core/src/scheduler', 'core/src/commandManager', 'menu/menuNavigator', 'menu/multiplayerMenu'],
+    function (DomEvents, Scheduler, CommandManager, MenuNavigator, MultiplayerMenu)
     {
         'use strict';
         window.addEventListener('error', function (e)
@@ -20,7 +20,8 @@ require(['core/src/domEvents', 'core/src/scheduler', 'core/src/commandManager', 
         function onDocumentReady()
         {
             Scheduler.start();
-            MainMenu.show();
+            document.body.className = 'main-menu';
+            MultiplayerMenu.show(document.body);
         }
 
         if (document.readyState === 'complete')
