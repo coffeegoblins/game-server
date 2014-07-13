@@ -44,17 +44,22 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io', 'core
                 }
             },
 
-            onLoggedIn: function (socket, user)
+            onLoggedIn: function (socket)
             {
                 socket.on('events', function (events)
                 {
                     socket.events = events;
 
-                    MenuNavigator.hide(this.parentElement);
+                    MenuNavigator.removeChildren(this.parentElement);
+                }.bind(this));
+
+                socket.on('userInfo', function (user)
+                {
+                    socket.user = user;
 
                     if (this.loginSuccessCallback)
                     {
-                        this.loginSuccessCallback(socket, user);
+                        this.loginSuccessCallback(socket);
                     }
                 }.bind(this));
             },

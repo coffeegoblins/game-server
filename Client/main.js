@@ -20,8 +20,8 @@ require(['core/src/domEvents', 'core/src/scheduler', 'core/src/commandManager', 
         function onDocumentReady()
         {
             Scheduler.start();
-            document.body.className = 'main-menu';
-            MultiplayerMenu.show(document.body);
+            var parentElement = MenuNavigator.createContentDiv();
+            MultiplayerMenu.show(parentElement);
         }
 
         if (document.readyState === 'complete')

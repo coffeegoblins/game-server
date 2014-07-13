@@ -1,10 +1,7 @@
 <link rel="stylesheet" type="text/css" href="./menu/multiplayerMenu.css" />
 
-<div id="menuIcon">
-    <img src="./menu/images/addIcon.png" />
-</div>
-
-<div id="sideBar">
+<!--
+<div id="sideBar" class="collapsed">
     <div id="userInfo">
         <img src="./menu/images/playerIcon.png" />
         <br />Username
@@ -26,7 +23,38 @@
         <div id="logOutButton">Log out</div>
     </div>
 </div>
+-->
+<!--
+
+<table id="header">
+    <tr>
+        <td>
+            <img src="./menu/images/addIcon.png" />
+        </td>
+        <td id="notificationsCount">1</td>
+        <td>
+            <input id="searchCriteria" type="text" placeholder="Enter a player name">
+            <input id="searchButton" type="button" value="Search">
+        </td>
+    </tr>
+</table>
+-->
+
+<div id="header">
+    <div id="notificationsButton">
+        <img src="./menu/images/addIcon.png" />
+        <span>1</span>
+    </div>
+    <div id="playerSearch">
+        <input id="searchCriteria" type="text" placeholder="Enter a player name">
+        <input id="searchButton" type="button" value="Search">
+    </div>
+</div>
 
 <div id="content">
+    <table id="searchResults"></table>
+</div>
 
+<div id="footer">
+    <div id="logoutButton">Logout</div>
 </div>

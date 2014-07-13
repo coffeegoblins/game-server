@@ -1,9 +1,7 @@
 define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utility',
-        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/notificationsMenu',
-        'menu/waitingOnYouMenu', 'menu/waitingOnThemMenu'],
+        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu'],
     function (Template, MenuNavigator, Utility,
-        LoginMenu, PlayerSearchMenu, NotificationsMenu,
-        WaitingOnYouMenu, WaitingOnThemMenu)
+        LoginMenu, PlayerSearchMenu, ActiveGamesMenu)
     {
         return {
             show: function (parentElement)
@@ -12,61 +10,70 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
 
                 if (!this.socket || !this.socket.connected)
                 {
-                    MenuNavigator.hide(parentElement);
-                    LoginMenu.show(parentElement, function (socket, user)
+                    MenuNavigator.removeChildren(parentElement);
+                    LoginMenu.show(parentElement, function (socket)
                     {
                         this.socket = socket;
-                        this.user = user;
                         this.show(parentElement);
                     }.bind(this));
 
                     return;
                 }
 
-                this.socket.on('disconnect', function ()
-                {
-                    localStorage.removeItem('token');
-
-                    this.show(parentElement);
-                }.bind(this));
-
                 this.playerSearchMenu = new PlayerSearchMenu(this.socket);
-                this.notificationsMenu = new NotificationsMenu(this.socket);
-                this.waitingOnYouMenu = new WaitingOnYouMenu(this.socket);
-                this.waitingOnThemMenu = new WaitingOnThemMenu(this.socket);
+                this.activeGamesMenu = new ActiveGamesMenu(this.socket);
+
+                this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
 
                 Utility.insertTemplate(parentElement, Template);
 
-                this.sideBar = document.getElementById('sideBar');
-                this.contentDiv = document.getElementById('content');
+                this.content = document.getElementById('content');
+                this.searchCriteria = document.getElementById('searchCriteria');
+                this.searchButton = document.getElementById('searchButton');
+                this.logoutButton = document.getElementById('logoutButton');
 
-                document.getElementById('menuIcon').addEventListener('click', this.onMenuIconClicked.bind(this));
-                document.getElementById('logOutButton').addEventListener('click', this.disconnect.bind(this));
-                document.getElementById('playerSearchButton').addEventListener('click', this.playerSearchMenu.show.bind(this, this.contentDiv));
-                document.getElementById('notificationsButton').addEventListener('click', this.notificationsMenu.show.bind(this, this.contentDiv));
-                document.getElementById('waitingOnYouButton').addEventListener('click', this.waitingOnYouMenu.show.bind(this.contentDiv));
-                document.getElementById('waitingOnThemButton').addEventListener('click', this.waitingOnThemMenu.show.bind(this.contentDiv));
+                this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
+                this.logoutButton.addEventListener('click', this.disconnect.bind(this));
+
+                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
+
+                this.activeGamesMenu.show(this.content);
             },
 
-            onMenuIconClicked: function ()
+            searchForPlayer: function ()
             {
-                if (this.sideBar.className === "")
+                if (!this.searchCriteria.value)
                 {
-                    this.sideBar.className = "collapsed";
+                    MenuNavigator.removeChildren(this.content);
+                    this.activeGamesMenu.show(this.content);
                     return;
                 }
 
-                this.sideBar.className = "";
+                this.searchCriteria.disabled = true;
+                this.searchButton.disabled = true;
+
+                this.socket.emit(this.socket.events.searchByUsername.name, this.searchCriteria.value);
             },
 
-            connect: function () {
+            onSearchCompleted: function (cursor)
+            {
+                MenuNavigator.removeChildren(this.content);
 
+                this.playerSearchMenu.show(this.content, cursor);
+
+                this.searchCriteria.disabled = false;
+                this.searchButton.disabled = false;
+            },
+
+            onDisconnected: function ()
+            {
+                localStorage.removeItem('token');
+                this.show(this.parentElement);
             },
 
             disconnect: function ()
             {
                 this.socket.disconnect();
             }
-
         };
     });

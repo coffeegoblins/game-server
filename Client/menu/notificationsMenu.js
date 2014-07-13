@@ -5,12 +5,12 @@ define(['text!menu/notificationsMenu.html', 'core/src/utility'],
 
         function NotificationsMenu(socket)
         {
-
+            this.socket = socket;
         }
 
-        NotificationsMenu.prototype.show = function ()
+        NotificationsMenu.prototype.show = function (parentElement)
         {
-
+            Utility.insertTemplate(parentElement, NotificationsTemplate);
         };
 
         return NotificationsMenu;

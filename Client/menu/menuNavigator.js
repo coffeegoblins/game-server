@@ -7,13 +7,13 @@ define([],
             createContentDiv: function ()
             {
                 this.contentDiv = document.createElement('div');
-                this.contentDiv.id = 'content';
+                this.contentDiv.id = 'contentWrapper';
                 document.body.appendChild(this.contentDiv);
 
                 return this.contentDiv;
             },
 
-            hide: function (parentElement)
+            removeChildren: function (parentElement)
             {
                 while (parentElement.lastChild)
                 {

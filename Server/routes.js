@@ -28,9 +28,6 @@ module.exports = function (app, socketio)
 
         userManager.selectPlayer(req.body.username, function (error, user)
         {
-            console.log('Player selected');
-            console.log(user);
-
             if (error)
             {
                 console.log(error);
@@ -43,12 +40,12 @@ module.exports = function (app, socketio)
                 expiresInMinutes: 1440 // 24 Hours
             });
 
-            console.log(token);
-
             res.json(
             {
                 token: token
             });
+
+            console.log(req.body.username + ' connected!');
         });
     });
 
@@ -63,6 +60,7 @@ module.exports = function (app, socketio)
         console.log(socket.decoded_token.username + ' connected!');
 
         socket.emit(events.connection.response.events, events);
+        socket.emit(events.connection.response.userInfo, socket.decoded_token);
 
         function responseCallback()
         {
