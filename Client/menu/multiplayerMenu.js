@@ -1,7 +1,9 @@
 define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utility',
-        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu'],
+        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu',
+        'menu/notificationsMenu'],
     function (Template, MenuNavigator, Utility,
-        LoginMenu, PlayerSearchMenu, ActiveGamesMenu)
+        LoginMenu, PlayerSearchMenu, ActiveGamesMenu,
+        NotificationsMenu)
     {
         return {
             show: function (parentElement)
@@ -22,6 +24,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
 
                 this.playerSearchMenu = new PlayerSearchMenu(this.socket);
                 this.activeGamesMenu = new ActiveGamesMenu(this.socket);
+                this.notificationsMenu = new NotificationsMenu(this.socket);
 
                 this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
 
@@ -31,13 +34,17 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                 this.searchCriteria = document.getElementById('searchCriteria');
                 this.searchButton = document.getElementById('searchButton');
                 this.logoutButton = document.getElementById('logoutButton');
+                this.notificationsButton = document.getElementById('notificationsButton');
+                this.sideBar = document.getElementById('sideBar');
 
                 this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                 this.logoutButton.addEventListener('click', this.disconnect.bind(this));
+                this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
 
                 this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
 
                 this.activeGamesMenu.show(this.content);
+                this.notificationsMenu.show(this.parentElement);
             },
 
             searchForPlayer: function ()
@@ -63,6 +70,17 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
 
                 this.searchCriteria.disabled = false;
                 this.searchButton.disabled = false;
+            },
+
+            toggleSideBar: function ()
+            {
+                if (this.sideBar.className)
+                {
+                    this.sideBar.className = "";
+                    return;
+                }
+
+                this.sideBar.className = 'collapsed';
             },
 
             onDisconnected: function ()

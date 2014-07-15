@@ -15,7 +15,6 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
                 for (var i = 0; i < games.length; ++i)
                 {
                     var currentGame = games[i];
-                    var opponentUser = null;
 
                     for (var j = 0; j < currentGame.users.length; ++j)
                     {
@@ -23,33 +22,35 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
                         if (user.lowerCaseUsername !== this.socket.user.lowerCaseUsername)
                         {
-                            opponentUser = user;
+                            currentGame.opponentUser = user;
                         }
                     }
 
-                    var gameListing = {
-                        game: currentGame,
-                        opponentUser: opponentUser
-                    };
-
-                    for (var k = 0; k < currentGame.waitingOn.length; ++k)
+                    if (this.isWaitingOnUser(currentGame))
                     {
-                        if (currentGame.waitingOn[k].lowerCaseUsername === this.socket.user.lowerCaseUsername)
-                        {
-                            waitingOnYouGames.push(gameListing);
-                            gameListing = null;
-                        }
+                        waitingOnYouGames.push(currentGame);
+                        continue;
                     }
 
-                    if (gameListing)
-                    {
-                        waitingOnThemGames.push(gameListing);
-                    }
-
-                    this.updateTemplate(waitingOnYouGames, waitingOnThemGames);
+                    waitingOnThemGames.push(currentGame);
                 }
+
+                this.updateTemplate(waitingOnYouGames, waitingOnThemGames);
             }.bind(this));
         }
+
+        ActiveGamesMenu.prototype.isWaitingOnUser = function (game)
+        {
+            for (var k = 0; k < game.waitingOn.length; ++k)
+            {
+                if (game.waitingOn[k].lowerCaseUsername === this.socket.user.lowerCaseUsername)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        };
 
         ActiveGamesMenu.prototype.show = function (parentElement)
         {
@@ -80,6 +81,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
                 var levelNameCell = row.insertCell(0);
                 var opponentCell = row.insertCell(1);
 
+                row.id = game._id;
                 levelNameCell.innerHTML = game.level;
                 opponentCell.innerHTML = game.opponentUser.username;
             }
