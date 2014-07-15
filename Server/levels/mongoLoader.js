@@ -3,7 +3,7 @@ var databaseManager = require('../databaseManager');
 var fileSystem = require('fs');
 
 // Initial Config
-var config = JSON.parse(fileSystem.readFileSync('../config.json'));
+var config = JSON.parse(fileSystem.readFileSync('../config/config.json'));
 
 databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 {

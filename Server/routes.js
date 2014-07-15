@@ -81,7 +81,7 @@ module.exports = function (app, socketio)
         socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
         socket.on(events.challengeDeclined.name, challengeManager.removeChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
 
-        socket.on(events.getLevel.name, levelManager.getLevels.bind(levelManager, responseCallback));
+        socket.on(events.getLevel.name, levelManager.getLevel.bind(levelManager, responseCallback));
         socket.on(events.getLevels.name, levelManager.getLevels.bind(levelManager, responseCallback));
     });
 };
