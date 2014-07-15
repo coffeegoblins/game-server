@@ -32,7 +32,7 @@ UserManager.prototype.login = function (responseCallback, loginSuccessCallback, 
     }.bind(this));
 };
 
-UserManager.prototype.register = function (responseCallback, loginSuccessCallback, username, password)
+UserManager.prototype.register = function (username, password, callback)
 {
     var lowerCaseUsername = username.toLowerCase();
 
@@ -40,7 +40,7 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         username: username,
         lowerCaseUsername: lowerCaseUsername,
         password: password,
-        notifications: new Array(),
+        notifications: [],
         creationTime: new Date().getTime()
     };
 
@@ -51,16 +51,13 @@ UserManager.prototype.register = function (responseCallback, loginSuccessCallbac
         if (error)
         {
             console.log('Unable to register ' + lowerCaseUsername);
-            console.log(error);
-
-            responseCallback(this.events.register.response.error, 'That username is already taken. Enter another username.');
+            callback('That username is already taken. Enter another username.');
             return;
         }
 
         console.log(lowerCaseUsername + ' has been registered.');
 
-        responseCallback(this.events.register.response.success, user);
-        loginSuccessCallback(createdUser.username);
+        callback(null, createdUser);
     }.bind(this));
 };
 

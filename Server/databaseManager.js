@@ -39,8 +39,23 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
                     return;
                 }
 
-                callback();
-            });
+                this.usersCollection.ensureIndex(
+                {
+                    username: 1
+                },
+                {
+                    unique: true
+                }, function (error)
+                {
+                    if (error)
+                    {
+                        console.log(error);
+                        return;
+                    }
+
+                    callback();
+                });
+            }.bind(this));
     }.bind(this));
 };
 
