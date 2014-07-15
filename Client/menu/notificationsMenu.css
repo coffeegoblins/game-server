@@ -10,8 +10,8 @@
     left: -300px;
 }
 .notification {
-    background: rgba(255, 255, 255, 0.9);
-    height: 150px;
+    background: rgba(255, 255, 255, 1);
+    padding: 10px;
 }
 .levelPreview {
     float: left;
@@ -35,7 +35,7 @@
 }
 .acceptButton,
 .declineButton {
-    border: 1px solid rgba(0, 0, 0, 1);
+    border: 1px solid rgba(0, 0, 0, 0.5);
     border-left: 0;
     text-align: center;
     display: inline-block;

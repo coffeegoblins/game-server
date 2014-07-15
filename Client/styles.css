@@ -43,7 +43,6 @@ body.game {
     overflow: hidden;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.5);
 }
 
 #game-canvas {
