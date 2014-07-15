@@ -1,7 +1,15 @@
-define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigator'],
-    function (ActiveGamesTemplate, Utility, MenuNavigator)
+define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigator', 'core/src/plotManager'],
+    function (ActiveGamesTemplate, Utility, MenuNavigator, PlotManager)
     {
         'use strict';
+
+        function parseFunctions(key, value)
+        {
+            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
+                return eval('(' + value + ')');
+
+            return value;
+        }
 
         function ActiveGamesMenu(socket)
         {
@@ -37,6 +45,8 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
                 this.updateTemplate(waitingOnYouGames, waitingOnThemGames);
             }.bind(this));
+
+            this.loadGameLogic();
         }
 
         ActiveGamesMenu.prototype.isWaitingOnUser = function (game)
@@ -81,10 +91,44 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
                 var levelNameCell = row.insertCell(0);
                 var opponentCell = row.insertCell(1);
 
-                row.id = game._id;
+                row.addEventListener('click', this.onGameClicked.bind(this, game));
+
                 levelNameCell.innerHTML = game.level;
                 opponentCell.innerHTML = game.opponentUser.username;
             }
+        };
+
+        ActiveGamesMenu.prototype.onGameClicked = function (game)
+        {
+            document.body.className = 'game';
+            while (document.body.lastChild)
+                document.body.removeChild(document.body.lastChild);
+
+            if (this.gameLogic)
+            {
+                PlotManager.loadLevel(this.socket, this.gameLogic, 'level1', game.units);
+            }
+        };
+
+        ActiveGamesMenu.prototype.loadGameLogic = function ()
+        {
+            var gameLogicVersion;
+            var serializedGameLogic = window.localStorage.getItem('gameLogic');
+            if (serializedGameLogic)
+            {
+                this.gameLogic = JSON.parse(serializedGameLogic, parseFunctions);
+                gameLogicVersion = this.gameLogic.version;
+            }
+
+            this.socket.emit(this.socket.events.getGameLogic.name, gameLogicVersion);
+            this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
+            {
+                if (gameLogic)
+                {
+                    window.localStorage.setItem('gameLogic', gameLogic);
+                    this.gameLogic = JSON.parse(gameLogic, parseFunctions);
+                }
+            }.bind(this));
         };
 
         return ActiveGamesMenu;
