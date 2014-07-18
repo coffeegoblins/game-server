@@ -47,6 +47,11 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                 this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
+            onGetLevelsCompleted: function (levels)
+            {
+
+            },
+
             searchForPlayer: function ()
             {
                 if (!this.searchCriteria.value)
