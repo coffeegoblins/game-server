@@ -26,8 +26,6 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                 this.activeGamesMenu = new ActiveGamesMenu(this.socket);
                 this.notificationsMenu = new NotificationsMenu(this.socket);
 
-                this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
-
                 Utility.insertTemplate(parentElement, Template);
 
                 this.content = document.getElementById('content');
@@ -41,10 +39,12 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                 this.logoutButton.addEventListener('click', this.disconnect.bind(this));
                 this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
 
-                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
-
                 this.activeGamesMenu.show(this.content);
                 this.notificationsMenu.show(this.parentElement);
+
+                this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
+                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
+                this.socket.on(this.socket.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
             searchForPlayer: function ()
