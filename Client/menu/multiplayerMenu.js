@@ -44,7 +44,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
 
                 this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
                 this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
-                this.socket.on(this.socket.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
+                this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
             searchForPlayer: function ()
