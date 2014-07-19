@@ -216,9 +216,10 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
             var battleConfig = new BattleConfiguration(this.remoteLevelLoader).show();
             battleConfig.on('cancel', this, this.show);
-            battleConfig.on('confirm', this, function (levelName)
+            battleConfig.on('confirm', this, function (levelName, units)
             {
-                this.socket.emit(this.socket.events.challengeUser.name, e.target.id, levelName);
+                var levelData = {name: levelName, units: units};
+                this.socket.emit(this.socket.events.challengeUser.name, e.target.id, levelData);
             }.bind(this));
         };
 

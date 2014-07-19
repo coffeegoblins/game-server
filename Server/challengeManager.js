@@ -10,7 +10,7 @@ function ChallengeManager(events)
     this.gameManager = new GameManager(events);
 }
 
-ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, levelName)
+ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, levelData)
 {
     this.userManager.selectPlayer(currentUserName, function (error, user)
     {
@@ -36,7 +36,8 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
                         _id: new ObjectID(),
                         sourceUserName: user.username,
                         type: "CHALLENGE",
-                        data: levelName,
+                        data: levelData.name,
+                        units: levelData.units,
                         creationTime: new Date().getTime()
                     }
                 }
@@ -47,7 +48,7 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
     }.bind(this));
 };
 
-ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserName, challengeID)
+ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserName, challengeID, units)
 {
     this.userManager.selectPlayer(currentUserName, function (error, currentUser)
     {
@@ -88,16 +89,18 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
                 return;
             }
 
+            // TODO: Units should probably be transformed into arrays of objects at this point. Don't know what's needed in the database.
+
             var users = [
                 {
                     username: currentUser.username,
                     lowerCaseUsername: currentUser.lowerCaseUsername,
-                    units: []
+                    units: units
                 },
                 {
                     username: opponentUser.username,
                     lowerCaseUsername: opponentUser.lowerCaseUsername,
-                    units: []
+                    units: notification.units
                 }
             ];
 
