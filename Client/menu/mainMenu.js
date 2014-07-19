@@ -1,5 +1,5 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notifications', 'text!menu/games.html', 'core/src/localJSONLoader', 'core/src/remoteJSONLoader', 'core/src/levelLoader'],
+        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notificationsMenu', 'text!menu/games.html', 'core/src/localJSONLoader', 'core/src/remoteJSONLoader', 'core/src/levelLoader'],
     function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications, GamesTemplate, LocalJSONLoader, RemoteJSONLoader, LevelLoader)
     {
         'use strict';

@@ -1,0 +1,48 @@
+#notifications {
+    z-index: 1;
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 0;
+    width: 300px;
+}
+#notifications.collapsed {
+    left: -300px;
+}
+.notification {
+    background: rgba(255, 255, 255, 1);
+    padding: 10px;
+}
+.levelPreview {
+    float: left;
+    text-align: center;
+    padding: 5px;
+}
+.levelImage {
+    width: 64px;
+    height: 64px;
+}
+.levelName {
+    font-weight: 700;
+}
+.userName, h2 {
+    margin: 0;
+    text-align: right;
+    padding: 10px;
+}
+.buttons {
+    clear: both;
+}
+.acceptButton,
+.declineButton {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-left: 0;
+    text-align: center;
+    display: inline-block;
+    width: 50%;
+    margin-top: 10px;
+    padding: 10px;
+}
+.declineButton {
+    border-right: 0;
+}

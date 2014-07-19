@@ -20,25 +20,51 @@ var levelManager = new LevelManager(events);
 
 module.exports = function (app, socketio)
 {
-    app.post('/login', function (req, res)
+    app.post('/login', function (request, response)
     {
-        userManager.selectPlayer(req.body.username, function (error, user)
+        console.log('Attempting to login ' + request.body.username);
+
+        userManager.selectPlayer(request.body.username, function (error, user)
         {
             if (error)
             {
-                res.send(403, error);
+                console.log(error);
+                response.send(403, error);
                 return;
             }
 
             var token = jwt.sign(user, jwtSecret,
             {
-                expiresInMinutes: 60 * 5
+                expiresInMinutes: 1440 // 24 Hours
             });
 
-            res.json(
+            response.json(
             {
                 token: token
             });
+
+            console.log(request.body.username + ' connected!');
+        });
+    });
+
+    app.post('/register', function (request, response)
+    {
+        console.log('Attempting to register ' + request.body.username);
+
+        // TODO Check blacklist
+
+        userManager.register(request.body.username, request.body.password, function (error, user)
+        {
+            if (error)
+            {
+                console.log(error);
+                response.send(400, error);
+                return;
+            }
+
+            response.send(200);
+
+            console.log(response.body.username + ' registered!');
         });
     });
 
@@ -50,34 +76,34 @@ module.exports = function (app, socketio)
 
     socketio.sockets.on('connection', function (socket)
     {
+        console.log(socket.decoded_token.username + ' connected!');
+
         socket.emit(events.connection.response.events, events);
+        socket.emit(events.connection.response.userInfo, socket.decoded_token);
+
+        socket.on(events.disconnect.name, function ()
+        {
+            socket.disconnect();
+        });
 
         function responseCallback()
         {
             socket.emit.apply(socket, Array.prototype.slice.call(arguments, 0));
         }
 
-        function onLoginSucceeded(username)
-        {
-            socket.username = username;
+        socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
 
-            socket.on(events.searchByUsername.name, userManager.selectPlayers.bind(userManager, responseCallback));
+        socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.decoded_token.username));
 
-            socket.on(events.getNotifications.name, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.username));
+        socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.decoded_token.username));
+        socket.on(events.getGameLogic.name, gameManager.getGameLogic.bind(gameManager, responseCallback));
+        socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
 
-            socket.on(events.getGames.name, gameManager.getGames.bind(gameManager, responseCallback, socket.username));
-            socket.on(events.getGameLogic.name, gameManager.getGameLogic.bind(gameManager, responseCallback));
-            socket.on(events.gameStateUpdate.name, function () {}.bind(userManager, responseCallback));
+        socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
+        socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
+        socket.on(events.challengeDeclined.name, challengeManager.removeChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
 
-            socket.on(events.challengeUser.name, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.username));
-            socket.on(events.challengeAccepted.name, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.username));
-            socket.on(events.challengeDeclined.name, challengeManager.removeChallenge.bind(challengeManager, responseCallback, socket.username));
-
-            socket.on(events.getLevel.name, levelManager.getLevel.bind(levelManager, responseCallback));
-            socket.on(events.getLevels.name, levelManager.getLevels.bind(levelManager, responseCallback));
-        }
-
-        socket.on(events.login.name, userManager.login.bind(userManager, responseCallback, onLoginSucceeded));
-        socket.on(events.register.name, userManager.register.bind(userManager, responseCallback, onLoginSucceeded));
+        socket.on(events.getLevel.name, levelManager.getLevel.bind(levelManager, responseCallback));
+        socket.on(events.getLevels.name, levelManager.getLevels.bind(levelManager, responseCallback));
     });
 };

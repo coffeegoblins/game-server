@@ -1,6 +1,13 @@
 var mongoDB = require('mongodb');
 var async = require('async');
 
+DatabaseManager.prototype.collections = {
+    users: 'users',
+    notifications: 'notifications',
+    games: 'games',
+    levels: 'levels'
+};
+
 function DatabaseManager()
 {
 
@@ -26,10 +33,10 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
         console.log('Connected to ' + dbHost + ":" + dbPort);
 
         async.parallel([
-            this.getCollection.bind(this, 'users'),
-            this.getCollection.bind(this, 'notifications'),
-            this.getCollection.bind(this, 'games'),
-            this.getCollection.bind(this, 'levels')
+            this.getCollection.bind(this, this.collections.users),
+            this.getCollection.bind(this, this.collections.notifications),
+            this.getCollection.bind(this, this.collections.games),
+            this.getCollection.bind(this, this.collections.levels)
         ],
             function (error)
             {
@@ -39,8 +46,23 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
                     return;
                 }
 
-                callback();
-            });
+                this.usersCollection.ensureIndex(
+                {
+                    username: 1
+                },
+                {
+                    unique: true
+                }, function (error)
+                {
+                    if (error)
+                    {
+                        console.log(error);
+                        return;
+                    }
+
+                    callback();
+                });
+            }.bind(this));
     }.bind(this));
 };
 

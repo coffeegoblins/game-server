@@ -1,5 +1,5 @@
-define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager', 'menu/notifications'],
-    function (Renderer, PlotManager, SoundManager, Notifications)
+define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager'],
+    function (Renderer, PlotManager, SoundManager)
     {
         'use strict';
 
@@ -40,10 +40,10 @@ define(['renderer/src/renderer', 'core/src/plotManager', 'core/src/soundManager'
             PlotManager.turnManager.activeUnit.setDirection(x, y);
         };
 
-        CommandManager.addNotification = function (notification)
-        {
-            Notifications.addNotification(notification);
-        };
+//        CommandManager.addNotification = function (notification)
+//        {
+//            Notifications.addNotification(notification);
+//        };
 
         window.CommandManager = CommandManager;
         return CommandManager;

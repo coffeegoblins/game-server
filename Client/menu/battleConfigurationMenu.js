@@ -1,8 +1,8 @@
-define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/utility'], function (Template, Events, LevelLoader, Renderer, Utility)
+define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/utility'], function (Template, Events, LevelLoader, Renderer, Utility)
 {
     'use strict';
 
-    function BattleConfiguration(levelLoader)
+    function BattleConfigurationMenu(levelLoader)
     {
         this.levels = {
             level1: {minUnits: 4, maxUnits: 4},
@@ -15,14 +15,14 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
         this.levelLoader = levelLoader;
     }
 
-    BattleConfiguration.prototype.hide = function ()
+    BattleConfigurationMenu.prototype.hide = function ()
     {
         var content = document.getElementById('content');
         while (content.lastChild)
             content.removeChild(content.lastChild);
     };
 
-    BattleConfiguration.prototype.show = function ()
+    BattleConfigurationMenu.prototype.show = function ()
     {
         var contentElement = document.getElementById('content');
         Utility.insertTemplate(contentElement, Template);
@@ -57,7 +57,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
     };
 
 
-    BattleConfiguration.prototype.onAddUnit = function (amount, e)
+    BattleConfigurationMenu.prototype.onAddUnit = function (amount, e)
     {
         if (e.target.classList.contains('disabled'))
             return;
@@ -81,19 +81,19 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
         this.selectedUnit.tab.querySelector('.unit-count').textContent = unitTypeCount || '';
     };
 
-    BattleConfiguration.prototype.onCancel = function ()
+    BattleConfigurationMenu.prototype.onCancel = function ()
     {
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('cancel');
     };
 
-    BattleConfiguration.prototype.onConfirm = function ()
+    BattleConfigurationMenu.prototype.onConfirm = function ()
     {
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('confirm', this.levelName, this.config[this.levelName].units);
     };
 
-    BattleConfiguration.prototype.onLevelChanged = function ()
+    BattleConfigurationMenu.prototype.onLevelChanged = function ()
     {
         this.levelName = this.levelSelect.value;
         this.level = this.levels[this.levelName];
@@ -145,14 +145,14 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
         }.bind(this));
     };
 
-    BattleConfiguration.prototype.onTabClick = function (e)
+    BattleConfigurationMenu.prototype.onTabClick = function (e)
     {
         var tabElement = Utility.findParentElement(e.target, '.tab');
         if (!tabElement.classList.contains('selected'))
             this.selectTab(tabElement);
     };
 
-    BattleConfiguration.prototype.onTurnCountChanged = function ()
+    BattleConfigurationMenu.prototype.onTurnCountChanged = function ()
     {
         var turnCount = this.turnSlider.value;
         if (turnCount === this.turnSlider.max)
@@ -161,12 +161,12 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
         this.turnSlider.nextSibling.textContent = turnCount;
     };
 
-    BattleConfiguration.prototype.onUnitCountChanged = function ()
+    BattleConfigurationMenu.prototype.onUnitCountChanged = function ()
     {
         this.unitSlider.nextSibling.textContent = this.unitSlider.value;
     };
 
-    BattleConfiguration.prototype.populateLevelSelect = function ()
+    BattleConfigurationMenu.prototype.populateLevelSelect = function ()
     {
         var levels = Object.keys(this.levels);
         levels.sort();
@@ -181,7 +181,7 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
         this.onLevelChanged();
     };
 
-    BattleConfiguration.prototype.selectTab = function (tabElement)
+    BattleConfigurationMenu.prototype.selectTab = function (tabElement)
     {
         if (this.selectedUnit)
         {
@@ -202,6 +202,6 @@ define(['text!./battleConfiguration.html', 'core/src/events', 'core/src/levelLoa
             this.removeButton.classList.remove('disabled');
     };
 
-    Events.register(BattleConfiguration.prototype);
-    return BattleConfiguration;
+    Events.register(BattleConfigurationMenu.prototype);
+    return BattleConfigurationMenu;
 });

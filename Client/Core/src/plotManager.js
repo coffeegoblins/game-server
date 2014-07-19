@@ -7,9 +7,11 @@ define([
         './soldier',
         './players/automatedPlayer',
         './players/localPlayer',
-        './players/remotePlayer'
+        './players/remotePlayer',
+        './levelLoader',
+        './remoteJSONLoader'
     ],
-    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, LevelLoader, RemoteJSONLoader)
     {
         'use strict';
 
@@ -36,12 +38,16 @@ define([
         }
 
         return {
-            loadLevel: function (unitLogic, levelLoader, levelName, units)
+            loadLevel: function (socket, unitLogic, levelName, units)
             {
+                this.socket = socket;
+
                 Scheduler.clear();
                 Renderer.initialize();
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
                 this.turnManager = new TurnManager();
+
+                var levelLoader = new LevelLoader(new RemoteJSONLoader(this.socket));
 
                 levelLoader.loadLevel(levelName, function (data)
                 {
