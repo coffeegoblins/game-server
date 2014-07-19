@@ -1,4 +1,4 @@
-define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/utility'], function (Template, Events, LevelLoader, Renderer, Utility)
+define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'menu/menuNavigator'], function (Template, Events, LevelLoader, Renderer, MenuNavigator)
 {
     'use strict';
 
@@ -25,7 +25,7 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
     BattleConfigurationMenu.prototype.show = function ()
     {
         var contentElement = document.getElementById('content');
-        Utility.insertTemplate(contentElement, Template);
+        MenuNavigator.insertTemplate(contentElement, Template);
 
         this.element = contentElement.querySelector('.battle-config');
         this.addButton = contentElement.querySelector('[data-button="add"');
@@ -147,7 +147,7 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 
     BattleConfigurationMenu.prototype.onTabClick = function (e)
     {
-        var tabElement = Utility.findParentElement(e.target, '.tab');
+        var tabElement = MenuNavigator.findParentElement(e.target, '.tab');
         if (!tabElement.classList.contains('selected'))
             this.selectTab(tabElement);
     };

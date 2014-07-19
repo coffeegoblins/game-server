@@ -48,23 +48,6 @@ define(function ()
             }
         },
 
-        findParentElement: function (element, selector)
-        {
-            while (element && element.matches)
-            {
-                if (element.matches(selector))
-                    return element;
-
-                element = element.parentNode;
-            }
-        },
-
-        insertTemplate: function (element, template)
-        {
-            element.insertAdjacentHTML('beforeend', template);
-            this.removeWhitespace(element);
-        },
-
         merge: function ()
         {
             var baseObject = arguments[0];
@@ -122,18 +105,6 @@ define(function ()
 
                 if (isMatching)
                     return array.splice(i, 1)[0];
-            }
-        },
-
-        removeWhitespace: function (element)
-        {
-            for (var i = element.childNodes.length - 1; i >= 0; i--)
-            {
-                var childNode = element.childNodes[i];
-                if (childNode.nodeType === 3 && !/\S/.test(childNode.nodeValue))
-                    element.removeChild(childNode);
-                else if (childNode.nodeType === 1)
-                    this.removeWhitespace(childNode);
             }
         },
 

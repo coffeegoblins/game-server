@@ -43,7 +43,7 @@ module.exports = function (app, socketio)
                 token: token
             });
 
-            console.log(request.body.username + ' connected!');
+            console.log(user.username + ' connected!');
         });
     });
 
@@ -63,8 +63,9 @@ module.exports = function (app, socketio)
             }
 
             response.send(200);
-
-            console.log(response.body.username + ' registered!');
+            if (user && user.length){
+                console.log(user[0].username + ' registered!');
+            }
         });
     });
 

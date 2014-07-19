@@ -1,4 +1,4 @@
-define(['text!menu/loginPopup.html', 'lib/socket.io', 'core/src/utility'],
+define(['text!menu/loginPopup.html', '../../lib/socket.io.js', 'core/src/utility'],
     function (Template, io, Utility)
     {
         function LoginPopup(mainMenu)

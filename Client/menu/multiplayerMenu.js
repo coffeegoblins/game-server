@@ -1,15 +1,16 @@
-define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utility',
-        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu',
-        'menu/notificationsMenu'],
-    function (Template, MenuNavigator, Utility,
-        LoginMenu, PlayerSearchMenu, ActiveGamesMenu,
-        NotificationsMenu)
+define([
+        'text!menu/multiplayerMenu.html',
+        'menu/menuNavigator',
+        'menu/loginMenu',
+        'menu/playerSearchMenu',
+        'menu/activeGamesMenu',
+        'menu/notificationsMenu'
+    ],
+    function (Template, MenuNavigator, LoginMenu, PlayerSearchMenu, ActiveGamesMenu, NotificationsMenu)
     {
         return {
             show: function (parentElement)
             {
-                this.parentElement = parentElement;
-
                 if (!this.socket || !this.socket.connected)
                 {
                     MenuNavigator.removeChildren(parentElement);
@@ -22,18 +23,18 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                     return;
                 }
 
+                this.parentElement = parentElement;
                 this.playerSearchMenu = new PlayerSearchMenu(this.socket);
                 this.activeGamesMenu = new ActiveGamesMenu(this.socket);
                 this.notificationsMenu = new NotificationsMenu(this.socket);
 
-                Utility.insertTemplate(parentElement, Template);
+                MenuNavigator.insertTemplate(parentElement, Template);
 
                 this.content = document.getElementById('content');
                 this.searchCriteria = document.getElementById('searchCriteria');
                 this.searchButton = document.getElementById('searchButton');
                 this.logoutButton = document.getElementById('logoutButton');
                 this.notificationsButton = document.getElementById('notificationsButton');
-                this.sideBar = document.getElementById('sideBar');
 
                 this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                 this.logoutButton.addEventListener('click', this.disconnect.bind(this));
@@ -54,6 +55,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
 
             searchForPlayer: function ()
             {
+                // TODO: Can't search for all players? Searching for '*' throws an exception
                 if (!this.searchCriteria.value)
                 {
                     MenuNavigator.removeChildren(this.content);
@@ -71,21 +73,11 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
             {
                 MenuNavigator.removeChildren(this.content);
 
+                this.notificationsMenu.hide();
                 this.playerSearchMenu.show(this.content, cursor);
 
                 this.searchCriteria.disabled = false;
                 this.searchButton.disabled = false;
-            },
-
-            toggleSideBar: function ()
-            {
-                if (this.sideBar.className)
-                {
-                    this.sideBar.className = "";
-                    return;
-                }
-
-                this.sideBar.className = 'collapsed';
             },
 
             onDisconnected: function ()

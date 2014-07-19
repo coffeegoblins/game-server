@@ -40,6 +40,6 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
     {
         var name = process.argv[i];
 
-        fileSystem.readFile(SERVER_ROOT + "levels/" + name + ".json", "", loadLevel.bind(this, name));
+        fileSystem.readFile(SERVER_ROOT + "/levels/" + name + ".json", "", loadLevel.bind(this, name));
     }
 });
