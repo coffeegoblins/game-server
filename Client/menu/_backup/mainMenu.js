@@ -98,7 +98,7 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
                 gameLogicVersion = this.gameLogic.version;
             }
 
-            this.socket.emit(this.socket.events.getGameLogic.name, gameLogicVersion);
+            this.socket.emit(this.socket.events.getGameLogic.url, gameLogicVersion);
             this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
             {
                 if (gameLogic)
@@ -128,8 +128,8 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
             this.remoteLevelLoader = new LevelLoader(new RemoteJSONLoader(this.socket));
 
             this.loadGameLogic();
-            this.socket.emit(this.socket.events.getNotifications.name);
-            this.socket.emit(this.socket.events.getGames.name);
+            this.socket.emit(this.socket.events.getNotifications.url);
+            this.socket.emit(this.socket.events.getGames.url);
 
             this.socket.on(this.socket.events.getNotifications.response.success, function (notifications)
             {

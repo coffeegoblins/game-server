@@ -11,9 +11,10 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
             return value;
         }
 
-        function ActiveGamesMenu(socket)
+        function ActiveGamesMenu(socket, parentElement)
         {
             this.socket = socket;
+            this.parentElement = parentElement;
 
             var waitingOnYouGames = [];
             var waitingOnThemGames = [];

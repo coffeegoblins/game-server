@@ -1,4 +1,4 @@
-define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConfigurationMenu'
+define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConfigurationMenu',
         'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu',
         'menu/notificationsMenu', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/imageCache'],
     function (Template, MenuNavigator, BattleConfigurationMenu,
@@ -14,11 +14,11 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
 
                     this.socket = socket;
 
-                    this.playerSearchMenu = new PlayerSearchMenu(this.socket);
+                    MenuNavigator.insertTemplate(parentElement, Template);
+
                     this.activeGamesMenu = new ActiveGamesMenu(this.socket);
                     this.notificationsMenu = new NotificationsMenu(this.socket);
-
-                    MenuNavigator.insertTemplate(parentElement, Template);
+                    this.playerSearchMenu = new PlayerSearchMenu();
 
                     this.content = document.getElementById('content');
                     this.searchCriteria = document.getElementById('searchCriteria');
@@ -30,11 +30,6 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                     this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                     this.logoutButton.addEventListener('click', this.disconnect.bind(this));
                     this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
-
-
-                    this.activeGamesMenu = new ActiveGamesMenu(this.socket);
-                    this.notificationsMenu = new NotificationsMenu(this.socket);
-                    this.playerSearchMenu = new PlayerSearchMenu();
 
                     this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
                     this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
@@ -76,7 +71,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                         });
                     });
                 }
-            }
+            },
 
             disconnect: function ()
             {
@@ -87,7 +82,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
             {
                 this.showBattleConfigurationMenu(levelName, function (levelData)
                 {
-                    this.socket.emit(this.socket.events.challengeAccepted.name, id, levelData);
+                    this.socket.emit(this.socket.events.challengeAccepted.url, id, levelData);
                     this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
                     {
                         onSuccess();
@@ -100,7 +95,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
             {
                 this.showBattleConfigurationMenu(null, function (levelData)
                 {
-                    this.socket.emit(this.socket.events.challengeUser.name, userId, levelData);
+                    this.socket.emit(this.socket.events.challengeUser.url, userId, levelData);
                     this.parentElement.style.display = '';
                 });
             },
@@ -135,7 +130,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                 this.searchCriteria.disabled = true;
                 this.searchButton.disabled = true;
 
-                this.socket.emit(this.socket.events.searchByUsername.name, this.searchCriteria.value);
+                this.socket.emit(this.socket.events.searchByUsername.url, this.searchCriteria.value);
             },
 
             showBattleConfigurationMenu: function (levelName, callback)

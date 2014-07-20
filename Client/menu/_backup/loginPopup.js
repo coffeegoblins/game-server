@@ -46,7 +46,7 @@ define(['text!menu/loginPopup.html', '../../lib/socket.io.js', 'core/src/utility
 
             this.connect(function ()
             {
-                this.socket.emit(this.socket.events.register.name, this.usernameInput.value, btoa(this.passwordInput.value));
+                this.socket.emit(this.socket.events.register.url, this.usernameInput.value, btoa(this.passwordInput.value));
 
                 this.socket.on(this.socket.events.register.response.success, function (user)
                 {
@@ -73,7 +73,7 @@ define(['text!menu/loginPopup.html', '../../lib/socket.io.js', 'core/src/utility
         {
             this.connect(function ()
             {
-                this.socket.emit(this.socket.events.login.name, this.usernameInput.value, btoa(this.passwordInput.value));
+                this.socket.emit(this.socket.events.login.url, this.usernameInput.value, btoa(this.passwordInput.value));
 
                 this.socket.on(this.socket.events.login.response.error, function (error)
                 {
