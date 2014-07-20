@@ -7,25 +7,15 @@ function LevelManager(events)
 
 LevelManager.prototype.getLevels = function (responseCallback)
 {
-    databaseManager.levelsCollection.find({}, function (error, levels)
+    databaseManager.levelsCollection.find().toArray(function (error, levelsArray)
     {
         if (error)
         {
-            console.log(error);
             responseCallback(this.events.getLevels.response.error, "Unable to retrieve levels");
             return;
         }
 
-        levels.toArray(function (error, levelsArray)
-        {
-            if (error)
-            {
-                responseCallback(this.events.getLevels.response.error, "Unable to retrieve levels");
-                return;
-            }
-
-            responseCallback(this.events.getLevels.response.success, levelsArray);
-        }.bind(this));
+        responseCallback(this.events.getLevels.response.success, levelsArray);
     }.bind(this));
 };
 

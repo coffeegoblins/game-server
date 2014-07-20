@@ -1,5 +1,5 @@
-define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigator', 'core/src/plotManager'],
-    function (ActiveGamesTemplate, Utility, MenuNavigator, PlotManager)
+define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigator', 'core/src/plotManager', 'core/src/imageCache'],
+    function (ActiveGamesTemplate, Utility, MenuNavigator, PlotManager, ImageCache)
     {
         'use strict';
 
@@ -66,7 +66,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
         {
             this.parentElement = parentElement;
 
-            this.socket.emit(this.socket.events.getGames.name);
+            this.socket.emit(this.socket.events.getGames.url);
         };
 
         ActiveGamesMenu.prototype.updateTemplate = function (waitingOnYouGames, waitingOnThemGames)
@@ -93,7 +93,8 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
                 row.addEventListener('click', this.onGameClicked.bind(this, game));
 
-                levelNameCell.innerHTML = game.level;
+                levelNameCell.className = game.level;
+                levelNameCell.innerHTML = ImageCache.getImage(game.level);
                 opponentCell.innerHTML = game.opponentUser.username;
             }
         };
@@ -120,7 +121,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
                 gameLogicVersion = this.gameLogic.version;
             }
 
-            this.socket.emit(this.socket.events.getGameLogic.name, gameLogicVersion);
+            this.socket.emit(this.socket.events.getGameLogic.url, gameLogicVersion);
             this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
             {
                 if (gameLogic)

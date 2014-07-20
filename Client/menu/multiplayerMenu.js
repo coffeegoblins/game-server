@@ -1,55 +1,67 @@
 define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utility',
         'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu',
-        'menu/notificationsMenu'],
+        'menu/notificationsMenu', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/imageCache'],
     function (Template, MenuNavigator, Utility,
         LoginMenu, PlayerSearchMenu, ActiveGamesMenu,
-        NotificationsMenu)
+        NotificationsMenu, LevelLoader, Renderer, ImageCache)
     {
         return {
             show: function (parentElement)
             {
                 this.parentElement = parentElement;
 
-                if (!this.socket || !this.socket.connected)
+                LoginMenu.show(parentElement, function (socket)
                 {
-                    MenuNavigator.removeChildren(parentElement);
-                    LoginMenu.show(parentElement, function (socket)
-                    {
-                        this.socket = socket;
-                        this.show(parentElement);
-                    }.bind(this));
+                    this.socket = socket;
 
-                    return;
-                }
+                    this.playerSearchMenu = new PlayerSearchMenu(this.socket);
+                    this.activeGamesMenu = new ActiveGamesMenu(this.socket);
+                    this.notificationsMenu = new NotificationsMenu(this.socket);
 
-                this.playerSearchMenu = new PlayerSearchMenu(this.socket);
-                this.activeGamesMenu = new ActiveGamesMenu(this.socket);
-                this.notificationsMenu = new NotificationsMenu(this.socket);
+                    Utility.insertTemplate(parentElement, Template);
 
-                Utility.insertTemplate(parentElement, Template);
+                    this.content = document.getElementById('content');
+                    this.searchCriteria = document.getElementById('searchCriteria');
+                    this.searchButton = document.getElementById('searchButton');
+                    this.logoutButton = document.getElementById('logoutButton');
+                    this.notificationsButton = document.getElementById('notificationsButton');
+                    this.sideBar = document.getElementById('sideBar');
 
-                this.content = document.getElementById('content');
-                this.searchCriteria = document.getElementById('searchCriteria');
-                this.searchButton = document.getElementById('searchButton');
-                this.logoutButton = document.getElementById('logoutButton');
-                this.notificationsButton = document.getElementById('notificationsButton');
-                this.sideBar = document.getElementById('sideBar');
+                    this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
+                    this.logoutButton.addEventListener('click', this.disconnect.bind(this));
+                    this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
 
-                this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
-                this.logoutButton.addEventListener('click', this.disconnect.bind(this));
-                this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
+                    this.activeGamesMenu.show(this.content);
+                    this.notificationsMenu.show(this.parentElement);
+                    this.levelLoader = new LevelLoader();
 
-                this.activeGamesMenu.show(this.content);
-                this.notificationsMenu.show(this.parentElement);
+                    this.socket.emit(this.socket.events.getLevels.url);
 
-                this.socket.on(this.socket.events.disconnect.name, this.onDisconnected.bind(this));
-                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
-                this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
+                    this.socket.on(this.socket.events.disconnect.url, this.onDisconnected.bind(this));
+                    this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
+                    this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
+                }.bind(this));
             },
 
             onGetLevelsCompleted: function (levels)
             {
+                for (var i = 0; i < 1; ++i)
+                {
+                    var level = levels[i];
 
+                    this.levelLoader.onLevelLoaded(level.data, function (data)
+                    {
+                        Renderer.createLevelImage(level.name, data, function ()
+                        {
+                            var elements = document.getElementsByClassName(level.name);
+
+                            for (var j = 0; j < elements.length; ++j)
+                            {
+                                elements[j].innerHTML = '<img src="' + ImageCache.getImage(level.name).path + '" class="levelThumbnail" />';
+                            }
+                        });
+                    });
+                }
             },
 
             searchForPlayer: function ()
@@ -64,7 +76,7 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'core/src/utilit
                 this.searchCriteria.disabled = true;
                 this.searchButton.disabled = true;
 
-                this.socket.emit(this.socket.events.searchByUsername.name, this.searchCriteria.value);
+                this.socket.emit(this.socket.events.searchByUsername.url, this.searchCriteria.value);
             },
 
             onSearchCompleted: function (cursor)

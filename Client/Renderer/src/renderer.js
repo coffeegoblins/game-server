@@ -22,16 +22,18 @@ define([
 
             Events.register(this);
             this.onResizeBound = this.onResize.bind(this);
+
+            this.canvas = document.createElement('canvas');
+            this.canvas.id = 'game-canvas';
+
+            this.context = this.canvas.getContext('2d');
+            this.camera = new Camera();
         }
 
         Renderer.prototype.initialize = function ()
         {
-            this.canvas = document.createElement('canvas');
-            this.canvas.id = 'game-canvas';
             document.body.appendChild(this.canvas);
 
-            this.context = this.canvas.getContext('2d');
-            this.camera = new Camera();
             this.renderables.length = 0;
             this.renderablePaths.length = 0;
 
@@ -40,7 +42,13 @@ define([
             window.addEventListener('resize', this.onResizeBound, false);
 
             this.onResize();
-            Scheduler.schedule({id: 'renderer', context: this, method: this.update, priority: Scheduler.priority.render});
+            Scheduler.schedule(
+            {
+                id: 'renderer',
+                context: this,
+                method: this.update,
+                priority: Scheduler.priority.render
+            });
         };
 
         Renderer.prototype.onClick = function (e)
@@ -63,6 +71,46 @@ define([
             this.canvas.height = this.canvas.clientHeight;
             this.camera.handleResize(this.canvas.width, this.canvas.height);
             this.trigger('resize', this.canvas.width, this.canvas.height);
+        };
+
+        Renderer.prototype.createLevelImage = function (levelName, levelData, loadedCallback)
+        {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            var renderables = [];
+            var renderableMap = new RenderableMap(levelData.map);
+            for (var i = 0; i < levelData.objects.length; i++)
+                renderables.push(new RenderableObject(levelData.objects[i]));
+
+            this.renderLevelPreview(levelName, levelData, renderables, renderableMap, loadedCallback);
+        };
+
+        Renderer.prototype.renderLevelPreview = function (levelName, levelData, renderables, renderableMap, loadedCallback)
+        {
+            if (ImageCache.isLoading())
+            {
+                setTimeout(this.renderLevelPreview.bind(this, levelName, levelData, renderables, renderableMap, loadedCallback), 100);
+                return;
+            }
+
+            var camera = new Camera();
+            camera.viewportRect.x = -levelData.map.height * camera.halfTileWidth;
+            camera.viewportRect.width = (levelData.map.width + levelData.map.height) * camera.halfTileWidth;
+            camera.viewportRect.height = (levelData.map.width + levelData.map.height) * camera.halfTileHeight;
+
+            this.canvas.width = camera.viewportRect.width;
+            this.canvas.height = camera.viewportRect.height;
+
+            var context = this.canvas.getContext('2d');
+            context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            renderableMap.render(context, camera);
+            for (var i = 0; i < renderables.length; i++)
+            {
+                renderables[i].render(context, 0, camera);
+            }
+
+            ImageCache.loadImage(levelName, this.canvas.toDataURL(), loadedCallback);
         };
 
         Renderer.prototype.renderPreview = function (canvas, map, objects)

@@ -7,7 +7,7 @@ define(['renderer/src/effects/transitionEffect'], function (TransitionEffect)
         this.viewportRect = {x: 0, y: 0, width: 0, height: 0};
 
         this.scale = 1;
-        this.tileWidth = 96;
+        this.tileWidth = 5;
         this.tileHeight = this.tileWidth / 2;
         this.halfTileWidth = this.tileWidth / 2;
         this.halfTileHeight = this.tileHeight / 2;

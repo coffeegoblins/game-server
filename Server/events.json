@@ -1,134 +1,139 @@
 {
-    "disconnect": {
-        "name": "disconnect",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
-            "success": "disconnect"
+    "connection":
+    {
+        "response":
+        {
+            "userInfo": "userInfo",
+            "events": "events"
         }
     },
-    "login": {
-        "name": "login",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
-            "error": "loginError",
-            "success": "loginSuccess"
+    "disconnect":
+    {
+        "url": "disconnect",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
+            "success": "disconnected"
         }
     },
-    "register": {
-        "name": "register",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
-            "error": "registerError",
-            "success": "registerSuccess"
-        }
-    },
-    "challengeUser": {
-        "name": "challengeUser",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "challengeUser":
+    {
+        "url": "challengeUser",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "challengeUserError",
             "success": "challengeUserSuccess"
         }
     },
-    "challengeAccepted": {
-        "name": "challengeAccepted",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "challengeAccepted":
+    {
+        "url": "challengeAccepted",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "challengeAcceptedError",
             "success": "challengeAcceptedSuccess"
         }
     },
-    "challengeDeclined": {
-        "name": "challengeDeclined",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "challengeDeclined":
+    {
+        "url": "challengeDeclined",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "challengeDeclinedError",
             "success": "challengeDeclinedSuccess"
         }
     },
-    "connection": {
-        "name": "connection",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
-            "events": "events",
-            "userInfo": "userInfo"
-        }
-    },
-    "gameStateUpdate": {
-        "name": "gameStateUpdate",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "gameStateUpdate":
+    {
+        "url": "gameStateUpdate",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "gameStateUpdateError",
             "success": "gameStateUpdateSuccess"
         }
     },
-    "searchByUsername": {
-        "name": "searchByUsername",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
-            "error": "searchByUsernameError",
-            "success": "searchByUsernameSuccess"
+    "searchByUsername":
+    {
+        "url": "searchByUsername",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
+            "error": "searchByUserurlError",
+            "success": "searchByUserurlSuccess"
         }
     },
-    "getNotifications": {
-        "name": "getNotifications",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "getNotifications":
+    {
+        "url": "getNotifications",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "getNotificationsError",
             "success": "getNotificationsSuccess"
         }
     },
-    "createGame": {
-        "name": "createGame",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "createGame":
+    {
+        "url": "createGame",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "createGameError",
             "success": "createGameSuccess"
         }
     },
-    "getGames": {
-        "name": "getGames",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "getGames":
+    {
+        "url": "getGames",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "getGamesError",
             "success": "getGamesSuccess"
         }
     },
-    "getGameLogic": {
-        "name": "getGameLogic",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "getGameLogic":
+    {
+        "url": "getGameLogic",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "getGameLogicError",
             "success": "getGameLogicSuccess"
         }
     },
-    "getLevels": {
-        "name": "getLevels",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "getLevels":
+    {
+        "url": "getLevels",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "getLevelsError",
             "success": "getLevelsSuccess"
         }
     },
-    "getLevel": {
-        "name": "getLevel",
-        "host": "127.0.0.1",
-        "port": "1988",
-        "response": {
+    "getLevel":
+    {
+        "url": "getLevel",
+        "version": "1",
+        "cached": "false",
+        "response":
+        {
             "error": "getLevelError",
             "success": "getLevelSuccess"
         }

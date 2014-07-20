@@ -52,9 +52,6 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
                 return;
             }
 
-            // TODO Remove
-            console.log(gamesArray);
-
             responseCallback(this.events.getGames.response.success, gamesArray);
         }.bind(this));
     }.bind(this));
@@ -77,7 +74,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
         var game = {
             users: users,
             waitingOn: users,
-            level: level,
+            level: levelName,
             turnCount: 0,
             creationTime: new Date().getTime()
         };

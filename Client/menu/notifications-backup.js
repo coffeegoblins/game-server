@@ -61,7 +61,7 @@ define(['text!menu/notifications.html'],
         {
             acceptButton.disabled = true;
 
-            this.socket.emit(this.socket.events.challengeAccepted.name, id);
+            this.socket.emit(this.socket.events.challengeAccepted.url, id);
 
             this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
             {
@@ -78,7 +78,7 @@ define(['text!menu/notifications.html'],
 
         Notifications.prototype.onDeclineButtonClicked = function (id)
         {
-            this.socket.emit(this.socket.events.challengeDeclined.name, id);
+            this.socket.emit(this.socket.events.challengeDeclined.url, id);
             this.removeNotification(id);
         };
 

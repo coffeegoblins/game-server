@@ -20,7 +20,7 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'core
             this.notificationsSideBar = document.getElementById('notifications');
             this.toggle();
 
-            this.socket.emit(this.socket.events.getNotifications.name);
+            this.socket.emit(this.socket.events.getNotifications.url);
         };
 
         NotificationsMenu.prototype.toggle = function ()
@@ -65,7 +65,7 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'core
 
         NotificationsMenu.prototype.acceptChallenge = function (notification)
         {
-            this.socket.emit(this.socket.events.challengeAccepted.name, notification._id);
+            this.socket.emit(this.socket.events.challengeAccepted.url, notification._id);
 
             this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
             {
@@ -75,7 +75,7 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'core
 
         NotificationsMenu.prototype.declineChallenge = function (notification)
         {
-            this.socket.emit(this.socket.events.challengeDeclined.name, notification._id);
+            this.socket.emit(this.socket.events.challengeDeclined.url, notification._id);
             this.removeNotification(notification._id);
         };
 

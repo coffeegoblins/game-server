@@ -31,7 +31,7 @@ define(['text!menu/playerSearchMenu.html', 'core/src/utility'],
         PlayerSearchMenu.prototype.challengePlayer = function (e)
         {
             // TODO Battle Config
-            this.socket.emit(this.socket.events.challengeUser.name, e.target.id, "level1");
+            this.socket.emit(this.socket.events.challengeUser.url, e.target.id, "level1");
         };
 
         return PlayerSearchMenu;

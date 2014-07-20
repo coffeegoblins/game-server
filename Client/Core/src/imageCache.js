@@ -11,8 +11,8 @@ define(function ()
         this.height = this.data.height;
         this.isLoaded = true;
 
-        if (this.data.callback)
-            this.data.callback(this);
+        if (this.callback)
+            this.callback(this);
     }
 
     function ImageCache() { }
