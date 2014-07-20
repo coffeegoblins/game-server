@@ -51,9 +51,9 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
         ActiveGamesMenu.prototype.isWaitingOnUser = function (game)
         {
-            for (var k = 0; k < game.waitingOn.length; ++k)
+            for (var i = 0; i < game.waitingOn.length; ++i)
             {
-                if (game.waitingOn[k].lowerCaseUsername === this.socket.user.lowerCaseUsername)
+                if (game.waitingOn[i].lowerCaseUsername === this.socket.user.lowerCaseUsername)
                 {
                     return true;
                 }
@@ -71,7 +71,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
         ActiveGamesMenu.prototype.updateTemplate = function (waitingOnYouGames, waitingOnThemGames)
         {
-            Utility.insertTemplate(this.parentElement, ActiveGamesTemplate);
+            MenuNavigator.insertTemplate(this.parentElement, ActiveGamesTemplate);
 
             this.insertGames('waitingOnYouTable', waitingOnYouGames);
             this.insertGames('waitingOnThemTable', waitingOnThemGames);
@@ -83,6 +83,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
             MenuNavigator.removeChildren(table);
 
+            // TODO: Should probably optimize a fragment
             for (var i = 0; i < games.length; ++i)
             {
                 var game = games[i];
@@ -107,6 +108,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
             if (this.gameLogic)
             {
+                // TODO: Load the correct level
                 PlotManager.loadLevel(this.socket, this.gameLogic, 'level1', game.units);
             }
         };

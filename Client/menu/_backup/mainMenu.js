@@ -1,5 +1,5 @@
 define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/searchBar.html',
-        'core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notificationsMenu', 'text!menu/games.html', 'core/src/localJSONLoader', 'core/src/remoteJSONLoader', 'core/src/levelLoader'],
+        '../../Core/src/plotManager', './loginPopup', 'core/src/browserNavigation', 'text!menu/playerSearch.html', './battleConfiguration', './notificationsMenu', 'text!menu/games.html', 'core/src/localJSONLoader', 'core/src/remoteJSONLoader', 'core/src/levelLoader'],
     function (MainMenuTemplate, MainMenuButtonsTemplate, SearchBarTemplate, PlotManager, LoginPopup, BrowserNavigation, PlayerSearchTemplate, BattleConfiguration, Notifications, GamesTemplate, LocalJSONLoader, RemoteJSONLoader, LevelLoader)
     {
         'use strict';
@@ -216,9 +216,10 @@ define(['text!menu/mainMenu.html', 'text!menu/mainMenuButtons.html', 'text!menu/
 
             var battleConfig = new BattleConfiguration(this.remoteLevelLoader).show();
             battleConfig.on('cancel', this, this.show);
-            battleConfig.on('confirm', this, function (levelName)
+            battleConfig.on('confirm', this, function (levelName, units)
             {
-                this.socket.emit(this.socket.events.challengeUser.name, e.target.id, levelName);
+                var levelData = {name: levelName, units: units};
+                this.socket.emit(this.socket.events.challengeUser.name, e.target.id, levelData);
             }.bind(this));
         };
 

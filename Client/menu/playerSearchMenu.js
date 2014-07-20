@@ -1,38 +1,39 @@
-define(['text!menu/playerSearchMenu.html', 'core/src/utility'],
-    function (PlayerSearchTemplate, Utility)
+define(['text!menu/playerSearchMenu.html', 'menu/menuNavigator', 'core/src/events'], function (PlayerSearchTemplate, MenuNavigator, Events)
+{
+    'use strict';
+
+    function PlayerSearchMenu()
     {
-        'use strict';
+    }
 
-        function PlayerSearchMenu(socket)
+    PlayerSearchMenu.prototype.show = function (parentElement, searchResults)
+    {
+        MenuNavigator.insertTemplate(parentElement, PlayerSearchTemplate);
+
+        this.searchResultsTable = document.getElementById('searchResults');
+
+        // TODO: Optimize. Templates and fragments.
+        for (var i = 0; i < searchResults.length; ++i)
         {
-            this.socket = socket;
+            var row = this.searchResultsTable.insertRow(i);
+
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+
+            // TODO: Should we show the number of active games/challenges with the players?
+
+            cell1.innerHTML = searchResults[i].username;
+            cell2.innerHTML = "<input type='button' value='Challenge!' id='" + searchResults[i].username + "'>";
+
+            document.getElementById(searchResults[i].username).addEventListener('click', this.challengePlayer.bind(this));
         }
+    };
 
-        PlayerSearchMenu.prototype.show = function (parentElement, searchResults)
-        {
-            Utility.insertTemplate(parentElement, PlayerSearchTemplate);
+    PlayerSearchMenu.prototype.challengePlayer = function (e)
+    {
+        this.trigger('challengeDeclared', e.target.id);
+    };
 
-            this.searchResultsTable = document.getElementById('searchResults');
-
-            for (var i = 0; i < searchResults.length; ++i)
-            {
-                var row = this.searchResultsTable.insertRow(i);
-
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-
-                cell1.innerHTML = searchResults[i].username;
-                cell2.innerHTML = "<input type='button' value='Challenge!' id='" + searchResults[i].username + "'>";
-
-                document.getElementById(searchResults[i].username).addEventListener('click', this.challengePlayer.bind(this));
-            }
-        };
-
-        PlayerSearchMenu.prototype.challengePlayer = function (e)
-        {
-            // TODO Battle Config
-            this.socket.emit(this.socket.events.challengeUser.url, e.target.id, "level1");
-        };
-
-        return PlayerSearchMenu;
-    });
+    Events.register(PlayerSearchMenu.prototype);
+    return PlayerSearchMenu;
+});

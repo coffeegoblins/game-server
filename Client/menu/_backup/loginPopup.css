@@ -40,7 +40,7 @@ input {
     height: 18px;
     vertical-align: sub;
     margin-right: 8px;
-    background-image: url('./images/cancelIcon.png');
+    background-image: url('../images/cancelIcon.png');
 }
 
 #errorMessage:empty {
