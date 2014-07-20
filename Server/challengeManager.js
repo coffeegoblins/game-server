@@ -10,7 +10,7 @@ function ChallengeManager(events)
     this.gameManager = new GameManager(events);
 }
 
-ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, levelData)
+ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, data)
 {
     this.userManager.selectPlayer(currentUserName, function (error, user)
     {
@@ -36,8 +36,8 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
                         _id: new ObjectID(),
                         sourceUserName: user.username,
                         type: "CHALLENGE",
-                        data: levelData.name,
-                        units: levelData.units,
+                        data: data.levelName,
+                        units: data.units,
                         creationTime: new Date().getTime()
                     }
                 }
@@ -48,7 +48,7 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
     }.bind(this));
 };
 
-ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserName, challengeID, units)
+ChallengeManager.prototype.acceptChallenge = function (responseCallback, currentUserName, challengeID, levelData)
 {
     this.userManager.selectPlayer(currentUserName, function (error, currentUser)
     {
@@ -59,10 +59,9 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
             return;
         }
 
-        var notification = null;
-
         console.log(currentUser.notifications);
 
+        var notification = null;
         for (var i = 0; i < currentUser.notifications.length; ++i)
         {
             // Double equals for loose equality (_id is an object)
@@ -95,7 +94,7 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
                 {
                     username: currentUser.username,
                     lowerCaseUsername: currentUser.lowerCaseUsername,
-                    units: units
+                    units: levelData.units
                 },
                 {
                     username: opponentUser.username,
@@ -118,6 +117,7 @@ ChallengeManager.prototype.removeChallenge = function (responseCallback, current
         'lowerCaseUsername': currentUserName.toLowerCase()
     };
 
+    // TODO: This doesn't seem to be working. Function params seem fine.
     databaseManager.usersCollection.update(searchCriteria,
     {
         '$pull':

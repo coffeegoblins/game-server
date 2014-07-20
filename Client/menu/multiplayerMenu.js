@@ -1,12 +1,13 @@
 define([
-        'text!menu/multiplayerMenu.html',
-        'menu/menuNavigator',
-        'menu/loginMenu',
-        'menu/playerSearchMenu',
-        'menu/activeGamesMenu',
-        'menu/notificationsMenu'
+        './activeGamesMenu',
+        './battleConfigurationMenu',
+        './loginMenu',
+        './menuNavigator',
+        './notificationsMenu',
+        './playerSearchMenu',
+        'text!./multiplayerMenu.html'
     ],
-    function (Template, MenuNavigator, LoginMenu, PlayerSearchMenu, ActiveGamesMenu, NotificationsMenu)
+    function (ActiveGamesMenu, BattleConfigurationMenu, LoginMenu, MenuNavigator, NotificationsMenu, PlayerSearchMenu, Template)
     {
         return {
             show: function (parentElement)
@@ -24,11 +25,14 @@ define([
                 }
 
                 this.parentElement = parentElement;
-                this.playerSearchMenu = new PlayerSearchMenu(this.socket);
+                MenuNavigator.insertTemplate(parentElement, Template);
+
                 this.activeGamesMenu = new ActiveGamesMenu(this.socket);
                 this.notificationsMenu = new NotificationsMenu(this.socket);
+                this.playerSearchMenu = new PlayerSearchMenu();
 
-                MenuNavigator.insertTemplate(parentElement, Template);
+                this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
+                this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
 
                 this.content = document.getElementById('content');
                 this.searchCriteria = document.getElementById('searchCriteria');
@@ -48,9 +52,54 @@ define([
                 this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
+
+            disconnect: function ()
+            {
+                this.socket.disconnect();
+            },
+
+            onChallengeAccepted: function (id, levelName, onSuccess)
+            {
+                this.showBattleConfigurationMenu(levelName, function (levelData)
+                {
+                    this.socket.emit(this.socket.events.challengeAccepted.name, id, levelData);
+                    this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
+                    {
+                        onSuccess();
+                        //PlotManager.loadLevel(this.gameLogic, this.remoteLevelLoader, levelData);
+                    }.bind(this));
+                });
+            },
+
+            onChallengeDeclared: function (userId)
+            {
+                this.showBattleConfigurationMenu(null, function (levelData)
+                {
+                    this.socket.emit(this.socket.events.challengeUser.name, userId, levelData);
+                    this.parentElement.style.display = '';
+                });
+            },
+
+            onDisconnected: function ()
+            {
+                localStorage.removeItem('token');
+                this.show(this.parentElement);
+            },
+
             onGetLevelsCompleted: function (levels)
             {
 
+            },
+
+            onSearchCompleted: function (cursor)
+            {
+                MenuNavigator.removeChildren(this.content);
+
+                this.notificationsMenu.hide();
+                this.playerSearchMenu.show(this.content, cursor);
+
+                this.searchCriteria.disabled = false;
+                this.searchButton.disabled = false;
             },
 
             searchForPlayer: function ()
@@ -69,26 +118,18 @@ define([
                 this.socket.emit(this.socket.events.searchByUsername.name, this.searchCriteria.value);
             },
 
-            onSearchCompleted: function (cursor)
+            showBattleConfigurationMenu: function (levelName, callback)
             {
-                MenuNavigator.removeChildren(this.content);
+                this.parentElement.style.display = 'none';
 
-                this.notificationsMenu.hide();
-                this.playerSearchMenu.show(this.content, cursor);
+                var battleConfig = new BattleConfigurationMenu(this.socket);
+                battleConfig.on('cancel', this, function ()
+                {
+                    this.parentElement.style.display = '';
+                });
 
-                this.searchCriteria.disabled = false;
-                this.searchButton.disabled = false;
-            },
-
-            onDisconnected: function ()
-            {
-                localStorage.removeItem('token');
-                this.show(this.parentElement);
-            },
-
-            disconnect: function ()
-            {
-                this.socket.disconnect();
+                battleConfig.on('confirm', this, callback);
+                battleConfig.show(levelName);
             }
         };
     });

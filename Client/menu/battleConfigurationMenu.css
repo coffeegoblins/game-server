@@ -1,6 +1,6 @@
 .battle-config {
-    background-color: #885728;
-    border: 1px solid #4b2520;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.5);
     margin: 16px auto;
     padding: 16px;
     max-width: 1200px;

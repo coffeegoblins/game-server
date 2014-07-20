@@ -2,7 +2,7 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 {
     'use strict';
 
-    function BattleConfigurationMenu(levelLoader)
+    function BattleConfigurationMenu(socket)
     {
         this.levels = {
             level1: {minUnits: 4, maxUnits: 4},
@@ -12,33 +12,28 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 
         var battleConfig = window.localStorage.getItem('battleConfig');
         this.config = battleConfig ? JSON.parse(battleConfig) : {};
-        this.levelLoader = levelLoader;
+        this.socket = socket;
     }
 
-    BattleConfigurationMenu.prototype.hide = function ()
+    BattleConfigurationMenu.prototype.show = function (levelName)
     {
-        var content = document.getElementById('content');
-        while (content.lastChild)
-            content.removeChild(content.lastChild);
-    };
+        this.parentElement = document.createElement('div');
+        this.parentElement.id = 'contentWrapper';
+        MenuNavigator.insertTemplate(this.parentElement, Template);
+        document.body.appendChild(this.parentElement);
 
-    BattleConfigurationMenu.prototype.show = function ()
-    {
-        var contentElement = document.getElementById('content');
-        MenuNavigator.insertTemplate(contentElement, Template);
-
-        this.element = contentElement.querySelector('.battle-config');
-        this.addButton = contentElement.querySelector('[data-button="add"');
-        this.removeButton = contentElement.querySelector('[data-button="remove"');
-        this.confirmButton = contentElement.querySelector('[data-button="confirm"');
+        this.element = this.parentElement.querySelector('.battle-config');
+        this.addButton = this.parentElement.querySelector('[data-button="add"]');
+        this.removeButton = this.parentElement.querySelector('[data-button="remove"]');
+        this.confirmButton = this.parentElement.querySelector('[data-button="confirm"]');
 
         this.addButton.addEventListener('click', this.onAddUnit.bind(this, 1), false);
         this.confirmButton.addEventListener('click', this.onConfirm.bind(this), false);
         this.removeButton.addEventListener('click', this.onAddUnit.bind(this, -1), false);
 
-        this.turnSlider = contentElement.querySelector('#turn-slider');
-        this.unitSlider = contentElement.querySelector('#unit-slider');
-        this.levelSelect = contentElement.querySelector('#level-select');
+        this.turnSlider = this.parentElement.querySelector('#turn-slider');
+        this.unitSlider = this.parentElement.querySelector('#unit-slider');
+        this.levelSelect = this.parentElement.querySelector('#level-select');
 
         this.turnSlider.addEventListener('input', this.onTurnCountChanged.bind(this), false);
         this.turnSlider.addEventListener('change', this.onTurnCountChanged.bind(this), false);
@@ -46,13 +41,13 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
         this.unitSlider.addEventListener('change', this.onUnitCountChanged.bind(this), false);
         this.levelSelect.addEventListener('change', this.onLevelChanged.bind(this), false);
 
-        contentElement.querySelector('.tab-header').on('click', '.tab-header-content', this.onTabClick.bind(this));
-        contentElement.querySelector('[data-button="cancel"').addEventListener('click', this.onCancel.bind(this), false);
+        this.parentElement.querySelector('.tab-header').on('click', '.tab-header-content', this.onTabClick.bind(this));
+        this.parentElement.querySelector('[data-button="cancel"').addEventListener('click', this.onCancel.bind(this), false);
 
         this.onTurnCountChanged();
-        this.populateLevelSelect();
+        this.populateLevelSelect(levelName);
 
-        this.selectTab(contentElement.querySelector('.tab[data-unit="shield"]'));
+        this.selectTab(this.parentElement.querySelector('.tab[data-unit="shield"]'));
         return this;
     };
 
@@ -83,14 +78,16 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 
     BattleConfigurationMenu.prototype.onCancel = function ()
     {
+        document.body.removeChild(this.parentElement);
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('cancel');
     };
 
     BattleConfigurationMenu.prototype.onConfirm = function ()
     {
+        document.body.removeChild(this.parentElement);
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
-        this.trigger('confirm', this.levelName, this.config[this.levelName].units);
+        this.trigger('confirm', {levelName: this.levelName, units: this.config[this.levelName].units});
     };
 
     BattleConfigurationMenu.prototype.onLevelChanged = function ()
@@ -132,17 +129,18 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
                 this.removeButton.classList.remove('disabled');
         }
 
-        this.levelLoader.loadLevel(this.levelName, function (data)
-        {
-            for (var i = 0; i < data.objects.length; i++)
-            {
-                var obj = data.objects[i];
-                data.map.addObject(obj, obj.x, obj.y);
-            }
-
-            var levelPreview = document.getElementById('level-preview');
-            Renderer.renderPreview(levelPreview, data.map, data.objects);
-        }.bind(this));
+        // TODO: Fix the level loader
+        //        this.levelLoader.loadLevel(this.levelName, function (data)
+        //        {
+        //            for (var i = 0; i < data.objects.length; i++)
+        //            {
+        //                var obj = data.objects[i];
+        //                data.map.addObject(obj, obj.x, obj.y);
+        //            }
+        //
+        //            var levelPreview = document.getElementById('level-preview');
+        //            Renderer.renderPreview(levelPreview, data.map, data.objects);
+        //        }.bind(this));
     };
 
     BattleConfigurationMenu.prototype.onTabClick = function (e)
@@ -166,7 +164,7 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
         this.unitSlider.nextSibling.textContent = this.unitSlider.value;
     };
 
-    BattleConfigurationMenu.prototype.populateLevelSelect = function ()
+    BattleConfigurationMenu.prototype.populateLevelSelect = function (levelName)
     {
         var levels = Object.keys(this.levels);
         levels.sort();
@@ -176,6 +174,12 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
             var option = document.createElement('option');
             option.text = levels[i];
             this.levelSelect.add(option);
+        }
+
+        if (levelName)
+        {
+            this.levelSelect.value = levelName;
+            this.levelSelect.disabled = true;
         }
 
         this.onLevelChanged();

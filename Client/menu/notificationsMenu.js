@@ -1,4 +1,4 @@
-define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu/menuNavigator'], function (NotificationsMenuTemplate, NotificationTemplate, MenuNavigator)
+define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu/menuNavigator', 'core/src/events'], function (NotificationsMenuTemplate, NotificationTemplate, MenuNavigator, Events)
 {
     'use strict';
 
@@ -48,8 +48,8 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
             MenuNavigator.insertTemplate(div, NotificationTemplate);
 
             div.setAttribute('data-id', notification._id);
-            div.querySelector('.userName').innerHTML = notification.sourceUserName;
-            div.querySelector('.levelName').innerHTML = notification.data;
+            div.querySelector('.userName').textContent = notification.sourceUserName;
+            div.querySelector('.levelName').textContent = notification.data;
             fragment.appendChild(div);
         }
 
@@ -60,16 +60,13 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
     {
         var notificationElement = MenuNavigator.findParentElement(e.target, '[data-id]');
         var id = notificationElement.getAttribute('data-id');
+        var levelName = notificationElement.querySelector('.levelName').textContent.trim();
 
         // TODO: Disable buttons while waiting for response?
 
-        this.socket.emit(this.socket.events.challengeAccepted.name, id);
-        this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
+        this.trigger('challengeAccepted', id, levelName, function ()
         {
             this.notificationsSideBar.removeChild(notificationElement);
-
-            // TODO: Choose units
-            // TODO: Launch game
         }.bind(this));
     };
 
@@ -84,5 +81,6 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
         this.notificationsSideBar.removeChild(notificationElement);
     };
 
+    Events.register(NotificationsMenu.prototype);
     return NotificationsMenu;
 });
