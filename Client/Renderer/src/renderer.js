@@ -73,16 +73,19 @@ define([
             this.trigger('resize', this.canvas.width, this.canvas.height);
         };
 
-        Renderer.prototype.createLevelImage = function (levelName, levelData, loadedCallback)
+        Renderer.prototype.createLevelImage = function (levelName, levelData)
         {
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             var renderables = [];
             var renderableMap = new RenderableMap(levelData.map);
-            for (var i = 0; i < levelData.objects.length; i++)
-                renderables.push(new RenderableObject(levelData.objects[i]));
 
-            this.renderLevelPreview(levelName, levelData, renderables, renderableMap, loadedCallback);
+            for (var i = 0; i < levelData.objects.length; i++)
+            {
+                renderables.push(new RenderableObject(levelData.objects[i]));
+            }
+
+            this.renderLevelPreview(levelName, levelData, renderables, renderableMap);
         };
 
         Renderer.prototype.renderLevelPreview = function (levelName, levelData, renderables, renderableMap, loadedCallback)
@@ -110,7 +113,7 @@ define([
                 renderables[i].render(context, 0, camera);
             }
 
-            ImageCache.loadImage(levelName, this.canvas.toDataURL(), loadedCallback);
+            ImageCache.setImage(levelName, this.canvas.toDataURL());
         };
 
         Renderer.prototype.renderPreview = function (canvas, map, objects)

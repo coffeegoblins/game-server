@@ -16,7 +16,7 @@ define(['core/src/events', './imageCache', './utility'], function (Events, Image
 
         if (id && path)
         {
-            this.image = ImageCache.loadImage(id, path);
+            this.image = ImageCache.setImage(id, path);
         }
     }
 

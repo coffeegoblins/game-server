@@ -2,67 +2,90 @@ define(function ()
 {
     'use strict';
 
-    var images = {};
-    var globalIndex = 0;
-
-    function onImageLoaded()
+    function ImageCache()
     {
-        this.width = this.data.width;
-        this.height = this.data.height;
-        this.isLoaded = true;
-
-        if (this.callback)
-            this.callback(this);
+        this.images = {};
+        this.syncedImages = {};
+        this.globalIndex = 0;
     }
 
-    function ImageCache() { }
-
-    ImageCache.clear = function ()
+    ImageCache.prototype.onImageLoaded = function (image)
     {
-        images = {};
-    };
+        image.width = image.data.width;
+        image.height = image.data.height;
+        image.isLoaded = true;
 
-    ImageCache.getImage = function (id)
-    {
-        return images[id];
-    };
-
-    ImageCache.isLoading = function ()
-    {
-        for (var i in images)
+        var syncedImageList = this.syncedImages[image.id];
+        if (syncedImageList)
         {
-            if (!images[i].isLoaded)
+            for (var i = 0; i < syncedImageList.length; ++i)
+            {
+                syncedImageList[i].src = image.path;
+            }
+        }
+    };
+
+    ImageCache.prototype.getImage = function (id)
+    {
+        return this.images[id];
+    };
+
+    ImageCache.prototype.isLoading = function ()
+    {
+        for (var i in this.images)
+        {
+            if (!this.images[i].isLoaded)
+            {
                 return true;
+            }
         }
 
         return false;
     };
 
-    ImageCache.loadImage = function (id, path, callback)
+    ImageCache.prototype.unbindImage = function (imageID, imgElement)
     {
-        var image = images[id];
+        if (this.syncedImages[imageID])
+        {
+            var index = this.syncedImages[imageID].indexOf(imgElement);
+            if (index > -1)
+            {
+                this.syncedImages[imageID].splice(index, 1)
+            }
+        }
+    };
+
+    ImageCache.prototype.bindImage = function (imageID, imgElement)
+    {
+        if (!this.syncedImages[imageID])
+        {
+            this.syncedImages[imageID] = [];
+        }
+
+        this.syncedImages[imageID].push(imgElement);
+    };
+
+    ImageCache.prototype.setImage = function (id, path)
+    {
+        var image = this.images[id];
         if (!image)
         {
             image = {
-                callback: callback,
+                id: id,
                 data: new Image(),
-                isLoaded: false,
-                path: path
+                path: path,
+                isLoaded: false
             };
 
-            image.globalIndex = globalIndex++;
-            image.data.onload = onImageLoaded.bind(image);
-            image.data.src = path;
-            images[id] = image;
+            image.globalIndex = this.globalIndex++;
+            image.data.onload = this.onImageLoaded.bind(this, image);
+
+            this.images[id] = image;
         }
+
+        image.data.src = path;
 
         return image;
     };
-
-    ImageCache.unloadImage = function (id)
-    {
-        delete images[id];
-    };
-
-    return ImageCache;
+    return new ImageCache();
 });

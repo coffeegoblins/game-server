@@ -95,8 +95,11 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
                 row.addEventListener('click', this.onGameClicked.bind(this, game));
 
-                levelNameCell.className = game.level;
-                levelNameCell.innerHTML = ImageCache.getImage(game.level);
+                var levelImage = new Image();
+                levelImage.className = 'levelThumbnail';
+                ImageCache.bindImage(game.level, levelImage);
+
+                levelNameCell.appendChild(levelImage);
                 opponentCell.innerHTML = game.opponentUser.username;
             }
         };

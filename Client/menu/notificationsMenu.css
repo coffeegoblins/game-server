@@ -6,7 +6,7 @@
     top: 40px;
     bottom: 40px;
     width: 300px;
-    background: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.5);
     border-right: 1px solid #cdcdcd;
     padding: 16px;
 }
@@ -25,6 +25,7 @@
 
 .notification {
     border: 1px solid #cdcdcd;
+    background: rgba(255, 255, 255, 1);
 }
 
 .levelPreview {
@@ -34,8 +35,8 @@
 }
 
 .levelImage {
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 48px;
 }
 
 .levelName {

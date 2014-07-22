@@ -1,4 +1,5 @@
-define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'menu/menuNavigator'], function (Template, Events, LevelLoader, Renderer, MenuNavigator)
+define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'menu/menuNavigator', 'core/src/ImageCache'],
+       function (Template, Events, LevelLoader, Renderer, MenuNavigator, ImageCache)
 {
     'use strict';
 
@@ -21,6 +22,8 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
         this.parentElement.id = 'contentWrapper';
         MenuNavigator.insertTemplate(this.parentElement, Template);
         document.body.appendChild(this.parentElement);
+
+        this.levelPreviewImage = this.parentElement.querySelector('#level-preview');
 
         this.element = this.parentElement.querySelector('.battle-config');
         this.addButton = this.parentElement.querySelector('[data-button="add"]');
@@ -92,6 +95,8 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 
     BattleConfigurationMenu.prototype.onLevelChanged = function ()
     {
+        ImageCache.unbindImage(this.levelName, this.levelPreviewImage);
+
         this.levelName = this.levelSelect.value;
         this.level = this.levels[this.levelName];
 
@@ -129,18 +134,7 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
                 this.removeButton.classList.remove('disabled');
         }
 
-        // TODO: Fix the level loader
-        //        this.levelLoader.loadLevel(this.levelName, function (data)
-        //        {
-        //            for (var i = 0; i < data.objects.length; i++)
-        //            {
-        //                var obj = data.objects[i];
-        //                data.map.addObject(obj, obj.x, obj.y);
-        //            }
-        //
-        //            var levelPreview = document.getElementById('level-preview');
-        //            Renderer.renderPreview(levelPreview, data.map, data.objects);
-        //        }.bind(this));
+        ImageCache.bindImage(this.levelName, this.levelPreviewImage);
     };
 
     BattleConfigurationMenu.prototype.onTabClick = function (e)

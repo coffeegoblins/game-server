@@ -8,9 +8,9 @@ define(['Editor'], function (Editor)
         large: new Editor.SpriteSheet({tileWidth: 128, tileHeight: 128})
     };
 
-    spriteSheets.small.setImage(Editor.ImageCache.loadImage('smallObjects', 'resources/objects-small.png'));
-    spriteSheets.medium.setImage(Editor.ImageCache.loadImage('mediumObjects', 'resources/objects-medium.png'));
-    spriteSheets.large.setImage(Editor.ImageCache.loadImage('largeObjects', 'resources/objects-large.png'));
+    spriteSheets.small.setImage(Editor.ImageCache.setImage('smallObjects', 'resources/objects-small.png'));
+    spriteSheets.medium.setImage(Editor.ImageCache.setImage('mediumObjects', 'resources/objects-medium.png'));
+    spriteSheets.large.setImage(Editor.ImageCache.setImage('largeObjects', 'resources/objects-large.png'));
 
 
     function DefaultObject() { }

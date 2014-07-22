@@ -60,15 +60,17 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
 
                     this.levelLoader.onLevelLoaded(level.data, function (data)
                     {
-                        Renderer.createLevelImage(level.name, data, function ()
-                        {
-                            var elements = document.getElementsByClassName(level.name);
+                        Renderer.createLevelImage(level.name, data);
 
-                            for (var j = 0; j < elements.length; ++j)
-                            {
-                                elements[j].innerHTML = '<img src="' + ImageCache.getImage(level.name).path + '" class="levelThumbnail" />';
-                            }
-                        });
+//                        , function ()
+//                        {
+//                            var elements = document.getElementsByClassName(level.name);
+//
+//                            for (var j = 0; j < elements.length; ++j)
+//                            {
+//                                elements[j].innerHTML = '<img src="' + ImageCache.getImage(level.name).path + '" class="levelThumbnail" />';
+//                            }
+//                        });
                     });
                 }
             },
