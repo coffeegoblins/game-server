@@ -25,7 +25,6 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                     this.searchButton = document.getElementById('searchButton');
                     this.logoutButton = document.getElementById('logoutButton');
                     this.notificationsButton = document.getElementById('notificationsButton');
-                    this.sideBar = document.getElementById('sideBar');
 
                     this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                     this.logoutButton.addEventListener('click', this.disconnect.bind(this));
@@ -57,20 +56,9 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                 for (var i = 0; i < 1; ++i)
                 {
                     var level = levels[i];
-
                     this.levelLoader.onLevelLoaded(level.data, function (data)
                     {
                         Renderer.createLevelImage(level.name, data);
-
-//                        , function ()
-//                        {
-//                            var elements = document.getElementsByClassName(level.name);
-//
-//                            for (var j = 0; j < elements.length; ++j)
-//                            {
-//                                elements[j].innerHTML = '<img src="' + ImageCache.getImage(level.name).path + '" class="levelThumbnail" />';
-//                            }
-//                        });
                     });
                 }
             },

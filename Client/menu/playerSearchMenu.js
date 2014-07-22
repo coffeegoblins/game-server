@@ -11,6 +11,8 @@ define(['text!menu/playerSearchMenu.html', 'menu/menuNavigator', 'core/src/event
         MenuNavigator.insertTemplate(parentElement, PlayerSearchTemplate);
 
         var itemPanel = document.getElementById('searchResults');
+        itemPanel.on('click', 'button', this.challengePlayer.bind(this));
+
         var itemTemplate = itemPanel.firstElementChild;
         itemPanel.removeChild(itemTemplate);
 

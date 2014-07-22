@@ -22,7 +22,7 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
                 return;
             }
 
-            MenuNavigator.insertTemplate(parentElement, Template);
+            parentElement.innerHTML = Template;
 
             this.errorMessage = document.getElementById('errorMessage');
             this.usernameInput = document.getElementById('usernameInput');
