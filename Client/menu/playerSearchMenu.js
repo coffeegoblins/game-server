@@ -10,23 +10,22 @@ define(['text!menu/playerSearchMenu.html', 'menu/menuNavigator', 'core/src/event
     {
         MenuNavigator.insertTemplate(parentElement, PlayerSearchTemplate);
 
-        this.searchResultsTable = document.getElementById('searchResults');
+        var itemPanel = document.getElementById('searchResults');
+        var itemTemplate = itemPanel.firstElementChild;
+        itemPanel.removeChild(itemTemplate);
 
-        // TODO: Optimize. Templates and fragments.
-        for (var i = 0; i < searchResults.length; ++i)
+        // TODO: Should we show the number of active games/challenges with the players?
+
+        var fragment = document.createDocumentFragment();
+        for (var i = 0; i < searchResults.length; i++)
         {
-            var row = this.searchResultsTable.insertRow(i);
-
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-
-            // TODO: Should we show the number of active games/challenges with the players?
-
-            cell1.innerHTML = searchResults[i].username;
-            cell2.innerHTML = "<input type='button' value='Challenge!' id='" + searchResults[i].username + "'>";
-
-            document.getElementById(searchResults[i].username).addEventListener('click', this.challengePlayer.bind(this));
+            var searchResult = searchResults[i];
+            var element = itemTemplate.cloneNode(true);
+            element.firstElementChild.textContent = searchResult.username;
+            fragment.appendChild(element);
         }
+
+        itemPanel.appendChild(fragment);
     };
 
     PlayerSearchMenu.prototype.challengePlayer = function (e)

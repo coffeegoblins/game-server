@@ -1,33 +1,19 @@
-#searchResults {
-    width: 100%;
-    border-collapse: collapse;
+.search-result {
+    display: table;
+    line-height: 30px;
+    padding: 10px 20px;
 }
-#searchResults input {
-    padding: 5px;
-    border-collapse: collapse;
+
+.search-result:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.05);
 }
-#searchResults td {
-    vertical-align: middle;
-    padding: 20px;
-    color: #FFF;
-}
-#searchResults tr:nth-child(even) {
-    background: rgba(0, 0, 0, 0.3);
-}
-#searchResults tr:nth-child(odd) {
-    background: rgba(0, 0, 0, 0.1);
-}
-#searchResults td:last-child {
-    width: 100px;
-}
-#searchResults th {
-    display: block;
-    background-color: #999;
-    padding: 10px;
-    text-align: left;
-    font-size: 14px;
-    font-family: Arial;
-    font-weight: 700;
-    color: #ffffff;
+
+.search-result span {
     display: table-cell;
+    width: 100%;
+}
+
+.search-result button {
+    display: table-cell;
+    margin-left: 16px;
 }
