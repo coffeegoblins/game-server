@@ -63,16 +63,19 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
 
         NotificationsMenu.prototype.acceptChallenge = function (e)
         {
-            var notificationElement = MenuNavigator.findParentElement(e.target, '[data-id]');
-            var id = notificationElement.getAttribute('data-id');
-            var levelName = notificationElement.querySelector('.levelName').textContent.trim();
+            var element = MenuNavigator.findParentElement(e.target, '[data-id]');
+            var id = element.getAttribute('data-id');
+            var levelName = element.querySelector('.levelName').textContent.trim();
 
             // TODO: Disable buttons while waiting for response?
 
             this.trigger('challengeAccepted', id, levelName, function ()
             {
                 this.socket.emit(this.socket.events.challengeAccepted.url, notification._id);
-                this.notificationsSideBar.removeChild(notificationElement);
+                if (element.parentNode)
+                {
+                    element.parentElement.removeChild(element);
+                }
             }.bind(this));
         };
 
