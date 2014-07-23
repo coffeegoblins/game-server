@@ -117,17 +117,23 @@ ChallengeManager.prototype.removeChallenge = function (responseCallback, current
         'lowerCaseUsername': currentUserName.toLowerCase()
     };
 
-    // TODO: This doesn't seem to be working. Function params seem fine.
-    databaseManager.usersCollection.update(searchCriteria,
-    {
-        '$pull':
+    var updateCriteria = {
+        $pull:
         {
-            "notifications":
+            notifications:
             {
-                _id: challengeID
+                _id: new ObjectID(challengeID)
             }
         }
-    }, function () {});
+    };
+
+    databaseManager.usersCollection.update(searchCriteria, updateCriteria, function (error, data)
+    {
+        if (error)
+        {
+            console.log(error);
+        }
+    });
 };
 
 module.exports = ChallengeManager;
