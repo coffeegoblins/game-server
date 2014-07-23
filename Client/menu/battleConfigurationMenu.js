@@ -1,4 +1,4 @@
-define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'menu/menuNavigator', 'core/src/ImageCache'],
+define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/levelLoader', 'renderer/src/renderer', 'menu/menuNavigator', 'core/src/imageCache'],
        function (Template, Events, LevelLoader, Renderer, MenuNavigator, ImageCache)
 {
     'use strict';

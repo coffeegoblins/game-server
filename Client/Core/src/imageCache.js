@@ -50,7 +50,7 @@ define(function ()
             var index = this.syncedImages[imageID].indexOf(imgElement);
             if (index > -1)
             {
-                this.syncedImages[imageID].splice(index, 1)
+                this.syncedImages[imageID].splice(index, 1);
             }
         }
     };
@@ -63,6 +63,10 @@ define(function ()
         }
 
         this.syncedImages[imageID].push(imgElement);
+        if (this.images[imageID])
+        {
+            imgElement.src = this.images[imageID].path;
+        }
     };
 
     ImageCache.prototype.setImage = function (id, path)
@@ -87,5 +91,6 @@ define(function ()
 
         return image;
     };
+
     return new ImageCache();
 });

@@ -1,9 +1,16 @@
-define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConfigurationMenu',
-        'menu/loginMenu', 'menu/playerSearchMenu', 'menu/activeGamesMenu',
-        'menu/notificationsMenu', 'core/src/levelLoader', 'renderer/src/renderer', 'core/src/imageCache'],
-    function (Template, MenuNavigator, BattleConfigurationMenu,
-        LoginMenu, PlayerSearchMenu, ActiveGamesMenu,
-        NotificationsMenu, LevelLoader, Renderer, ImageCache)
+define([
+        'text!menu/multiplayerMenu.html',
+        'menu/menuNavigator',
+        'menu/battleConfigurationMenu',
+        'menu/loginMenu',
+        'menu/playerSearchMenu',
+        'menu/activeGamesMenu',
+        'menu/notificationsMenu',
+        'core/src/levelLoader',
+        'core/src/plotManager',
+        'renderer/src/renderer'
+    ],
+    function (Template, MenuNavigator, BattleConfigurationMenu, LoginMenu, PlayerSearchMenu, ActiveGamesMenu, NotificationsMenu, LevelLoader, PlotManager, Renderer)
     {
         return {
             show: function (parentElement)
@@ -11,7 +18,6 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                 LoginMenu.show(parentElement, function (socket)
                 {
                     this.parentElement = parentElement;
-
                     this.socket = socket;
 
                     MenuNavigator.insertTemplate(parentElement, Template);
@@ -25,7 +31,6 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                     this.searchButton = document.getElementById('searchButton');
                     this.logoutButton = document.getElementById('logoutButton');
                     this.notificationsButton = document.getElementById('notificationsButton');
-                    this.sideBar = document.getElementById('sideBar');
 
                     this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                     this.logoutButton.addEventListener('click', this.disconnect.bind(this));
@@ -34,18 +39,10 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                     this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
                     this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
 
-                    this.content = document.getElementById('content');
-                    this.searchCriteria = document.getElementById('searchCriteria');
-                    this.searchButton = document.getElementById('searchButton');
-                    this.logoutButton = document.getElementById('logoutButton');
-                    this.notificationsButton = document.getElementById('notificationsButton');
-
                     this.activeGamesMenu.show(this.content);
                     this.notificationsMenu.show(this.parentElement);
-                    this.levelLoader = new LevelLoader();
 
                     this.socket.emit(this.socket.events.getLevels.url);
-
                     this.socket.on(this.socket.events.disconnect.url, this.onDisconnected.bind(this));
                     this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
                     this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
@@ -54,24 +51,17 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
 
             onGetLevelsCompleted: function (levels)
             {
-                for (var i = 0; i < 1; ++i)
+                if (levels)
                 {
-                    var level = levels[i];
-
-                    this.levelLoader.onLevelLoaded(level.data, function (data)
+                    var levelLoader = new LevelLoader();
+                    for (var i = 0; i < levels.length; ++i)
                     {
-                        Renderer.createLevelImage(level.name, data);
-
-//                        , function ()
-//                        {
-//                            var elements = document.getElementsByClassName(level.name);
-//
-//                            for (var j = 0; j < elements.length; ++j)
-//                            {
-//                                elements[j].innerHTML = '<img src="' + ImageCache.getImage(level.name).path + '" class="levelThumbnail" />';
-//                            }
-//                        });
-                    });
+                        var level = levels[i];
+                        levelLoader.onLevelLoaded(level.data, function (data)
+                        {
+                            Renderer.createLevelImage(level.name, data);
+                        });
+                    }
                 }
             },
 
@@ -85,10 +75,10 @@ define(['text!menu/multiplayerMenu.html', 'menu/menuNavigator', 'menu/battleConf
                 this.showBattleConfigurationMenu(levelName, function (levelData)
                 {
                     this.socket.emit(this.socket.events.challengeAccepted.url, id, levelData);
-                    this.socket.on(this.socket.events.challengeAccepted.response.success, function ()
+                    this.socket.on(this.socket.events.createGame.response.success, function (data)
                     {
                         onSuccess();
-                        //PlotManager.loadLevel(this.gameLogic, this.remoteLevelLoader, levelData);
+                        //PlotManager.loadLevel(this.socket, this.gameLogic, data.level, data.units);
                     }.bind(this));
                 });
             },
