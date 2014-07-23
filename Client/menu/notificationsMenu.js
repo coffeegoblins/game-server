@@ -24,8 +24,9 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
             this.notificationsSideBar.on('click', '.acceptButton', this.acceptChallenge.bind(this));
             this.notificationsSideBar.on('click', '.declineButton', this.declineChallenge.bind(this));
 
-            this.toggle();
             this.socket.emit(this.socket.events.getNotifications.url);
+
+            this.hide();
         };
 
         NotificationsMenu.prototype.toggle = function ()

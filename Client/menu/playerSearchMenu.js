@@ -3,8 +3,7 @@ define(['text!menu/playerSearchMenu.html', 'menu/menuNavigator', 'core/src/event
     'use strict';
 
     function PlayerSearchMenu()
-    {
-    }
+    {}
 
     PlayerSearchMenu.prototype.show = function (parentElement, searchResults)
     {
@@ -19,11 +18,15 @@ define(['text!menu/playerSearchMenu.html', 'menu/menuNavigator', 'core/src/event
         // TODO: Should we show the number of active games/challenges with the players?
 
         var fragment = document.createDocumentFragment();
+
         for (var i = 0; i < searchResults.length; i++)
         {
             var searchResult = searchResults[i];
+
             var element = itemTemplate.cloneNode(true);
-            element.firstElementChild.textContent = searchResult.username;
+            element.children[0].textContent = searchResult.username;
+            element.children[1].id = searchResult.username;
+
             fragment.appendChild(element);
         }
 
