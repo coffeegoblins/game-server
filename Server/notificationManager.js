@@ -8,8 +8,6 @@ function NotificationManager(events)
 
 NotificationManager.prototype.getNotifications = function (responseCallback, userName)
 {
-    console.log("Getting notifications for: " + userName);
-
     if (!userName)
     {
         responseCallback(this.events.getNotifications.response.error, "You are not logged in.");
@@ -25,7 +23,6 @@ NotificationManager.prototype.getNotifications = function (responseCallback, use
             return;
         }
 
-        console.log(user);
         responseCallback(this.events.getNotifications.response.success, user.notifications);
     }.bind(this));
 };

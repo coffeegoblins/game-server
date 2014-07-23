@@ -6,8 +6,6 @@ var LevelManager = require('./levelManager');
 
 var fileSystem = require('fs');
 var jwt = require('jsonwebtoken');
-var jwtSecret = 'COFFEEGOBLINS';
-var socketioJwt = require('socketio-jwt');
 
 // Socket IO Events
 var events = JSON.parse(fileSystem.readFileSync('./events.json'));
@@ -18,7 +16,7 @@ var challengeManager = new ChallengeManager(events);
 var gameManager = new GameManager(events);
 var levelManager = new LevelManager(events);
 
-module.exports = function (app, socketio)
+module.exports = function (app, socketio, jwtSecret)
 {
     app.post('/login', function (request, response)
     {
@@ -69,12 +67,6 @@ module.exports = function (app, socketio)
             }
         });
     });
-
-    socketio.use(socketioJwt.authorize(
-    {
-        secret: jwtSecret,
-        handshake: true
-    }));
 
     socketio.sockets.on('connection', function (socket)
     {
