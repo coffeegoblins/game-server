@@ -21,43 +21,39 @@ define([
         }
 
         return {
-            show: function (parentElement)
+            show: function (parentElement, socket)
             {
-                LoginMenu.show(parentElement, function (socket)
-                {
-                    this.levels = {};
-                    this.socket = socket;
-                    this.parentElement = parentElement;
+                this.levels = {};
+                this.socket = socket;
+                this.parentElement = parentElement;
 
-                    this.loadGameLogic();
-                    MenuNavigator.insertTemplate(parentElement, Template);
+                this.loadGameLogic();
+                MenuNavigator.insertTemplate(parentElement, Template);
 
-                    this.activeGamesMenu = new ActiveGamesMenu(this.socket);
-                    this.notificationsMenu = new NotificationsMenu(this.socket);
-                    this.playerSearchMenu = new PlayerSearchMenu();
+                this.activeGamesMenu = new ActiveGamesMenu(this.socket);
+                this.notificationsMenu = new NotificationsMenu(this.socket);
+                this.playerSearchMenu = new PlayerSearchMenu();
 
-                    this.content = document.getElementById('content');
-                    this.searchCriteria = document.getElementById('searchCriteria');
-                    this.searchButton = document.getElementById('searchButton');
-                    this.logoutButton = document.getElementById('logoutButton');
-                    this.notificationsButton = document.getElementById('notificationsButton');
+                this.content = document.getElementById('content');
+                this.searchCriteria = document.getElementById('searchCriteria');
+                this.searchButton = document.getElementById('searchButton');
+                this.logoutButton = document.getElementById('logoutButton');
+                this.notificationsButton = document.getElementById('notificationsButton');
 
-                    this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
-                    this.logoutButton.addEventListener('click', this.disconnect.bind(this));
-                    this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
+                this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
+                this.logoutButton.addEventListener('click', this.disconnect.bind(this));
+                this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
 
-                    this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
-                    this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
-                    this.activeGamesMenu.on('gameClicked', this, this.launchGame);
+                this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
+                this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
+                this.activeGamesMenu.on('gameClicked', this, this.launchGame);
 
-                    this.activeGamesMenu.show(this.content);
-                    this.notificationsMenu.show(this.parentElement);
+                this.activeGamesMenu.show(this.content);
+                this.notificationsMenu.show(this.parentElement);
 
-                    this.socket.emit(this.socket.events.getLevels.url);
-                    this.socket.on(this.socket.events.disconnect.url, this.onDisconnected.bind(this));
-                    this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
-                    this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
-                }.bind(this));
+                this.socket.emit(this.socket.events.getLevels.url);
+                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
+                this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
             disconnect: function ()
@@ -133,12 +129,6 @@ define([
                     this.socket.emit(this.socket.events.challengeUser.url, userId, levelData);
                     this.parentElement.style.display = '';
                 });
-            },
-
-            onDisconnected: function ()
-            {
-                localStorage.removeItem('token');
-                this.show(this.parentElement);
             },
 
             onSearchCompleted: function (cursor)

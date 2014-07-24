@@ -11,7 +11,7 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
             var token = localStorage.getItem('token');
             if (token)
             {
-                this.connectSocket(token, this.onLoggedIn.bind(this), function ()
+                this.connectSocket(token, this.loginSuccessCallback, function ()
                 {
                     // Token is expired
                     localStorage.removeItem('token');
@@ -43,26 +43,6 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
             }
         },
 
-        onLoggedIn: function (socket)
-        {
-            socket.on('events', function (events)
-            {
-                socket.events = events;
-
-                MenuNavigator.removeChildren(this.parentElement);
-            }.bind(this));
-
-            socket.on('userInfo', function (user)
-            {
-                socket.user = user;
-
-                if (this.loginSuccessCallback)
-                {
-                    this.loginSuccessCallback(socket);
-                }
-            }.bind(this));
-        },
-
         login: function ()
         {
             var requestData = 'username=' + encodeURIComponent(this.usernameInput.value) + "&password=" + encodeURIComponent(btoa(this.passwordInput.value));
@@ -74,7 +54,7 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
 
                     localStorage.setItem("token", response.token);
 
-                    this.connectSocket(response.token, this.onLoggedIn.bind(this), this.setError.bind(this));
+                    this.connectSocket(response.token, this.loginSuccessCallback, this.setError.bind(this));
                 }
                 else
                 { // TODO: Handle error better
