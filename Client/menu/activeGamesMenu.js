@@ -1,34 +1,24 @@
-define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigator', 'core/src/plotManager', 'core/src/imageCache'],
-    function (ActiveGamesTemplate, Utility, MenuNavigator, PlotManager, ImageCache)
+define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageCache', 'core/src/events'],
+    function (ActiveGamesTemplate, MenuNavigator, ImageCache, Events)
     {
         'use strict';
-
-        function parseFunctions(key, value)
-        {
-            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
-                return eval('(' + value + ')');
-
-            return value;
-        }
 
         function ActiveGamesMenu(socket, parentElement)
         {
             this.socket = socket;
             this.parentElement = parentElement;
 
-            var waitingOnYouGames = [];
-            var waitingOnThemGames = [];
-
             this.socket.on(this.socket.events.getGames.response.success, function (games)
             {
+                var waitingOnYouGames = [];
+                var waitingOnThemGames = [];
+
                 for (var i = 0; i < games.length; ++i)
                 {
                     var currentGame = games[i];
-
                     for (var j = 0; j < currentGame.users.length; ++j)
                     {
                         var user = currentGame.waitingOn[j];
-
                         if (user.lowerCaseUsername !== this.socket.user.lowerCaseUsername)
                         {
                             currentGame.opponentUser = user;
@@ -46,8 +36,6 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
                 this.updateTemplate(waitingOnYouGames, waitingOnThemGames);
             }.bind(this));
-
-            this.loadGameLogic();
         }
 
         ActiveGamesMenu.prototype.isWaitingOnUser = function (game)
@@ -84,7 +72,7 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
             MenuNavigator.removeChildren(table);
 
-            // TODO: Should probably optimize a fragment
+            // TODO: Should probably optimize with a fragment
             for (var i = 0; i < games.length; ++i)
             {
                 var game = games[i];
@@ -106,37 +94,9 @@ define(['text!menu/activeGamesMenu.html', 'core/src/utility', 'menu/menuNavigato
 
         ActiveGamesMenu.prototype.onGameClicked = function (game)
         {
-            document.body.className = 'game';
-            while (document.body.lastChild)
-                document.body.removeChild(document.body.lastChild);
-
-            if (this.gameLogic)
-            {
-                // TODO: Load the correct level
-                PlotManager.loadLevel(this.socket, this.gameLogic, 'level1', game.units);
-            }
+            this.trigger('gameClicked', game);
         };
 
-        ActiveGamesMenu.prototype.loadGameLogic = function ()
-        {
-            var gameLogicVersion;
-            var serializedGameLogic = window.localStorage.getItem('gameLogic');
-            if (serializedGameLogic)
-            {
-                this.gameLogic = JSON.parse(serializedGameLogic, parseFunctions);
-                gameLogicVersion = this.gameLogic.version;
-            }
-
-            this.socket.emit(this.socket.events.getGameLogic.url, gameLogicVersion);
-            this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
-            {
-                if (gameLogic)
-                {
-                    window.localStorage.setItem('gameLogic', gameLogic);
-                    this.gameLogic = JSON.parse(gameLogic, parseFunctions);
-                }
-            }.bind(this));
-        };
-
+        Events.register(ActiveGamesMenu.prototype);
         return ActiveGamesMenu;
     });

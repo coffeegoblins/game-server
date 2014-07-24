@@ -72,7 +72,7 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
 
             this.trigger('challengeAccepted', id, levelName, function ()
             {
-                this.socket.emit(this.socket.events.challengeAccepted.url, notification._id);
+                this.socket.emit(this.socket.events.challengeAccepted.url, id);
                 if (element.parentNode)
                 {
                     element.parentElement.removeChild(element);

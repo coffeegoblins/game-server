@@ -12,14 +12,24 @@ define([
     ],
     function (Template, MenuNavigator, BattleConfigurationMenu, LoginMenu, PlayerSearchMenu, ActiveGamesMenu, NotificationsMenu, LevelLoader, PlotManager, Renderer)
     {
+        function parseFunctions(key, value)
+        {
+            if (typeof value === 'string' && value.length >= 8 && value.substring(0, 8) === 'function')
+                return eval('(' + value + ')');
+
+            return value;
+        }
+
         return {
             show: function (parentElement)
             {
                 LoginMenu.show(parentElement, function (socket)
                 {
-                    this.parentElement = parentElement;
+                    this.levels = {};
                     this.socket = socket;
+                    this.parentElement = parentElement;
 
+                    this.loadGameLogic();
                     MenuNavigator.insertTemplate(parentElement, Template);
 
                     this.activeGamesMenu = new ActiveGamesMenu(this.socket);
@@ -38,6 +48,7 @@ define([
 
                     this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
                     this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
+                    this.activeGamesMenu.on('gameClicked', this, this.launchGame);
 
                     this.activeGamesMenu.show(this.content);
                     this.notificationsMenu.show(this.parentElement);
@@ -46,6 +57,42 @@ define([
                     this.socket.on(this.socket.events.disconnect.url, this.onDisconnected.bind(this));
                     this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
                     this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
+                }.bind(this));
+            },
+
+            disconnect: function ()
+            {
+                this.socket.disconnect();
+            },
+
+            launchGame: function (game)
+            {
+                document.body.className = 'game';
+                while (document.body.lastChild)
+                    document.body.removeChild(document.body.lastChild);
+
+                var levelData = this.levels[game.level];
+                PlotManager.loadLevel(this.socket, this.gameLogic, levelData, game.users);
+            },
+
+            loadGameLogic: function ()
+            {
+                var gameLogicVersion;
+                var serializedGameLogic = window.localStorage.getItem('gameLogic');
+                if (serializedGameLogic)
+                {
+                    this.gameLogic = JSON.parse(serializedGameLogic, parseFunctions);
+                    gameLogicVersion = this.gameLogic.version;
+                }
+
+                this.socket.emit(this.socket.events.getGameLogic.url, gameLogicVersion);
+                this.socket.on(this.socket.events.getGameLogic.response.success, function (gameLogic)
+                {
+                    if (gameLogic)
+                    {
+                        window.localStorage.setItem('gameLogic', gameLogic);
+                        this.gameLogic = JSON.parse(gameLogic, parseFunctions);
+                    }
                 }.bind(this));
             },
 
@@ -59,15 +106,11 @@ define([
                         var level = levels[i];
                         levelLoader.onLevelLoaded(level.data, function (data)
                         {
+                            this.levels[level.name] = data;
                             Renderer.createLevelImage(level.name, data);
-                        });
+                        }.bind(this));
                     }
                 }
-            },
-
-            disconnect: function ()
-            {
-                this.socket.disconnect();
             },
 
             onChallengeAccepted: function (id, levelName, onSuccess)
@@ -75,10 +118,10 @@ define([
                 this.showBattleConfigurationMenu(levelName, function (levelData)
                 {
                     this.socket.emit(this.socket.events.challengeAccepted.url, id, levelData);
-                    this.socket.on(this.socket.events.createGame.response.success, function (data)
+                    this.socket.on(this.socket.events.createGame.response.success, function (game)
                     {
                         onSuccess();
-                        //PlotManager.loadLevel(this.socket, this.gameLogic, data.level, data.units);
+                        this.launchGame(game);
                     }.bind(this));
                 });
             },

@@ -7,11 +7,9 @@ define([
         './soldier',
         './players/automatedPlayer',
         './players/localPlayer',
-        './players/remotePlayer',
-        './levelLoader',
-        './remoteJSONLoader'
+        './players/remotePlayer'
     ],
-    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer, LevelLoader, RemoteJSONLoader)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
     {
         'use strict';
 
@@ -24,13 +22,11 @@ define([
                 for (var i = 0; i < unitTypes[unitType]; i++)
                 {
                     var position = positions[positionIndex++];
-                    var soldier = new Soldier({
+                    soldiers.push(new Soldier({
                         tileX: position.x,
                         tileY: position.y,
                         type: unitType
-                    });
-
-                    soldiers.push(soldier);
+                    }));
                 }
             }
 
@@ -38,54 +34,59 @@ define([
         }
 
         return {
-            loadLevel: function (socket, unitLogic, levelName, units)
+            loadLevel: function (socket, unitLogic, levelData, users)
             {
-                this.socket = socket;
-
                 Scheduler.clear();
                 Renderer.initialize();
                 BrowserNavigation.on('leaving:singlePlayer', this, this.uninitialize);
+
+                this.players = [];
+                this.socket = socket;
+                this.currentMap = levelData.map;
                 this.turnManager = new TurnManager();
+                Renderer.addRenderableMap(this.currentMap);
 
-                var levelLoader = new LevelLoader(new RemoteJSONLoader(this.socket));
-
-                levelLoader.loadLevel(levelName, function (data)
+                for (var i = 0; i < levelData.objects.length; i++)
                 {
-                    this.currentMap = data.map;
-                    Renderer.addRenderableMap(this.currentMap);
+                    var obj = levelData.objects[i];
+                    levelData.map.addObject(obj, obj.x, obj.y);
+                    Renderer.addRenderableObject(obj);
+                }
 
-                    for (var i = 0; i < data.objects.length; i++)
+                var soldiers;
+                var currentUserName = this.socket.user.lowerCaseUsername;
+                for (i = 0; i < users.length; i++)
+                {
+                    var user = users[i];
+                    if (user.lowerCaseUsername === currentUserName)
                     {
-                        var obj = data.objects[i];
-                        data.map.addObject(obj, obj.x, obj.y);
-                        Renderer.addRenderableObject(obj);
+                        soldiers = createSoldiers(levelData.player1Positions, user.units);
+                        this.players.push(new LocalPlayer(unitLogic, this.currentMap, soldiers));
                     }
-
-                    this.players = [
-                        new LocalPlayer(unitLogic, this.currentMap, createSoldiers(data.player1Positions, units)),
-                        new AutomatedPlayer(unitLogic, this.currentMap, createSoldiers(data.player2Positions, {
-                            archer: 1, rogue: 1, shield: 1, warrior: 1
-                        }))
-                    ];
-
-                    for (i = 0; i < this.players.length; i++)
+                    else
                     {
-                        var player = this.players[i];
-                        player.on('defeat', this, this.onPlayerDefeat);
-                        player.on('endTurn', this, this.endTurn);
-
-                        for (var j = 0; j < player.units.length; j++)
-                        {
-                            var unit = player.units[j];
-                            this.turnManager.addUnit(unit);
-                            Renderer.addRenderableSoldier(unit);
-                            this.currentMap.addUnit(unit, unit.tileX, unit.tileY);
-                        }
+                        soldiers = createSoldiers(levelData.player2Positions, user.units);
+                        this.players.push(new RemotePlayer(unitLogic, this.currentMap, soldiers));
                     }
+                }
 
-                    InputHandler.disableInput();
-                    this.beginTurn();
-                }.bind(this));
+                for (i = 0; i < this.players.length; i++)
+                {
+                    var player = this.players[i];
+                    player.on('defeat', this, this.onPlayerDefeat);
+                    player.on('endTurn', this, this.endTurn);
+
+                    for (var j = 0; j < player.units.length; j++)
+                    {
+                        var unit = player.units[j];
+                        this.turnManager.addUnit(unit);
+                        Renderer.addRenderableSoldier(unit);
+                        this.currentMap.addUnit(unit, unit.tileX, unit.tileY);
+                    }
+                }
+
+                InputHandler.disableInput();
+                this.beginTurn();
             },
 
             beginTurn: function ()
