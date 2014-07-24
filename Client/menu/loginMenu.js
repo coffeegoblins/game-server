@@ -66,7 +66,7 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
         login: function ()
         {
             var requestData = 'username=' + encodeURIComponent(this.usernameInput.value) + "&password=" + encodeURIComponent(btoa(this.passwordInput.value));
-            this.sendRequest(requestData, function (request)
+            this.sendRequest('/login', requestData, function (request)
             {
                 if (request.status === 200)
                 {
@@ -92,7 +92,7 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
             }
 
             var requestData = 'username=' + encodeURIComponent(this.usernameInput.value) + "&password=" + encodeURIComponent(this.passwordInput.value);
-            this.sendRequest(requestData, function (request)
+            this.sendRequest('/register', requestData, function (request)
             {
                 if (request.status === 200)
                 {
@@ -117,10 +117,10 @@ define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], func
             socket.on('error', errorCallback);
         },
 
-        sendRequest: function (data, callback)
+        sendRequest: function (route, data, callback)
         {
             var request = new XMLHttpRequest();
-            request.open('POST', SERVER_URL + '/login');
+            request.open('POST', SERVER_URL + route.toString());
             request.overrideMimeType('application/json');
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
