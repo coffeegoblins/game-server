@@ -3,82 +3,56 @@ var NotificationManager = require('./notificationManager');
 var ChallengeManager = require('./challengeManager');
 var GameManager = require('./gameManager');
 var LevelManager = require('./levelManager');
+var socketioJwt = require('socketio-jwt');
+var activeSocketConnections = {};
 
-var fileSystem = require('fs');
-var jwt = require('jsonwebtoken');
-
-// Socket IO Events
-var events = JSON.parse(fileSystem.readFileSync('./events.json'));
-
-var userManager = new UserManager(events);
-var notificationManager = new NotificationManager(events);
-var challengeManager = new ChallengeManager(events);
-var gameManager = new GameManager(events);
-var levelManager = new LevelManager(events);
-
-module.exports = function (app, socketio, jwtSecret)
+function pushEvent(event, userName)
 {
-    app.post('/login', function (request, response)
+    if (activeSocketConnections[userName])
     {
-        console.log('Attempting to login ' + request.body.username);
+        var data = Array.prototype.slice.call(arguments).splice(2, arguments.length - 2);
 
-        userManager.selectPlayer(request.body.username, function (error, user)
-        {
-            if (error)
-            {
-                console.log(error);
-                response.send(403, error);
-                return;
-            }
+        activeSocketConnections[userName].emit(event, data);
+    }
+}
 
-            var token = jwt.sign(user, jwtSecret,
-            {
-                expiresInMinutes: 1440 // 24 Hours
-            });
+module.exports = function (app, socketio, events, jwtSecret)
+{
+    var userManager = new UserManager(events, jwtSecret);
+    var gameManager = new GameManager(events);
+    var notificationManager = new NotificationManager(events, userManager, pushEvent);
+    var challengeManager = new ChallengeManager(events, userManager, gameManager, notificationManager);
+    var levelManager = new LevelManager(events);
 
-            response.json(
-            {
-                token: token
-            });
+    //---------------------------------------------------------------------------------------------
+    // Unauthenticated Calls
+    //---------------------------------------------------------------------------------------------
+    app.post('/login', userManager.login.bind(userManager));
+    app.post('/register', userManager.register.bind(userManager));
 
-            console.log(user.username + ' connected!');
-        });
-    });
 
-    app.post('/register', function (request, response)
+    //---------------------------------------------------------------------------------------------
+    // Authenticated Calls
+    //---------------------------------------------------------------------------------------------
+
+    // All socketio events route through this auth check
+    socketio.use(socketioJwt.authorize(
     {
-        console.log('Attempting to register ' + request.body.username);
-
-        // TODO Check blacklist
-
-        userManager.register(request.body.username, request.body.password, function (error, user)
-        {
-            if (error)
-            {
-                console.log(error);
-                response.send(400, error);
-                return;
-            }
-
-            response.send(200);
-
-            if (user && user.length){
-                console.log(user[0].username + ' registered!');
-            }
-        });
-    });
+        secret: jwtSecret,
+        handshake: true
+    }));
 
     socketio.sockets.on('connection', function (socket)
     {
-        console.log(socket.decoded_token.username + ' connected!');
-
-        socket.emit(events.connection.response.events, events);
-        socket.emit(events.connection.response.userInfo, socket.decoded_token);
+        activeSocketConnections[socket.decoded_token.username] = socket;
 
         socket.on(events.disconnect.url, function ()
         {
-            socket.disconnect();
+            delete activeSocketConnections[socket.decoded_token.username];
         });
+
+        socket.emit(events.connection.response.events, events);
+        socket.emit(events.connection.response.userInfo, socket.decoded_token);
 
         function responseCallback()
         {

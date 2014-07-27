@@ -19,7 +19,7 @@ define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageC
                     for (var j = 0; j < currentGame.users.length; ++j)
                     {
                         var user = currentGame.waitingOn[j];
-                        if (user.lowerCaseUsername !== this.socket.user.lowerCaseUsername)
+                        if (user.username !== this.socket.user.username)
                         {
                             currentGame.opponentUser = user;
                         }
@@ -42,7 +42,7 @@ define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageC
         {
             for (var i = 0; i < game.waitingOn.length; ++i)
             {
-                if (game.waitingOn[i].lowerCaseUsername === this.socket.user.lowerCaseUsername)
+                if (game.waitingOn[i].username === this.socket.user.username)
                 {
                     return true;
                 }

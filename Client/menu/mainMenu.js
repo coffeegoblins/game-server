@@ -1,8 +1,6 @@
-define(['menu/loginMenu', 'menu/multiplayerMenu', 'menu/menuNavigator'],
-    function (LoginMenu, MultiplayerMenu, MenuNavigator)
+define(['menu/loginMenu', 'menu/multiplayerMenu', 'menu/menuNavigator', 'core/src/eventListener'],
+    function (LoginMenu, MultiplayerMenu, MenuNavigator, EventListener)
     {
-        var SERVER_URL = 'http://127.0.0.1:1988';
-
         return {
             show: function (parentElement)
             {
@@ -21,11 +19,16 @@ define(['menu/loginMenu', 'menu/multiplayerMenu', 'menu/menuNavigator'],
                     socket.on(events.connection.response.userInfo, function (user)
                     {
                         socket.user = user;
-                        socket.on(events.disconnect.url, this.onDisconnected.bind(this));
+                        socket.on(events.listeners.disconnect, this.onDisconnected.bind(this));
+
+                        // TODO Cache manager
+
+                        EventListener.listen(socket, events.listeners);
 
                         MenuNavigator.removeChildren(this.parentElement);
                         MultiplayerMenu.show(this.parentElement, socket);
                     }.bind(this));
+
                 }.bind(this));
             },
 

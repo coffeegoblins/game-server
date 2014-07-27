@@ -31,7 +31,6 @@ define([
                 MenuNavigator.insertTemplate(parentElement, Template);
 
                 this.activeGamesMenu = new ActiveGamesMenu(this.socket);
-                this.notificationsMenu = new NotificationsMenu(this.socket);
                 this.playerSearchMenu = new PlayerSearchMenu();
 
                 this.content = document.getElementById('content');
@@ -42,14 +41,13 @@ define([
 
                 this.searchButton.addEventListener('click', this.searchForPlayer.bind(this));
                 this.logoutButton.addEventListener('click', this.disconnect.bind(this));
-                this.notificationsButton.addEventListener('click', this.notificationsMenu.toggle.bind(this.notificationsMenu, this.parentElement));
+                this.notificationsButton.addEventListener('click', NotificationsMenu.toggle.bind(NotificationsMenu, this.parentElement));
 
-                this.notificationsMenu.on('challengeAccepted', this, this.onChallengeAccepted);
                 this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
                 this.activeGamesMenu.on('gameClicked', this, this.launchGame);
 
                 this.activeGamesMenu.show(this.content);
-                this.notificationsMenu.show(this.parentElement);
+                NotificationsMenu.show(this.parentElement, this.socket, this.onChallengeAccepted.bind(this), this.onChallengeDeclined.bind(this));
 
                 this.socket.emit(this.socket.events.getLevels.url);
                 this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
@@ -122,6 +120,11 @@ define([
                 });
             },
 
+            onChallengeDeclined: function (challengeID)
+            {
+                this.socket.emit(this.socket.events.challengeDeclined.url, challengeID);
+            },
+
             onChallengeDeclared: function (userId)
             {
                 this.showBattleConfigurationMenu(null, function (levelData)
@@ -135,7 +138,7 @@ define([
             {
                 MenuNavigator.removeChildren(this.content);
 
-                this.notificationsMenu.hide();
+                NotificationsMenu.hide();
                 this.playerSearchMenu.show(this.content, cursor);
 
                 this.searchCriteria.disabled = false;

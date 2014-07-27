@@ -1,4 +1,8 @@
 {
+    "listeners": {
+        "notifications": "notifications",
+        "disconnect": "disconnect"
+    },
     "connection":
     {
         "response":

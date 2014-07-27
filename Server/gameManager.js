@@ -32,7 +32,7 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
     console.log("Getting games for: " + currentUserName);
 
     var searchCriteria = {
-        'users.lowerCaseUsername': currentUserName.toLowerCase()
+        'users.userName': currentUserName
     };
 
     databaseManager.gamesCollection.find(searchCriteria, function (error, games)

@@ -1,13 +1,12 @@
-var UserManager = require('./userManager');
-var GameManager = require('./gameManager');
 var databaseManager = require('./databaseManager');
 var ObjectID = require('mongodb').ObjectID;
 
-function ChallengeManager(events)
+function ChallengeManager(events, userManager, gameManager, notificationManager)
 {
     this.events = events;
-    this.userManager = new UserManager(events);
-    this.gameManager = new GameManager(events);
+    this.userManager = userManager;
+    this.gameManager = gameManager;
+    this.notificationManager = notificationManager;
 }
 
 ChallengeManager.prototype.initiateChallenge = function (responseCallback, currentUserName, opponentUserName, data)
@@ -20,31 +19,18 @@ ChallengeManager.prototype.initiateChallenge = function (responseCallback, curre
             return;
         }
 
-        var searchCriteria = {
-            'username': opponentUserName
-        };
-
         console.log(user.username + " is challenging " + opponentUserName);
 
-        // TODO Handle error
-        databaseManager.usersCollection.update(searchCriteria,
-            {
-                '$push':
-                {
-                    "notifications":
-                    {
-                        _id: new ObjectID(),
-                        sourceUserName: user.username,
-                        type: "CHALLENGE",
-                        data: data.levelName,
-                        units: data.units,
-                        creationTime: new Date().getTime()
-                    }
-                }
-            },
-            function () {
+        var notification = {
+            _id: new ObjectID(),
+            sourceUsername: user.username,
+            type: "CHALLENGE",
+            data: data.levelName,
+            units: data.units,
+            creationTime: new Date().getTime()
+        };
 
-            });
+        this.notificationManager.addNotification(opponentUserName, notification);
     }.bind(this));
 };
 
@@ -79,7 +65,7 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
         }
 
         // TODO Delete Challenge on source user
-        this.userManager.selectPlayer(notification.sourceUserName, function (error, opponentUser)
+        this.userManager.selectPlayer(notification.sourceUsername, function (error, opponentUser)
         {
             if (error)
             {
@@ -92,13 +78,13 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
 
             var users = [
                 {
-                    username: currentUser.username,
-                    lowerCaseUsername: currentUser.lowerCaseUsername,
+                    userName: currentUser.userName,
+                    displayName: currentUser.displayName,
                     units: levelData.units
                 },
                 {
-                    username: opponentUser.username,
-                    lowerCaseUsername: opponentUser.lowerCaseUsername,
+                    userName: opponentUser.userName,
+                    displayName: opponentUser.displayName,
                     units: notification.units
                 }
             ];
@@ -114,7 +100,7 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
 ChallengeManager.prototype.removeChallenge = function (responseCallback, currentUserName, challengeID)
 {
     var searchCriteria = {
-        'lowerCaseUsername': currentUserName.toLowerCase()
+        'username': currentUserName
     };
 
     var updateCriteria = {

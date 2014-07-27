@@ -54,11 +54,11 @@ define([
                 }
 
                 var soldiers;
-                var currentUserName = this.socket.user.lowerCaseUsername;
+                var currentUsername = this.socket.user.username;
                 for (i = 0; i < users.length; i++)
                 {
                     var user = users[i];
-                    if (user.lowerCaseUsername === currentUserName)
+                    if (user.username === currentUsername)
                     {
                         soldiers = createSoldiers(levelData.player1Positions, user.units);
                         this.players.push(new LocalPlayer(unitLogic, this.currentMap, soldiers));

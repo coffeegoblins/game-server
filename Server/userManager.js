@@ -1,63 +1,71 @@
 var ObjectID = require('mongodb').ObjectID;
 var databaseManager = require('./databaseManager');
+var jwt = require('jsonwebtoken');
 
-function UserManager(events)
+function UserManager(events, jwtSecret)
 {
     this.events = events;
+    this.jwtSecret = jwtSecret;
 }
 
-UserManager.prototype.login = function (responseCallback, loginSuccessCallback, username, password)
+UserManager.prototype.login = function (request, response)
 {
-    var lowerCaseUsername = username.toLowerCase();
+    console.log('Attempting to login ' + request.body.username);
 
-    var searchCriteria = {
-        'lowerCaseUsername': lowerCaseUsername
-    };
-
-    console.log('Attempting to login ' + lowerCaseUsername + '.');
-
-    databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
+    this.selectPlayer(request.body.username, function (error, user)
     {
-        if (error || !user || user.password !== password)
+        // TODO  || user.password !== request.body.password
+        if (error|| !user)
         {
-            console.log('Invalid username or password for ' + lowerCaseUsername + '.');
-            responseCallback(this.events.login.response.error, 'Invalid username or password.');
-
+            console.log(error);
+            response.send(403, 'Invalid username or password.');
             return;
         }
 
-        console.log(lowerCaseUsername + ' has logged in.');
-        responseCallback(this.events.login.response.success, user);
-        loginSuccessCallback(user.username);
+        console.log(this.jwtSecret);
+
+        var token = jwt.sign(user, this.jwtSecret,
+        {
+            expiresInMinutes: 1440 // 24 Hours
+        });
+
+        response.json(
+        {
+            token: token
+        });
+
+        console.log(user.username + ' connected!');
     }.bind(this));
 };
 
-UserManager.prototype.register = function (username, password, callback)
+UserManager.prototype.register = function (request, response)
 {
-    var lowerCaseUsername = username.toLowerCase();
+    console.log('Attempting to register ' + request.body.username);
+
+    // TODO Check blacklist
 
     var user = {
-        username: username,
-        lowerCaseUsername: lowerCaseUsername,
-        password: password,
+        username: request.body.username.toLowerCase(),
+        displayName: request.body.username.toString(),
+        password: request.body.password,
         notifications: [],
         creationTime: new Date().getTime()
     };
 
-    console.log('Registering user: ' + lowerCaseUsername);
+    console.log('Registering user ' + user.username);
 
     databaseManager.usersCollection.insert(user, function (error, createdUser)
     {
         if (error)
         {
-            console.log('Unable to register ' + lowerCaseUsername);
-            callback('That username is already taken. Enter another username.');
+            console.log(error);
+            response.send(403, 'That username is already taken. Enter another username.');
             return;
         }
 
-        console.log(lowerCaseUsername + ' has been registered.');
+        console.log(user.username + ' has been registered.');
 
-        callback(null, createdUser);
+        response.send(200);
     }.bind(this));
 };
 
@@ -68,7 +76,7 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
 
     var searchResults = databaseManager.usersCollection.find(
     {
-        lowerCaseUsername: regex
+        username: regex
     }).limit(200);
 
     if (searchResults.length === 0)
@@ -93,19 +101,19 @@ UserManager.prototype.selectPlayer = function (username, callback)
 {
     if (!username)
     {
-        callback("No username was provided");
+        callback("No user name was provided");
         return;
     }
 
     var searchCriteria = {
-        'lowerCaseUsername': username.toLowerCase()
+        'username': username
     };
 
     databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
     {
         if (!user)
         {
-            callback('Unable to find a user with the name: ' + searchCriteria.lowerCaseUsername + '\n' + error);
+            callback('Unable to find a user with the name: ' + username + '\n' + error);
             return;
         }
 

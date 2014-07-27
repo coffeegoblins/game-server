@@ -1,9 +1,10 @@
-var UserManager = require('./userManager');
+var databaseManager = require('./databaseManager');
 
-function NotificationManager(events)
+function NotificationManager(events, userManager, pushNotificationCallback)
 {
     this.events = events;
-    this.userManager = new UserManager(events);
+    this.userManager = userManager;
+    this.pushNotificationCallback = pushNotificationCallback;
 }
 
 NotificationManager.prototype.getNotifications = function (responseCallback, userName)
@@ -14,6 +15,8 @@ NotificationManager.prototype.getNotifications = function (responseCallback, use
         return;
     }
 
+    console.log('Getting notifications for ' + userName);
+
     this.userManager.selectPlayer(userName, function (error, user)
     {
         if (error || !user)
@@ -23,7 +26,36 @@ NotificationManager.prototype.getNotifications = function (responseCallback, use
             return;
         }
 
-        responseCallback(this.events.getNotifications.response.success, user.notifications);
+        console.log(user.username + ' has ' + user.notifications.length + ' notifications');
+        responseCallback(this.events.listeners.notifications, user.notifications);
+    }.bind(this));
+};
+
+NotificationManager.prototype.addNotification = function (username, notification)
+{
+    var searchCriteria = {
+        'username': username
+    };
+
+    // TODO Handle error
+    databaseManager.usersCollection.update(searchCriteria,
+    {
+        '$push':
+        {
+            "notifications": notification
+        }
+    }, function (error)
+    {
+        if (error)
+        {
+            console.log(error);
+            return;
+        }
+
+        console.log('Notifying ' + username);
+        console.log(notification);
+
+        this.pushNotificationCallback(this.events.listeners.notifications, username, notification);
     }.bind(this));
 };
 

@@ -43,7 +43,7 @@
     font-weight: 700;
 }
 
-.userName, #notifications h2 {
+.username, #notifications h2 {
     margin: 0;
     text-align: right;
     padding: 10px;

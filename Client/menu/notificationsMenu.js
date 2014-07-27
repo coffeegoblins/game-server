@@ -2,95 +2,87 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
         'core/src/events', 'core/src/imageCache'],
     function (NotificationsMenuTemplate, NotificationTemplate, MenuNavigator, Events, ImageCache)
     {
-        'use strict';
-
-        function NotificationsMenu(socket)
-        {
-            this.socket = socket;
-            this.socket.on(this.socket.events.getNotifications.response.success, this.onNotificationReceived.bind(this));
-        }
-
-        NotificationsMenu.prototype.hide = function ()
-        {
-            this.notificationsSideBar.className = 'collapsed';
-        };
-
-        NotificationsMenu.prototype.show = function (parentElement)
-        {
-            this.parentElement = parentElement;
-            MenuNavigator.insertTemplate(parentElement, NotificationsMenuTemplate);
-
-            this.notificationsSideBar = document.getElementById('notifications');
-            this.notificationsSideBar.on('click', '.acceptButton', this.acceptChallenge.bind(this));
-            this.notificationsSideBar.on('click', '.declineButton', this.declineChallenge.bind(this));
-
-            this.socket.emit(this.socket.events.getNotifications.url);
-
-            this.hide();
-        };
-
-        NotificationsMenu.prototype.toggle = function ()
-        {
-            if (this.notificationsSideBar.className)
-            {
-                this.notificationsSideBar.className = '';
-            }
-            else
+        return {
+            hide: function ()
             {
                 this.notificationsSideBar.className = 'collapsed';
-            }
-        };
+            },
 
-        NotificationsMenu.prototype.onNotificationReceived = function (notifications)
-        {
-            var fragment = document.createDocumentFragment();
-            for (var i = 0; i < notifications.length; ++i)
+            show: function (parentElement, socket, challengeAcceptedCallback, challengeDeclinedCallback)
             {
-                var notification = notifications[i];
-                var div = document.createElement('div');
-                MenuNavigator.insertTemplate(div, NotificationTemplate);
+                this.parentElement = parentElement;
+                MenuNavigator.insertTemplate(parentElement, NotificationsMenuTemplate);
 
-                div.setAttribute('data-id', notification._id);
-                div.querySelector('.userName').textContent = notification.sourceUserName;
-                div.querySelector('.levelName').textContent = notification.data;
+                this.notificationsSideBar = document.getElementById('notifications');
+                this.notificationsSideBar.on('click', '.acceptButton', this.acceptChallenge.bind(this, socket, challengeAcceptedCallback));
+                this.notificationsSideBar.on('click', '.declineButton', this.declineChallenge.bind(this, socket, challengeDeclinedCallback));
 
-                ImageCache.bindImage(notification.data, div.querySelector('.levelImage'));
+                socket.emit(socket.events.getNotifications.url);
 
-                fragment.appendChild(div);
-            }
+                this.hide();
+            },
 
-            this.notificationsSideBar.appendChild(fragment);
-        };
-
-        NotificationsMenu.prototype.acceptChallenge = function (e)
-        {
-            var element = MenuNavigator.findParentElement(e.target, '[data-id]');
-            var id = element.getAttribute('data-id');
-            var levelName = element.querySelector('.levelName').textContent.trim();
-
-            // TODO: Disable buttons while waiting for response?
-
-            this.trigger('challengeAccepted', id, levelName, function ()
+            toggle: function ()
             {
-                this.socket.emit(this.socket.events.challengeAccepted.url, id);
-                if (element.parentNode)
+                if (this.notificationsSideBar.className)
                 {
-                    element.parentElement.removeChild(element);
+                    this.notificationsSideBar.className = '';
                 }
-            }.bind(this));
+                else
+                {
+                    this.notificationsSideBar.className = 'collapsed';
+                }
+            },
+
+            onNotificationsReceived: function (notifications)
+            {
+                var fragment = document.createDocumentFragment();
+                for (var i = 0; i < notifications.length; ++i)
+                {
+                    var notification = notifications[i];
+                    var div = document.createElement('div');
+                    MenuNavigator.insertTemplate(div, NotificationTemplate);
+
+                    div.setAttribute('data-id', notification._id);
+                    div.querySelector('.username').textContent = notification.sourceUsername;
+                    div.querySelector('.levelName').textContent = notification.data;
+
+                    ImageCache.bindImage(notification.data, div.querySelector('.levelImage'));
+
+                    fragment.appendChild(div);
+                }
+
+                this.notificationsSideBar.appendChild(fragment);
+            },
+
+            acceptChallenge: function (socket, acceptedCallback, e)
+            {
+                var element = MenuNavigator.findParentElement(e.target, '[data-id]');
+                var id = element.getAttribute('data-id');
+                var levelName = element.querySelector('.levelName').textContent.trim();
+
+                // TODO: Disable buttons while waiting for response?
+
+                acceptedCallback(id, levelName, function ()
+                {
+                    if (element.parentNode)
+                    {
+                        element.parentElement.removeChild(element);
+                    }
+                });
+            },
+
+            declineChallenge: function (socket, declinedCallback, e)
+            {
+                var notificationElement = MenuNavigator.findParentElement(e.target, '[data-id]');
+                var id = notificationElement.getAttribute('data-id');
+
+                // TODO: What happens on error?
+
+                declinedCallback(id, function ()
+                {
+                    this.notificationsSideBar.removeChild(notificationElement);
+                }.bind(this));
+            }
         };
-
-        NotificationsMenu.prototype.declineChallenge = function (e)
-        {
-            var notificationElement = MenuNavigator.findParentElement(e.target, '[data-id]');
-            var id = notificationElement.getAttribute('data-id');
-
-            // TODO: What happens on error?
-
-            this.socket.emit(this.socket.events.challengeDeclined.url, id);
-            this.notificationsSideBar.removeChild(notificationElement);
-        };
-
-        Events.register(NotificationsMenu.prototype);
-        return NotificationsMenu;
     });
