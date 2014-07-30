@@ -1,17 +1,10 @@
 .battle-config {
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    margin: 16px auto;
-    padding: 16px;
-    max-width: 1200px;
-    min-width: 320px;
+    padding: 32px;
 }
 
 .battle-config .config-column {
     display: inline-block;
     vertical-align: top;
-    min-width: 280px;
-    width: 100%;
 }
 
 @media (min-width: 600px) {
@@ -23,7 +16,6 @@
 .battle-config label {
     display: block;
     margin-bottom: 12px;
-    vertical-align: middle;
 }
 
 .battle-config label span:first-child {
@@ -37,16 +29,11 @@
 
 .battle-config input, .battle-config select {
     vertical-align: middle;
-    width: 140px;
-    overflow: visible;
-}
-
-.level-config {
-    padding-right: 16px;
 }
 
 #level-preview {
     width: 100%;
+    padding: 16px;
 }
 
 .tab-content-container {
@@ -55,16 +42,12 @@
 }
 
 .tab-header {
-    list-style: none;
     padding: 0;
-    margin: 12px 0 0 0;
 }
 
 .tab {
     display: inline-block;
     width: 25%;
-    margin: 0;
-    padding: 0;
 }
 
 .tab-header-content {
@@ -137,32 +120,23 @@
 }
 
 .tab-content[data-unit="shield"] .unit-preview {
-    background-size: 1280px;
     background: url('../renderer/content/images/shield - idle.png') -12px -168px;
 }
 
 .tab-content[data-unit="warrior"] .unit-preview {
-    background-size: 1120px;
     background: url('../renderer/content/images/warrior - idle.png') -6px -144px;
 }
 
 .tab-content[data-unit="archer"] .unit-preview {
-    background-size: 960px;
     background: url('../renderer/content/images/archer - idle.png') 0 -116px;
 }
 
 .tab-content[data-unit="rogue"] .unit-preview {
-    background-size: 1280px;
     background: url('../renderer/content/images/shield - idle.png') -12px -168px;
 }
 
-.tab-content ul {
-    padding: 0 0 0 16px;
-    margin: 0;
-}
-
 .battle-config footer {
-    margin-top: 16px;
+    margin-top: 32px;
 }
 
 .battle-config .button-panel {

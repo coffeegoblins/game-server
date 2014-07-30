@@ -115,7 +115,7 @@ define([
                         onSuccess();
                         this.launchGame(game);
                     }.bind(this));
-                });
+                }.bind(this));
             },
 
             onChallengeDeclined: function (challengeID)
@@ -129,7 +129,7 @@ define([
                 {
                     this.socket.emit(this.socket.events.challengeUser.url, userId, levelData);
                     this.parentElement.style.display = '';
-                });
+                }.bind(this));
             },
 
             onSearchCompleted: function (cursor)
@@ -161,20 +161,35 @@ define([
 
             showBattleConfigurationMenu: function (levelName, callback)
             {
-                var children = this.content.children;
+                // TODO Fix hack, use browser nav to save state
+                var children = [];
+                for (var i = 0; i < this.content.children.length; ++i)
+                {
+                    children.push(this.content.children[i]);
+                }
+
                 this.content.innerHTML = '';
 
                 var battleConfig = new BattleConfigurationMenu(this.socket);
                 battleConfig.on('cancel', this, function ()
                 {
-                    this.content.children = children;
-                });
+                    this.content.innerHTML = '';
+                    for (i = 0; i < children.length; ++i)
+                    {
+                        this.content.appendChild(children[i]);
+                    }
+                }.bind(this));
 
                 battleConfig.on('confirm', this, function (levelData)
                 {
-                    this.content.children = children;
+                    this.content.innerHTML = '';
+                    for (i = 0; i < children.length; ++i)
+                    {
+                        this.content.appendChild(children[i]);
+                    }
+
                     callback(levelData);
-                });
+                }.bind(this));
 
                 battleConfig.show(this.content, levelName);
             }

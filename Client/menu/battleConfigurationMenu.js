@@ -21,7 +21,6 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
         this.parentElement = parentElement;
 
         MenuNavigator.insertTemplate(this.parentElement, Template);
-        document.body.appendChild(this.parentElement);
 
         this.levelPreviewImage = this.parentElement.querySelector('#level-preview');
 
@@ -81,14 +80,12 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
 
     BattleConfigurationMenu.prototype.onCancel = function ()
     {
-        document.body.removeChild(this.parentElement);
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('cancel');
     };
 
     BattleConfigurationMenu.prototype.onConfirm = function ()
     {
-        document.body.removeChild(this.parentElement);
         window.localStorage.setItem('battleConfig', JSON.stringify(this.config));
         this.trigger('confirm', {levelName: this.levelName, units: this.config[this.levelName].units});
     };
