@@ -89,6 +89,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             }
 
             responseCallback(this.events.listeners.gameCreations, gameResult[0]);
+            responseCallback(this.events.createGame.response.success, gameResult);
         }.bind(this));
     }.bind(this));
 };

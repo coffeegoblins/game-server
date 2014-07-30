@@ -118,9 +118,11 @@ define([
                 }.bind(this));
             },
 
-            onChallengeDeclined: function (challengeID)
+            onChallengeDeclined: function (challengeID, callback)
             {
                 this.socket.emit(this.socket.events.challengeDeclined.url, challengeID);
+
+                callback();
             },
 
             onChallengeDeclared: function (userId)
