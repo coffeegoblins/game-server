@@ -1,14 +1,16 @@
-define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageCache', 'core/src/events'],
-    function (ActiveGamesTemplate, MenuNavigator, ImageCache, Events)
+define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageCache'],
+    function (ActiveGamesTemplate, MenuNavigator, ImageCache)
     {
-        'use strict';
+        return {
+            show: function (parentElement, socket, gameClickedCallback)
+            {
+                this.socket = socket;
+                this.gameClickedCallback = gameClickedCallback;
 
-        function ActiveGamesMenu(socket, parentElement)
-        {
-            this.socket = socket;
-            this.parentElement = parentElement;
+                MenuNavigator.insertTemplate(parentElement, ActiveGamesTemplate);
+            },
 
-            this.socket.on(this.socket.events.getGames.response.success, function (games)
+            onGamesCreated: function (games)
             {
                 var waitingOnYouGames = [];
                 var waitingOnThemGames = [];
@@ -34,69 +36,55 @@ define(['text!menu/activeGamesMenu.html', 'menu/menuNavigator', 'core/src/imageC
                     waitingOnThemGames.push(currentGame);
                 }
 
-                this.updateTemplate(waitingOnYouGames, waitingOnThemGames);
-            }.bind(this));
-        }
+                this.insertGames('waitingOnYouTable', waitingOnYouGames);
+                this.insertGames('waitingOnThemTable', waitingOnThemGames);
+            },
 
-        ActiveGamesMenu.prototype.isWaitingOnUser = function (game)
-        {
-            for (var i = 0; i < game.waitingOn.length; ++i)
+            onGamesUpdated: function (games) {
+
+            },
+
+            isWaitingOnUser: function (game)
             {
-                if (game.waitingOn[i].username === this.socket.user.username)
+                for (var i = 0; i < game.waitingOn.length; ++i)
                 {
-                    return true;
+                    if (game.waitingOn[i].username === this.socket.user.username)
+                    {
+                        return true;
+                    }
                 }
-            }
 
-            return false;
-        };
+                return false;
+            },
 
-        ActiveGamesMenu.prototype.show = function (parentElement)
-        {
-            this.parentElement = parentElement;
-
-            this.socket.emit(this.socket.events.getGames.url);
-        };
-
-        ActiveGamesMenu.prototype.updateTemplate = function (waitingOnYouGames, waitingOnThemGames)
-        {
-            MenuNavigator.insertTemplate(this.parentElement, ActiveGamesTemplate);
-
-            this.insertGames('waitingOnYouTable', waitingOnYouGames);
-            this.insertGames('waitingOnThemTable', waitingOnThemGames);
-        };
-
-        ActiveGamesMenu.prototype.insertGames = function (tableID, games)
-        {
-            var table = document.getElementById(tableID);
-
-            MenuNavigator.removeChildren(table);
-
-            // TODO: Should probably optimize with a fragment
-            for (var i = 0; i < games.length; ++i)
+            insertGames: function (tableID, games)
             {
-                var game = games[i];
+                var fragment = document.createDocumentFragment();
+                for (var i = 0; i < games.length; ++i)
+                {
+                    var game = games[i];
+                    var row = document.createElement('tr');
+                    var levelNameCell = row.insertCell(0);
+                    var opponentCell = row.insertCell(1);
 
-                var row = table.insertRow(i);
-                var levelNameCell = row.insertCell(0);
-                var opponentCell = row.insertCell(1);
+                    row.addEventListener('click', this.onGameClicked.bind(this, game));
 
-                row.addEventListener('click', this.onGameClicked.bind(this, game));
+                    var levelImage = new Image();
+                    levelImage.className = 'levelThumbnail';
+                    ImageCache.bindImage(game.level, levelImage);
 
-                var levelImage = new Image();
-                levelImage.className = 'levelThumbnail';
-                ImageCache.bindImage(game.level, levelImage);
+                    levelNameCell.appendChild(levelImage);
+                    opponentCell.innerHTML = game.opponentUser.username;
 
-                levelNameCell.appendChild(levelImage);
-                opponentCell.innerHTML = game.opponentUser.username;
+                    fragment.appendChild(row);
+                }
+
+                document.getElementById(tableID).appendChild(fragment);
+            },
+
+            onGameClicked: function (game)
+            {
+                this.gameClickedCallback(game);
             }
         };
-
-        ActiveGamesMenu.prototype.onGameClicked = function (game)
-        {
-            this.trigger('gameClicked', game);
-        };
-
-        Events.register(ActiveGamesMenu.prototype);
-        return ActiveGamesMenu;
     });

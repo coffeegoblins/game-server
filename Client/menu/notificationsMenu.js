@@ -17,8 +17,6 @@ define(['text!menu/notificationsMenu.html', 'text!menu/notification.html', 'menu
                 this.notificationsSideBar.on('click', '.acceptButton', this.acceptChallenge.bind(this, socket, challengeAcceptedCallback));
                 this.notificationsSideBar.on('click', '.declineButton', this.declineChallenge.bind(this, socket, challengeDeclinedCallback));
 
-                socket.emit(socket.events.getNotifications.url);
-
                 this.hide();
             },
 

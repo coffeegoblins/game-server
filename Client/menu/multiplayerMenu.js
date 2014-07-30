@@ -30,7 +30,6 @@ define([
                 this.loadGameLogic();
                 MenuNavigator.insertTemplate(parentElement, Template);
 
-                this.activeGamesMenu = new ActiveGamesMenu(this.socket);
                 this.playerSearchMenu = new PlayerSearchMenu();
 
                 this.content = document.getElementById('content');
@@ -44,12 +43,11 @@ define([
                 this.notificationsButton.addEventListener('click', NotificationsMenu.toggle.bind(NotificationsMenu, this.parentElement));
 
                 this.playerSearchMenu.on('challengeDeclared', this, this.onChallengeDeclared);
-                this.activeGamesMenu.on('gameClicked', this, this.launchGame);
+                //this.activeGamesMenu.on('gameClicked', this, this.launchGame);
 
-                this.activeGamesMenu.show(this.content);
+                ActiveGamesMenu.show(this.content, this.socket, this.launchGame.bind(this));
                 NotificationsMenu.show(this.parentElement, this.socket, this.onChallengeAccepted.bind(this), this.onChallengeDeclined.bind(this));
 
-                this.socket.emit(this.socket.events.getLevels.url);
                 this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
                 this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
@@ -163,16 +161,22 @@ define([
 
             showBattleConfigurationMenu: function (levelName, callback)
             {
-                this.parentElement.style.display = 'none';
+                var children = this.content.children;
+                this.content.innerHTML = '';
 
                 var battleConfig = new BattleConfigurationMenu(this.socket);
                 battleConfig.on('cancel', this, function ()
                 {
-                    this.parentElement.style.display = '';
+                    this.content.children = children;
                 });
 
-                battleConfig.on('confirm', this, callback);
-                battleConfig.show(levelName);
+                battleConfig.on('confirm', this, function (levelData)
+                {
+                    this.content.children = children;
+                    callback(levelData);
+                });
+
+                battleConfig.show(this.content, levelName);
             }
         };
     });

@@ -21,12 +21,15 @@ define(['menu/loginMenu', 'menu/multiplayerMenu', 'menu/menuNavigator', 'core/sr
                         socket.user = user;
                         socket.on(events.listeners.disconnect, this.onDisconnected.bind(this));
 
-                        // TODO Cache manager
-
-                        EventListener.listen(socket, events.listeners);
+                        // TODO Prefetch and Cache manager
+                        socket.emit(socket.events.getGames.url);
+                        socket.emit(socket.events.getLevels.url);
+                        socket.emit(socket.events.getNotifications.url);
 
                         MenuNavigator.removeChildren(this.parentElement);
                         MultiplayerMenu.show(this.parentElement, socket);
+
+                        EventListener.listen(socket, events.listeners);
                     }.bind(this));
 
                 }.bind(this));

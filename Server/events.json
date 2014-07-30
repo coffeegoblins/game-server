@@ -1,6 +1,8 @@
 {
     "listeners": {
         "notifications": "notifications",
+        "gameCreations": "gameCreations",
+        "gameUpdates": "gameUpdates",
         "disconnect": "disconnect"
     },
     "connection":

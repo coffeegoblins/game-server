@@ -32,7 +32,7 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
     console.log("Getting games for: " + currentUserName);
 
     var searchCriteria = {
-        'users.userName': currentUserName
+        'users.username': currentUserName
     };
 
     databaseManager.gamesCollection.find(searchCriteria, function (error, games)
@@ -52,7 +52,7 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
                 return;
             }
 
-            responseCallback(this.events.getGames.response.success, gamesArray);
+            responseCallback(this.events.listeners.gameCreations, gamesArray);
         }.bind(this));
     }.bind(this));
 };
@@ -88,7 +88,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
                 return;
             }
 
-            responseCallback(this.events.createGame.response.success, gameResult[0]);
+            responseCallback(this.events.listeners.gameCreations, gameResult[0]);
         }.bind(this));
     }.bind(this));
 };

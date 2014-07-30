@@ -16,10 +16,10 @@ define(['text!./battleConfigurationMenu.html', 'core/src/events', 'core/src/leve
         this.socket = socket;
     }
 
-    BattleConfigurationMenu.prototype.show = function (levelName)
+    BattleConfigurationMenu.prototype.show = function (parentElement, levelName)
     {
-        this.parentElement = document.createElement('div');
-        this.parentElement.id = 'contentWrapper';
+        this.parentElement = parentElement;
+
         MenuNavigator.insertTemplate(this.parentElement, Template);
         document.body.appendChild(this.parentElement);
 
