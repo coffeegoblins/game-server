@@ -80,22 +80,7 @@ define(['./map', './worldObject'], function (Map, WorldObject)
     {
         for (var i = 0; i < layer.objects.length; i++)
         {
-            var object = layer.objects[i];
-            if (object.typeName === 'soldier')
-            {
-                if (object.player === 'Player1')
-                {
-                    data.player1Positions.push(object);
-                }
-                else
-                {
-                    data.player2Positions.push(object);
-                }
-            }
-            else
-            {
-                data.objects.push(new WorldObject(object));
-            }
+            data.objects.push(new WorldObject(layer.objects[i]));
         }
     };
 

@@ -172,6 +172,20 @@ define(['renderer/src/ui/actionPanel', 'renderer/src/ui/confirmationPanel', '../
             this.actionPanel.hide();
             this.unit.statusPanel.previewAP();
 
+            //// Transform the information into something that's suitable for the server
+            //var update = {
+            //    action: 'move',
+            //    unitID: this.unit.id,
+            //    tiles: []
+            //};
+            //
+            //for (var i = 0; i < this.selectedTiles.length; i++)
+            //{
+            //    var tile = this.selectedTiles[i];
+            //    update.tiles.push({x: tile.x, y: tile.y, distance: tile.distance});
+            //}
+            //
+            //this.socket.emit(this.socket.events.gameStateUpdate.url, update);
             this.moveUnit(this.selectedTiles);
         };
 

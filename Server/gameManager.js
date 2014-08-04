@@ -1,4 +1,5 @@
 var databaseManager = require('./databaseManager');
+var levelManager = require('./levelManager');
 var validator = require('./validationUtility');
 var ObjectID = require('mongodb').ObjectID;
 
@@ -11,6 +12,7 @@ var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
 function GameManager(events)
 {
     this.events = events;
+    this.levelManager = new levelManager(events);
 }
 
 GameManager.prototype.getGameLogic = function (responseCallback, version)
@@ -71,38 +73,71 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             return;
         }
 
-        var game = {
-            users: users,
-            waitingOn: users,
-            level: levelName,
-            turnCount: 0,
-            creationTime: new Date().getTime()
-        };
-
-        databaseManager.gamesCollection.insert(game, function (error, gameResult)
+        this.levelManager.getLevel(function (response, level)
         {
-            if (error)
+            if (response !== this.events.getLevel.response.success)
             {
-                console.log(error);
-                responseCallback(this.events.createGame.response.error, "Unable to create the game.");
+                responseCallback(response, level);
                 return;
             }
 
-            responseCallback(this.events.listeners.gameCreations, gameResult[0]);
-            responseCallback(this.events.createGame.response.success, gameResult);
-        }.bind(this));
+            var game = {
+                users: users,
+                waitingOn: users,
+                level: levelName,
+                turnCount: 0,
+                creationTime: new Date().getTime()
+            };
+
+            this.createSoldiers(users[0], level.data.player1Positions);
+            this.createSoldiers(users[1], level.data.player2Positions);
+
+            databaseManager.gamesCollection.insert(game, function (error, gameResult)
+            {
+                if (error)
+                {
+                    console.log(error);
+                    responseCallback(this.events.createGame.response.error, "Unable to create the game.");
+                    return;
+                }
+
+                responseCallback(this.events.listeners.gameCreations, gameResult[0]);
+                responseCallback(this.events.createGame.response.success, gameResult);
+            }.bind(this));
+
+        }.bind(this), levelName);
     }.bind(this));
+};
+
+GameManager.prototype.createSoldiers = function (user, positions)
+{
+    var units = [];
+    var positionIndex = 0;
+    for (var unitType in user.units)
+    {
+        for (var i = 0; i < user.units[unitType]; i++)
+        {
+            var position = positions[positionIndex++];
+            units.push({
+                id: new ObjectID(),
+                tileX: position.x,
+                tileY: position.y,
+                type: unitType
+            });
+        }
+    }
+
+    user.units = units;
 };
 
 GameManager.prototype.updateGame = function (responseCallback, updates)
 {
-    if (updates.length === 0)
+    var update = Array.isArray(updates) ? updates.shift() : updates;
+    if (!update)
     {
         responseCallback(this.events.updateGame.response.success);
         return;
     }
-
-    var update = updates.shift();
 
     var updateHandler = function (error)
     {
@@ -112,22 +147,26 @@ GameManager.prototype.updateGame = function (responseCallback, updates)
             return;
         }
 
-        updateGame(responseCallback, updates);
+        this.updateGame(responseCallback, updates);
     };
 
     switch (update.action)
     {
-        case 'MOVE':
-            this.performMove(update.unitID, update.target, updateHandler);
+        case 'attack':
+            this.performAttack(update.unitID, update.target, updateHandler);
             break;
 
-        case 'ATTACK':
-            this.performAttack(update.unitID, update.target, updateHandler);
+        case 'move':
+            this.performMove(update.unitID, update.tiles, updateHandler);
+            break;
+
+        default:
+            console.log('Invalid action: ' + update.action);
             break;
     }
 };
 
-GameManager.prototype.performMove = function (unitID, targetTile, callback)
+GameManager.prototype.performMove = function (unitID, tiles, callback)
 {
     var searchCriteria = {
         _id: unitID
@@ -176,16 +215,16 @@ GameManager.prototype.performMove = function (unitID, targetTile, callback)
 
 GameManager.prototype.performAttack = function ()
 {
-    var availableTiles = this.unitLogic.getAttackTiles(this.map, attack);
-    // TODO Version attacks
-    var attacks = this.unitLogic.getAttacks(unit);
-    var attack = attacks.indexOf(attackName);
-
-    if (!attack)
-    {
-        responseCallback(this.events.updateGame.response.error, "Invalid attack provided.");
-        return;
-    }
+    //    var availableTiles = this.unitLogic.getAttackTiles(this.map, attack);
+    //    // TODO Version attacks
+    //    var attacks = this.unitLogic.getAttacks(unit);
+    //    var attack = attacks.indexOf(attackName);
+    //
+    //    if (!attack)
+    //    {
+    //        responseCallback(this.events.updateGame.response.error, "Invalid attack provided.");
+    //        return;
+    //    }
 };
 
 

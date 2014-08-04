@@ -4,34 +4,13 @@ define([
         './inputHandler',
         './browserNavigation',
         './turnManager',
-        './soldier',
         './players/automatedPlayer',
         './players/localPlayer',
         './players/remotePlayer'
     ],
-    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, Soldier, AutomatedPlayer, LocalPlayer, RemotePlayer)
+    function (Renderer, Scheduler, InputHandler, BrowserNavigation, TurnManager, AutomatedPlayer, LocalPlayer, RemotePlayer)
     {
         'use strict';
-
-        function createSoldiers(positions, unitTypes)
-        {
-            var soldiers = [];
-            var positionIndex = 0;
-            for (var unitType in unitTypes)
-            {
-                for (var i = 0; i < unitTypes[unitType]; i++)
-                {
-                    var position = positions[positionIndex++];
-                    soldiers.push(new Soldier({
-                        tileX: position.x,
-                        tileY: position.y,
-                        type: unitType
-                    }));
-                }
-            }
-
-            return soldiers;
-        }
 
         return {
             loadLevel: function (socket, unitLogic, levelData, users)
@@ -53,20 +32,17 @@ define([
                     Renderer.addRenderableObject(obj);
                 }
 
-                var soldiers;
                 var currentUsername = this.socket.user.username;
                 for (i = 0; i < users.length; i++)
                 {
                     var user = users[i];
                     if (user.username === currentUsername)
                     {
-                        soldiers = createSoldiers(levelData.player1Positions, user.units);
-                        this.players.push(new LocalPlayer(unitLogic, this.currentMap, soldiers));
+                        this.players.push(new LocalPlayer(this.socket, unitLogic, this.currentMap, user.units));
                     }
                     else
                     {
-                        soldiers = createSoldiers(levelData.player2Positions, user.units);
-                        this.players.push(new RemotePlayer(unitLogic, this.currentMap, soldiers));
+                        this.players.push(new RemotePlayer(this.socket, unitLogic, this.currentMap, user.units));
                     }
                 }
 

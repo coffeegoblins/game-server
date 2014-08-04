@@ -37,11 +37,6 @@ define(['./events', './utility'], function (Events, Utility)
         }
     };
 
-    Soldier.prototype.isAlive = function ()
-    {
-        return this.hp > 0;
-    };
-
     Soldier.prototype.setDirection = function (x, y)
     {
         if (Math.abs(x) > 1 || Math.abs(y) > 1)

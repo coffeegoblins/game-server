@@ -1,5 +1,5 @@
-define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
-    function (Events, Options, Renderer, Scheduler, SoundManager, UnitStatusPanel, Utility)
+define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../soldier', '../soundManager', 'renderer/src/ui/unitStatusPanel', '../utility'],
+    function (Events, Options, Renderer, Scheduler, Soldier, SoundManager, UnitStatusPanel, Utility)
     {
         'use strict';
 
@@ -8,18 +8,20 @@ define(['../events', '../options', 'renderer/src/renderer', '../scheduler', '../
             return Options[key] === 'always' || (isSelection && Options[key] === 'selected');
         }
 
-        function Player(unitLogic, map, units)
+        function Player(socket, unitLogic, map, units)
         {
             this.map = map;
-            this.units = units || [];
+            this.socket = socket;
             this.unitLogic = unitLogic;
 
-            for (var i = 0; i < this.units.length; i++)
+            this.units = [];
+            for (var i = 0; i < units.length; i++)
             {
-                var unit = this.units[i];
+                var unit = new Soldier(units[i]);
                 unit.player = this;
                 unit.on('death', this.onSoldierDeath.bind(this));
                 this.openUnitStatusPanel(unit);
+                this.units.push(unit);
             }
         }
 

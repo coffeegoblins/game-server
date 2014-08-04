@@ -22,11 +22,7 @@ define('engine/game/viewport', [], function ()
         this.context = this.canvas.getContext('2d');
         this.canvas.tabIndex = 0;
 
-        if (document.body.firstChild)
-            document.body.insertBefore(this.canvas, document.body.firstChild);
-        else
-            document.body.appendChild(this.canvas);
-
+        document.body.insertBefore(this.canvas, document.body.firstElementChild || null);
         this.rect = new Rectangle(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
 
         this.onResize();
@@ -1196,7 +1192,7 @@ define('engine/rendering/render2dIsometric', [], function ()
             }
         },
 
-        drawSpriteSheet: function (viewport, spriteSheet, rect, tileSize)
+        drawSpriteSheet: function (viewport, spriteSheet, rect)
         {
             var tileRect = spriteSheet.getCurrentTileBounds();
             if (tileRect)
@@ -3614,9 +3610,23 @@ define('editor/core/mainPanel', ['Editor', 'text!../templates/mainPanel.html', '
 
         if (data.layers)
         {
+            var layerData;
+            var layers = [];
             for (var layerName in data.layers)
             {
-                var layerData = data.layers[layerName];
+                layerData = data.layers[layerName];
+                layerData.name = layerName;
+                layers.push(layerData);
+            }
+
+            layers.sort(function (layer1, layer2)
+            {
+                return layer1.index - layer2.index;
+            });
+
+            for (var i = 0; i < layers.length; i++)
+            {
+                layerData = layers[i];
                 var LayerType = Editor.Plugins.layerTypes[layerData.type];
                 if (LayerType)
                 {
@@ -3624,18 +3634,13 @@ define('editor/core/mainPanel', ['Editor', 'text!../templates/mainPanel.html', '
                     newLayer.index = layerData.index;
                     newLayer.type = layerData.type;
                     newLayer.deserialize(layerData);
-                    this.createLayer(newLayer, layerName);
+                    this.createLayer(newLayer, layerData.name);
                 }
                 else
                 {
                     console.log(layerData.type + ' could not be loaded');
                 }
             }
-
-            this.layers.sort(function (layer1, layer2)
-            {
-                return layer1.index - layer2.index;
-            });
         }
     };
 
@@ -3683,7 +3688,13 @@ define('editor/core/mainPanel', ['Editor', 'text!../templates/mainPanel.html', '
 
     MainPanel.prototype.onLoad = function (e)
     {
-        Editor.FileHandler.loadJSON(e.target.files[0], this.loadData.bind(this));
+        Editor.FileHandler.loadJSON(e.target.files[0], function (fileName, data)
+        {
+            if (Editor.Plugins.onLoad)
+                Editor.Plugins.onLoad(data);
+
+            this.loadData(fileName, data);
+        }.bind(this));
     };
 
     MainPanel.prototype.onSave = function (e)
@@ -3703,6 +3714,9 @@ define('editor/core/mainPanel', ['Editor', 'text!../templates/mainPanel.html', '
 
         var fileName = data.fileName;
         delete data.fileName;
+
+        if (Editor.Plugins.onSave)
+            Editor.Plugins.onSave(data);
 
         Editor.FileHandler.saveJSON(fileName + '.json', JSON.stringify(data));
         e.stopPropagation();

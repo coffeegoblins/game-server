@@ -74,8 +74,6 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
                 return;
             }
 
-            // TODO: Units should probably be transformed into arrays of objects at this point. Don't know what's needed in the database.
-
             var users = [
                 {
                     username: currentUser.username,
