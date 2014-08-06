@@ -59,7 +59,7 @@ module.exports = function (app, socketio, events, jwtSecret)
             socket.emit.apply(socket, Array.prototype.slice.call(arguments, 0));
         }
 
-        socket.on(events.playerSearch.url, userManager.searchForPlayers.bind(userManager, responseCallback));
+        socket.on(events.playerSearch.url, userManager.searchForPlayers.bind(userManager, responseCallback, socket.decoded_token.username));
 
         socket.on(events.getNotifications.url, notificationManager.getNotifications.bind(notificationManager, responseCallback, socket.decoded_token.username));
 

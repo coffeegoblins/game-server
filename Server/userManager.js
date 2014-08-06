@@ -69,15 +69,19 @@ UserManager.prototype.register = function (request, response)
     }.bind(this));
 };
 
-UserManager.prototype.searchForPlayers = function (responseCallback, currentUser, searchCriteria, startingUsername)
+UserManager.prototype.searchForPlayers = function (responseCallback, currentUser, searchCriteria)
 {
     // TODO Filter characters
-    var regex = new RegExp(searchCriteria);
+    var regex = new RegExp('^(?!' + currentUser + '$).*' + searchCriteria + '.*$', "i");
+
+    console.log(regex);
 
     var searchResults = databaseManager.usersCollection.find(
     {
-        username: regex
+        username: regex,
     }).limit(200);
+
+    console.log(searchResults);
 
     if (searchResults.length === 0)
     {
@@ -87,6 +91,8 @@ UserManager.prototype.searchForPlayers = function (responseCallback, currentUser
 
     searchResults.toArray(function (error, result)
     {
+        console.log(result);
+
         if (error)
         {
             responseCallback(this.events.playerSearch.response.error, error);
