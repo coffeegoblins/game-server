@@ -48,7 +48,7 @@ define([
                 ActiveGamesMenu.show(this.content, this.socket, this.launchGame.bind(this));
                 NotificationsMenu.show(this.parentElement, this.socket, this.onChallengeAccepted.bind(this), this.onChallengeDeclined.bind(this));
 
-                this.socket.on(this.socket.events.searchByUsername.response.success, this.onSearchCompleted.bind(this));
+                this.socket.on(this.socket.events.playerSearch.response.success, this.onSearchCompleted.bind(this));
                 this.socket.on(this.socket.events.getLevels.response.success, this.onGetLevelsCompleted.bind(this));
             },
 
@@ -158,7 +158,7 @@ define([
                 this.searchCriteria.disabled = true;
                 this.searchButton.disabled = true;
 
-                this.socket.emit(this.socket.events.searchByUsername.url, this.searchCriteria.value);
+                this.socket.emit(this.socket.events.playerSearch.url, this.searchCriteria.value);
             },
 
             showBattleConfigurationMenu: function (levelName, callback)

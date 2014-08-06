@@ -69,7 +69,7 @@ UserManager.prototype.register = function (request, response)
     }.bind(this));
 };
 
-UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria, startingUsername)
+UserManager.prototype.searchForPlayers = function (responseCallback, currentUser, searchCriteria, startingUsername)
 {
     // TODO Filter characters
     var regex = new RegExp(searchCriteria);
@@ -81,7 +81,7 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
 
     if (searchResults.length === 0)
     {
-        responseCallback(this.events.searchByUsername.response.error, 'No players found.');
+        responseCallback(this.events.playerSearch.response.error, 'No players found.');
         return;
     }
 
@@ -89,11 +89,11 @@ UserManager.prototype.selectPlayers = function (responseCallback, searchCriteria
     {
         if (error)
         {
-            responseCallback(this.events.searchByUsername.response.error, error);
+            responseCallback(this.events.playerSearch.response.error, error);
             return;
         }
 
-        responseCallback(this.events.searchByUsername.response.success, result);
+        responseCallback(this.events.playerSearch.response.success, result);
     }.bind(this));
 };
 

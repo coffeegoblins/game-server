@@ -67,15 +67,15 @@
             "success": "gameStateUpdateSuccess"
         }
     },
-    "searchByUsername":
+    "playerSearch":
     {
-        "url": "searchByUsername",
+        "url": "playerSearch",
         "version": "1",
         "cached": "false",
         "response":
         {
-            "error": "searchByUserurlError",
-            "success": "searchByUserurlSuccess"
+            "error": "playerSearchError",
+            "success": "playerSearchSuccess"
         }
     },
     "getNotifications":
