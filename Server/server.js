@@ -39,3 +39,4 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 
     console.log('Listening...');
 });
+
