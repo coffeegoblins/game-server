@@ -1,6 +1,6 @@
 define(['text!menu/loginMenu.html', 'menu/menuNavigator', 'lib/socket.io'], function (Template, MenuNavigator, io)
 {
-    var SERVER_URL = 'http://127.0.0.1:1988';
+    var SERVER_URL = 'http://nodejs-coffeegoblins.rhcloud.com:8000';
 
     return {
         show: function (parentElement, loginSuccessCallback)
