@@ -23,6 +23,9 @@ app.all('*', function (req, res, next)
     next();
 });
 
+app.set('ipaddr', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 3000);
+
 var config = JSON.parse(fileSystem.readFileSync('./config/config.json'));
 var socketEvents = JSON.parse(fileSystem.readFileSync('./events.json'));
 
@@ -32,7 +35,7 @@ databaseManager.open(config.dbName, config.dbHost, config.dbPort, function ()
 
     require('./routes')(app, socketio, socketEvents, jwtSecret);
 
-    server.listen(config.port);
+    server.listen(process.env.OPENSHIFT_NODEJS_PORT || config.port);
 
     console.log('Listening...');
 });
