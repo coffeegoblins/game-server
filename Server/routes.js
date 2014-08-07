@@ -30,6 +30,10 @@ module.exports = function (app, socketio, events, jwtSecret)
     app.post('/login', userManager.login.bind(userManager));
     app.post('/register', userManager.register.bind(userManager));
 
+    app.get('/', function (request, response)
+    {
+        response.send("Server is running");
+    });
 
     //---------------------------------------------------------------------------------------------
     // Authenticated Calls
