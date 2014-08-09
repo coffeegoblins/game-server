@@ -1,6 +1,6 @@
 {
     "name": "Game",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Cross platform JavaScript game",
     "keywords": [],
     "homepage": "https://github.com/coffeegoblins/game",
@@ -24,7 +24,7 @@
         "body-parser": "1.4.x",
         "jsonwebtoken": "0.4.x",
         "mongodb": "1.4.x",
-        "socketio-jwt": "2.3.x",
+        "socketio-jwt": "2.3.x"
     },
     "devDependencies": {},
     "bundleDependencies": [],
