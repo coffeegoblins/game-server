@@ -1,0 +1,29 @@
+{
+    "name": "Game",
+    "version": "0.1.0",
+    "description": "Cross platform JavaScript game",
+    "keywords": [],
+    "homepage": "https://github.com/coffeegoblins/game",
+    "author": {
+        "name": "Coffee Goblins",
+        "email": "coffeegoblins@gmail.com",
+        "url": "http://coffeegoblinstudios.com/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/coffeegoblins/game.git"
+    },
+    "engines": {
+        "node": ">= 0.6.0",
+        "npm": ">= 1.0.0"
+    },
+    "dependencies": {
+        "socket.io": "0.9.x",
+        "express": "3.x"
+    },
+    "devDependencies": {},
+    "bundleDependencies": [],
+
+    "private": false,
+    "main": "server.js"
+}
