@@ -1,4 +1,4 @@
-var mongoDB = require('mongodb');
+var MongoClient = require('mongodb').MongoClient;
 var async = require('async');
 
 DatabaseManager.prototype.collections = {
@@ -13,24 +13,17 @@ function DatabaseManager()
 
 }
 
-DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, callback)
+DatabaseManager.prototype.open = function (url, callback)
 {
-    console.log('Opening database ' + dbName + ' on ' + dbHost + ':' + dbPort);
-
-    this.database = new mongoDB.Db(dbName, new mongoDB.Server(dbHost, dbPort),
+    MongoClient.connect(url, function (error, database)
     {
-        fsync: true
-    });
-
-    this.database.open(function (error)
-    {
+        this.database = database;
+        
         if (error)
         {
             console.log('Unable to open the database. ' + error);
             return;
         }
-
-        console.log('Connected to ' + dbHost + ":" + dbPort);
 
         async.parallel([
             this.getCollection.bind(this, this.collections.users),
