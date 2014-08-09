@@ -1,4 +1,4 @@
-var MongoClient = require('mongodb').MongoClient;
+var mongoDB = require('mongodb');
 var async = require('async');
 
 DatabaseManager.prototype.collections = {
@@ -13,39 +13,40 @@ function DatabaseManager()
 
 }
 
-DatabaseManager.prototype.open = function (url, callback)
+DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, dbPassword, callback)
 {
-    MongoClient.connect(url, function (error, database)
+    console.log('Opening database ' + dbName + ' on ' + dbHost + ':' + dbPort);
+
+    this.database = new mongoDB.Db(dbName, new mongoDB.Server(dbHost, dbPort),
     {
-        this.database = database;
-        
+        fsync: true
+    });
+
+    this.database.open(function (error)
+    {
         if (error)
         {
             console.log('Unable to open the database. ' + error);
             return;
         }
 
-        async.parallel([
+        console.log('Connected to ' + dbHost + ":" + dbPort);
+
+        this.database.authenticate(dbUsername, dbPassword, function (error, result)
+        {
+            if (error)
+            {
+                console.log('Unable to authenticate with MongoDB');
+                return;
+            }
+
+            async.parallel([
             this.getCollection.bind(this, this.collections.users),
             this.getCollection.bind(this, this.collections.notifications),
             this.getCollection.bind(this, this.collections.games),
             this.getCollection.bind(this, this.collections.levels)
         ],
-            function (error)
-            {
-                if (error)
-                {
-                    console.log(error);
-                    return;
-                }
-
-                this.usersCollection.ensureIndex(
-                {
-                    username: 1
-                },
-                {
-                    unique: true
-                }, function (error)
+                function (error)
                 {
                     if (error)
                     {
@@ -53,10 +54,25 @@ DatabaseManager.prototype.open = function (url, callback)
                         return;
                     }
 
-                    callback();
-                });
-            }.bind(this));
-    }.bind(this));
+                    this.usersCollection.ensureIndex(
+                    {
+                        username: 1
+                    },
+                    {
+                        unique: true
+                    }, function (error)
+                    {
+                        if (error)
+                        {
+                            console.log(error);
+                            return;
+                        }
+
+                        callback();
+                    });
+                }.bind(this));
+        }.bind(this));
+    });
 };
 
 DatabaseManager.prototype.getCollection = function (collectionName, asyncCallback)

@@ -29,9 +29,12 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 3000);
 var config = JSON.parse(fileSystem.readFileSync('./config/config.json'));
 var socketEvents = JSON.parse(fileSystem.readFileSync('./events.json'));
 
-var dbUrl = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://127.0.0.1:27017/';
-
-databaseManager.open(dbUrl + 'soldier_game', function ()
+databaseManager.open(config.dbName, 
+                     process.env.OPENSHIFT_MONGODB_DB_HOST || config.dbHost, 
+                     process.env.OPENSHIFT_MONGODB_DB_PORT || config.dbPort, 
+                     process.env.OPENSHIFT_MONGODB_DB_USERNAME || "",
+                     process.env.OPENSHIFT_MONGODB_DB_PASSWORD || "",
+                     function ()
 {
     console.log("Database Ready.");
 
