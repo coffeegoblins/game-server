@@ -31,12 +31,12 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
         }
 
         console.log('Connected to ' + dbHost + ":" + dbPort);
-
-        this.database.auth(dbUsername, dbPassword, function (error, result)
+        
+        this.database.authenticate(dbUsername, dbPassword, function (error, result)
         {
             if (error)
             {
-                console.log('Unable to authenticate with MongoDB');
+                console.log('Unable to authenticate with MongoDB. ' + error);
                 return;
             }
 
@@ -72,7 +72,7 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
                     });
                 }.bind(this));
         }.bind(this));
-    });
+    }.bind(this));
 };
 
 DatabaseManager.prototype.getCollection = function (collectionName, asyncCallback)
