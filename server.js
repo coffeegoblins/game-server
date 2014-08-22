@@ -40,7 +40,9 @@ databaseManager.open(config.dbName,
 
     require('./routes')(app, socketio, socketEvents, jwtSecret);
 
-    server.listen(process.env.OPENSHIFT_NODEJS_PORT || config.port);
+    console.log("Port: " + process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
+
+    server.listen(process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
 
     console.log('Listening...');
 });
