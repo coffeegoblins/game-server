@@ -31,10 +31,10 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
         }
 
         console.log('Connected to ' + dbHost + ":" + dbPort);
-        
+
         console.log('Database user: ' + dbUsername);
         console.log('Database password: ' + dbPassword);
-        
+
         this.database.authenticate(dbUsername, dbPassword, function (error, result)
         {
             if (error)
@@ -44,12 +44,25 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
             }
 
             async.parallel([
-            this.getCollection.bind(this, this.collections.users),
-            this.getCollection.bind(this, this.collections.notifications),
-            this.getCollection.bind(this, this.collections.games),
-            this.getCollection.bind(this, this.collections.levels)
-        ],
-                function (error)
+                this.getCollection.bind(this, this.collections.users),
+                this.getCollection.bind(this, this.collections.notifications),
+                this.getCollection.bind(this, this.collections.games),
+                this.getCollection.bind(this, this.collections.levels)
+            ], function (error)
+            {
+                if (error)
+                {
+                    console.log(error);
+                    return;
+                }
+
+                this.usersCollection.ensureIndex(
+                {
+                    username: 1
+                },
+                {
+                    unique: true
+                }, function (error)
                 {
                     if (error)
                     {
@@ -57,23 +70,9 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
                         return;
                     }
 
-                    this.usersCollection.ensureIndex(
-                    {
-                        username: 1
-                    },
-                    {
-                        unique: true
-                    }, function (error)
-                    {
-                        if (error)
-                        {
-                            console.log(error);
-                            return;
-                        }
-
-                        callback();
-                    });
-                }.bind(this));
+                    callback();
+                });
+            }.bind(this));
         }.bind(this));
     }.bind(this));
 };
