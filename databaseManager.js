@@ -32,6 +32,9 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
 
         console.log('Connected to ' + dbHost + ":" + dbPort);
         
+        console.log('Database user: ' + dbUsername);
+        console.log('Database password: ' + dbPassword);
+        
         this.database.authenticate(dbUsername, dbPassword, function (error, result)
         {
             if (error)
