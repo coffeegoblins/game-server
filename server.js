@@ -46,7 +46,10 @@ databaseManager.open(config.dbName,
     console.log(process.env.OPENSHIFT_NODEJS_PORT);
     console.log(config.port);
     
-    server.listen(config.port);
+    console.log("Using port:");
+    console.log(process.env.PORT || process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
+    
+    server.listen(process.env.PORT || process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
 
     console.log('Listening...');
 });
