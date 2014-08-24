@@ -29,28 +29,19 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 3000);
 var config = JSON.parse(fileSystem.readFileSync('./config/config.json'));
 var socketEvents = JSON.parse(fileSystem.readFileSync('./events.json'));
 
-databaseManager.open(config.dbName, 
-                     process.env.OPENSHIFT_MONGODB_DB_HOST || config.dbHost, 
-                     process.env.OPENSHIFT_MONGODB_DB_PORT || config.dbPort, 
-                     process.env.OPENSHIFT_MONGODB_DB_USERNAME || "",
-                     process.env.OPENSHIFT_MONGODB_DB_PASSWORD || "",
-                     function ()
+databaseManager.open(config.dbName,
+    process.env.OPENSHIFT_MONGODB_DB_HOST || config.dbHost,
+    process.env.OPENSHIFT_MONGODB_DB_PORT || config.dbPort,
+    process.env.OPENSHIFT_MONGODB_DB_USERNAME || "",
+    process.env.OPENSHIFT_MONGODB_DB_PASSWORD || "",
+function ()
 {
     console.log("Database Ready.");
 
     require('./routes')(app, socketio, socketEvents, jwtSecret);
 
-    console.log("Port: ");
-    console.log(process.env.PORT);
-    console.log(process.env.OPENSHIFT_INTERNAL_PORT);
-    console.log(process.env.OPENSHIFT_NODEJS_PORT);
-    console.log(config.port);
-    
-    console.log("Using port:");
-    console.log(process.env.PORT || process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
-    
-    server.listen(process.env.PORT || process.env.OPENSHIFT_INTERNAL_PORT || process.env.OPENSHIFT_NODEJS_PORT || config.port);
-
-    console.log('Listening...');
+    server.listen(app.get('port'), app.get('ipaddr'), function ()
+    {
+        console.log('Express server listening on IP: ' + app.get('ipaddr') + ' and port ' + app.get('port'));
+    });
 });
-
