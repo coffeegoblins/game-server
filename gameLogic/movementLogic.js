@@ -79,7 +79,7 @@ module.exports = {
         tileNode.tile.unit = unit;
     },
 
-    getMoveTiles: function (map, unit)
+    getMoveNodes: function (map, unit)
     {
         var currentNodes = new this.DualKeyHash();
         var completedNodes = new this.DualKeyHash();

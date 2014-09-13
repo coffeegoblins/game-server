@@ -2,8 +2,10 @@ var databaseManager = require('./databaseManager');
 var levelManager = require('./levelManager');
 var validator = require('./validationUtility');
 var ObjectID = require('mongodb').ObjectID;
-
 var gameLogic = require('./gameLogic/gameLogic');
+var Map = require('./gameLogic/map');
+var Utility = require('./utility');
+
 var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
 {
     return (typeof value === 'function') ? value.toString() : value;
@@ -62,174 +64,171 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
 GameManager.prototype.createGame = function (responseCallback, users, levelName)
 {
     var searchCriteria = {
-        name: levelName.toString()
+        name: levelName
     };
 
-    databaseManager.levelsCollection.find(searchCriteria, function (error, level)
+    var usernames = [];
+    for (var i = 0; i < users.length; ++i)
+    {
+        usernames.push(users.username);
+    }
+
+    databaseManager.levelsCollection.findOne(searchCriteria, function (error, level)
     {
         if (error)
         {
-            responseCallback(this.events.createGame.response.error, "Unable to create the game because a valid level was not selected.");
+            responseCallback(this.events.createGame.response.error, "Invalid level.");
             return;
         }
 
-        this.levelManager.getLevel(function (response, level)
+        var game = {
+            usernames: usernames,
+            waitingOn: usernames,
+            level: levelName,
+            units: [],
+            tiles: level.prototypes.tiles,
+            turnCount: 0,
+            creationTime: new Date().getTime()
+        };
+
+        // Set users to starting positions
+        for (var i = 0; i < level.prototypes.units.length; ++i)
         {
-            if (response !== this.events.getLevel.response.success)
+            var prototypeUnit = level.prototypes.units[i];
+
+            var owningUser = users[prototypeUnit.userIndex];
+            if (owningUser)
             {
-                responseCallback(response, level);
-                return;
+                var tile = this.tiles[prototypeUnit.tileIndex];
+
+                tile.unit = {
+                    _id: new ObjectID(),
+                    tileX: prototypeUnit.x,
+                    tileY: prototypeUnit.y,
+                    type: owningUser.unitTypes[i],
+                    username: owningUser.username
+                };
+
+                game.units.push(tile.unit);
             }
-
-            var game = {
-                users: users,
-                waitingOn: users,
-                level: levelName,
-                turnCount: 0,
-                creationTime: new Date().getTime()
-            };
-
-            this.createSoldiers(users[0], level.data.player1Positions);
-            this.createSoldiers(users[1], level.data.player2Positions);
-
-            databaseManager.gamesCollection.insert(game, function (error, gameResult)
-            {
-                if (error)
-                {
-                    console.log(error);
-                    responseCallback(this.events.createGame.response.error, "Unable to create the game.");
-                    return;
-                }
-
-                responseCallback(this.events.listeners.gameCreations, gameResult[0]);
-                responseCallback(this.events.createGame.response.success, gameResult);
-            }.bind(this));
-
-        }.bind(this), levelName);
-    }.bind(this));
-};
-
-GameManager.prototype.createSoldiers = function (user, positions)
-{
-    var units = [];
-    var positionIndex = 0;
-    for (var unitType in user.units)
-    {
-        for (var i = 0; i < user.units[unitType]; i++)
-        {
-            var position = positions[positionIndex++];
-            units.push({
-                id: new ObjectID(),
-                tileX: position.x,
-                tileY: position.y,
-                type: unitType
-            });
-        }
-    }
-
-    user.units = units;
-};
-
-GameManager.prototype.updateGame = function (responseCallback, updates)
-{
-    var update = Array.isArray(updates) ? updates.shift() : updates;
-    if (!update)
-    {
-        responseCallback(this.events.updateGame.response.success);
-        return;
-    }
-
-    var updateHandler = function (error)
-    {
-        if (error)
-        {
-            responseCallback(this.events.updateGame.response.error, error);
-            return;
         }
 
-        this.updateGame(responseCallback, updates);
-    };
-
-    switch (update.action)
-    {
-        case 'attack':
-            this.performAttack(update.unitID, update.target, updateHandler);
-            break;
-
-        case 'move':
-            this.performMove(update.unitID, update.tiles, updateHandler);
-            break;
-
-        default:
-            console.log('Invalid action: ' + update.action);
-            break;
-    }
-};
-
-GameManager.prototype.performMove = function (unitID, tiles, callback)
-{
-    var searchCriteria = {
-        _id: unitID
-    };
-
-    databaseManager.unitsCollection.findOne(searchCriteria, function (error, unit)
-    {
-        if (error || !unit)
-        {
-            callback(this.events.updateGame.response.error, "Invalid unit provided.");
-            return;
-        }
-
-        // TODO Get Map from DB
-        var availableTiles = this.unitLogic.getMoveTiles(this.map, unit);
-
-        var tile = Utility.getElementByProperty(availableTiles, 'tile', targetTile);
-        if (!tile)
-        {
-            callback(this.events.updateGame.response.error, "Invalid tile provided.");
-            return;
-        }
-
-        var moveCost = this.unitLogic.getMoveCost(unit, tile.distance);
-        if (moveCost > unit.ap)
-        {
-            callback(this.events.updateGame.response.error, "The unit has insufficient action points to perform that move.");
-            return;
-        }
-
-        this.unitLogic.endMoveUnit(unit, tile, moveCost);
-
-        databaseManager.unitsCollection.update(searchCriteria, unit, function (error)
+        databaseManager.gamesCollection.insert(game, function (error, dbGame)
         {
             if (error)
             {
-                callback(this.events.updateGame.response.error, "Unable to update the unit's position. Please try again.");
-                // TODO Disaster recovery, the client will be out of sync with the server
+                console.log(error);
+                responseCallback(this.events.createGame.response.error, "Unable to create the game.");
                 return;
             }
 
-            callback(null);
-        });
+            responseCallback(this.events.listeners.gameCreations, dbGame[0]);
+            responseCallback(this.events.createGame.response.success, dbGame);
+        }.bind(this));
+
+    }.bind(this));
+};
+
+GameManager.prototype.gameStateUpdate = function (responseCallback, gameID, actions)
+{
+    this.selectGameByID(gameID, function (error, dbGame)
+    {
+        if (!error)
+        {
+            responseCallback(this.events.gameStateUpdate.response.error, error);
+            return;
+        }
+
+        if (!this.validateUnitActions(dbGame, actions))
+        {
+            responseCallback(this.events.gameStateUpdate.response.error, "An invalid action was provided. Update your game or contact support.");
+            return;
+        }
+
+        this.updateUnitActions(responseCallback, dbGame);
     });
 };
 
-GameManager.prototype.performAttack = function ()
+GameManager.prototype.validateUnitActions = function (dbGame, actions)
 {
-    //    var availableTiles = this.unitLogic.getAttackTiles(this.map, attack);
-    //    // TODO Version attacks
-    //    var attacks = this.unitLogic.getAttacks(unit);
-    //    var attack = attacks.indexOf(attackName);
-    //
-    //    if (!attack)
-    //    {
-    //        responseCallback(this.events.updateGame.response.error, "Invalid attack provided.");
-    //        return;
-    //    }
+    for (var i = 0; i < actions.length; ++i)
+    {
+        var action = actions[i];
+        switch (action.type)
+        {
+
+        case "move":
+            {
+                var dbUnit = Utility.getElementByProperty(dbGame.units, '_id', action.unitID);
+                if (!dbUnit)
+                {
+                    // The unit does not exist in the database
+                    return false;
+                }
+
+                var moveNodes = gameLogic.getMoveNodes(dbGame.map, dbUnit);
+                if (!Utility.containsElement(moveNodes, action.destinationNode))
+                {
+                    return false;
+                }
+
+                // Pseudo Update dbUnit
+                if (dbUnit.target)
+                {
+                    dbUnit.target.target = null;
+                    dbUnit.target = null;
+                }
+
+                var dbCurrentTile = dbGame.map.getTile(dbUnit.tileX, dbUnit.tileY);
+                dbCurrentTile.unit = null;
+
+                dbUnit.ap -= gameLogic.getMoveCost(dbUnit, action.destinationNode.distance);
+                dbUnit.tileX = action.destinationNode.x;
+                dbUnit.tileY = action.destinationNode.y;
+
+                var dbTile = dbGame.map.getTile(action.destinationNode.x, action.destinationNode.y);
+                dbTile.unit = dbUnit;
+
+                break;
+            }
+
+        case "attack":
+            {
+                // TODO
+                break;
+            }
+
+        case "endTurn":
+            {
+                // Nothing to validate
+                break;
+            }
+
+        default:
+            return false;
+
+        }
+    }
+
+    return true;
 };
 
-
-GameManager.prototype.selectGameByID = function (gameID)
+GameManager.prototype.updateUnitActions = function (responseCallback, dbGame)
 {
+    databaseManager.gamesCollection.update(
+    {
+        '_id': dbGame._id,
+    }, dbGame, function (error, rowsModified)
+    {
+        if (error || rowsModified === 0)
+        {
+            // TODO Flag game and Log, game is in a broken state
+            return;
+        }
+    }.bind(this));
+};
+
+GameManager.prototype.selectGameByID = function (gameID) {
 
 };
 

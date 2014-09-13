@@ -30,7 +30,7 @@ module.exports = {
         return crossNodes;
     },
 
-    getAttackTiles: function (map, unit, attack)
+    getAttackNodes: function (map, unit, attack)
     {
         var tileNodes = this.OcclusionCalculator.getTileNodes(map, unit, attack.range);
         var occlusionQuads = this.OcclusionCalculator.getOcclusionQuads(tileNodes, unit, attack);

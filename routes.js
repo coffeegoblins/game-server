@@ -72,7 +72,7 @@ module.exports = function (app, socketio, events, jwtSecret)
 
         socket.on(events.getGames.url, gameManager.getGames.bind(gameManager, responseCallback, socket.decoded_token.username));
         socket.on(events.getGameLogic.url, gameManager.getGameLogic.bind(gameManager, responseCallback));
-        socket.on(events.gameStateUpdate.url, gameManager.updateGame.bind(gameManager, responseCallback));
+        socket.on(events.gameStateUpdate.url, gameManager.gameStateUpdate.bind(gameManager, responseCallback));
 
         socket.on(events.challengeUser.url, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
         socket.on(events.challengeAccepted.url, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
