@@ -78,12 +78,12 @@ ChallengeManager.prototype.acceptChallenge = function (responseCallback, current
                 {
                     username: currentUser.username,
                     displayName: currentUser.displayName,
-                    units: levelData.units
+                    unitTypes: levelData.units
                 },
                 {
                     username: opponentUser.username,
                     displayName: opponentUser.displayName,
-                    units: notification.units
+                    unitTypes: notification.units
                 }
             ];
 

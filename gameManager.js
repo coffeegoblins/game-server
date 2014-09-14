@@ -36,7 +36,7 @@ GameManager.prototype.getGames = function (responseCallback, currentUserName)
     console.log("Getting games for: " + currentUserName);
 
     var searchCriteria = {
-        'users.username': currentUserName
+        'usernames': currentUserName
     };
 
     databaseManager.gamesCollection.find(searchCriteria, function (error, games)
@@ -67,10 +67,27 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
         name: levelName
     };
 
+    console.log(users);
+
     var usernames = [];
     for (var i = 0; i < users.length; ++i)
     {
-        usernames.push(users.username);
+        var user = users[i];
+
+        usernames.push(user.username);
+
+        // TODO Pass over string list from client
+        user.unitTypeArray = [];
+
+        for (var unitType in user.unitTypes)
+        {
+            for (var x = 0; x < user.unitTypes[unitType]; ++x)
+            {
+                user.unitTypeArray.push(unitType);
+            }
+        }
+
+        console.log(user.unitTypeArray);
     }
 
     databaseManager.levelsCollection.findOne(searchCriteria, function (error, level)
@@ -87,9 +104,11 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             level: levelName,
             units: [],
             tiles: level.prototypes.tiles,
+            boundaries: level.boundaries,
             turnCount: 0,
             creationTime: new Date().getTime()
         };
+
 
         // Set users to starting positions
         for (var i = 0; i < level.prototypes.units.length; ++i)
@@ -99,13 +118,15 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             var owningUser = users[prototypeUnit.userIndex];
             if (owningUser)
             {
-                var tile = this.tiles[prototypeUnit.tileIndex];
+                var tile = game.tiles[prototypeUnit.tileIndex];
+
+                console.log(owningUser.unitTypes);
 
                 tile.unit = {
                     _id: new ObjectID(),
                     tileX: prototypeUnit.x,
                     tileY: prototypeUnit.y,
-                    type: owningUser.unitTypes[i],
+                    type: owningUser.unitTypeArray.shift(),
                     username: owningUser.username
                 };
 
@@ -123,7 +144,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             }
 
             responseCallback(this.events.listeners.gameCreations, dbGame[0]);
-            responseCallback(this.events.createGame.response.success, dbGame);
+            responseCallback(this.events.createGame.response.success, dbGame[0]);
         }.bind(this));
 
     }.bind(this));
