@@ -1,9 +1,10 @@
 module.exports = {
     combatLockCost: 10,
 
-    soldierData: {
+    unitData: {
         "archer": {
             "moveCost": 12,
+            "maxAP": 100,
             "attacks": [
                 {
                     "name": "rangedAttack",
@@ -58,6 +59,7 @@ module.exports = {
 
         "rogue": {
             "moveCost": 10,
+            "maxAP": 100,
             "attacks": [
                 {
                     "name": "strike",
@@ -90,6 +92,7 @@ module.exports = {
 
         "shield": {
             "moveCost": 15,
+            "maxAP": 100,
             "attacks": [
                 {
                     "name": "strike",
@@ -119,6 +122,7 @@ module.exports = {
 
         "warrior": {
             "moveCost": 12,
+            "maxAP": 100,
             "attacks": [
                 {
                     "name": "strike",
@@ -157,7 +161,7 @@ module.exports = {
     getAttacks: function (unit)
     {
         var attacks = [];
-        var attackDefinitions = this.soldierData[unit.type].attacks;
+        var attackDefinitions = this.unitData[unit.type].attacks;
         for (var i = 0; i < attackDefinitions.length; i++)
         {
             var attack = {range: 1};
@@ -184,10 +188,61 @@ module.exports = {
 
     getMoveCost: function (unit, distance)
     {
-        var cost = distance * this.soldierData[unit.type].moveCost;
+        var cost = distance * this.unitData[unit.type].moveCost;
         if (unit.target)
             cost += this.combatLockCost;
 
         return cost;
+    },
+
+    endTurn: function (units)
+    {
+        console.log("Initial Unit State: ", units);
+
+        // Remove the soldier from the front
+        var currentUnit = units.shift();
+
+        // Pay the end turn penalty
+        currentUnit.ap *= 0.75;
+        // TODO this.endTurnPercentageCost;
+
+        var nextUnit = units[0];
+        var apIncrement = nextUnit.maxAP - nextUnit.ap;
+
+        // Ensure the next in queue is ready to go
+        nextUnit.ap = nextUnit.maxAP;
+
+        // Increment the same amount for all other units
+        for (var i = 1; i < units.length; ++i)
+        {
+            var unit = units[i];
+            var missingAP = unit.maxAP - unit.ap;
+
+            // Min() with missing AP to ensure we never go over max AP
+            unit.ap += Math.min(apIncrement, missingAP);
+        }
+
+        // Place in queue at appropriate spot
+        for (var placementIndex = units.length - 1; placementIndex >= 0; --placementIndex)
+        {
+            var comparisonUnit = units[placementIndex];
+            var currentUnitTurnsToMove = currentUnit.maxAP - currentUnit.ap;
+            var comparisonUnitTurnsToMove = comparisonUnit.maxAP - comparisonUnit.ap;
+
+            if (currentUnitTurnsToMove >= comparisonUnitTurnsToMove)
+            {
+                console.log("Placing unit back in queue at: " + (placementIndex + 1));
+                units.splice(placementIndex + 1, 0, currentUnit);
+                break;
+            }
+        }
+
+        // Update turn numbers
+        for (i = 0; i < units.length; i++)
+        {
+            units[i].turnNumber = i + 1;
+        }
+
+        console.log("Unit State: ", units);
     }
 };

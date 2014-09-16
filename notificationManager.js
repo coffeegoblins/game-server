@@ -55,7 +55,7 @@ NotificationManager.prototype.addNotification = function (username, notification
         console.log('Notifying ' + username);
         console.log(notification);
 
-        this.pushNotificationCallback(this.events.listeners.notifications, username, notification);
+        this.pushNotificationCallback(this.events.listeners.notifications, username, [notification]);
     }.bind(this));
 };
 

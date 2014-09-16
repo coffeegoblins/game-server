@@ -11,10 +11,11 @@ var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
     return (typeof value === 'function') ? value.toString() : value;
 });
 
-function GameManager(events)
+function GameManager(events, pushNotificationCallback)
 {
     this.events = events;
     this.levelManager = new levelManager(events);
+    this.pushNotificationCallback = pushNotificationCallback;
 }
 
 GameManager.prototype.getGameLogic = function (responseCallback, version)
@@ -119,14 +120,15 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             if (owningUser)
             {
                 var tile = game.tiles[prototypeUnit.tileIndex];
-
-                console.log(owningUser.unitTypes);
+                var unitType = owningUser.unitTypeArray.shift();
 
                 tile.unit = {
                     _id: new ObjectID(),
                     tileX: prototypeUnit.x,
                     tileY: prototypeUnit.y,
-                    type: owningUser.unitTypeArray.shift(),
+                    type: unitType,
+                    ap: gameLogic.unitData[unitType].maxAP,
+                    maxAP: gameLogic.unitData[unitType].maxAP,
                     username: owningUser.username
                 };
 
@@ -150,44 +152,61 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
     }.bind(this));
 };
 
-GameManager.prototype.gameStateUpdate = function (responseCallback, gameID, actions)
+GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsername, gameID, actions)
 {
-    this.selectGameByID(gameID, function (error, dbGame)
+    console.log("Update received");
+
+    databaseManager.gamesCollection.findOne(
     {
-        if (!error)
+        "_id": new ObjectID(gameID)
+    }, function (error, dbGame)
+    {
+        if (error)
         {
+            console.log("Error: ", error);
             responseCallback(this.events.gameStateUpdate.response.error, error);
             return;
         }
 
-        if (!this.validateUnitActions(dbGame, actions))
+        console.log("Game Found: ", dbGame);
+
+        var map = new Map(dbGame.tiles, dbGame.boundaries);
+
+        console.log("Map created.");
+
+        if (!this.validateUnitActions(dbGame, map, actions))
         {
             responseCallback(this.events.gameStateUpdate.response.error, "An invalid action was provided. Update your game or contact support.");
             return;
         }
 
-        this.updateUnitActions(responseCallback, dbGame);
-    });
+        this.updateUnitActions(responseCallback, currentUsername, dbGame, actions);
+    }.bind(this));
 };
 
-GameManager.prototype.validateUnitActions = function (dbGame, actions)
+GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 {
+    console.log("Validating unit actions.");
+
     for (var i = 0; i < actions.length; ++i)
     {
         var action = actions[i];
+
+        console.log("Action type: ", action.type);
+
         switch (action.type)
         {
 
-        case "move":
+        case "MOVE":
             {
                 var dbUnit = Utility.getElementByProperty(dbGame.units, '_id', action.unitID);
                 if (!dbUnit)
                 {
-                    // The unit does not exist in the database
+                    console.log("The unit " + action.unitID + " does not exist in the database");
                     return false;
                 }
 
-                var moveNodes = gameLogic.getMoveNodes(dbGame.map, dbUnit);
+                var moveNodes = gameLogic.getMoveNodes(map, dbUnit);
                 if (!Utility.containsElement(moveNodes, action.destinationNode))
                 {
                     return false;
@@ -200,32 +219,35 @@ GameManager.prototype.validateUnitActions = function (dbGame, actions)
                     dbUnit.target = null;
                 }
 
-                var dbCurrentTile = dbGame.map.getTile(dbUnit.tileX, dbUnit.tileY);
+                var dbCurrentTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
                 dbCurrentTile.unit = null;
 
                 dbUnit.ap -= gameLogic.getMoveCost(dbUnit, action.destinationNode.distance);
                 dbUnit.tileX = action.destinationNode.x;
                 dbUnit.tileY = action.destinationNode.y;
 
-                var dbTile = dbGame.map.getTile(action.destinationNode.x, action.destinationNode.y);
+                var dbTile = map.getTile(action.destinationNode.x, action.destinationNode.y);
                 dbTile.unit = dbUnit;
 
                 break;
             }
 
-        case "attack":
+        case "ATTACK":
             {
                 // TODO
                 break;
             }
 
-        case "endTurn":
+        case "ENDTURN":
             {
-                // Nothing to validate
+                console.log("Validating ENDTURN");
+                gameLogic.endTurn(dbGame.units);
+
                 break;
             }
 
         default:
+                // TODO Error
             return false;
 
         }
@@ -234,7 +256,7 @@ GameManager.prototype.validateUnitActions = function (dbGame, actions)
     return true;
 };
 
-GameManager.prototype.updateUnitActions = function (responseCallback, dbGame)
+GameManager.prototype.updateUnitActions = function (responseCallback, currentUsername, dbGame, actions)
 {
     databaseManager.gamesCollection.update(
     {
@@ -246,11 +268,15 @@ GameManager.prototype.updateUnitActions = function (responseCallback, dbGame)
             // TODO Flag game and Log, game is in a broken state
             return;
         }
+
+        for (var i = 0; i < dbGame.usernames.length; ++i)
+        {
+            if (dbGame.usernames[i] !== currentUsername)
+            {
+                this.pushNotificationCallback(this.events.listeners.gameUpdates, dbGame.usernames[i], actions);
+            }
+        }
     }.bind(this));
-};
-
-GameManager.prototype.selectGameByID = function (gameID) {
-
 };
 
 module.exports = GameManager;

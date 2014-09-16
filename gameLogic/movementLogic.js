@@ -50,7 +50,7 @@ module.exports = {
     canMoveToTile: function (map, unit, currentNode, directionX, directionY)
     {
         var destinationTile = map.getTile(currentNode.x + directionX, currentNode.y + directionY);
-        if (!destinationTile || destinationTile.unit || !map.isTraversable(destinationTile))
+        if (!destinationTile || destinationTile.unit || !destinationTile.isTraversable)
             return false;
 
         var sourceIsClimbable, destinationIsClimbable;
@@ -84,7 +84,7 @@ module.exports = {
         var currentNodes = new this.DualKeyHash();
         var completedNodes = new this.DualKeyHash();
 
-        var maxDistance = unit.ap / this.soldierData[unit.type].moveCost;
+        var maxDistance = unit.ap / this.unitData[unit.type].moveCost;
         var currentNode = {
             distance: 0,
             x: unit.tileX,

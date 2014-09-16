@@ -12,14 +12,14 @@ function pushEvent(event, userName)
     {
         var data = Array.prototype.slice.call(arguments).splice(2, arguments.length - 2);
 
-        activeSocketConnections[userName].emit(event, data);
+        activeSocketConnections[userName].emit(event, data[0]);
     }
 }
 
 module.exports = function (app, socketio, events, jwtSecret)
 {
     var userManager = new UserManager(events, jwtSecret);
-    var gameManager = new GameManager(events);
+    var gameManager = new GameManager(events, pushEvent);
     var notificationManager = new NotificationManager(events, userManager, pushEvent);
     var challengeManager = new ChallengeManager(events, userManager, gameManager, notificationManager);
     var levelManager = new LevelManager(events);
@@ -72,7 +72,7 @@ module.exports = function (app, socketio, events, jwtSecret)
 
         socket.on(events.getGames.url, gameManager.getGames.bind(gameManager, responseCallback, socket.decoded_token.username));
         socket.on(events.getGameLogic.url, gameManager.getGameLogic.bind(gameManager, responseCallback));
-        socket.on(events.gameStateUpdate.url, gameManager.gameStateUpdate.bind(gameManager, responseCallback));
+        socket.on(events.gameStateUpdate.url, gameManager.gameStateUpdate.bind(gameManager, responseCallback, socket.decoded_token.username));
 
         socket.on(events.challengeUser.url, challengeManager.initiateChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
         socket.on(events.challengeAccepted.url, challengeManager.acceptChallenge.bind(challengeManager, responseCallback, socket.decoded_token.username));
