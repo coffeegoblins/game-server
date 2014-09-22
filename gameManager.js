@@ -152,13 +152,13 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
     }.bind(this));
 };
 
-GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsername, gameID, actions)
+GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsername, gameStateUpdates)
 {
     console.log("Update received");
 
     databaseManager.gamesCollection.findOne(
     {
-        "_id": new ObjectID(gameID)
+        "_id": new ObjectID(gameStateUpdates.gameID)
     }, function (error, dbGame)
     {
         if (error)
@@ -174,13 +174,13 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
 
         console.log("Map created.");
 
-        if (!this.validateUnitActions(dbGame, map, actions))
+        if (!this.validateUnitActions(dbGame, map, gameStateUpdates.actions))
         {
             responseCallback(this.events.gameStateUpdate.response.error, "An invalid action was provided. Update your game or contact support.");
             return;
         }
 
-        this.updateUnitActions(responseCallback, currentUsername, dbGame, actions);
+        this.updateUnitActions(responseCallback, currentUsername, dbGame, gameStateUpdates.actions);
     }.bind(this));
 };
 
@@ -199,7 +199,16 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 
         case "MOVE":
             {
-                var dbUnit = Utility.getElementByProperty(dbGame.units, '_id', action.unitID);
+                var dbUnit = null;
+
+                for (var j = 0; j < dbGame.units.length; ++j)
+                {
+                    if (dbGame.units[j]._id.toString() === action.unitID)
+                    {
+                        dbUnit = dbGame.units[j];
+                    }
+                }
+
                 if (!dbUnit)
                 {
                     console.log("The unit " + action.unitID + " does not exist in the database");
@@ -207,8 +216,15 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
                 }
 
                 var moveNodes = gameLogic.getMoveNodes(map, dbUnit);
-                if (!Utility.containsElement(moveNodes, action.destinationNode))
+                var searchCriteria = {
+                    x: action.x,
+                    y: action.y
+                };
+
+                var destinationNode = Utility.findInArray(moveNodes, searchCriteria);
+                if (!destinationNode)
                 {
+                    console.log("The move destination is invalid");
                     return false;
                 }
 
@@ -222,11 +238,11 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
                 var dbCurrentTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
                 dbCurrentTile.unit = null;
 
-                dbUnit.ap -= gameLogic.getMoveCost(dbUnit, action.destinationNode.distance);
-                dbUnit.tileX = action.destinationNode.x;
-                dbUnit.tileY = action.destinationNode.y;
+                dbUnit.ap -= gameLogic.getMoveCost(dbUnit, destinationNode.distance);
+                dbUnit.tileX = destinationNode.x;
+                dbUnit.tileY = destinationNode.y;
 
-                var dbTile = map.getTile(action.destinationNode.x, action.destinationNode.y);
+                var dbTile = map.getTile(destinationNode.x, destinationNode.y);
                 dbTile.unit = dbUnit;
 
                 break;
@@ -247,7 +263,7 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
             }
 
         default:
-                // TODO Error
+            // TODO Error
             return false;
 
         }
@@ -273,6 +289,7 @@ GameManager.prototype.updateUnitActions = function (responseCallback, currentUse
         {
             if (dbGame.usernames[i] !== currentUsername)
             {
+                responseCallback(this.events.gameStateUpdate.response.success);
                 this.pushNotificationCallback(this.events.listeners.gameUpdates, dbGame.usernames[i], actions);
             }
         }

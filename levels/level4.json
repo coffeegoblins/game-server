@@ -271,27 +271,27 @@
             },
             {
                 "userIndex": 1,
-                "tileIndex": 10,
+                "tileIndex": 19,
                 "x": 0,
-                "y": 1
+                "y": 2
             },
             {
                 "userIndex": 1,
-                "tileIndex": 11,
+                "tileIndex": 20,
                 "x": 1,
-                "y": 1
+                "y": 2
             },
             {
                 "userIndex": 1,
-                "tileIndex": 12,
+                "tileIndex": 21,
                 "x": 2,
-                "y": 1
+                "y": 2
             },
             {
                 "userIndex": 1,
-                "tileIndex": 13,
+                "tileIndex": 22,
                 "x": 3,
-                "y": 1
+                "y": 2
             }
         ]
     },

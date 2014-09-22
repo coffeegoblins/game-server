@@ -1,8 +1,10 @@
 module.exports = {
     combatLockCost: 10,
 
-    unitData: {
-        "archer": {
+    unitData:
+    {
+        "archer":
+        {
             "moveCost": 12,
             "maxAP": 100,
             "attacks": [
@@ -14,13 +16,15 @@ module.exports = {
                     "isObstructable": true,
                     "displayName": "Attack",
                     "track": "bow1",
-                    "damage": {
+                    "damage":
+                    {
                         "archer": 30,
                         "rogue": 30,
                         "shield": 20,
                         "warrior": 25
                     },
-                    "accuracy": {
+                    "accuracy":
+                    {
                         "archer": 0.75,
                         "rogue": 0.5,
                         "shield": 0.2,
@@ -34,13 +38,15 @@ module.exports = {
                     "minRange": 3.9,
                     "displayName": "Overhead Attack",
                     "track": "bow1",
-                    "damage": {
+                    "damage":
+                    {
                         "archer": 25,
                         "rogue": 25,
                         "shield": 15,
                         "warrior": 20
                     },
-                    "accuracy": {
+                    "accuracy":
+                    {
                         "archer": 0.25,
                         "rogue": 0.2,
                         "shield": 0.1,
@@ -57,7 +63,8 @@ module.exports = {
             ]
         },
 
-        "rogue": {
+        "rogue":
+        {
             "moveCost": 10,
             "maxAP": 100,
             "attacks": [
@@ -90,7 +97,8 @@ module.exports = {
             ]
         },
 
-        "shield": {
+        "shield":
+        {
             "moveCost": 15,
             "maxAP": 100,
             "attacks": [
@@ -120,7 +128,8 @@ module.exports = {
             ]
         },
 
-        "warrior": {
+        "warrior":
+        {
             "moveCost": 12,
             "maxAP": 100,
             "attacks": [
@@ -147,7 +156,8 @@ module.exports = {
                     "cost": 50,
                     "displayName": "Overhead strike",
                     "damage": 60,
-                    "accuracy": {
+                    "accuracy":
+                    {
                         "archer": 0.4,
                         "rogue": 0.3,
                         "shield": 0.8,
@@ -164,7 +174,9 @@ module.exports = {
         var attackDefinitions = this.unitData[unit.type].attacks;
         for (var i = 0; i < attackDefinitions.length; i++)
         {
-            var attack = {range: 1};
+            var attack = {
+                range: 1
+            };
             var attackDefinition = attackDefinitions[i];
 
             for (var property in attackDefinition)
@@ -197,8 +209,6 @@ module.exports = {
 
     endTurn: function (units)
     {
-        console.log("Initial Unit State: ", units);
-
         // Remove the soldier from the front
         var currentUnit = units.shift();
 
@@ -231,7 +241,6 @@ module.exports = {
 
             if (currentUnitTurnsToMove >= comparisonUnitTurnsToMove)
             {
-                console.log("Placing unit back in queue at: " + (placementIndex + 1));
                 units.splice(placementIndex + 1, 0, currentUnit);
                 break;
             }
@@ -242,7 +251,5 @@ module.exports = {
         {
             units[i].turnNumber = i + 1;
         }
-
-        console.log("Unit State: ", units);
     }
 };
