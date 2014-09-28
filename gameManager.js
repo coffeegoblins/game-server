@@ -186,7 +186,7 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
 
 GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 {
-    console.log("Validating unit actions.");
+    var dbUnit;
 
     for (var i = 0; i < actions.length; ++i)
     {
@@ -199,15 +199,7 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 
         case "MOVE":
             {
-                var dbUnit = null;
-
-                for (var j = 0; j < dbGame.units.length; ++j)
-                {
-                    if (dbGame.units[j]._id.toString() === action.unitID)
-                    {
-                        dbUnit = dbGame.units[j];
-                    }
-                }
+                dbUnit = this.findUnitInGame(dbGame, action.unitID);
 
                 if (!dbUnit)
                 {
@@ -250,13 +242,37 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 
         case "ATTACK":
             {
-                // TODO
+                dbUnit = this.findUnitInGame(dbGame, action.unitID);
+
+                if (!dbUnit)
+                {
+                    console.log("The unit " + action.unitID + " does not exist in the database");
+                    return false;
+                }
+
+                // TODO Get Attack from DB
+                var attackNodes = gameLogic.getAttackNodes(map, dbUnit, action.attack);
+
+                var criteria = {
+                    x: action.x,
+                    y: action.y
+                };
+
+                var attackNode = Utility.findInArray(attackNodes, criteria);
+                if (!attackNode)
+                {
+                    console.log("The attack destination is invalid");
+                    return false;
+                }
+
+                var dbUnitTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
+                dbCurrentTile.unit = null;
+
                 break;
             }
 
         case "ENDTURN":
             {
-                console.log("Validating ENDTURN");
                 gameLogic.endTurn(dbGame.units);
 
                 break;
@@ -270,6 +286,17 @@ GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
     }
 
     return true;
+};
+
+GameManager.prototype.findUnitInGame = function (game, unitID)
+{
+    for (var j = 0; j < game.units.length; ++j)
+    {
+        if (game.units[j]._id.toString() === unitID)
+        {
+            game = game.units[j];
+        }
+    }
 };
 
 GameManager.prototype.updateUnitActions = function (responseCallback, currentUsername, dbGame, actions)

@@ -1,5 +1,5 @@
 var gameLogic = {
-    version: 0.1
+    version: 0.2
 };
 
 // Merge all of the logic from the other sections in place

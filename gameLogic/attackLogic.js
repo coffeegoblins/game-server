@@ -46,7 +46,7 @@ module.exports = {
             var tile = tileNode.tile;
 
             // Remove tiles that contain team mates, blocking objects, or are at incompatible ranges
-            if ((tile.unit && tile.unit.player === unit.player) ||
+            if ((tile.unit && tile.unit.username === unit.username) ||
                 (tile.content && tile.content.isBlocking !== false) ||
                 (minRange && tileNode.distance < minRange) ||
                 (Math.abs(tile.height - unitHeight) > verticalRange))
@@ -120,7 +120,11 @@ module.exports = {
                         this.breakCombatLock(targetUnit);
                 }
 
-                targets.push({unit: targetUnit, damage: damage});
+                targets.push(
+                {
+                    unit: targetUnit,
+                    damage: damage
+                });
             }
         }
 
