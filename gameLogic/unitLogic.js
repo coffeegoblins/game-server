@@ -1,5 +1,10 @@
 module.exports = {
     combatLockCost: 10,
+    directions: [
+        [6, 7, 0],
+        [5, 0, 1],
+        [4, 3, 2]
+    ],
 
     unitData:
     {
@@ -9,7 +14,7 @@ module.exports = {
             "maxAP": 100,
             "attacks": [
                 {
-                    "name": "rangedAttack",
+                    "name": "shortBow",
                     "cost": 20,
                     "range": 10,
                     "minRange": 1.9,
@@ -168,6 +173,26 @@ module.exports = {
         }
     },
 
+    breakCombatLock: function (unit)
+    {
+        if (unit.target)
+        {
+            unit.target.target = null;
+            unit.target = null;
+        }
+    },
+
+    applyCombatLock: function (sourceUnit, targetUnit)
+    {
+        sourceUnit.target = targetUnit;
+
+        // Only apply lock if target has no target (to allow attacks from behind)
+        if (!targetUnit.target)
+        {
+            targetUnit.target = sourceUnit;
+        }
+    },
+
     getAttacks: function (unit)
     {
         var attacks = [];
@@ -180,7 +205,9 @@ module.exports = {
             var attackDefinition = attackDefinitions[i];
 
             for (var property in attackDefinition)
+            {
                 attack[property] = attackDefinition[property];
+            }
 
             attack.isDisabled = (attack.cost > unit.ap);
             attacks.push(attack);
@@ -189,67 +216,30 @@ module.exports = {
         return attacks;
     },
 
-    getAttackCost: function (unit, attack, targetTile)
+    setDirection: function (unit, x, y)
     {
-        var cost = attack.cost;
-        if (unit.target && targetTile && unit.target !== targetTile.unit)
-            cost += this.combatLockCost;
+        if (Math.abs(x) > 1 || Math.abs(y) > 1)
+        {
+            // Normalize the direction
+            var length = Math.sqrt(x * x + y * y);
+            x = Math.round(x / length);
+            y = Math.round(y / length);
+        }
 
-        return cost;
+        //this.worldDirection.x = x;
+        //this.worldDirection.y = y;
+
+        //this.direction = this.directions[y + 1][x + 1];
     },
 
     getMoveCost: function (unit, distance)
     {
         var cost = distance * this.unitData[unit.type].moveCost;
         if (unit.target)
+        {
             cost += this.combatLockCost;
+        }
 
         return cost;
-    },
-
-    endTurn: function (units)
-    {
-        // Remove the soldier from the front
-        var currentUnit = units.shift();
-
-        // Pay the end turn penalty
-        currentUnit.ap *= 0.75;
-        // TODO this.endTurnPercentageCost;
-
-        var nextUnit = units[0];
-        var apIncrement = nextUnit.maxAP - nextUnit.ap;
-
-        // Ensure the next in queue is ready to go
-        nextUnit.ap = nextUnit.maxAP;
-
-        // Increment the same amount for all other units
-        for (var i = 1; i < units.length; ++i)
-        {
-            var unit = units[i];
-            var missingAP = unit.maxAP - unit.ap;
-
-            // Min() with missing AP to ensure we never go over max AP
-            unit.ap += Math.min(apIncrement, missingAP);
-        }
-
-        // Place in queue at appropriate spot
-        for (var placementIndex = units.length - 1; placementIndex >= 0; --placementIndex)
-        {
-            var comparisonUnit = units[placementIndex];
-            var currentUnitTurnsToMove = currentUnit.maxAP - currentUnit.ap;
-            var comparisonUnitTurnsToMove = comparisonUnit.maxAP - comparisonUnit.ap;
-
-            if (currentUnitTurnsToMove >= comparisonUnitTurnsToMove)
-            {
-                units.splice(placementIndex + 1, 0, currentUnit);
-                break;
-            }
-        }
-
-        // Update turn numbers
-        for (i = 0; i < units.length; i++)
-        {
-            units[i].turnNumber = i + 1;
-        }
     }
 };

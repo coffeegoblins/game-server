@@ -1,0 +1,444 @@
+{
+    "_id": ObjectId("5429f4cf4301952014199e3e"),
+    "usernames": ["test1", "test2"],
+    "waitingOn": ["test1"],
+    "level": "GAME_1x2_Archer_Shield",
+    "units": [
+        {
+            "_id": ObjectId("5429f4cf4301952014199e36"),
+            "tileX": 0,
+            "tileY": 0,
+            "type": "archer",
+            "ap": 100,
+            "maxAP": 100,
+            "username": "test1"
+        },
+        {
+            "_id": ObjectId("5429f4cf4301952014199e37"),
+            "tileX": 1,
+            "tileY": 0,
+            "type": "shield",
+            "ap": 100,
+            "maxAP": 100,
+            "username": "test2"
+        }],
+    "tiles": [
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e36"),
+                "tileX": 0,
+                "tileY": 0,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "2"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e37"),
+                "tileX": 1,
+                "tileY": 0,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "2"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e38"),
+                "tileX": 2,
+                "tileY": 0,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "2"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e39"),
+                "tileX": 3,
+                "tileY": 0,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "2"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e3a"),
+                "tileX": 0,
+                "tileY": 2,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "1"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e3b"),
+                "tileX": 1,
+                "tileY": 2,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "1"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e3c"),
+                "tileX": 2,
+                "tileY": 2,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "1"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true,
+            "unit":
+            {
+                "_id": ObjectId("5429f4cf4301952014199e3d"),
+                "tileX": 3,
+                "tileY": 2,
+                "type": "archer",
+                "ap": 100,
+                "maxAP": 100,
+                "username": "1"
+            }
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": tr
+            ue
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+},
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+}],
+    "boundaries":
+    {
+        "x": 0,
+        "y": 0,
+        "width": 9,
+        "height": 9
+    },
+    "turnCount": 0,
+    "creationTime": 1412035791564
+}

@@ -1,10 +1,9 @@
 var databaseManager = require('./databaseManager');
 var levelManager = require('./levelManager');
-var validator = require('./validationUtility');
 var ObjectID = require('mongodb').ObjectID;
 var gameLogic = require('./gameLogic/gameLogic');
 var Map = require('./gameLogic/map');
-var Utility = require('./utility');
+var ActionManager = require('./actionManager');
 
 var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
 {
@@ -186,121 +185,25 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
 
 GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 {
-    var dbUnit;
-
     for (var i = 0; i < actions.length; ++i)
     {
         var action = actions[i];
 
         console.log("Action type: ", action.type);
 
-        switch (action.type)
+        if (!ActionManager.performAction(dbGame, map, action))
         {
-
-        case "MOVE":
-            {
-                dbUnit = this.findUnitInGame(dbGame, action.unitID);
-
-                if (!dbUnit)
-                {
-                    console.log("The unit " + action.unitID + " does not exist in the database");
-                    return false;
-                }
-
-                var moveNodes = gameLogic.getMoveNodes(map, dbUnit);
-                var searchCriteria = {
-                    x: action.x,
-                    y: action.y
-                };
-
-                var destinationNode = Utility.findInArray(moveNodes, searchCriteria);
-                if (!destinationNode)
-                {
-                    console.log("The move destination is invalid");
-                    return false;
-                }
-
-                // Pseudo Update dbUnit
-                if (dbUnit.target)
-                {
-                    dbUnit.target.target = null;
-                    dbUnit.target = null;
-                }
-
-                var dbCurrentTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
-                dbCurrentTile.unit = null;
-
-                dbUnit.ap -= gameLogic.getMoveCost(dbUnit, destinationNode.distance);
-                dbUnit.tileX = destinationNode.x;
-                dbUnit.tileY = destinationNode.y;
-
-                var dbTile = map.getTile(destinationNode.x, destinationNode.y);
-                dbTile.unit = dbUnit;
-
-                break;
-            }
-
-        case "ATTACK":
-            {
-                dbUnit = this.findUnitInGame(dbGame, action.unitID);
-
-                if (!dbUnit)
-                {
-                    console.log("The unit " + action.unitID + " does not exist in the database");
-                    return false;
-                }
-
-                // TODO Get Attack from DB
-                var attackNodes = gameLogic.getAttackNodes(map, dbUnit, action.attack);
-
-                var criteria = {
-                    x: action.x,
-                    y: action.y
-                };
-
-                var attackNode = Utility.findInArray(attackNodes, criteria);
-                if (!attackNode)
-                {
-                    console.log("The attack destination is invalid");
-                    return false;
-                }
-
-                var dbUnitTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
-                dbCurrentTile.unit = null;
-
-                break;
-            }
-
-        case "ENDTURN":
-            {
-                gameLogic.endTurn(dbGame.units);
-
-                break;
-            }
-
-        default:
-            // TODO Error
             return false;
-
         }
     }
 
     return true;
 };
 
-GameManager.prototype.findUnitInGame = function (game, unitID)
-{
-    for (var j = 0; j < game.units.length; ++j)
-    {
-        if (game.units[j]._id.toString() === unitID)
-        {
-            game = game.units[j];
-        }
-    }
-};
-
 GameManager.prototype.updateUnitActions = function (responseCallback, currentUsername, dbGame, actions)
 {
+    console.log("Updating game");
+
     databaseManager.gamesCollection.update(
     {
         '_id': dbGame._id,

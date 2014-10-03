@@ -10,7 +10,7 @@ var tileDirections = [
 ];
 
 module.exports = {
-    DualKeyHash: require('./dualKeyHash'),
+    DualKeyHash: require('../dualKeyHash'),
     tileDirections: tileDirections,
 
     beginMoveUnit: function (map, unit, tileNode)
@@ -43,8 +43,8 @@ module.exports = {
     canMoveToDiagonal: function (map, unit, currentNode, directionX, directionY)
     {
         return this.canMoveToTile(map, unit, currentNode, directionX, directionY) &&
-               this.canMoveToTile(map, unit, currentNode, directionX, 0) &&
-               this.canMoveToTile(map, unit, currentNode, 0, directionY);
+            this.canMoveToTile(map, unit, currentNode, directionX, 0) &&
+            this.canMoveToTile(map, unit, currentNode, 0, directionY);
     },
 
     canMoveToTile: function (map, unit, currentNode, directionX, directionY)
@@ -138,7 +138,13 @@ module.exports = {
                 var newNode = currentNodes.get(x, y);
                 if (!newNode)
                 {
-                    newNode = {distance: Infinity, x: x, y: y, tile: tile, neighbors: [currentNode]};
+                    newNode = {
+                        distance: Infinity,
+                        x: x,
+                        y: y,
+                        tile: tile,
+                        neighbors: [currentNode]
+                    };
                     currentNodes.add(x, y, newNode);
                 }
 

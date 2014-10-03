@@ -1,12 +1,13 @@
 var gameLogic = {
-    version: 0.2
+    version: 0.4
 };
 
 // Merge all of the logic from the other sections in place
 var logicalComponents = [
-    require('./attackLogic'),
-    require('./movementLogic'),
-    require('./unitLogic')
+    require('./unitLogic'),
+    require('./actionLogic/moveLogic'),
+    require('./actionLogic/endTurnLogic'),
+    require('./actionLogic/attackLogic')
 ];
 
 for (var i = 0; i < logicalComponents.length; i++)

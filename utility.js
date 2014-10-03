@@ -37,5 +37,16 @@ module.exports = {
                 return array[i];
             }
         }
+    },
+
+    getElementByObjectID: function (array, id)
+    {
+        for (var i = 0; i < array.length; i++)
+        {
+            if (array[i]._id.toString() === id)
+            {
+                return array[i];
+            }
+        }
     }
 };
