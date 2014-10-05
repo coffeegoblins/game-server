@@ -1,16 +1,16 @@
-var ShortBowAttackLogic = require('../../gameLogic/actionLogic/attacks/shortBowAttackLogic');
+var OneHandedAttackLogic = require('../../gameLogic/actionLogic/attacks/oneHandedAttackLogic');
 var SharedAttackTests = require('./sharedAttackTests');
 var Map = require('../../gameLogic/map');
 var fileSystem = require('fs');
-var GAME_1x20 = JSON.parse(fileSystem.readFileSync('test/content/GAME_1x20.json'));
+var GAME_1x3 = JSON.parse(fileSystem.readFileSync('test/content/GAME_1x3.json'));
 var TestUtility = require('../testUtility');
 
-describe('Short Bow Attack', function ()
+describe('One Handed Attack', function ()
 {
     beforeEach(function ()
     {
-        this.attackLogic = ShortBowAttackLogic;
-        this.game = TestUtility.cloneObject(GAME_1x20);
+        this.attackLogic = OneHandedAttackLogic;
+        this.game = TestUtility.cloneObject(GAME_1x3);
         this.map = new Map(this.game.tiles, this.game.boundaries);
         this.units = [];
 
@@ -37,11 +37,6 @@ describe('Short Bow Attack', function ()
         };
     });
 
-    SharedAttackTests.occlusionTests();
+    SharedAttackTests.appliesCombatLockTest();
     SharedAttackTests.performAttackTests();
-    SharedAttackTests.doesNotApplyCombatLock();
-
-    it('Cannot attack immediate neighbors', function () {
-
-    });
 });

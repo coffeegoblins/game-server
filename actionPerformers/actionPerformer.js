@@ -1,4 +1,4 @@
-var GameLogic = require('./GameLogic/GameLogic');
+var GameLogic = require('../GameLogic/GameLogic');
 var MovePerformer = require('./movePerformer');
 var EndTurnPerformer = require('./endTurnPerformer');
 var AttackPerformer = require('./attackPerformer');
@@ -10,18 +10,18 @@ var actionMap = {
 
 for (var attackName in GameLogic.attacks)
 {
-    actionMap[attackName.toLowerCase()] = AttackPerformer;
+    actionMap[attackName.toLowerCase()] = AttackPerformer.perform;
 }
 
-exports.performAction = function (dbGame, map, action)
+exports.perform = function (units, map, action)
 {
     var lowerCaseName = action.type.toLowerCase();
 
     if (typeof actionMap[lowerCaseName] !== 'function')
     {
-        // TODO Replace With Logging - console.log("The action type is invalid");
+        // console.log("The action type is invalid");
         return false;
     }
 
-    return actionMap[lowerCaseName](dbGame, map, action);
+    return actionMap[lowerCaseName](units, map, action);
 };

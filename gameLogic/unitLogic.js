@@ -175,7 +175,7 @@ module.exports = {
 
     breakCombatLock: function (unit)
     {
-        if (unit.target)
+        if (unit.target && unit.target.target === unit)
         {
             unit.target.target = null;
             unit.target = null;
@@ -185,11 +185,13 @@ module.exports = {
     applyCombatLock: function (sourceUnit, targetUnit)
     {
         sourceUnit.target = targetUnit;
+        this.setDirection(sourceUnit, targetUnit);
 
         // Only apply lock if target has no target (to allow attacks from behind)
         if (!targetUnit.target)
         {
             targetUnit.target = sourceUnit;
+            this.setDirection(targetUnit, sourceUnit);
         }
     },
 
@@ -216,18 +218,21 @@ module.exports = {
         return attacks;
     },
 
-    setDirection: function (unit, x, y)
+    setDirection: function (unit, target)
     {
-        if (Math.abs(x) > 1 || Math.abs(y) > 1)
+        var deltaX = target.x - unit.x;
+        var deltaY = target.y - unit.y;
+
+        if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1)
         {
             // Normalize the direction
-            var length = Math.sqrt(x * x + y * y);
-            x = Math.round(x / length);
-            y = Math.round(y / length);
+            var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            deltaX = Math.round(deltaX / length);
+            deltaY = Math.round(deltaY / length);
         }
 
-        //this.worldDirection.x = x;
-        //this.worldDirection.y = y;
+        unit.direction.x = deltaX;
+        unit.direction.y = deltaY;
 
         //this.direction = this.directions[y + 1][x + 1];
     },

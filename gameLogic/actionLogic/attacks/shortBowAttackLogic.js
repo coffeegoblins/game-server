@@ -1,8 +1,7 @@
-var CommonAttackLogic = require('../commonAttackLogic');
-
 module.exports = {
-    UnitLogic: require('../../unitLogic'),
-    OcclusionCalculator: require('../../occlusionCalculator'),
+    commonAttackLogic: require('../commonAttackLogic'),
+    occlusionCalculator: require('../../occlusionCalculator'),
+    unitLogic: require('../../unitLogic'),
     maxRange: 10,
     attackCost: 20,
     minRange: 1.9,
@@ -10,75 +9,59 @@ module.exports = {
     displayName: "Short Attack",
     damage:
     {
-        archer: 30,
-        shield: 20,
-        warrior: 25
+        archer:
+        {
+            back: 30,
+            side: 30,
+            front: 30
+        },
+        shield:
+        {
+            back: 30,
+            side: 25,
+            front: 10,
+        },
+        warrior:
+        {
+            back: 30,
+            side: 30,
+            front: 30
+        }
     },
     accuracy:
     {
         archer: 0.75,
-        rogue: 0.5,
-        shield: 0.2,
-        warrior: 0.9
+        shield: 0.9,
+        warrior: 0.5
     },
 
     getAttackNodes: function (map, attackingUnit)
     {
-        var tileNodes = CommonAttackLogic.getTileNodes(map, attackingUnit, this.minRange, this.maxRange);
+        var tileNodes = this.commonAttackLogic.getAttackNodes(map, attackingUnit, this.minRange, this.maxRange);
 
-        var occlusionQuads = this.OcclusionCalculator.getOcclusionQuads(tileNodes, attackingUnit, this.maxRange);
-        this.OcclusionCalculator.occludeTiles(occlusionQuads, tileNodes);
+        var occlusionQuads = this.occlusionCalculator.getOcclusionQuads(tileNodes, attackingUnit, this.maxRange);
+        this.occlusionCalculator.occludeTiles(occlusionQuads, tileNodes);
 
         return tileNodes;
     },
 
-    getTargetNodes: CommonAttackLogic.getSingleTargetNode,
+    getTargetNodes: function (tile)
+    {
+        return this.commonAttackLogic.getSingleTargetNode(tile);
+    },
 
     performAttack: function (attackingUnit, targetNode)
     {
-        attackingUnit.ap -= CommonAttackLogic.getAttackCost(attackingUnit, targetNode) + this.attackCost;
-
-        var deltaX = targetNode.x - attackingUnit.tileX;
-        var deltaY = targetNode.y - attackingUnit.tileY;
-        this.UnitLogic.setDirection(attackingUnit, deltaX, deltaY);
-
         var targetUnit = targetNode.tile.unit;
-        if (targetUnit)
-        {
-            var unitType = targetUnit.type;
-            var damage = this.damage[unitType];
-            var accuracy = this.accuracy[unitType];
+        var accuracy = this.occlusionCalculator.getOcclusionAccuracy(this.accuracy[targetUnit.type], targetNode);
 
-            if (targetNode.occlusionPercentage)
+        this.unitLogic.setDirection(attackingUnit, targetUnit);
+        var damage = this.commonAttackLogic.applyDamage(targetUnit, accuracy, attackingUnit.direction, this.damage);
+
+        return [
             {
-                accuracy *= (1 - targetNode.occlusionPercentage);
-            }
-
-            if (Math.random() < accuracy)
-            {
-                var attackDirection = Math.atan2(deltaX, deltaY);
-                var targetDirection = Math.atan2(targetUnit.worldDirection.x, targetUnit.worldDirection.y);
-
-                var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
-                if (directionDelta > Math.PI * 0.66)
-                {
-                    // The attack was from behind
-                    damage *= 2;
-                }
-                else if (directionDelta > Math.PI * 0.33)
-                {
-                    // The attack was from the side
-                    damage *= 1.5;
-                }
-
-                targetUnit.damage(damage);
-
-                return [
-                    {
-                        unit: targetUnit,
-                        damage: damage
-                }];
-            }
-        }
+                unit: targetUnit,
+                damage: damage
+            }];
     }
 };

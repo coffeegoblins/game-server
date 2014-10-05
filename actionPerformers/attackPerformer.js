@@ -6,33 +6,42 @@ module.exports.perform = function (units, map, action)
     var dbAttackingUnit = Utility.getElementByObjectID(units, action.unitID);
     if (!dbAttackingUnit)
     {
-        // TODO Replace With Logging - console.log("The unit " + action.unitID + " does not exist in the database");
+        // console.log("The unit " + action.unitID + " does not exist in the database");
         return false;
     }
 
-    var attackNodes = GameLogic.attacks[action.type].getAttackNodes(map, dbAttackingUnit);
+    var attackLogic = GameLogic.attacks[action.type];
+    var attackNodes = attackLogic.getAttackNodes(map, dbAttackingUnit);
 
     var criteria = {
-        x: action.targetTile.x,
-        y: action.targetTile.y
+        x: action.targetX,
+        y: action.targetY
     };
 
-    var dbAttackNode = Utility.findInArray(attackNodes, criteria);
-    if (!dbAttackNode)
+    var dbTargetNode = Utility.findInArray(attackNodes, criteria);
+    if (!dbTargetNode)
     {
-        // TODO Replace With Logging - console.log("The attack destination is invalid");
+        // console.log("The attack destination is invalid");
         return false;
     }
 
-    var targetNodes = GameLogic.attacks[action.type].getTargetNodes(action.selectedTile);
-    if (!GameLogic.commonAttackLogic.hasTarget(targetNodes))
+    var directTargetUnit = dbTargetNode.tile.unit;
+    if (directTargetUnit)
     {
-        // TODO Replace With Logging - console.log("Invalid attack target");
+        dbAttackingUnit.target = directTargetUnit;
+    }
+
+    var targetNodes = attackLogic.getTargetNodes(dbTargetNode);
+
+    if (!GameLogic.hasTarget(targetNodes))
+    {
+        // console.log("Invalid attack target");
         return false;
     }
 
-    // TODO Validate affected tiles
-    GameLogic.attacks[action.type].performAttack(dbAttackingUnit, dbAttackNode, action.affectedTiles);
+    dbAttackingUnit.ap -= GameLogic.getAttackCost(dbAttackingUnit, dbTargetNode, attackLogic.attackCost);
+
+    attackLogic.performAttack(dbAttackingUnit, dbTargetNode);
 
     return true;
 };

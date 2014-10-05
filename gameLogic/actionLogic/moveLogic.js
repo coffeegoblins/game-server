@@ -16,7 +16,7 @@ module.exports = {
     beginMoveUnit: function (map, unit, tileNode)
     {
         this.breakCombatLock(unit);
-        map.getTile(unit.tileX, unit.tileY).unit = null;
+        map.getTile(unit.x, unit.y).unit = null;
         return this.getMoveCost(unit, tileNode.distance);
     },
 
@@ -74,8 +74,8 @@ module.exports = {
     endMoveUnit: function (unit, tileNode, cost)
     {
         unit.ap -= cost;
-        unit.tileX = tileNode.x;
-        unit.tileY = tileNode.y;
+        unit.x = tileNode.x;
+        unit.y = tileNode.y;
         tileNode.tile.unit = unit;
     },
 
@@ -87,10 +87,10 @@ module.exports = {
         var maxDistance = unit.ap / this.unitData[unit.type].moveCost;
         var currentNode = {
             distance: 0,
-            x: unit.tileX,
-            y: unit.tileY,
+            x: unit.x,
+            y: unit.y,
             neighbors: [],
-            tile: map.getTile(unit.tileX, unit.tileY)
+            tile: map.getTile(unit.x, unit.y)
         };
 
         currentNodes.add(currentNode.x, currentNode.y, currentNode);
@@ -177,7 +177,7 @@ module.exports = {
         }
 
         // Remove the initial tile and flatten this out to an array
-        completedNodes.remove(unit.tileX, unit.tileY);
+        completedNodes.remove(unit.x, unit.y);
         return completedNodes.toArray();
     },
 

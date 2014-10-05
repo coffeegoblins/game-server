@@ -29,12 +29,12 @@ module.exports.perform = function (units, map, action)
         dbUnit.target = null;
     }
 
-    var dbCurrentTile = map.getTile(dbUnit.tileX, dbUnit.tileY);
+    var dbCurrentTile = map.getTile(dbUnit.x, dbUnit.y);
     dbCurrentTile.unit = null;
 
     dbUnit.ap -= GameLogic.getMoveCost(dbUnit, destinationNode.distance);
-    dbUnit.tileX = destinationNode.x;
-    dbUnit.tileY = destinationNode.y;
+    dbUnit.x = destinationNode.x;
+    dbUnit.y = destinationNode.y;
 
     var dbTile = map.getTile(destinationNode.x, destinationNode.y);
     dbTile.unit = dbUnit;

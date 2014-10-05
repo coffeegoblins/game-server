@@ -1,4 +1,4 @@
-var GameLogic = require('../gameLogic/gameLogic');
+var GameLogic = require('../gameLogic/actionLogic/endTurnLogic');
 
 module.exports.perform = function (units)
 {

@@ -66,8 +66,8 @@ module.exports = {
 
         // Form occlusion quads
         var attackCenter = {
-            x: unit.tileX + 0.5,
-            y: unit.tileY + 0.5
+            x: unit.x + 0.5,
+            y: unit.y + 0.5
         };
 
         for (i = 0; i < obstacles.length; i++)
@@ -155,16 +155,17 @@ module.exports = {
         for (var i = tileNodes.length - 1; i >= 0; i--)
         {
             var tileNode = tileNodes[i];
-            var occlusionPercentage = this.getOcclusionPercentage(tileNode, quads);
 
-            if (occlusionPercentage > 0.9)
+            tileNode.occlusionPercentage = this.getOcclusionPercentage(tileNode, quads);
+            if (tileNode.occlusionPercentage > 0.9)
             {
                 tileNodes.splice(i, 1);
             }
-            else if (occlusionPercentage)
-            {
-                tileNode.occlusionPercentage = occlusionPercentage;
-            }
         }
-    }
+    },
+
+    getOcclusionAccuracy: function (baseAccuracy, targetNode)
+    {
+        return baseAccuracy *= (1 - targetNode.occlusionPercentage);
+    },
 };

@@ -1,4 +1,8 @@
+var UnitLogic = require('../unitLogic');
+
 module.exports = {
+    combatLockCost: 10,
+
     getTileDistance: function (x1, y1, x2, y2)
     {
         var deltaX = Math.abs(x2 - x1);
@@ -18,28 +22,28 @@ module.exports = {
         minRange = minRange || 0;
         maxRange = maxRange || 1.5;
 
-        var startX = Math.max(0, Math.floor(unit.tileX - maxRange));
-        var startY = Math.max(0, Math.floor(unit.tileY - maxRange));
-        var endX = Math.min(map.width - 1, Math.ceil(unit.tileX + maxRange));
-        var endY = Math.min(map.height - 1, Math.ceil(unit.tileY + maxRange));
+        var startX = Math.max(0, Math.floor(unit.x - maxRange));
+        var startY = Math.max(0, Math.floor(unit.y - maxRange));
+        var endX = Math.min(map.width - 1, Math.ceil(unit.x + maxRange));
+        var endY = Math.min(map.height - 1, Math.ceil(unit.y + maxRange));
 
         var tileNodes = [];
         for (var x = startX; x <= endX; x++)
         {
             for (var y = startY; y <= endY; y++)
             {
-                if (x === unit.tileX && y === unit.tileY)
+                if (x === unit.x && y === unit.y)
                 {
                     continue;
                 }
 
-                var distance = this.getTileDistance(unit.tileX, unit.tileY, x, y);
+                var distance = this.getTileDistance(unit.x, unit.y, x, y);
                 if (distance <= maxRange && distance >= minRange)
                 {
                     var tile = map.getTile(x, y);
 
                     // Remove tiles that contain team mates, blocking objects
-                    if ((!tile.unit || tile.unit.username !== unit.username) &&
+                    if (tile && (!tile.unit || tile.unit.username !== unit.username) &&
                         (!tile.content || !tile.content.isBlocking))
                     {
                         tileNodes.push(
@@ -57,14 +61,14 @@ module.exports = {
         return tileNodes;
     },
 
-    getAttackCost: function (unit, targetTile)
+    getAttackCost: function (unit, targetNode, baseCost)
     {
-        if (unit.target && targetTile && unit.target !== targetTile.unit)
+        if (unit.target && unit.target === targetNode.tile.unit)
         {
-            return this.combatLockCost;
+            return this.combatLockCost + baseCost;
         }
 
-        return 0;
+        return baseCost;
     },
 
     getSingleTargetNode: function (tile)
@@ -73,12 +77,11 @@ module.exports = {
         return [tile];
     },
 
-    hasTarget: function (tiles)
+    hasTarget: function (nodes)
     {
-        for (var i = 0; i < tiles.length; ++i)
+        for (var i = 0; i < nodes.length; ++i)
         {
-            var tile = tiles[i];
-            if (tile.unit)
+            if (nodes[i].tile.unit)
             {
                 return true;
             }
@@ -86,4 +89,36 @@ module.exports = {
 
         return false;
     },
+
+    applyDamage: function (targetUnit, accuracy, direction, damage)
+    {
+        var damageType = damage[targetUnit.type];
+        var damageAmount = damageType.front;
+
+        if (Math.random() <= accuracy)
+        {
+            var attackDirection = Math.atan2(direction.x, direction.y);
+            var targetDirection = Math.atan2(targetUnit.direction.x, targetUnit.direction.y);
+
+            var directionDelta = Math.abs(Math.abs(attackDirection - targetDirection) - Math.PI);
+            if (directionDelta > Math.PI * 0.66)
+            {
+                // The attack was from behind
+                damageAmount = damageType.back;
+            }
+            else if (directionDelta > Math.PI * 0.33)
+            {
+                // The attack was from the side
+                damageAmount = damageType.side;
+            }
+
+            targetUnit.hp -= damageAmount;
+            if (targetUnit.hp <= 0)
+            {
+                UnitLogic.breakCombatLock(targetUnit);
+            }
+        }
+
+        return damageAmount;
+    }
 };

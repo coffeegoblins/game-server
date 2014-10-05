@@ -3,7 +3,7 @@ var levelManager = require('./levelManager');
 var ObjectID = require('mongodb').ObjectID;
 var gameLogic = require('./gameLogic/gameLogic');
 var Map = require('./gameLogic/map');
-var ActionManager = require('./actionManager');
+var ActionPerformer = require('./actionPerformers/actionPerformer');
 
 var serializedGameLogic = JSON.stringify(gameLogic, function (key, value)
 {
@@ -123,12 +123,18 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
 
                 tile.unit = {
                     _id: new ObjectID(),
-                    tileX: prototypeUnit.x,
-                    tileY: prototypeUnit.y,
+                    x: prototypeUnit.x,
+                    y: prototypeUnit.y,
                     type: unitType,
                     ap: gameLogic.unitData[unitType].maxAP,
                     maxAP: gameLogic.unitData[unitType].maxAP,
-                    username: owningUser.username
+                    hp: 100,
+                    username: owningUser.username,
+                    direction:
+                    {
+                        x: 0,
+                        y: 0
+                    }
                 };
 
                 game.units.push(tile.unit);
@@ -167,13 +173,11 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
             return;
         }
 
-        console.log("Game Found: ", dbGame);
-
         var map = new Map(dbGame.tiles, dbGame.boundaries);
 
         console.log("Map created.");
 
-        if (!this.validateUnitActions(dbGame, map, gameStateUpdates.actions))
+        if (!this.validateUnitActions(dbGame.units, map, gameStateUpdates.actions))
         {
             responseCallback(this.events.gameStateUpdate.response.error, "An invalid action was provided. Update your game or contact support.");
             return;
@@ -183,15 +187,13 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
     }.bind(this));
 };
 
-GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
+GameManager.prototype.validateUnitActions = function (units, map, actions)
 {
     for (var i = 0; i < actions.length; ++i)
     {
         var action = actions[i];
 
-        console.log("Action type: ", action.type);
-
-        if (!ActionManager.performAction(dbGame, map, action))
+        if (!ActionPerformer.perform(units, map, action))
         {
             return false;
         }

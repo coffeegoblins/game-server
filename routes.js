@@ -39,9 +39,6 @@ module.exports = function (app, socketio, events, jwtSecret)
     // Authenticated Calls
     //---------------------------------------------------------------------------------------------
 
-    console.log("Socket.io Object:");
-    console.log(socketio);
-    
     // All socketio events route through this auth check
     socketio.use(socketioJwt.authorize(
     {

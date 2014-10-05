@@ -1,0 +1,97 @@
+{
+    "_id": "5429f4cf4301952014199e3f",
+    "usernames": ["test1", "test2"],
+    "waitingOn": ["test1"],
+    "level": "GAME_1x20",
+    "units": [],
+    "tiles": [
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        },
+        {
+            "spriteIndex": 1,
+            "isTraversable": true
+        }],
+    "boundaries":
+    {
+        "x": 0,
+        "y": 0,
+        "width": 20,
+        "height": 1
+    },
+    "turnCount": 0,
+    "creationTime": 1412035791564
+}

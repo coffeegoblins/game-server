@@ -14,7 +14,9 @@ for (var i = 0; i < logicalComponents.length; i++)
 {
     var component = logicalComponents[i];
     for (var property in component)
+    {
         gameLogic[property] = component[property];
+    }
 }
 
 module.exports = gameLogic;
