@@ -1,55 +1,32 @@
+//AttackLogic.calculateCrossNodes = function (unit, selectedNode, availableNodes)
+//{
+//    var crossNodes = [];
+//    var x = selectedNode.x;
+//    var y = selectedNode.y;
+//
+//    for (var i = 0; i < availableNodes.length; ++i)
+//    {
+//        var node = availableNodes[i];
+//        if (node.tile.unit !== unit &&
+//            (node.x === x && Math.abs(node.y - y) === 1) ||
+//            (node.y === y && Math.abs(node.x - x) === 1))
+//        {
+//            crossNodes.push(node);
+//        }
+//    }
+//
+//    return crossNodes;
+//};
+
+var CommonAttackLogic = require('./commonAttackLogic');
+
 module.exports = {
-    commonAttackLogic: require('../commonAttackLogic'),
-    unitLogic: require('../../unitLogic'),
-    attackCost: 40,
-    accuracy: 0.9,
-    displayName: "Strike",
-    track: "dualStrike",
-
-    damage:
+    hasTarget: CommonAttackLogic.hasTarget,
+    getAttackCost: CommonAttackLogic.getAttackCost,
+    getAttackNodes: CommonAttackLogic.getAttackNodes,
+    attacks:
     {
-        archer:
-        {
-            back: 30,
-            side: 30,
-            front: 30
-        },
-        shield:
-        {
-            back: 20,
-            side: 20,
-            front: 20,
-        },
-        warrior:
-        {
-            back: 25,
-            side: 25,
-            front: 25
-        }
-    },
-
-    getAttackNodes: function (map, attackingUnit)
-    {
-        return this.commonAttackLogic.getAttackNodes(map, attackingUnit);
-    },
-
-    getTargetNodes: function (tile)
-    {
-        return this.commonAttackLogic.getSingleTargetNode(tile);
-    },
-
-    performAttack: function (attackingUnit, targetNode)
-    {
-        var targetUnit = targetNode.tile.unit;
-
-        this.unitLogic.applyCombatLock(attackingUnit, targetUnit);
-
-        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage);
-
-        return [
-            {
-                unit: targetUnit,
-                damage: damage
-            }];
+        shortbow: require('./attacks/shortBowAttackLogic'),
+        onehanded: require('./attacks/strikeAttackLogic')
     }
 };
