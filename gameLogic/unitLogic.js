@@ -108,7 +108,7 @@ module.exports = {
             "maxAP": 100,
             "attacks": [
                 {
-                    "name": "strike",
+                    "name": "onehanded",
                     "cost": 30,
                     "damage": 30,
                     "accuracy": 0.9,
@@ -173,25 +173,26 @@ module.exports = {
         }
     },
 
-    breakCombatLock: function (unit)
+    breakCombatLock: function (sourceUnit, targetUnit)
     {
-        if (unit.target && unit.target.target === unit)
+        sourceUnit.target = null;
+
+        if (targetUnit && targetUnit.target === sourceUnit._id)
         {
-            unit.target.target = null;
-            unit.target = null;
+            targetUnit.target = null;
         }
     },
 
     applyCombatLock: function (sourceUnit, targetUnit)
     {
-        sourceUnit.target = targetUnit;
-        this.setDirection(sourceUnit, targetUnit);
+        sourceUnit.target = targetUnit._id;
+        sourceUnit.direction = this.getDirection(sourceUnit, targetUnit);
 
         // Only apply lock if target has no target (to allow attacks from behind)
         if (!targetUnit.target)
         {
-            targetUnit.target = sourceUnit;
-            this.setDirection(targetUnit, sourceUnit);
+            targetUnit.target = sourceUnit._id;
+            targetUnit.direction = this.getDirection(targetUnit, sourceUnit);
         }
     },
 
@@ -218,10 +219,10 @@ module.exports = {
         return attacks;
     },
 
-    setDirection: function (unit, target)
+    getDirection: function (source, target)
     {
-        var deltaX = target.x - unit.x;
-        var deltaY = target.y - unit.y;
+        var deltaX = target.x - Math.round(source.x);
+        var deltaY = target.y - Math.round(source.y);
 
         if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1)
         {
@@ -231,10 +232,10 @@ module.exports = {
             deltaY = Math.round(deltaY / length);
         }
 
-        unit.direction.x = deltaX;
-        unit.direction.y = deltaY;
-
-        //this.direction = this.directions[y + 1][x + 1];
+        return {
+            x: deltaX,
+            y: deltaY
+        };
     },
 
     getMoveCost: function (unit, distance)

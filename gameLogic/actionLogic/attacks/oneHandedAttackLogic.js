@@ -44,7 +44,7 @@ module.exports = {
 
         this.unitLogic.applyCombatLock(attackingUnit, targetUnit);
 
-        var damage = this.commonAttackLogic.applyDamage(targetUnit, this.accuracy, attackingUnit.direction, this.damage);
+        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage);
 
         return [
             {

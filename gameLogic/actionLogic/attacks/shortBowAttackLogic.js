@@ -54,9 +54,7 @@ module.exports = {
     {
         var targetUnit = targetNode.tile.unit;
         var accuracy = this.occlusionCalculator.getOcclusionAccuracy(this.accuracy[targetUnit.type], targetNode);
-
-        this.unitLogic.setDirection(attackingUnit, targetUnit);
-        var damage = this.commonAttackLogic.applyDamage(targetUnit, accuracy, attackingUnit.direction, this.damage);
+        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, accuracy, attackingUnit.direction, this.damage);
 
         return [
             {

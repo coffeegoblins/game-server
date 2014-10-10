@@ -19,7 +19,7 @@ exports.perform = function (units, map, action)
 
     if (typeof actionMap[lowerCaseName] !== 'function')
     {
-        // console.log("The action type is invalid");
+        console.log("The action type is invalid");
         return false;
     }
 

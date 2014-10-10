@@ -12,7 +12,6 @@ describe('MovePerformer', function ()
     beforeEach(function ()
     {
         game = TestUtility.cloneObject(GAME_1x3);
-        map = new Map(game.tiles, game.boundaries);
         units = [];
 
         unit = TestUtility.createUnit(
@@ -21,6 +20,8 @@ describe('MovePerformer', function ()
         });
 
         units.push(unit);
+
+        map = new Map(game.tiles, units, game.boundaries);
 
         moveAction = {
             type: 'move',
@@ -63,12 +64,12 @@ describe('MovePerformer', function ()
     {
         var combatLockedUnit = TestUtility.createUnit(
         {
-            target: unit
+            target: unit._id
         });
 
         units.push(combatLockedUnit);
 
-        unit.target = combatLockedUnit;
+        unit.target = combatLockedUnit._id;
 
         MovePerformer.perform(units, map, moveAction);
 

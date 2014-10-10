@@ -6,7 +6,7 @@ module.exports.perform = function (units, map, action)
     var dbUnit = Utility.getElementByObjectID(units, action.unitID);
     if (!dbUnit)
     {
-        // TODO Replace With Logging - console.log("The unit " + action.unitID + " does not exist in the database");
+        console.log("The unit " + action.unitID + " does not exist in the database");
         return false;
     }
 
@@ -19,15 +19,11 @@ module.exports.perform = function (units, map, action)
     var destinationNode = Utility.findInArray(moveNodes, searchCriteria);
     if (!destinationNode)
     {
-        // TODO Replace With Logging - console.log("The move destination is invalid");
+        console.log("The move destination is invalid");
         return false;
     }
 
-    if (dbUnit.target)
-    {
-        dbUnit.target.target = null;
-        dbUnit.target = null;
-    }
+    GameLogic.breakCombatLock(dbUnit, Utility.getElementByObjectID(units, dbUnit.target));
 
     var dbCurrentTile = map.getTile(dbUnit.x, dbUnit.y);
     dbCurrentTile.unit = null;

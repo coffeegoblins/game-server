@@ -12,7 +12,6 @@ describe('AttackPerformer', function ()
     beforeEach(function ()
     {
         game = TestUtility.cloneObject(GAME_1x3);
-        map = new Map(game.tiles, game.boundaries);
         units = [];
 
         attackingUnit = TestUtility.createUnit(
@@ -28,11 +27,12 @@ describe('AttackPerformer', function ()
         units.push(attackingUnit);
         units.push(defendingUnit);
 
+        map = new Map(game.tiles, units, game.boundaries);
         map.getTile(defendingUnit.x, defendingUnit.y).unit = defendingUnit;
         map.getTile(attackingUnit.x, attackingUnit.y).unit = attackingUnit;
 
         attackAction = {
-            type: 'oneHanded',
+            type: 'onehanded',
             unitID: attackingUnit._id,
             targetX: 0,
             targetY: 0
@@ -74,17 +74,17 @@ describe('AttackPerformer', function ()
     {
         AttackPerformer.perform(units, map, attackAction);
 
-        assert.equal(attackingUnit.target, defendingUnit, "The attacking unit does not have the correct target.");
+        assert.equal(attackingUnit.target, defendingUnit._id, "The attacking unit does not have the correct target.");
     });
 
     it('Should remove the previous target', function ()
     {
         var previousTarget = TestUtility.createUnit();
-        attackingUnit.target = previousTarget;
+        attackingUnit.target = previousTarget._id;
 
         AttackPerformer.perform(units, map, attackAction);
 
-        assert.notEqual(previousTarget, attackingUnit.target, "The attacking unit did not lose the previous target.");
+        assert.notEqual(previousTarget._id, attackingUnit.target, "The attacking unit did not lose the previous target.");
     });
 
     it('Should set the attacking unit direction', function ()

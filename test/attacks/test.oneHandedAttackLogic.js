@@ -11,7 +11,6 @@ describe('One Handed Attack', function ()
     {
         this.attackLogic = OneHandedAttackLogic;
         this.game = TestUtility.cloneObject(GAME_1x3);
-        this.map = new Map(this.game.tiles, this.game.boundaries);
         this.units = [];
 
         this.attackingUnit = TestUtility.createUnit(
@@ -26,6 +25,8 @@ describe('One Handed Attack', function ()
 
         this.units.push(this.attackingUnit);
         this.units.push(this.defendingUnit);
+
+        this.map = new Map(this.game.tiles, this.units, this.game.boundaries);
 
         var tile = this.map.getTile(0, 0);
         tile.unit = this.defendingUnit;

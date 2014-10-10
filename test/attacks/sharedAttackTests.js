@@ -1,5 +1,4 @@
 var assert = require('assert');
-var TestUtility = require('../testUtility');
 
 module.exports.appliesCombatLockTest = function ()
 {
@@ -9,8 +8,8 @@ module.exports.appliesCombatLockTest = function ()
 
         this.attackLogic.performAttack(this.attackingUnit, this.targetNode);
 
-        assert.equal(this.attackingUnit, targetUnit.target, "The target unit is not in combat lock.");
-        assert.equal(targetUnit, this.attackingUnit.target, "The attacking unit is not in combat lock.");
+        assert.equal(this.attackingUnit._id, targetUnit.target, "The target unit is not in combat lock.");
+        assert.equal(targetUnit._id, this.attackingUnit.target, "The attacking unit is not in combat lock.");
     });
 };
 

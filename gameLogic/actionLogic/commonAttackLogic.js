@@ -63,7 +63,7 @@ module.exports = {
 
     getAttackCost: function (unit, targetNode, baseCost)
     {
-        if (unit.target && unit.target === targetNode.tile.unit)
+        if (unit.target && unit.target === targetNode.tile.unit._id)
         {
             return this.combatLockCost + baseCost;
         }
@@ -90,7 +90,7 @@ module.exports = {
         return false;
     },
 
-    applyDamage: function (targetUnit, accuracy, direction, damage)
+    applyDamage: function (sourceUnit, targetUnit, accuracy, direction, damage)
     {
         var damageType = damage[targetUnit.type];
         var damageAmount = damageType.front;
@@ -115,7 +115,7 @@ module.exports = {
             targetUnit.hp -= damageAmount;
             if (targetUnit.hp <= 0)
             {
-                UnitLogic.breakCombatLock(targetUnit);
+                UnitLogic.breakCombatLock(sourceUnit, targetUnit);
             }
         }
 

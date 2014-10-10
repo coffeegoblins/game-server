@@ -118,10 +118,10 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             var owningUser = users[prototypeUnit.userIndex];
             if (owningUser)
             {
-                var tile = game.tiles[prototypeUnit.tileIndex];
                 var unitType = owningUser.unitTypeArray.shift();
 
-                tile.unit = {
+                game.units.push(
+                {
                     _id: new ObjectID(),
                     x: prototypeUnit.x,
                     y: prototypeUnit.y,
@@ -135,9 +135,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
                         x: 0,
                         y: 0
                     }
-                };
-
-                game.units.push(tile.unit);
+                });
             }
         }
 
@@ -173,7 +171,7 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
             return;
         }
 
-        var map = new Map(dbGame.tiles, dbGame.boundaries);
+        var map = new Map(dbGame.tiles, dbGame.units, dbGame.boundaries);
 
         console.log("Map created.");
 
@@ -195,6 +193,7 @@ GameManager.prototype.validateUnitActions = function (units, map, actions)
 
         if (!ActionPerformer.perform(units, map, action))
         {
+            console.log("Action Invalid", action);
             return false;
         }
     }
@@ -213,6 +212,7 @@ GameManager.prototype.updateUnitActions = function (responseCallback, currentUse
     {
         if (error || rowsModified === 0)
         {
+            console.log("Error: ", error);
             // TODO Flag game and Log, game is in a broken state
             return;
         }
@@ -222,6 +222,7 @@ GameManager.prototype.updateUnitActions = function (responseCallback, currentUse
             if (dbGame.usernames[i] !== currentUsername)
             {
                 responseCallback(this.events.gameStateUpdate.response.success);
+                console.log("Sending actions", actions);
                 this.pushNotificationCallback(this.events.listeners.gameUpdates, dbGame.usernames[i], actions);
             }
         }
