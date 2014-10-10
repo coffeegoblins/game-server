@@ -1,7 +1,7 @@
 module.exports = {
     commonAttackLogic: require('../commonAttackLogic'),
     unitLogic: require('../../unitLogic'),
-    attackCost: 40,
+    attackCost: 30,
     accuracy: 0.9,
     displayName: "Strike",
     track: "dualStrike",
@@ -10,21 +10,21 @@ module.exports = {
     {
         archer:
         {
-            back: 30,
-            side: 30,
+            back: 40,
+            side: 35,
             front: 30
         },
         shield:
         {
-            back: 20,
-            side: 20,
-            front: 20,
+            back: 35,
+            side: 30,
+            front: 15,
         },
         warrior:
         {
-            back: 25,
-            side: 25,
-            front: 25
+            back: 40,
+            side: 35,
+            front: 30
         }
     },
 

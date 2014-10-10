@@ -3,28 +3,28 @@ module.exports = {
     unitLogic: require('../../unitLogic'),
     attackCost: 30,
     accuracy: 0.9,
-    displayName: "One-handed Attack",
-    track: "dualStrike",
+    displayName: "Shield Bash",
+    track: "shieldBash1",
 
     damage:
     {
         archer:
         {
-            back: 40,
-            side: 35,
-            front: 30
+            back: 20,
+            side: 20,
+            front: 15
         },
         shield:
         {
-            back: 35,
-            side: 30,
-            front: 15,
+            back: 20,
+            side: 20,
+            front: 5,
         },
         warrior:
         {
-            back: 40,
-            side: 35,
-            front: 30
+            back: 20,
+            side: 20,
+            front: 10
         }
     },
 

@@ -1,32 +1,31 @@
 module.exports = {
     commonAttackLogic: require('../commonAttackLogic'),
     unitLogic: require('../../unitLogic'),
-    attackCost: 40,
-    accuracy: 0.9,
-    displayName: "Strike",
-    track: "dualStrike",
-
+    attackCost: 10,
+    track: "bow1",
+    displayName: "Stab",
     damage:
     {
         archer:
         {
-            back: 30,
-            side: 30,
-            front: 30
+            back: 20,
+            side: 15,
+            front: 10
         },
         shield:
         {
-            back: 20,
-            side: 20,
-            front: 20,
+            back: 15,
+            side: 10,
+            front: 5
         },
         warrior:
         {
-            back: 25,
-            side: 25,
-            front: 25
+            back: 20,
+            side: 15,
+            front: 5
         }
     },
+    accuracy: 0.9,
 
     getAttackNodes: function (map, attackingUnit)
     {
