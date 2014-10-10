@@ -1,4 +1,4 @@
-var GameLogic = require('../GameLogic/GameLogic');
+var GameLogic = require('../gameLogic/gameLogic');
 var MovePerformer = require('./movePerformer');
 var EndTurnPerformer = require('./endTurnPerformer');
 var AttackPerformer = require('./attackPerformer');
