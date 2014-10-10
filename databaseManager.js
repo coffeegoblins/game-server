@@ -35,13 +35,13 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
         console.log('Database user: ' + dbUsername);
         console.log('Database password: ' + dbPassword);
 
-        this.database.authenticate(dbUsername, dbPassword, function (error, result)
+        this.database.authenticate(dbUsername, dbPassword, function (error)
         {
-//            if (error)
-//            {
-//                console.log('Unable to authenticate with MongoDB. ' + error);
-//                return;
-//            }
+            if (error)
+            {
+                console.log('Unable to authenticate with MongoDB. ' + error);
+                return;
+            }
 
             async.parallel([
                 this.getCollection.bind(this, this.collections.users),
