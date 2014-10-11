@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded(
     extended: true
 }));
 
-app.use(phoneGap);
+// app.use(phoneGap);
 
 // Enable Cross Origin Resource Sharing (CORS)
 app.all('*', function (req, res, next)
