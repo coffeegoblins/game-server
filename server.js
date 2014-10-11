@@ -24,7 +24,7 @@ app.all('*', function (req, res, next)
 });
 
 app.set('ipaddr', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
-app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 3000);
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
 
 var config = JSON.parse(fileSystem.readFileSync('./config/config.json'));
 var socketEvents = JSON.parse(fileSystem.readFileSync('./events.json'));
@@ -34,14 +34,14 @@ databaseManager.open(config.dbName,
     process.env.OPENSHIFT_MONGODB_DB_PORT || config.dbPort,
     process.env.OPENSHIFT_MONGODB_DB_USERNAME || "",
     process.env.OPENSHIFT_MONGODB_DB_PASSWORD || "",
-function ()
-{
-    console.log("Database Ready.");
-
-    require('./routes')(app, socketio, socketEvents, jwtSecret);
-
-    server.listen(app.get('port'), app.get('ipaddr'), function ()
+    function ()
     {
-        console.log('Express server listening on IP: ' + app.get('ipaddr') + ' and port ' + app.get('port'));
+        console.log("Database Ready.");
+
+        require('./routes')(app, socketio, socketEvents, jwtSecret);
+
+        server.listen(app.get('port'), app.get('ipaddr'), function ()
+        {
+            console.log('Express server listening on IP: ' + app.get('ipaddr') + ' and port ' + app.get('port'));
+        });
     });
-});
