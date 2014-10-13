@@ -6,7 +6,6 @@ var bodyParser = require('body-parser');
 var databaseManager = require('./databaseManager');
 var server = require('http').createServer(app);
 var socketio = require('socket.io').listen(server);
-var phoneGap = require('connect-phonegap');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded(
