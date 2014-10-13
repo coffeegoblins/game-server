@@ -84,7 +84,7 @@ module.exports = {
         var currentNodes = new this.DualKeyHash();
         var completedNodes = new this.DualKeyHash();
 
-        var maxDistance = unit.ap / this.unitData[unit.type].moveCost;
+        var maxDistance = unit.ap / this.unitTypes[unit.type].moveCost;
         var currentNode = {
             distance: 0,
             x: unit.x,

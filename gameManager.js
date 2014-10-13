@@ -118,7 +118,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             var owningUser = users[prototypeUnit.userIndex];
             if (owningUser)
             {
-                var unitType = owningUser.unitTypeArray.shift();
+                var unitType = owningUser.unitTypeArray.shift().toLowerCase();
 
                 game.units.push(
                 {
@@ -126,8 +126,8 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
                     x: prototypeUnit.x,
                     y: prototypeUnit.y,
                     type: unitType,
-                    ap: gameLogic.unitData[unitType].maxAP,
-                    maxAP: gameLogic.unitData[unitType].maxAP,
+                    ap: gameLogic.unitTypes[unitType].maxAP,
+                    maxAP: gameLogic.unitTypes[unitType].maxAP,
                     hp: 100,
                     username: owningUser.username,
                     direction:
