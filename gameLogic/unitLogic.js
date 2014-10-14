@@ -20,7 +20,7 @@ module.exports = {
         {
             "moveCost": 15,
             "maxAP": 100,
-            "attacks": ["strike", "shieldbash"],
+            "attacks": ["strike", "shieldbash", "TODO"],
             "description": "A defensive unit that takes less damage from frontal attacks."
         }
 
