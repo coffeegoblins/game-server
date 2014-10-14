@@ -118,7 +118,7 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             var owningUser = users[prototypeUnit.userIndex];
             if (owningUser)
             {
-                var unitType = owningUser.unitTypeArray.shift().toLowerCase();
+                var unitType = owningUser.unitTypeArray.shift();
 
                 game.units.push(
                 {
