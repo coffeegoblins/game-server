@@ -1,4 +1,5 @@
 module.exports = {
+    attacks: require("attackLogic").attacks,
     combatLockCost: 10,
     directions: [
         [6, 7, 0],
@@ -20,7 +21,7 @@ module.exports = {
         {
             "moveCost": 15,
             "maxAP": 100,
-            "attacks": ["strike", "shieldbash", "TODO"],
+            "attacks": ["onehanded"],
             "description": "A defensive unit that takes less damage from frontal attacks."
         }
 
@@ -59,19 +60,11 @@ module.exports = {
     getAttacks: function (unit)
     {
         var attacks = [];
-        var attackDefinitions = this.unitTypes[unit.type].attacks;
-        for (var i = 0; i < attackDefinitions.length; i++)
+        var attackNames = this.unitTypes[unit.type].attacks;
+
+        for (var i = 0; i < attackNames.length; i++)
         {
-            var attack = {
-                range: 1
-            };
-            var attackDefinition = attackDefinitions[i];
-
-            for (var property in attackDefinition)
-            {
-                attack[property] = attackDefinition[property];
-            }
-
+            var attack = this.attacks[attackNames[i]];
             attack.isDisabled = (attack.cost > unit.ap);
             attacks.push(attack);
         }
