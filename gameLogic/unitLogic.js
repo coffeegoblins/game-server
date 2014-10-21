@@ -65,6 +65,7 @@ module.exports = {
         for (var i = 0; i < attackNames.length; i++)
         {
             var attack = this.attacks[attackNames[i]];
+            attack.name = attackNames[i];
             attack.isDisabled = (attack.cost > unit.ap);
             attacks.push(attack);
         }
