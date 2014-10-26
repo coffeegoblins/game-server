@@ -1,5 +1,4 @@
 module.exports = {
-    attacks: require("./actionLogic/attackLogic").attacks,
     combatLockCost: 10,
     directions: [
         [6, 7, 0],

@@ -5,6 +5,7 @@ var gameLogic = {
 // Merge all of the logic from the other sections in place
 var logicalComponents = [
     require('./unitLogic'),
+    require('./utilityLogic'),
     require('./actionLogic/moveLogic'),
     require('./actionLogic/endTurnLogic'),
     require('./actionLogic/attackLogic')

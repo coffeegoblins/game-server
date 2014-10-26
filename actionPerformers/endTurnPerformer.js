@@ -1,7 +1,9 @@
 var GameLogic = require('../gameLogic/actionLogic/endTurnLogic');
 
-module.exports.perform = function (units)
+module.exports.perform = function (game)
 {
+    var units = game.units;
+
     // Remove the soldier from the front
     var currentUnit = units.shift();
 

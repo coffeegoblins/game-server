@@ -106,7 +106,8 @@ GameManager.prototype.createGame = function (responseCallback, users, levelName)
             tiles: level.prototypes.tiles,
             boundaries: level.boundaries,
             turnCount: 0,
-            creationTime: new Date().getTime()
+            creationTime: new Date().getTime(),
+            seed: Math.random()
         };
 
 
@@ -175,7 +176,7 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
 
         console.log("Map created.");
 
-        if (!this.validateUnitActions(dbGame.units, map, gameStateUpdates.actions))
+        if (!this.validateUnitActions(dbGame, map, gameStateUpdates.actions))
         {
             responseCallback(this.events.gameStateUpdate.response.error, "An invalid action was provided. Update your game or contact support.");
             return;
@@ -185,13 +186,13 @@ GameManager.prototype.gameStateUpdate = function (responseCallback, currentUsern
     }.bind(this));
 };
 
-GameManager.prototype.validateUnitActions = function (units, map, actions)
+GameManager.prototype.validateUnitActions = function (dbGame, map, actions)
 {
     for (var i = 0; i < actions.length; ++i)
     {
         var action = actions[i];
 
-        if (!ActionPerformer.perform(units, map, action))
+        if (!ActionPerformer.perform(dbGame, map, action))
         {
             console.log("Action Invalid", action);
             return false;

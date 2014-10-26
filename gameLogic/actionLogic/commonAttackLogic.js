@@ -1,6 +1,6 @@
-var UnitLogic = require('../unitLogic');
-
 module.exports = {
+    unitLogic: require('../unitLogic'),
+    utilityLogic: require('../utilityLogic'),
     combatLockCost: 10,
 
     getTileDistance: function (x1, y1, x2, y2)
@@ -90,12 +90,12 @@ module.exports = {
         return false;
     },
 
-    applyDamage: function (sourceUnit, targetUnit, accuracy, direction, damage)
+    applyDamage: function (sourceUnit, targetUnit, accuracy, direction, damage, hitChance)
     {
-        var damageType = damage[targetUnit.type];
+        var damageType = damage[targetUnit.type.toLowerCase()];
         var damageAmount = damageType.front;
 
-        if (Math.random() <= accuracy)
+        if (hitChance <= accuracy)
         {
             var attackDirection = Math.atan2(direction.x, direction.y);
             var targetDirection = Math.atan2(targetUnit.direction.x, targetUnit.direction.y);
@@ -115,7 +115,7 @@ module.exports = {
             targetUnit.hp -= damageAmount;
             if (targetUnit.hp <= 0)
             {
-                UnitLogic.breakCombatLock(sourceUnit, targetUnit);
+                this.unitLogic.breakCombatLock(sourceUnit, targetUnit);
             }
         }
 

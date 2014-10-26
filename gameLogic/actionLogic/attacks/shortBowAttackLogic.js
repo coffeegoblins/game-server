@@ -50,11 +50,11 @@ module.exports = {
         return this.commonAttackLogic.getSingleTargetNode(tile);
     },
 
-    performAttack: function (attackingUnit, targetNode)
+    performAttack: function (attackingUnit, targetNode, hitChance)
     {
         var targetUnit = targetNode.tile.unit;
         var accuracy = this.occlusionCalculator.getOcclusionAccuracy(this.accuracy[targetUnit.type], targetNode);
-        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, accuracy, attackingUnit.direction, this.damage);
+        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, accuracy, attackingUnit.direction, this.damage, hitChance);
 
         return [
             {

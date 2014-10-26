@@ -1,9 +1,9 @@
 var GameLogic = require('../gameLogic/gameLogic');
 var Utility = require('../utility');
 
-module.exports.perform = function (units, map, action)
+module.exports.perform = function (game, map, action)
 {
-    var dbAttackingUnit = Utility.getElementByObjectID(units, action.unitID);
+    var dbAttackingUnit = Utility.getElementByObjectID(game.units, action.unitID);
     if (!dbAttackingUnit)
     {
         console.log("The unit " + action.unitID + " does not exist in the database");
@@ -36,7 +36,9 @@ module.exports.perform = function (units, map, action)
     dbAttackingUnit.direction = GameLogic.getDirection(dbAttackingUnit, dbTargetNode);
     dbAttackingUnit.ap -= GameLogic.getAttackCost(dbAttackingUnit, dbTargetNode, attackLogic.attackCost);
 
-    action.results = attackLogic.performAttack(dbAttackingUnit, dbTargetNode);
+    var dbHitChance = GameLogic.nextRandom(game);
+
+    action.results = attackLogic.performAttack(dbAttackingUnit, dbTargetNode, dbHitChance);
 
     return true;
 };

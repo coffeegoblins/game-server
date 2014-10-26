@@ -37,13 +37,13 @@ module.exports = {
         return this.commonAttackLogic.getSingleTargetNode(tile);
     },
 
-    performAttack: function (attackingUnit, targetNode)
+    performAttack: function (attackingUnit, targetNode, hitChance)
     {
         var targetUnit = targetNode.tile.unit;
 
         this.unitLogic.applyCombatLock(attackingUnit, targetUnit);
 
-        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage);
+        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage, hitChance);
 
         return [
             {

@@ -1,8 +1,10 @@
 var GameLogic = require('../gameLogic/gameLogic');
 var Utility = require('../utility');
 
-module.exports.perform = function (units, map, action)
+module.exports.perform = function (game, map, action)
 {
+    var units = game.units;
+
     var dbUnit = Utility.getElementByObjectID(units, action.unitID);
     if (!dbUnit)
     {

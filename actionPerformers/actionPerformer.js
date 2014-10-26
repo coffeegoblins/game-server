@@ -13,7 +13,7 @@ for (var attackName in GameLogic.attacks)
     actionMap[attackName.toLowerCase()] = AttackPerformer.perform;
 }
 
-exports.perform = function (units, map, action)
+exports.perform = function (game, map, action)
 {
     var lowerCaseName = action.type.toLowerCase();
 
@@ -23,5 +23,5 @@ exports.perform = function (units, map, action)
         return false;
     }
 
-    return actionMap[lowerCaseName](units, map, action);
+    return actionMap[lowerCaseName](game, map, action);
 };

@@ -35,20 +35,34 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
         console.log('Database user: ' + dbUsername);
         console.log('Database password: ' + dbPassword);
 
-        this.database.authenticate(dbUsername, dbPassword, function (error)
+        //        this.database.authenticate(dbUsername, dbPassword, function (error)
+        //        {
+        if (error)
         {
-            if (error)
-            {
-                console.log('Unable to authenticate with MongoDB. ' + error);
-                return;
-            }
+            console.log('Unable to authenticate with MongoDB. ' + error);
+            return;
+        }
 
-            async.parallel([
+        async.parallel([
                 this.getCollection.bind(this, this.collections.users),
                 this.getCollection.bind(this, this.collections.notifications),
                 this.getCollection.bind(this, this.collections.games),
                 this.getCollection.bind(this, this.collections.levels)
             ], function (error)
+        {
+            if (error)
+            {
+                console.log(error);
+                return;
+            }
+
+            this.usersCollection.ensureIndex(
+            {
+                username: 1
+            },
+            {
+                unique: true
+            }, function (error)
             {
                 if (error)
                 {
@@ -56,24 +70,10 @@ DatabaseManager.prototype.open = function (dbName, dbHost, dbPort, dbUsername, d
                     return;
                 }
 
-                this.usersCollection.ensureIndex(
-                {
-                    username: 1
-                },
-                {
-                    unique: true
-                }, function (error)
-                {
-                    if (error)
-                    {
-                        console.log(error);
-                        return;
-                    }
-
-                    callback();
-                });
-            }.bind(this));
+                callback();
+            });
         }.bind(this));
+        //}.bind(this));
     }.bind(this));
 };
 

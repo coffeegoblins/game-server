@@ -1,6 +1,6 @@
 module.exports = {
     commonAttackLogic: require('../commonAttackLogic'),
-    applyCombatLock: require('../../unitLogic').applyCombatLock,
+    unitLogic: require('../../unitLogic'),
     attackCost: 30,
     accuracy: 0.9,
     displayName: "Strike",
@@ -38,13 +38,13 @@ module.exports = {
         return this.commonAttackLogic.getSingleTargetNode(tile);
     },
 
-    performAttack: function (attackingUnit, targetNode)
+    performAttack: function (attackingUnit, targetNode, hitChance)
     {
         var targetUnit = targetNode.tile.unit;
 
-        this.applyCombatLock(attackingUnit, targetUnit);
+        this.unitLogic.applyCombatLock(attackingUnit, targetUnit);
 
-        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage);
+        var damage = this.commonAttackLogic.applyDamage(attackingUnit, targetUnit, this.accuracy, attackingUnit.direction, this.damage, hitChance);
 
         return [
             {
