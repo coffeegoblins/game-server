@@ -30,7 +30,7 @@ app.set('ipaddr', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
 
 var config = JSON.parse(fileSystem.readFileSync('./config/config.json'));
-var socketEvents = JSON.parse(fileSystem.readFileSync('./events.json'));
+var socketEvents = JSON.parse(fileSystem.readFileSync('./routes/routes.json'));
 
 databaseManager.open(config.dbName,
     process.env.OPENSHIFT_MONGODB_DB_HOST || config.dbHost,

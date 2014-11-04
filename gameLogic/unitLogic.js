@@ -6,6 +6,18 @@ module.exports = {
         [4, 3, 2]
     ],
 
+    heroTypes:
+    {
+        "Wizard":
+        {
+            "moveCost": 15,
+            "maxAP": 100,
+            "attacks": ["Fireball"],
+            "description": "An unarmored unit capable of inflicting magical attacks from a distance.",
+            "src": "../../renderer/content/images/shieldIcon.png"
+        }
+    },
+
     unitTypes:
     {
         //        "Archer":

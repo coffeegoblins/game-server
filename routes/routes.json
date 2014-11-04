@@ -1,8 +1,8 @@
 {
-    "listeners": {
-        "notifications": "notifications",
-        "gameCreations": "gameCreations",
-        "gameUpdates": "gameUpdates",
+    "listeners":
+    {
+        "gameCreation": "gameCreation",
+        "gameUpdate": "gameUpdate",
         "disconnect": "disconnect"
     },
     "connection":
@@ -23,70 +23,26 @@
             "success": "disconnected"
         }
     },
-    "challengeUser":
+    "updateGame":
     {
-        "url": "challengeUser",
+        "url": "updateGame",
         "version": "1",
         "cached": "false",
         "response":
         {
-            "error": "challengeUserError",
-            "success": "challengeUserSuccess"
+            "error": "updateGameError",
+            "success": "updateGameSuccess"
         }
     },
-    "challengeAccepted":
+    "userSearch":
     {
-        "url": "challengeAccepted",
+        "url": "userSearch",
         "version": "1",
         "cached": "false",
         "response":
         {
-            "error": "challengeAcceptedError",
-            "success": "challengeAcceptedSuccess"
-        }
-    },
-    "challengeDeclined":
-    {
-        "url": "challengeDeclined",
-        "version": "1",
-        "cached": "false",
-        "response":
-        {
-            "error": "challengeDeclinedError",
-            "success": "challengeDeclinedSuccess"
-        }
-    },
-    "gameStateUpdate":
-    {
-        "url": "gameStateUpdate",
-        "version": "1",
-        "cached": "false",
-        "response":
-        {
-            "error": "gameStateUpdateError",
-            "success": "gameStateUpdateSuccess"
-        }
-    },
-    "playerSearch":
-    {
-        "url": "playerSearch",
-        "version": "1",
-        "cached": "false",
-        "response":
-        {
-            "error": "playerSearchError",
-            "success": "playerSearchSuccess"
-        }
-    },
-    "getNotifications":
-    {
-        "url": "getNotifications",
-        "version": "1",
-        "cached": "false",
-        "response":
-        {
-            "error": "getNotificationsError",
-            "success": "getNotificationsSuccess"
+            "error": "userSearchError",
+            "success": "userSearchSuccess"
         }
     },
     "createGame":
@@ -122,15 +78,15 @@
             "success": "getGameLogicSuccess"
         }
     },
-    "getLevels":
+    "getLevelNames":
     {
-        "url": "getLevels",
+        "url": "getLevelNames",
         "version": "1",
         "cached": "false",
         "response":
         {
-            "error": "getLevelsError",
-            "success": "getLevelsSuccess"
+            "error": "getLevelNamesError",
+            "success": "getLevelNamesSuccess"
         }
     },
     "getLevel":

@@ -1,6 +1,8 @@
 {
-    "layers": {
-        "objectLayer": {
+    "layers":
+    {
+        "objectLayer":
+        {
             "objects": [
                 {
                     "size": "small",
@@ -144,9 +146,12 @@
             "index": 1,
             "type": "objectLayer"
         },
-        "background": {
-            "properties": {
-                "rect": {
+        "background":
+        {
+            "properties":
+            {
+                "rect":
+                {
                     "x": 0,
                     "y": 0,
                     "width": 9,
@@ -159,136 +164,377 @@
             "type": "tileLayer"
         }
     },
-    "prototypes": {
+    "prototypes":
+    {
         "tiles": [
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true },
-            { "spriteIndex": 1, "isTraversable": true }
-        ],
-        "units": [
             {
-                "userIndex": 0,
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            },
+            {
+                "spriteIndex": 1,
+                "isTraversable": true
+            }
+        ],
+        "goblins": [
+            {
                 "tileIndex": 0,
                 "x": 0,
                 "y": 0
             },
             {
-                "userIndex": 0,
                 "tileIndex": 1,
                 "x": 1,
                 "y": 0
             },
             {
-                "userIndex": 0,
                 "tileIndex": 2,
                 "x": 2,
                 "y": 0
             },
             {
-                "userIndex": 0,
                 "tileIndex": 4,
                 "x": 3,
                 "y": 0
-            },
+            }
+        ],
+        "humans": [
             {
-                "userIndex": 1,
                 "tileIndex": 19,
                 "x": 0,
                 "y": 2
             },
             {
-                "userIndex": 1,
                 "tileIndex": 20,
                 "x": 1,
                 "y": 2
             },
             {
-                "userIndex": 1,
                 "tileIndex": 21,
                 "x": 2,
                 "y": 2
             },
             {
-                "userIndex": 1,
                 "tileIndex": 22,
                 "x": 3,
                 "y": 2
@@ -297,7 +543,8 @@
     },
     "active": true,
     "name": "level4",
-    "boundaries": {
+    "boundaries":
+    {
         "x": 0,
         "y": 0,
         "width": 9,

@@ -1,5 +1,5 @@
-var ObjectID = require('mongodb').ObjectID;
-var databaseManager = require('./databaseManager');
+var validator = require('./validator');
+var usersCollection = require('./databaseManager').usersCollection;
 var jwt = require('jsonwebtoken');
 
 function UserManager(events, jwtSecret)
@@ -10,19 +10,15 @@ function UserManager(events, jwtSecret)
 
 UserManager.prototype.login = function (request, response)
 {
-    console.log('Attempting to login ' + request.body.username);
-
-    this.selectPlayer(request.body.username, function (error, user)
+    validator.isValidUser(request.body.username, function (error, user)
     {
         // TODO  || user.password !== request.body.password
-        if (error|| !user)
+        if (error || !user)
         {
             console.log(error);
             response.send(403, 'Invalid username or password.');
             return;
         }
-
-        console.log(this.jwtSecret);
 
         var token = jwt.sign(user, this.jwtSecret,
         {
@@ -40,91 +36,33 @@ UserManager.prototype.login = function (request, response)
 
 UserManager.prototype.register = function (request, response)
 {
-    console.log('Attempting to register ' + request.body.username);
-
-    // TODO Check blacklist
-
-    var user = {
-        username: request.body.username.toLowerCase(),
-        displayName: request.body.username.toString(),
-        password: request.body.password,
-        notifications: [],
-        creationTime: new Date().getTime()
-    };
-
-    console.log('Registering user ' + user.username);
-
-    databaseManager.usersCollection.insert(user, function (error, createdUser)
+    validator.isValidUser(request.body.username, function (error, user)
     {
-        if (error)
+        if (user)
         {
-            console.log(error);
-            response.send(403, 'That username is already taken. Enter another username.');
+            response.send(403, 'That username is taken. Enter another username.');
             return;
         }
 
-        console.log(user.username + ' has been registered.');
+        user = {
+            username: request.body.username,
+            password: request.body.password,
+            notifications: [],
+            creationTime: new Date().getTime()
+        };
 
-        response.send(200);
-    }.bind(this));
-};
-
-UserManager.prototype.searchForPlayers = function (responseCallback, currentUser, searchCriteria)
-{
-    // TODO Filter characters
-    var regex = new RegExp('^(?!' + currentUser + '$).*' + searchCriteria + '.*$', "i");
-
-    console.log(regex);
-
-    var searchResults = databaseManager.usersCollection.find(
-    {
-        username: regex,
-    }).limit(200);
-
-    console.log(searchResults);
-
-    if (searchResults.length === 0)
-    {
-        responseCallback(this.events.playerSearch.response.error, 'No players found.');
-        return;
-    }
-
-    searchResults.toArray(function (error, result)
-    {
-        console.log(result);
-
-        if (error)
+        usersCollection.insert(user, function (error, createdUser)
         {
-            responseCallback(this.events.playerSearch.response.error, error);
-            return;
-        }
+            if (error)
+            {
+                console.log("Unable to create new user.", error);
+                response.send(403, 'Unable to create new account. Try again.');
+                return;
+            }
 
-        responseCallback(this.events.playerSearch.response.success, result);
-    }.bind(this));
-};
-
-UserManager.prototype.selectPlayer = function (username, callback)
-{
-    if (!username)
-    {
-        callback("No user name was provided");
-        return;
-    }
-
-    var searchCriteria = {
-        'username': username
-    };
-
-    databaseManager.usersCollection.findOne(searchCriteria, function (error, user)
-    {
-        if (!user)
-        {
-            callback('Unable to find a user with the name: ' + username + '\n' + error);
-            return;
-        }
-
-        callback(null, user);
-    }.bind(this));
+            response.send(200, createdUser);
+        }.bind(this));
+    });
 };
 
 module.exports = UserManager;
